@@ -1,10 +1,6 @@
-<?php
-require '../controllers/RegistrationController.php';
-?>
-
 <h1>Register 📝</h1>
 
-<form action="../controllers/RegisterController.php" method="POST">
+<form name="registration-form" action="/register" method="POST">
     <label for="nameInput">Name</label>
     <input type="text" name="name" id="nameInput">
     <label for="passwordInput">Password</label>
