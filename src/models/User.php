@@ -2,6 +2,8 @@
 
 class User
 {
+    use Model;
+    protected $table = 'user';
     private string $name;
     private string $password;
 

@@ -1,6 +1,6 @@
 <?php
 
-class Controller
+trait Controller
 {
     public function view($name)
     {

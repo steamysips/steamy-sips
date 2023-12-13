@@ -18,4 +18,4 @@
         </tr>
 
     </tbody>
-</table> <a href="/register"><Button>Create new user</Button></a>
+</table> <a href="<?=ROOT?>/register"><Button>Create new user</Button></a>

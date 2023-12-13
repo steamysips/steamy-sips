@@ -5,18 +5,11 @@ class App
     private $controller = 'Home';
     private $method = 'index';
 
-    private function show($stuff)
-    {
-        echo "<pre>";
-        print_r($stuff);
-        echo "</pre>";
-    }
-
     private function splitURL()
     {
 
         $URL = $_GET['url'] ?? 'home';
-        $URL = explode("/", $URL);
+        $URL = explode("/", trim($URL, '/'));
         return $URL;
     }
 
@@ -34,6 +27,8 @@ class App
         }
 
         $controller =  new $this->controller;
-        $controller->index();
+        $controller->index(); # use get contents
     }
 }
+
+# include app html template here 
