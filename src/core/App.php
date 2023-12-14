@@ -5,6 +5,9 @@ class App
     private $controller = 'Home';
     private $method = 'index';
 
+    // manage routes and methods 
+    // $req = $_SERVER['REQUEST_URI'];
+    //$method = $_SERVER['REQUEST_METHOD'];
     private function splitURL()
     {
 

@@ -6,6 +6,14 @@ trait Model
     protected $table = 'user';
     protected $limit = 10;
     protected $offset = 0;
+    public $errors = [];
+
+
+    public function all()
+    {
+        $query = "select * from $this->table";
+        return $this->query($query);
+    }
 
     public function where($data, $data_not = [])
     {

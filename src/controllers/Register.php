@@ -5,8 +5,13 @@ class Register
     use Controller;
     public function index()
     {
-        // echo 'this is register controller';
+        $user = new User;
 
-        $this->view('Register');
+        if ($user->validate($_POST)) {
+            $user->insert($_POST);
+            redirect('home');
+        }
+        $data['errors'] = $user->errors;
+        $this->view('Register', $data);
     }
 }

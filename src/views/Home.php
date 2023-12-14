@@ -1,4 +1,4 @@
-<h1>Home 🏡</h1>
+<h1>Home</h1>
 
 <table>
     <thead>
@@ -9,13 +9,15 @@
     </thead>
 
     <tbody>
-        <tr>
-            <td>
-                John
-            </td>
-
-            <td>1234</td>
-        </tr>
-
+        <?php
+        foreach ($users as $user) {
+            echo <<<EOL
+                <tr>
+                <td>$user->name</td>
+                <td>$user->password</td>
+                </tr>
+                EOL;
+        }
+        ?>
     </tbody>
-</table> <a href="<?=ROOT?>/register"><Button>Create new user</Button></a>
+</table> <a href="<?= ROOT ?>/register"><Button>Create new user</Button></a>
