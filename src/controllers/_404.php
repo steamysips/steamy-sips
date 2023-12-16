@@ -6,6 +6,6 @@ class _404
 
     function index()
     {
-        echo '404 page';
+        $this->view('404.php');
     }
 }
