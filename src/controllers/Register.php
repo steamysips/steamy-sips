@@ -12,6 +12,9 @@ class Register
             redirect('home');
         }
         $data['errors'] = $user->errors;
-        $this->view('Register', $data);
+
+        $css_file = ROOT . "/styles/views/Register.css";
+
+        $this->view('Register', $data, 'Login', "<link rel=\"stylesheet\" href=\"$css_file\"></link>");
     }
 }
