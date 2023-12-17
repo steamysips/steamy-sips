@@ -20,13 +20,24 @@ class User
         if (empty($data['name'])) {
             $this->errors['name'] = "Name is required";
         }
+
+        if (strlen($data['name']) < 5) {
+            $this->errors['name'] = "Name too short";
+        }
+
         if (empty($data['password'])) {
             $this->errors['password'] = "Password is required";
+        }
+
+        if (strlen($data['password']) < 5) {
+            $this->errors['password'] = "Password too short";
         }
 
         if (empty($this->errors)) return true;
         return false;
     }
+
+    // ! Override insert and use bcrypt
     public function getName(): string
     {
         return $this->name;
