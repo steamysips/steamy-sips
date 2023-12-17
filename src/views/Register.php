@@ -1,22 +1,27 @@
 <main class="container">
-    <article class="grid slide-in">
+    <article class="grid">
         <div>
             <hgroup>
-                <h1>Sign in</h1>
-                <h2>A minimalist layout for Login pages</h2>
+                <h1>Sign up</h1>
+                <h2>Create a new account for free</h2>
             </hgroup>
-            <form>
-                <input type="text" name="login" placeholder="Login" aria-label="Login" autocomplete="nickname" required />
-                <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required />
-                <fieldset>
-                    <label for="remember">
-                        <input type="checkbox" role="switch" id="remember" name="remember" />
-                        Remember me
-                    </label>
-                </fieldset>
-                <button type="submit" class="contrast" onclick="event.preventDefault()">Login</button>
+            <form method="post">
+                <label for="name">Name</label>
+                <input type="text" name="name" aria-label="Name" autocomplete="nickname" value="<?php echo $defaultName; ?>" required />
+
+                <?php if (!empty($errors['name'])) : ?>
+                    <small class="warning"><?php echo $errors['name'] ?></small>
+                <?php endif; ?>
+
+                <label for="password">Password</label>
+                <input type="password" name="password" aria-label="Password" value="<?php echo $defaultPassword; ?>" autocomplete="current-password" required />
+
+                <?php if (!empty($errors['password'])) : ?>
+                    <small class="warning"><?php echo $errors['password'] ?></small>
+                <?php endif; ?>
+
+                <button type="submit" name="register_submit">Register</button>
             </form>
         </div>
-        <div></div>
     </article>
 </main>
