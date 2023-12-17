@@ -24,6 +24,9 @@
             </li>
         </ul>
         <ul>
+            <li><a href="<?= ROOT ?>/shop" class="secondary">Shop</a></li>
+            <li><a href="<?= ROOT ?>/login" class="secondary">Login</a></li>
+
             <li>
                 <details role="list" dir="rtl">
                     <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
@@ -34,29 +37,14 @@
                     </ul>
                 </details>
             </li>
-            <li>
-                <details role="list" dir="rtl">
-                    <summary aria-haspopup="listbox" role="link" class="secondary">Examples (v1)</summary>
-                    <ul role="listbox">
-                        <li><a href="../v1-preview/">Preview</a></li>
-                        <li><a href="../v1-preview-rtl/">Right-to-left</a></li>
-                        <li><a href="../v1-classless/">Classless</a></li>
-                        <li><a href="../v1-basic-template/">Basic template</a></li>
-                        <li><a href="../v1-company/">Company</a></li>
-                        <li><a href="../v1-google-amp/">Google Amp</a></li>
-                        <li><a href="../v1-sign-in/">Sign in</a></li>
-                        <li><a href="../v1-bootstrap-grid/">Bootstrap grid</a></li>
-                    </ul>
-                </details>
-            </li>
         </ul>
     </nav>
 
     <?= $template_content ?>
 
     <footer class="container-fluid">
-        <small>Built with <a href="https://picocss.com" class="secondary">Pico</a> •
-            <a href="https://github.com/picocss/examples/tree/master/v1-sign-in/" class="secondary">Source code</a></small>
+        <small>Built by <a href="https://github.com/creme332" class="secondary">creme332</a> •
+            <a href="https://github.com/creme332/skeleton/" class="secondary">Source code</a></small>
     </footer>
 
     <!-- Minimal theme switcher -->
