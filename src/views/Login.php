@@ -1,10 +1,7 @@
 <main class="container">
     <article class="grid slide-in">
         <div>
-            <hgroup>
-                <h1>Sign in</h1>
-                <h2>A minimalist layout for Login pages</h2>
-            </hgroup>
+            <h1>Sign in</h1>
             <form>
                 <input type="text" name="login" placeholder="Login" aria-label="Login" autocomplete="nickname" required />
                 <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required />
