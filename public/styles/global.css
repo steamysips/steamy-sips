@@ -1,3 +1,16 @@
 .warning {
   color: var(--form-element-invalid-border-color);
 }
+
+nav .icon {
+  height: 40px;
+  width: 40px;
+}
+
+body > footer {
+  padding: 1rem 0;
+}
+
+* {
+  /* outline: 1px solid red; */
+}

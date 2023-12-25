@@ -1,0 +1,32 @@
+:root {
+  --icon-size: 40px;
+}
+
+article > header {
+  position: relative;
+}
+
+article > header > .icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  /* color: red; */
+  /* fill: white; */
+}
+
+/* TODO make icons responsive */
+#features h2 {
+  margin: 0;
+}
+
+#testimonials img {
+  aspect-ratio: 1/1;
+  border-radius: 10px;
+  height: 200px;
+}
+
+.img-container {
+  object-fit: cover;
+}
