@@ -13,12 +13,22 @@
                     <small class="warning"><?php echo $errors['name'] ?></small>
                 <?php endif; ?>
 
-                <label for="password">Password</label>
-                <input type="password" name="password" aria-label="Password" value="<?php echo $defaultPassword; ?>" autocomplete="current-password" required />
-
-                <?php if (!empty($errors['password'])) : ?>
-                    <small class="warning"><?php echo $errors['password'] ?></small>
-                <?php endif; ?>
+                <div class="grid">
+                    <div class="container">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" aria-label="Password" value="<?php echo $defaultPassword; ?>" autocomplete="current-password" required />
+                        <?php if (!empty($errors['password'])) : ?>
+                            <small class="warning"><?php echo $errors['password'] ?></small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="container">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" name="confirmPassword" aria-label="Confirm password" value="<?php echo $defaultPassword; ?>" autocomplete="current-password" required />
+                        <?php if (!empty($errors['password'])) : ?>
+                            <small class="warning"><?php echo $errors['confirmPassword'] ?></small>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
                 <button type="submit" name="register_submit">Register</button>
             </form>
