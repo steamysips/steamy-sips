@@ -12,6 +12,7 @@
                     </label>
                 </fieldset>
                 <button type="submit" class="contrast" onclick="event.preventDefault()">Login</button>
+                <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
             </form>
         </div>
         <div></div>

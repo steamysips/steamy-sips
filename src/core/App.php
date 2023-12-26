@@ -10,7 +10,6 @@ class App
     //$method = $_SERVER['REQUEST_METHOD'];
     private function splitURL()
     {
-
         $URL = $_GET['url'] ?? 'home';
         $URL = explode("/", trim($URL, '/'));
         return $URL;
@@ -19,7 +18,11 @@ class App
     public function loadController()
     {
         $URL = $this->splitURL();
-        $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php';
+        /**
+         * filename is relative to public/index.php
+         */
+        $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php'; 
+
         // echo $filename;
         if (file_exists($filename)) {
             require $filename;

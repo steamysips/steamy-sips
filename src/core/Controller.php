@@ -7,7 +7,7 @@ trait Controller
     /**
      * Renders a view
      *
-     * @param  mixed $filename File name of view file in `views` folder.
+     * @param  mixed $filename File name of view file in `views` folder without the `.php` extension.
      * @param  mixed $data  Additional data defined in the view.
      * @param  mixed $template_title Page title. Default value is `lamp`.
      * @param  mixed $template_tags Optional tags to be included in head. Examples can be
@@ -23,6 +23,7 @@ trait Controller
         }
         $template_filename = '../src/views/' . ucfirst($filename) . '.php';
         $template_content = ''; // html content for template
+
         ob_start();
         if (file_exists($template_filename)) {
             include($template_filename);
