@@ -3,6 +3,7 @@
 class User
 {
     use Model;
+
     protected $table = 'user';
     private string $name;
     private string $password;
@@ -13,6 +14,7 @@ class User
         $this->password = $password;
     }
 
+    // sanitize
     public function validate($data)
     {
         $this->errors = [];
@@ -33,6 +35,10 @@ class User
             $this->errors['password'] = "Password too short";
         }
 
+        if ($data['password'] != $data['confirmPassword']) {
+            $this->errors['confirmPassword'] = "Passwords do not match";
+        }
+
         if (empty($this->errors)) return true;
         return false;
     }
@@ -42,14 +48,17 @@ class User
     {
         return $this->name;
     }
+
     public function setName(string $name)
     {
         $this->name = $name;
     }
+
     public function getPassword(): string
     {
         return $this->password;
     }
+
     public function setPassword(string $password)
     {
         $this->password = $password;
