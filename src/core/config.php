@@ -8,7 +8,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define('DBPASS', 'aaa');
 
     // define absolute url for public folder
-    define('ROOT', 'http://localhost/skeleton/public');
+    define('ROOT', 'http://localhost/steamy-sips/public');
 } else {
 
     // define database credentials
