@@ -6,8 +6,8 @@ class Home
 
     function index()
     {
-        $css_file = ROOT . "/styles/views/Home.css";
-
-        $this->view('Home', [], 'Home', "<link rel=\"stylesheet\" href=\"$css_file\"></link>");
+        $home_css_path = ROOT . "/styles/views/Home.css";
+        $home_css_tag = "<link rel=\"stylesheet\" href=\"$home_css_path\"></link>";
+        $this->view('Home', [], 'Home', $home_css_tag);
     }
 }

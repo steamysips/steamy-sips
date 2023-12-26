@@ -6,7 +6,7 @@ article > header {
   position: relative;
 }
 
-article > header > .icon {
+#about-us article > header > .icon {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -17,7 +17,8 @@ article > header > .icon {
 }
 
 /* TODO make icons responsive */
-#features h2 {
+#about-us h2,
+#testimonials h2 {
   margin: 0;
 }
 
@@ -29,4 +30,25 @@ article > header > .icon {
 
 .img-container {
   object-fit: cover;
+}
+
+.splide__slide article {
+  width: 400px;
+
+  height: auto;
+}
+
+/* do not show picoss loading animation when track is busy */
+[aria-busy="true"]#testimonials-track::before {
+  display: none;
+}
+
+#testimonials header{
+  display: flex;
+  justify-content: center;
+}
+
+.stars{
+  display: flex;
+  gap:0.2rem;
 }
