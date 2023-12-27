@@ -3,10 +3,11 @@
 trait Model
 {
     use Database;
-    protected $table = 'user';
-    protected $limit = 10;
-    protected $offset = 0;
-    public $errors = [];
+
+    protected string $table = 'user';
+    protected int $limit = 10;
+    protected int $offset = 0;
+    public array $errors = [];
 
 
     public function all()
@@ -15,7 +16,7 @@ trait Model
         return $this->query($query);
     }
 
-    public function where($data, $data_not = [])
+    public function where($data, $data_not = []): false|array
     {
         $keys = array_keys($data);
         $keys_not = array_keys($data_not);
@@ -40,7 +41,7 @@ trait Model
     {
     }
 
-    public function insert($data)
+    public function insert($data): void
     {
         $keys = array_keys($data);
         $query = "insert into $this->table(" . join(", ", $keys) . ") ";
@@ -56,8 +57,6 @@ trait Model
         // echo $query;
 
         $this->query($query, $data);
-
-        return false;
     }
 
     public function update($id, $data, $id_column = 'id')

@@ -1,5 +1,5 @@
 <main class="container">
-    <article class="grid slide-in">
+    <article class="grid" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="500">
         <div>
             <h1>Sign in</h1>
             <form>
@@ -11,10 +11,16 @@
                         Remember me
                     </label>
                 </fieldset>
-                <button type="submit" class="contrast" onclick="event.preventDefault()">Login</button>
+                <button type="submit" class="contrast">Login</button>
                 <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
             </form>
         </div>
         <div></div>
     </article>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init();
+    });
+</script>

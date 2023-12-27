@@ -1,13 +1,14 @@
 <?php
+
 trait Database
 {
-    private function connect()
+    private function connect(): PDO
     {
-        $string  = "mysql:hostname=" . DBHOST . ";dbname=" . DBNAME;
+        $string = "mysql:hostname=" . DBHOST . ";dbname=" . DBNAME;
         return new PDO($string, DBUSER, DBPASS);
     }
 
-    public function query($query, $data = [])
+    public function query($query, $data = []): false|array
     {
         $con = $this->connect();
         $stm = $con->prepare($query);
@@ -17,7 +18,7 @@ trait Database
         if ($check) {
             $result = $stm->fetchAll(PDO::FETCH_OBJ);
 
-            if (is_array($result) && count($result)) {
+            if ($result && count($result)) {
                 return $result;
             }
         }

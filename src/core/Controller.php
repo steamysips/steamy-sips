@@ -16,11 +16,14 @@ trait Controller
      * ! Any links used inside $template_tags should be absolute (include ROOT).
      * @return void
      */
-    public function view(string $filename, array $data = [], string $template_title = 'lamp', string $template_tags = '')
+    public function view(string $filename, array $data = [], string $template_title = 'lamp',
+                         string $template_tags = ''): void
     {
         if (!empty($data)) {
             extract($data);
         }
+        // ! All file paths defined below are relative to index file in public folder
+
         $template_filename = '../src/views/' . ucfirst($filename) . '.php';
         $template_content = ''; // html content for template
 

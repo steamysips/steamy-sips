@@ -1,3 +1,11 @@
+<?php
+/**
+ * Variables below are defined in controller.
+ * @var string $defaultName Default name in registration form
+ * @var string $defaultPassword Default password in registration form
+ * @var string $defaultConfirmPassword Default password in registration form
+ */
+?>
 <main class="container">
     <article class="grid">
         <div>
@@ -26,7 +34,7 @@
                     <div class="container">
                         <label for="confirmPassword">Confirm password</label>
                         <input type="password" name="confirmPassword" aria-label="Confirm password"
-                               value="<?php echo $defaultPassword; ?>" required/>
+                               value="<?php echo $defaultConfirmPassword; ?>" required/>
                         <?php if (!empty($errors['confirmPassword'])) : ?>
                             <small class="warning"><?php echo $errors['confirmPassword'] ?></small>
                         <?php endif; ?>

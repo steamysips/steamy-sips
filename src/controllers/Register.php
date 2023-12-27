@@ -1,22 +1,23 @@
 <?php
 
+
 class Register
 {
     use Controller;
 
-    public function index()
+    public function index(): void
     {
         $css_file = ROOT . "/styles/views/Register.css";
 
         $user = new User;
         $data['defaultName'] = ''; // initial value for name before submit
         $data['defaultPassword'] = ''; // initial value for password before submit
-        $data['confirmPassword']=''; // initial  value for confirm password
+        $data['defaultConfirmPassword'] = ''; // initial  value for confirm password
 
         if (isset($_POST['register_submit'])) {
             $data['defaultName'] = $_POST['name'];
             $data['defaultPassword'] = $_POST['password'];
-            $data['confirmPassword'] = $_POST['confirmPassword'];
+            $data['defaultConfirmPassword'] = $_POST['confirmPassword'];
 
             if ($user->validate($_POST)) {
                 // remove extraneous post values before insertion to database
@@ -28,6 +29,7 @@ class Register
             $data['errors'] = $user->errors;
         }
 
-        $this->view('Register', $data, 'Login', "<link rel=\"stylesheet\" href=\"$css_file\"></link>");
+        $this->view('Register', $data, 'Login',
+            "<link rel=\"stylesheet\" href=\"$css_file\">");
     }
 }
