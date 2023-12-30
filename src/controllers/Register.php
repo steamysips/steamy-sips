@@ -20,16 +20,16 @@ class Register
             $data['defaultConfirmPassword'] = $_POST['confirmPassword'];
 
             if ($user->validate($_POST)) {
-                // remove extraneous post values before insertion to database
+                // remove extraneous $post values before insertion to database
                 unset($_POST['register_submit']);
                 unset($_POST['confirmPassword']);
                 $user->insert($_POST);
-                redirect('dashboard');
+                redirect('login');
             }
             $data['errors'] = $user->errors;
         }
 
         $this->view('Register', $data, 'Login',
-            "<link rel=\"stylesheet\" href=\"$css_file\">");
+            "<link rel=\"stylesheet\" href=\"$css_file\"/>");
     }
 }

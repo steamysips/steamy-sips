@@ -1,5 +1,5 @@
 <?php
-function show($stuff)
+function show($stuff): void
 {
     echo "<pre>";
     print_r($stuff);
@@ -7,7 +7,7 @@ function show($stuff)
 }
 
 
-function redirect($path)
+function redirect($path): void
 {
     header("Location: " . ROOT . "/" . $path);
     die;

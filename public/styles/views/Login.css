@@ -11,7 +11,6 @@ article {
   padding: 0;
   overflow: hidden;
   transform: translateX(-100%);
-  -webkit-transform: translateX(-100%);
 }
 
 .slide-in {

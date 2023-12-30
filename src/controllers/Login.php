@@ -25,7 +25,7 @@ class Login
         return false;
     }
 
-    function index()
+    function index(): void
     {
         $user = new User;
         $css_file = ROOT . "/styles/views/Login.css";

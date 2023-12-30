@@ -1,6 +1,8 @@
 <?php
 /**
- *  string $defaultName
+ * Variables below are defined in controllers/Login.php.
+ * @var string $defaultName Default name in registration form
+ * @var string $defaultPassword Default password in registration form
  */
 ?>
 

@@ -2,26 +2,25 @@
 
 class App
 {
-    private $controller = 'Home';
-    private $method = 'index';
+    private string $controller = 'Home';
+    private string $method = 'index';
 
     // manage routes and methods 
     // $req = $_SERVER['REQUEST_URI'];
     //$method = $_SERVER['REQUEST_METHOD'];
-    private function splitURL()
+    private function splitURL(): array
     {
         $URL = $_GET['url'] ?? 'home';
-        $URL = explode("/", trim($URL, '/'));
-        return $URL;
+        return explode("/", trim($URL, '/'));
     }
 
-    public function loadController()
+    public function loadController(): void
     {
         $URL = $this->splitURL();
         /**
          * filename is relative to public/index.php
          */
-        $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php'; 
+        $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php';
 
         // echo $filename;
         if (file_exists($filename)) {
@@ -32,7 +31,7 @@ class App
             $this->controller = "_404";
         }
 
-        $controller =  new $this->controller;
+        $controller = new $this->controller;
         $controller->index(); # use get contents
     }
 }

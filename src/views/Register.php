@@ -42,6 +42,7 @@
                 </div>
 
                 <button type="submit" name="register_submit">Register</button>
+                <small>Already have an account? <a href="<?= ROOT ?>/login">Login</a></small>
             </form>
         </div>
     </article>

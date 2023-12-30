@@ -4,7 +4,7 @@ class _404
 {
     use Controller;
 
-    function index()
+    function index(): void
     {
         $this->view('404.php');
     }

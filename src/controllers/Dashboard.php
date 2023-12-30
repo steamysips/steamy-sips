@@ -4,7 +4,7 @@ class Dashboard
 {
     use Controller;
 
-    function index()
+    function index(): void
     {
         $css_file = ROOT . "/styles/views/Dashboard.css";
         $data['users'] = (new User)->all();

@@ -4,7 +4,7 @@ class User
 {
     use Model;
 
-    protected $table = 'user';
+    protected string $table = 'user';
     private string $name;
     private string $password;
 
@@ -15,7 +15,13 @@ class User
     }
 
     // sanitize
-    public function validate($data)
+
+    /**
+     * Validates user properties
+     * @param $data array data with name and password properties
+     * @return bool True if data passes all checks
+     */
+    public function validate(array $data): bool
     {
         $this->errors = [];
 
@@ -35,12 +41,11 @@ class User
             $this->errors['password'] = "Password too short";
         }
 
-        if ($data['password'] != $data['confirmPassword']) {
+        if (array_key_exists('confirmPassword', $data) && $data['password'] != $data['confirmPassword']) {
             $this->errors['confirmPassword'] = "Passwords do not match";
         }
 
-        if (empty($this->errors)) return true;
-        return false;
+        return (empty($this->errors));
     }
 
     // ! Override insert and use bcrypt
@@ -49,7 +54,7 @@ class User
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -59,7 +64,7 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password)
+    public function setPassword(string $password): void
     {
         $this->password = $password;
     }
