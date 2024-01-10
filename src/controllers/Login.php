@@ -34,6 +34,8 @@ class Login
         $this->data['defaultPassword'] = $user->getPassword();
 
         if (isset($_POST['login_submit'])) {
+            // save values entered by user so that form
+            // maintains its state if an error occurs
             $this->data['defaultName'] = $_POST['name'];
             $this->data['defaultPassword'] = $_POST['password'];
 
@@ -43,6 +45,9 @@ class Login
             unset($_POST['login_submit']);
 
             if ($this->validateUser($user)) {
+                // user details are correct
+                // setup session and redirect to dashboard
+                $_SESSION['user'] = $user->getName();
                 redirect('dashboard');
             }
         }
