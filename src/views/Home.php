@@ -204,6 +204,11 @@
 
         new Splide('#testimonials', {
             perPage: 2,
+            breakpoints: {
+                1000: {
+                    perPage: 1,
+                },
+            },
             lazyLoad: "nearby",
             preloadPages: 3,
             focus: 0,
