@@ -6,6 +6,22 @@ article > header {
   position: relative;
 }
 
+#introduction div {
+  z-index: 2;
+}
+
+.wave {
+  bottom: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+@media screen and (max-width: 995px) {
+  .wave {
+    display: none;
+  }
+}
+
 #about-us article > header > .icon {
   position: absolute;
   top: 10px;
