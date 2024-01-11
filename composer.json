@@ -5,6 +5,7 @@
   "homepage": "https://github.com/creme332/steamy-sips",
   "license": "MIT",
   "require": {
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-mbstring": "*"
   }
 }
