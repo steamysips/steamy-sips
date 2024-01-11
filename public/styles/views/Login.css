@@ -13,17 +13,6 @@ article {
   transform: translateX(-100%);
 }
 
-.slide-in {
-  animation: slide-in 1s forwards;
-  -webkit-animation: slide-in 1s forwards;
-}
-
-@keyframes slide-in {
-  100% {
-    transform: translateX(0%);
-  }
-}
-
 article div {
   padding: 1rem;
 }
