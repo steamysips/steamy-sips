@@ -1,50 +1,86 @@
-# LAMP project
+# steamy-sips ☕
 
-A template for CRUD applications using LAMP stack.
+A CRUD application for a coffee shop built using LAMP stack.
 
 ## Features
+
+- User authentication
+- Users can leave reviews
+- Admin dashboard
 - MVC pattern
-- Styled with PicoCSS library (3KB)
+- Uses PDO
+- Styled minimally with PicoCSS
 - Mobile-responsive
 - Perfect web vital scores
 
 ## Installation
+
 ### Prerequisites:
-- PHP 8.1
-- phpMyAdmin 5.2 
-- Apache 2
+
+- PHP 8.1 installed globally
+- phpMyAdmin 5.2  (optional)
+- Apache2
+- Composer installed globally
+- Git
+
+### Setup project
+Navigate to the document root of your server:
 ```bash
-git clone ssh:
+cd /var/www/html # your root might be different
+```
+Download project:
+
+```bash
+git clone git@github.com:creme332/steamy-sips.git
 ```
 
-### Database
-Create database on mysql by running the following script:
+Move to the root directory of the project:
+
+```bash
+cd steamy-sips
+```
+
+Install dependencies:
+
+```bash
+composer update
+```
+
+### Setup database
+
+Create a MySQL database:
 
 Edit config file at `src/core/config.php` with your details.
+
 ## Usage
-Start server and database and display log:
+
+Start server and MySQL database and display live error log:
+
 ```bash
 sudo service apache2 restart && sudo service mysql start && sudo tail -f /var/log/apache2/error.log
 ```
 
-Open `http://localhost/skeleton/public/` in your browser to see the website.
+Open http://localhost/steamy-sips/public/ in your browser to see the website.
 
 ## To-do
-- [ ] Edit domain name by changing server name: https://github.com/Bashar-Ahmed/ShopEase
-- [ ] add landing page
-  - [ ] add svg wave
-  - [ ] add animations
-  - [ ] use intersection observer API from [fireship video](https://youtu.be/T33NN_pPeNI?si=qmortFFiXdDzlF0e)
+
+- [x] add landing page
+    - [x] add svg wave
+    - [x] add animations
 - [ ] write phpUnit tests for model
-- [ ] user must login to write review
+- [x] make landing page responsive
+- [ ] how to use package imports, autoreload
+- [ ] add animation to make wave disappear
+- [ ] read about [namespaces](https://phptherightway.com/#namespaces)
+- [ ] user must log in to write review
+- [ ] how does php session work
 - [ ] follow phptherightway method
-  - [ ] pdo
-  - [ ] unicode set
+    - [ ] pdo
+    - [ ] unicode set
 - [ ] test website when database is not connected
-- [ ] renaming variables with f2 not working. install php extension
-- [ ] Decide what to do with compliance validators...
 - [ ] Use mysqldump for database backups
 - [ ] Deploy on render using Docker
 
 ## References
+- https://github.com/php-pds/skeleton
 - https://github.com/kevinisaac/php-mvc
