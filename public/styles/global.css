@@ -11,6 +11,11 @@ body > footer {
   padding: 1rem 0;
 }
 
+#page-footer {
+  display: flex;
+  justify-content: center;
+}
+
 * {
   /* outline: 1px solid red; */
 }
