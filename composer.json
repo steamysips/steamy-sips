@@ -1,18 +1,10 @@
 {
-    "name": "pds/skeleton",
-    "type": "standard",
-    "description": "Standard for PHP package skeletons.",
-    "homepage": "https://github.com/php-pds/skeleton",
-    "license": "CC-BY-SA-4.0",
-    "autoload": {
-        "psr-4": {
-            "Pds\\Skeleton\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Pds\\Skeleton\\": "tests/"
-        }
-    },
-    "bin": ["bin/pds-skeleton"]
+  "name": "creme332/steamy-sips",
+  "type": "project",
+  "description": "A coffee shop website built using LAMP stack.",
+  "homepage": "https://github.com/creme332/steamy-sips",
+  "license": "MIT",
+  "require": {
+    "ext-pdo": "*"
+  }
 }
