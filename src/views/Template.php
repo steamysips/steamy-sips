@@ -61,7 +61,7 @@
         </li>
     </ul>
     <ul>
-        <a href="<?= ROOT ?>/shop" class="secondary">
+        <a href="<?= ROOT ?>/shop" class="contrast">
             Shop
         </a>
         <li>
