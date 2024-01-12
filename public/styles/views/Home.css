@@ -2,26 +2,21 @@
   --icon-size: 40px;
 }
 
-article > header {
-  position: relative;
+body > .wave {
+  bottom: 0;
+  position: absolute;
+  z-index: 1;
 }
 
 #introduction * {
   z-index: 2;
 }
 
-.wave {
-  bottom: 0;
-  position: absolute;
-  z-index: 1;
+#about-us article > header {
+  position: relative;
 }
 
-@media screen and (max-width: 995px) {
-  .wave {
-    display: none;
-  }
-}
-
+/* TODO make icons responsive */
 #about-us article > header > .icon {
   position: absolute;
   top: 10px;
@@ -32,16 +27,10 @@ article > header {
   /* fill: white; */
 }
 
-/* TODO make icons responsive */
+
 #about-us h2,
 #testimonials h2 {
   margin: 0;
-}
-
-#testimonials img {
-  aspect-ratio: 1/1;
-  border-radius: 10px;
-  height: 200px;
 }
 
 .splide__slide article {
@@ -67,7 +56,7 @@ article > header {
   justify-content: center;
 }
 
-.stars {
+#testimonials .stars {
   display: flex;
   gap: 0.2rem;
 }
