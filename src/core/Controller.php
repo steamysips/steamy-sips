@@ -22,7 +22,8 @@ trait Controller
         if (!empty($data)) {
             extract($data);
         }
-        // ! All file paths defined below are relative to index file in public folder
+
+        // ! All file paths defined below are relative to public/index.php
 
         $template_filename = '../src/views/' . ucfirst($filename) . '.php';
         $template_content = ''; // html content for template

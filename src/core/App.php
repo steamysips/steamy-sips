@@ -18,11 +18,12 @@ class App
     {
         $URL = $this->splitURL();
         /**
-         * filename is relative to public/index.php
+         * path to controller file
+         *
+         * NOTE: path is relative to getcwd() which is public/index.php
          */
         $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php';
 
-        // echo $filename;
         if (file_exists($filename)) {
             require $filename;
             $this->controller = ucfirst($URL[0]);
@@ -35,5 +36,3 @@ class App
         $controller->index(); # use get contents
     }
 }
-
-# include app html template here 

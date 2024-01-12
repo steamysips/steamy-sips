@@ -10,7 +10,7 @@ trait Model
     public array $errors = [];
 
 
-    public function all()
+    public function all(): false|array
     {
         $query = "select * from $this->table";
         return $this->query($query);
