@@ -11,9 +11,12 @@ A CRUD application for a coffee shop built using LAMP stack.
 - Uses PDO
 - Styled minimally with PicoCSS
 - Mobile-responsive
-- Perfect web vital scores
+- Good core web vital scores
 
 ## Installation
+
+The following setup instructions are tailored for Linux. If you are using Windows, the steps are generally similar, but
+some commands may differ. Please adapt accordingly.
 
 ### Prerequisites:
 
@@ -24,10 +27,13 @@ A CRUD application for a coffee shop built using LAMP stack.
 - Git
 
 ### Setup project
+
 Navigate to the document root of your server:
+
 ```bash
 cd /var/www/html # your root might be different
 ```
+
 Download project:
 
 ```bash
@@ -48,13 +54,20 @@ composer update
 
 ### Setup database
 
-Create a MySQL database:
+Create a MySQL database and import data.
 
-Edit config file at `src/core/config.php` with your details.
+Insert your database information in [`src/core/config.php`](src/core/config.php):
+
+```php
+// define database credentials for localhost
+define('DBNAME', ''); // name of database
+define('DBUSER', ''); // name of database user
+define('DBPASS', ''); // password of database user
+```
 
 ## Usage
 
-Start server and MySQL database and display live error log:
+Start Apache server, MySQL database, and display live error log:
 
 ```bash
 sudo service apache2 restart && sudo service mysql start && sudo tail -f /var/log/apache2/error.log
@@ -64,23 +77,22 @@ Open http://localhost/steamy-sips/public/ in your browser to see the website.
 
 ## To-do
 
-- [x] add landing page
-    - [x] add svg wave
-    - [x] add animations
 - [ ] write phpUnit tests for model
-- [x] make landing page responsive
+- [ ] About Us heading missing from website
 - [ ] how to use package imports, autoreload
 - [ ] add animation to make wave disappear
 - [ ] read about [namespaces](https://phptherightway.com/#namespaces)
 - [ ] user must log in to write review
-- [ ] how does php session work
+- [ ] fix accessibility issues
+- [x] how does php session work
 - [ ] follow phptherightway method
     - [ ] pdo
-    - [ ] unicode set
-- [ ] test website when database is not connected
-- [ ] Use mysqldump for database backups
+    - [x] unicode set
+- [x] test website when database is not connected
+- [ ] Try to import/export mysqldump
 - [ ] Deploy on render using Docker
 
 ## References
+
 - https://github.com/php-pds/skeleton
 - https://github.com/kevinisaac/php-mvc
