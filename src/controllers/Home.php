@@ -4,7 +4,7 @@ class Home
 {
     use Controller;
 
-    function index(): void
+    public function index(): void
     {
         $home_css_path = ROOT . "/styles/views/Home.css";
         $home_css_tag = "<link rel=\"stylesheet\" href=\"$home_css_path\"/>";

@@ -9,7 +9,7 @@ class Register
     {
         $css_file = ROOT . "/styles/views/Register.css";
 
-        $user = new User;
+        $user = new User();
         $data['defaultName'] = ''; // initial value for name before submit
         $data['defaultPassword'] = ''; // initial value for password before submit
         $data['defaultConfirmPassword'] = ''; // initial  value for confirm password

@@ -28,6 +28,7 @@ trait Model
         foreach ($keys_not as $key) {
             $query .= $key . " = :" . $key . " && ";
         }
+        /** @noinspection PhpDuplicatedCharacterInStrFunctionCallInspection */
         $query = trim($query, " && ");
 
         $query .= " limit $this->limit offset $this->offset";
@@ -65,6 +66,5 @@ trait Model
 
     public function delete($id, $id_column = 'id')
     {
-        return false;
     }
 }

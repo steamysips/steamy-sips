@@ -6,7 +6,7 @@ class Login
 
     private array $data;
 
-    function validateUser($user): bool
+    private function validateUser($user): bool
     {
         if ($user->validate($_POST)) {
             $user_profile = $user->where($_POST);
@@ -19,15 +19,14 @@ class Login
             }
 
             return true;
-
         }
         $this->data['errors'] = $user->errors;
         return false;
     }
 
-    function index(): void
+    public function index(): void
     {
-        $user = new User;
+        $user = new User();
         $css_file = ROOT . "/styles/views/Login.css";
 
         $this->data['defaultName'] = $user->getName();
@@ -52,7 +51,11 @@ class Login
             }
         }
 
-        $this->view('Login', $this->data, 'Login',
-            "<link rel=\"stylesheet\" href=\"$css_file\"/>");
+        $this->view(
+            'Login',
+            $this->data,
+            'Login',
+            "<link rel=\"stylesheet\" href=\"$css_file\"/>"
+        );
     }
 }
