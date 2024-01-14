@@ -20,18 +20,11 @@ All documentation (installation instructions, usage guide, ...) is available in 
 ## To-do
 
 - [ ] write phpUnit tests for model
-- [ ] About Us heading missing from website
 - [ ] how to use package imports, autoreload
-- [ ] add animation to make wave disappear
 - [ ] read about [namespaces](https://phptherightway.com/#namespaces)
-- [ ] user must log in to write review
-- [ ] fix accessibility issues
-- [x] how does php session work
 - [ ] follow phptherightway method
     - [ ] pdo
     - [x] unicode set
-- [x] test website when database is not connected
-- [ ] Try to import/export mysqldump
 - [ ] Deploy on render using Docker
 
 ## License
