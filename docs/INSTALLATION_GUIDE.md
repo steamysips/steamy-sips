@@ -43,7 +43,7 @@ composer update
 
 Create a MySQL database named `cafe` and import the SQL dump at `resources/db.sql`.
 
-Insert your database information in [`src/core/config.php`](src/core/config.php):
+Insert your database information in [`src/core/config.php`](../src/core/config.php):
 
 ```php
 // define database credentials for localhost
