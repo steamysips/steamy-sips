@@ -2,14 +2,32 @@
   --icon-size: 40px;
 }
 
+/* position wave */
 body > .wave {
   bottom: 0;
   position: absolute;
   z-index: 1;
 }
 
+/*hide wave on small screens and large screens*/
+@media screen and (max-width: 1000px) {
+  .wave {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .wave {
+    display: none;
+  }
+}
+
 #introduction * {
   z-index: 2;
+}
+
+#about-us {
+  margin-top: 70px;
 }
 
 #about-us article > header {
@@ -27,10 +45,8 @@ body > .wave {
   /* fill: white; */
 }
 
-
-#about-us h2,
-#testimonials h2 {
-  margin: 0;
+#testimonials h2, #about-us h2 {
+  margin-bottom: 0;
 }
 
 .splide__slide article {
