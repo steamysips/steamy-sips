@@ -1,23 +1,14 @@
-# pds/skeleton
+# Filesystem
 
-This publication describes a standard filesystem skeleton suitable for all PHP
-packages.
-
-Please see <https://github.com/php-pds/skeleton_research> for background
-information.
-
-Command-line tools for `validating` or `generating` PDS conform packages which are included with this standard are documented [here](./docs/tools.md).
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this publication are to be
-interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
+The filesystem for this project was adapted from https://github.com/php-pds/skeleton. The code inside `src`
+follows the MVC pattern.
 
 ## Summary
 
 A package MUST use these names for these root-level directories:
 
 | If a package has a root-level directory for ... | ... then it MUST be named: |
-| ----------------------------------------------- | -------------------------- |
+|-------------------------------------------------|----------------------------|
 | command-line executables                        | `bin/`                     |
 | configuration files                             | `config/`                  |
 | documentation files                             | `docs/`                    |
@@ -29,7 +20,7 @@ A package MUST use these names for these root-level directories:
 A package MUST use these names for these root-level files:
 
 | If a package has a root-level file for ... | ... then it MUST be named: |
-| ------------------------------------------ | -------------------------- |
+|--------------------------------------------|----------------------------|
 | a log of changes between releases          | `CHANGELOG(.*)`            |
 | guidelines for contributors                | `CONTRIBUTING(.*)`         |
 | licensing information                      | `LICENSE(.*)`              |
