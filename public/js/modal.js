@@ -7,9 +7,9 @@
  */
 
 // Config
-const isOpenClass = 'modal-is-open';
-const openingClass = 'modal-is-opening';
-const closingClass = 'modal-is-closing';
+const isOpenClass = "modal-is-open";
+const openingClass = "modal-is-opening";
+const closingClass = "modal-is-closing";
 const animationDuration = 600; // ms
 let visibleModal = null;
 
@@ -17,29 +17,32 @@ let visibleModal = null;
 const toggleModal = (event) => {
   event.preventDefault();
   const modal = document.getElementById(
-      event.currentTarget.getAttribute('data-target'));
-  typeof modal != 'undefined' && modal != null && isModalOpen(modal)
-      ? closeModal(modal)
-      : openModal(modal);
+    event.currentTarget.getAttribute("data-target"),
+  );
+  typeof modal != "undefined" && modal != null && isModalOpen(modal)
+    ? closeModal(modal)
+    : openModal(modal);
 };
 
 // Is modal open
 const isModalOpen = (modal) => {
-  return modal.hasAttribute('open') && modal.getAttribute('open') !== 'false';
+  return modal.hasAttribute("open") && modal.getAttribute("open") !== "false";
 };
 
 // Open modal
 const openModal = (modal) => {
   if (isScrollbarVisible()) {
-    document.documentElement.style.setProperty('--scrollbar-width',
-        `${getScrollbarWidth()}px`);
+    document.documentElement.style.setProperty(
+      "--scrollbar-width",
+      `${getScrollbarWidth()}px`,
+    );
   }
   document.documentElement.classList.add(isOpenClass, openingClass);
   setTimeout(() => {
     visibleModal = modal;
     document.documentElement.classList.remove(openingClass);
   }, animationDuration);
-  modal.setAttribute('open', true);
+  modal.setAttribute("open", true);
 };
 
 // Close modal
@@ -48,23 +51,23 @@ const closeModal = (modal) => {
   document.documentElement.classList.add(closingClass);
   setTimeout(() => {
     document.documentElement.classList.remove(closingClass, isOpenClass);
-    document.documentElement.style.removeProperty('--scrollbar-width');
-    modal.removeAttribute('open');
+    document.documentElement.style.removeProperty("--scrollbar-width");
+    modal.removeAttribute("open");
   }, animationDuration);
 };
 
 // Close with a click outside
-document.addEventListener('click', (event) => {
+document.addEventListener("click", (event) => {
   if (visibleModal != null) {
-    const modalContent = visibleModal.querySelector('article');
+    const modalContent = visibleModal.querySelector("article");
     const isClickInside = modalContent.contains(event.target);
     !isClickInside && closeModal(visibleModal);
   }
 });
 
 // Close with Esc key
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && visibleModal != null) {
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && visibleModal != null) {
     closeModal(visibleModal);
   }
 });
@@ -72,14 +75,14 @@ document.addEventListener('keydown', (event) => {
 // Get scrollbar width
 const getScrollbarWidth = () => {
   // Creating invisible container
-  const outer = document.createElement('div');
-  outer.style.visibility = 'hidden';
-  outer.style.overflow = 'scroll'; // forcing scrollbar to appear
-  outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+  const outer = document.createElement("div");
+  outer.style.visibility = "hidden";
+  outer.style.overflow = "scroll"; // forcing scrollbar to appear
+  outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
   document.body.appendChild(outer);
 
   // Creating inner element and placing it in the container
-  const inner = document.createElement('div');
+  const inner = document.createElement("div");
   outer.appendChild(inner);
 
   // Calculating difference between container's full width and the child width
@@ -97,15 +100,14 @@ const isScrollbarVisible = () => {
 };
 
 // Add event listeners to modal components
-document.querySelector('#cart-modal article > a[data-target="cart-modal"]').
-    addEventListener('click',
-        (e) => toggleModal(e));
-document.querySelector(
-    '#cart-modal article > footer a[data-target="cart-modal"]').
-    addEventListener('click',
-        (e) => toggleModal(e));
+document
+  .querySelector('#cart-modal article > a[data-target="cart-modal"]')
+  .addEventListener("click", (e) => toggleModal(e));
+document
+  .querySelector('#cart-modal article > footer a[data-target="cart-modal"]')
+  .addEventListener("click", (e) => toggleModal(e));
 
 // add event listener to shopping cart icon in nav bar
-document.querySelector('nav li[data-target="cart-modal"]').
-    addEventListener('click',
-        (e) => toggleModal(e));
+document
+  .querySelector('nav li[data-target="cart-modal"]')
+  .addEventListener("click", (e) => toggleModal(e));
