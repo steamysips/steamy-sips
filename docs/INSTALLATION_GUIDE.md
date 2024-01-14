@@ -51,3 +51,15 @@ define('DBNAME', ''); // name of database
 define('DBUSER', ''); // name of database user
 define('DBPASS', ''); // password of database user
 ```
+
+## Setup linting and formatting
+
+This step is optional if you do not plan on editing the JS and CSS files. Node.js is required to install the linter and
+formatter for JS and CSS files. For more details on the linters and formatters used, see
+our [coding standards](CODING_STANDARDS.md).
+
+In the root directory of the project, run:
+
+```bash
+npm install
+```
