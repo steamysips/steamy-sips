@@ -5,6 +5,7 @@
  * @var string $template_title Title of web page
  * @var string $template_content HTML content of web page
  */
+
 ?>
 
 <!DOCTYPE html>
@@ -31,9 +32,15 @@
     <!-- end of styles -->
 
     <!-- start of scripts -->
+    <!--    load script for managing shopping cart modal-->
+    <script src="<?= ROOT ?>/js/modal.js" defer></script>
+
+    <!--    load library for scroll animations-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
             integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--    load library for image carousel-->
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <!-- end of scripts -->
 
@@ -42,6 +49,57 @@
 </head>
 
 <body>
+
+<!-- Modal -->
+<dialog id="cart-modal">
+    <article>
+        <a href="#"
+           aria-label="Close"
+           class="close"
+           data-target="cart-modal">
+        </a>
+        <h3>Your shopping cart</h3>
+        <div class="cart-items">
+            <p>
+                Cras sit amet maximus risus.
+                Pellentesque sodales odio sit amet augue finibus pellentesque.
+                Nullam finibus risus non semper euismod.
+            </p>
+
+            <p>
+                Cras sit amet maximus risus.
+                Pellentesque sodales odio sit amet augue finibus pellentesque.
+                Nullam finibus risus non semper euismod.
+            </p>
+
+            <p>
+                Cras sit amet maximus risus.
+                Pellentesque sodales odio sit amet augue finibus pellentesque.
+                Nullam finibus risus non semper euismod.
+            </p>
+
+            <p>
+                Cras sit amet maximus risus.
+                Pellentesque sodales odio sit amet augue finibus pellentesque.
+                Nullam finibus risus non semper euismod.
+            </p>
+
+            <p>
+                Cras sit amet maximus risus.
+                Pellentesque sodales odio sit amet augue finibus pellentesque.
+                Nullam finibus risus non semper euismod.
+            </p></div>
+        <footer>
+
+            <a href="#"
+               role="button"
+               data-target="cart-modal"
+            >
+                Checkout
+            </a>
+        </footer>
+    </article>
+</dialog>
 
 <nav class="container-fluid">
     <ul>
@@ -64,7 +122,7 @@
         <a href="<?= ROOT ?>/shop" class="contrast">
             Shop
         </a>
-        <li>
+        <li data-target="cart-modal">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart" width="24"
                  height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                  stroke-linecap="round" stroke-linejoin="round">
