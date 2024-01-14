@@ -1,5 +1,6 @@
 .warning {
-  color: var(--form-element-invalid-border-color);
+  /*noinspection CssUnresolvedCustomProperty*/
+  color: var(--form-element-invalid-border-color); /* defined in picocss */
 }
 
 nav .icon {

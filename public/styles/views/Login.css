@@ -60,7 +60,8 @@ article div {
 /* Nav */
 summary[role="link"].secondary:is([aria-current], :hover, :active, :focus) {
   background-color: transparent;
-  color: var(--secondary-hover);
+  /*noinspection CssUnresolvedCustomProperty*/
+  color: var(--secondary-hover); /* defined in picocss */
 }
 
 /* Hero Image */
