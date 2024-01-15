@@ -7,7 +7,7 @@ trait Controller
     /**
      * Renders a view
      *
-     * @param mixed $filename File name of view file in `views` folder without the `.php` extension.
+     * @param mixed $filename File name of view file in `views` folder WITHOUT the `.php` extension.
      * @param mixed $data Additional data defined in the view.
      * @param mixed $template_title Page title. Default value is `lamp`.
      * @param mixed $template_tags Optional tags to be included in head. Examples can be
@@ -19,7 +19,7 @@ trait Controller
     public function view(
         string $filename,
         array $data = [],
-        string $template_title = 'lamp',
+        string $template_title = 'Steamy Sips',
         string $template_tags = ''
     ): void {
         if (!empty($data)) {
@@ -33,9 +33,9 @@ trait Controller
 
         ob_start();
         if (file_exists($template_filename)) {
-            include($template_filename);
+            include $template_filename;
         } else {
-            include('../src/views/404.php');
+            include '../src/views/404.php';
         }
         $template_content = ob_get_contents();
         ob_end_clean();
