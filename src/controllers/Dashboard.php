@@ -11,10 +11,9 @@ class Dashboard
 
     public function index(): void
     {
-        // check if user is authenticated
+        // if user is unauthenticated, redirect to login page
         session_regenerate_id();
-        if (!isset($_SESSION['user']))      // if there is no valid session
-        {
+        if (!array_key_exists('user', $_SESSION) || !isset($_SESSION['user'])) {
             redirect('login');
         }
 
