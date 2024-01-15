@@ -3,6 +3,13 @@
   color: var(--form-element-invalid-border-color); /* defined in picocss */
 }
 
+body > nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: var(--background-color);
+}
+
 body > nav .icon {
   height: 40px;
   width: 40px;
