@@ -49,6 +49,24 @@ body > .wave {
   margin-bottom: 0;
 }
 
+
+#testimonials article > header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+#testimonials article > footer {
+  margin-top: 0px;
+}
+
+#testimonials img.avatar {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+}
+
 .splide__slide article {
   width: 400px;
   height: auto;
@@ -65,11 +83,6 @@ body > .wave {
 /*noinspection CssUnusedSymbol*/
 [aria-busy="true"]#testimonials-track::before {
   display: none;
-}
-
-#testimonials header {
-  display: flex;
-  justify-content: center;
 }
 
 #testimonials .stars {

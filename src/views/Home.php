@@ -81,6 +81,8 @@
                 <li class="splide__slide">
                     <article>
                         <header>
+                            <img class="avatar" src="<?= ROOT ?>/assets/img/pic-2.png"
+                                 alt="White woman with black beanie">
                             <div class="stars">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled"
                                      width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -114,16 +116,18 @@
 
 
                         </header>
-                        <p><em>I have been a customer of steamy bean for a few months now and I have to say, I am
-                                extremely impressed with the quality and freshness of their beans. The selection is also
-                                fantastic, I love trying new blends and flavors. Highly recommend steamy bean.</em></p>
-                        <footer><small>Jessica M.</small></footer>
+                        <p><em>I have been a customer of steamy sips for a few months now and I have to say, I am
+                                extremely impressed with the quality and freshness of their coffee. The selection is
+                                also
+                                fantastic, I love trying new blends and flavors. Highly recommend steamy sips.</em></p>
                     </article>
                 </li>
                 <li class="splide__slide">
 
                     <article>
                         <header>
+                            <img class="avatar" src="<?= ROOT ?>/assets/img/pic-2.png"
+                                 alt="White woman with black beanie">
                             <div class="stars">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled"
                                      width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -152,12 +156,13 @@
                                 compare to the quality and taste of the beans from steamy bean. Their commitment to
                                 sustainability and ethical sourcing is also a huge plus. I will definitely be a
                                 long-time customer.</em></p>
-                        <footer><small>Java K.</small></footer>
                     </article>
                 </li>
                 <li class="splide__slide">
                     <article>
                         <header>
+                            <img class="avatar" src="<?= ROOT ?>/assets/img/pic-2.png"
+                                 alt="White woman with black beanie">
                             <div class="stars">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled"
                                      width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -186,7 +191,6 @@
                                 disappointed. Their beans are always fresh and delicious, and the customer service is
                                 top-notch. I love supporting a business that is committed to sustainability and ethical
                                 sourcing.</em></p>
-                        <footer><small>Johnson M.</small></footer>
                     </article>
                 </li>
             </ul>
@@ -206,19 +210,19 @@
 <script defer src="<?= ROOT ?>/js/minimal-theme-switcher.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        AOS.init();
+  document.addEventListener("DOMContentLoaded", function() {
+    AOS.init();
 
-        new Splide('#testimonials', {
-            perPage: 2,
-            breakpoints: {
-                1000: {
-                    perPage: 1,
-                },
-            },
-            lazyLoad: "nearby",
-            preloadPages: 3,
-            focus: 0,
-        }).mount();
-    });
+    new Splide("#testimonials", {
+      perPage: 2,
+      breakpoints: {
+        1000: {
+          perPage: 1,
+        },
+      },
+      lazyLoad: "nearby",
+      preloadPages: 3,
+      focus: 0,
+    }).mount();
+  });
 </script>
