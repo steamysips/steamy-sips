@@ -115,13 +115,21 @@
                     <path d="M3 10h14v5a6 6 0 0 1 -6 6h-2a6 6 0 0 1 -6 -6v-5z"/>
                     <path d="M16.746 16.726a3 3 0 1 0 .252 -5.555"/>
                 </svg>
+                <h4>steamy sips</h4>
             </a>
         </li>
     </ul>
     <ul>
-        <a href="<?= ROOT ?>/shop" class="contrast">
-            Shop
-        </a>
+        <li>
+            <a href="<?= ROOT ?>/shop" class="contrast">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tools-kitchen-2" width="24"
+                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/>
+                </svg>
+            </a>
+        </li>
         <li data-target="cart-modal">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart" width="24"
                  height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -134,7 +142,7 @@
             </svg>
         </li>
         <li>
-            <a href="<?= ROOT ?>/login" class="contrast">
+            <a href="<?= ROOT ?>/profile" class="contrast">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24"
                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                      stroke-linejoin="round">
@@ -145,16 +153,16 @@
             </a>
         </li>
 
-        <li>
-            <details role="list" dir="rtl">
-                <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>
-                <ul role="listbox">
-                    <li><a href="#" data-theme-switcher="auto">Auto</a></li>
-                    <li><a href="#" data-theme-switcher="light">Light</a></li>
-                    <li><a href="#" data-theme-switcher="dark">Dark</a></li>
-                </ul>
-            </details>
-        </li>
+        <!--        <li>-->
+        <!--            <details role="list" dir="rtl">-->
+        <!--                <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>-->
+        <!--                <ul role="listbox">-->
+        <!--                    <li><a href="#" data-theme-switcher="auto">Auto</a></li>-->
+        <!--                    <li><a href="#" data-theme-switcher="light">Light</a></li>-->
+        <!--                    <li><a href="#" data-theme-switcher="dark">Dark</a></li>-->
+        <!--                </ul>-->
+        <!--            </details>-->
+        <!--        </li>-->
     </ul>
 </nav>
 

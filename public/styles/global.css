@@ -3,9 +3,15 @@
   color: var(--form-element-invalid-border-color); /* defined in picocss */
 }
 
-nav .icon {
+body > nav .icon {
   height: 40px;
   width: 40px;
+}
+
+/*style logo on left hand side of navbar*/
+body > nav > ul li:nth-child(1) > a {
+  display: flex;
+  gap: 1rem;
 }
 
 #page-footer {
