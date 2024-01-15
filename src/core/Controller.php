@@ -1,24 +1,27 @@
 <?php
 
+namespace Steamy\Core;
+
 trait Controller
 {
-
-
     /**
      * Renders a view
      *
-     * @param  mixed $filename File name of view file in `views` folder without the `.php` extension.
-     * @param  mixed $data  Additional data defined in the view.
-     * @param  mixed $template_title Page title. Default value is `lamp`.
-     * @param  mixed $template_tags Optional tags to be included in head. Examples can be
+     * @param mixed $filename File name of view file in `views` folder without the `.php` extension.
+     * @param mixed $data Additional data defined in the view.
+     * @param mixed $template_title Page title. Default value is `lamp`.
+     * @param mixed $template_tags Optional tags to be included in head. Examples can be
      * script tags and links to stylesheets.
      *
      * ! Any links used inside $template_tags should be absolute (include ROOT).
      * @return void
      */
-    public function view(string $filename, array $data = [], string $template_title = 'lamp',
-                         string $template_tags = ''): void
-    {
+    public function view(
+        string $filename,
+        array $data = [],
+        string $template_title = 'lamp',
+        string $template_tags = ''
+    ): void {
         if (!empty($data)) {
             extract($data);
         }

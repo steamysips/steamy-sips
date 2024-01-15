@@ -1,5 +1,9 @@
 <?php
 
+namespace Steamy\Core;
+
+use PDO;
+
 trait Database
 {
     private function connect(): PDO

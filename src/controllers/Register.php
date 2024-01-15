@@ -1,5 +1,9 @@
 <?php
 
+namespace Steamy\Controller;
+
+use Steamy\Core\Controller;
+use Steamy\Model\User;
 
 class Register
 {
@@ -29,7 +33,11 @@ class Register
             $data['errors'] = $user->errors;
         }
 
-        $this->view('Register', $data, 'Login',
-            "<link rel=\"stylesheet\" href=\"$css_file\"/>");
+        $this->view(
+            'Register',
+            $data,
+            'Login',
+            "<link rel=\"stylesheet\" href=\"$css_file\"/>"
+        );
     }
 }

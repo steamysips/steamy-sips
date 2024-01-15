@@ -1,8 +1,11 @@
 <?php
 
+namespace Steamy\Core;
+
+use Steamy\Controller\_404;
+
 class App
 {
-    private string $controller = 'Home';
     private string $method = 'index';
 
     // manage routes and methods 
@@ -14,25 +17,24 @@ class App
         return explode("/", trim($URL, '/'));
     }
 
+    /**
+     * Calls appropriate controller class to deal with URL.
+     * @return void
+     */
     public function loadController(): void
     {
         $URL = $this->splitURL();
-        /**
-         * path to controller file
-         *
-         * NOTE: path is relative to getcwd() which is public/index.php
-         */
-        $filename = '../src/controllers/' . ucfirst($URL[0]) . '.php';
 
-        if (file_exists($filename)) {
-            require $filename;
-            $this->controller = ucfirst($URL[0]);
+        $controllerClassName = 'Steamy\\Controller\\' . ucfirst($URL[0]);
+
+
+        if (class_exists($controllerClassName)) {
+            $controller = new $controllerClassName();
         } else {
-            require '../src/controllers/_404.php';
-            $this->controller = "_404";
+            // Fallback to 404 controller
+            $controller = new _404();
         }
 
-        $controller = new $this->controller();
-        $controller->index(); # use get contents
+        $controller->index(); // display contents
     }
 }

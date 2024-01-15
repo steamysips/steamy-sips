@@ -1,5 +1,9 @@
 <?php
 
+namespace Steamy\Model;
+
+use Steamy\Core\Model;
+
 class User
 {
     use Model;

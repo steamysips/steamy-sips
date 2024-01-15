@@ -1,5 +1,7 @@
 <?php
 
+namespace Steamy\Core;
+
 trait Model
 {
     use Database;

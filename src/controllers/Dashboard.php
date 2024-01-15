@@ -1,5 +1,10 @@
 <?php
 
+namespace Steamy\Controller;
+
+use Steamy\Core\Controller;
+use Steamy\Model\User;
+
 class Dashboard
 {
     use Controller;

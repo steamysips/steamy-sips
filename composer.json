@@ -7,5 +7,15 @@
   "require": {
     "ext-pdo": "*",
     "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Steamy\\": "src/",
+      "Steamy\\Core": "src/core/",
+      "Steamy\\Controller": "src/controllers/",
+      "Steamy\\View": "src/views/",
+      "Steamy\\Model": "src/models/"
+
+    }
   }
 }
