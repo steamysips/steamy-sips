@@ -37,19 +37,19 @@ body > .wave {
 
 #about-us article:nth-child(1) > header {
   position: relative;
-  background-image: url("https://media.istockphoto.com/id/1135359711/photo/roasted-coffee-beans-falling-down.webp?b=1&s=170667a&w=0&k=20&c=zWSSHz0k0VjOnjuL-Fr2OOjkwJPHZYy7q1gnzHkRgpw=");
+  background-image: url("../../assets/img/falling-coffee.webp");
 }
 
 
 #about-us article:nth-child(2) > header {
   position: relative;
-  background-image: url("https://media.istockphoto.com/id/1191321406/photo/variety-of-cups-of-coffee-and-coffee-beans-in-burlap-sack-on-black-background.jpg?s=612x612&w=0&k=20&c=NV_R0A_gjlOtGpDoOyI2dlWPq_0k6zdY2eSRGod5iLQ=");
+  background-image: url("../../assets/img/coffee-flavours.jpg");
   background-position: 65% 65%;
 }
 
 #about-us article:nth-child(3) > header {
   position: relative;
-  background-image: url("https://c0.wallpaperflare.com/preview/652/943/804/close-up-fresh-freshness-garden.jpg");
+  background-image: url("../../assets/img/fresh-leaves.jpg");
   background-position: 0 65%;
 }
 
