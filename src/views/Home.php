@@ -207,8 +207,6 @@
     </section>
 </main>
 
-<script defer src="<?= ROOT ?>/js/minimal-theme-switcher.js"></script>
-
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     AOS.init();

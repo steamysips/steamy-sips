@@ -32,15 +32,16 @@
     <!-- end of styles -->
 
     <!-- start of scripts -->
-    <!--    load script for managing shopping cart modal-->
+
+    <!-- shopping cart modal-->
     <script src="<?= ROOT ?>/js/modal.js" defer></script>
 
-    <!--    load library for scroll animations-->
+    <!--    scroll animations-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
             integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!--    load library for image carousel-->
+    <!-- image carousel-->
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <!-- end of scripts -->
 
@@ -152,17 +153,6 @@
                 </svg>
             </a>
         </li>
-
-        <!--        <li>-->
-        <!--            <details role="list" dir="rtl">-->
-        <!--                <summary aria-haspopup="listbox" role="link" class="secondary">Theme</summary>-->
-        <!--                <ul role="listbox">-->
-        <!--                    <li><a href="#" data-theme-switcher="auto">Auto</a></li>-->
-        <!--                    <li><a href="#" data-theme-switcher="light">Light</a></li>-->
-        <!--                    <li><a href="#" data-theme-switcher="dark">Dark</a></li>-->
-        <!--                </ul>-->
-        <!--            </details>-->
-        <!--        </li>-->
     </ul>
 </nav>
 
