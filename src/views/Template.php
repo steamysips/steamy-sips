@@ -33,6 +33,9 @@
 
     <!-- start of scripts -->
 
+    <!-- theme switcher-->
+    <script src="<?= ROOT ?>/js/minimal-theme-switcher.js" defer></script>
+
     <!-- shopping cart modal-->
     <script src="<?= ROOT ?>/js/modal.js" defer></script>
 
@@ -164,5 +167,4 @@
     </small>
 </footer>
 </body>
-
 </html>
