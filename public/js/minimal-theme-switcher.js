@@ -8,8 +8,7 @@
 const themeSwitcher = {
   // Config
   _scheme: "auto",
-  menuTarget: "details[role='list']",
-  buttonsTarget: "a[data-theme-switcher]",
+  buttonsTarget: "input[data-theme-switcher]",
   buttonAttribute: "data-theme-switcher",
   rootAttribute: "data-theme",
   localStorageKey: "picoPreferredColorScheme",
@@ -41,14 +40,14 @@ const themeSwitcher = {
   initSwitchers() {
     const buttons = document.querySelectorAll(this.buttonsTarget);
     buttons.forEach((button) => {
+      if (this.scheme === button.getAttribute(this.buttonAttribute)) {
+        button.setAttribute("checked", true);
+      }
       button.addEventListener(
         "click",
         (event) => {
-          event.preventDefault();
           // Set scheme
           this.scheme = button.getAttribute(this.buttonAttribute);
-          // Close dropdown
-          document.querySelector(this.menuTarget).removeAttribute("open");
         },
         false,
       );
