@@ -15,5 +15,8 @@
       "Steamy\\Controller\\": "src/controllers/",
       "Steamy\\Model\\": "src/models/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
   }
 }
