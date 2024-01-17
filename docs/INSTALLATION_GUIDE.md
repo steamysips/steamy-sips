@@ -8,7 +8,7 @@ some commands may differ. Please adapt accordingly.
 - PHP 8.1
 - phpMyAdmin 5.2  (optional)
 - Apache2
-- Composer installed globally
+- Composer with its executable on your $PATH
 - Git
 
 > **Note**: The project has been tested only on PHP 8.1, but it might work for other versions as well.
