@@ -79,10 +79,7 @@
         </div>
     </fieldset>
 
-
     <button>Log out</button>
+    <button>Delete account</button>
 
 </main>
-
-<!-- theme switcher-->
-<script src="<?= ROOT ?>/js/minimal-theme-switcher.js"></script>
