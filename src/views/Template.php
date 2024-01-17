@@ -94,6 +94,7 @@
             <h5>Total Price = Rs 434</h5>
             <a href="#"
                role="button"
+               class="contrast"
                data-target="cart-modal"
             >
                 Checkout
@@ -106,7 +107,7 @@
     <ul>
         <li>
             <a href="<?= ROOT ?>/" class="contrast">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-coffee" width="24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -123,7 +124,7 @@
     <ul>
         <li>
             <a href="<?= ROOT ?>/shop" class="contrast">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tools-kitchen-2" width="24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -132,7 +133,7 @@
             </a>
         </li>
         <li data-target="cart-modal">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart" width="24"
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                  height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                  stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -144,7 +145,7 @@
         </li>
         <li>
             <a href="<?= ROOT ?>/profile" class="contrast">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                      stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
