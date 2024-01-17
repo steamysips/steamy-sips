@@ -10,22 +10,19 @@ A CRUD application for a coffee shop built using LAMP stack.
 - MVC pattern
 - Uses PDO for accessing database
 - Styled minimally with PicoCSS
+- Tested with PHPUnit
+- Documented with phpDoc
 - Mobile-responsive
-- Good core web vital scores
 
 ## Documentation
 
 All documentation (installation instructions, usage guide, ...) is available in the [`docs`](docs) folder.
 
 ## To-do
-
+- [ ] use cafe database instead of test_db
+- [ ] fix bug: session data is persisting even after closing browser
 - [ ] write phpUnit tests for model
-- [ ] how to use package imports, autoreload
-- [ ] read about [namespaces](https://phptherightway.com/#namespaces)
-- [ ] follow phptherightway method
-    - [ ] pdo
-    - [x] unicode set
-- [ ] Deploy on render using Docker
+- [ ] add system requirements pdf
 
 ## License
 
