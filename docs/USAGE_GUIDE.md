@@ -24,5 +24,5 @@ Go to http://localhost/steamy-sips/public/ in your browser to see the website.
 To run tests:
 
 ```bash
-./vendor/bin/phpunit tests
+composer tests
 ```

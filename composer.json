@@ -8,6 +8,9 @@
     "ext-pdo": "*",
     "ext-mbstring": "*"
   },
+  "scripts": {
+    "test": "phpunit tests"
+  },
   "autoload": {
     "psr-4": {
       "Steamy\\": "src/",
