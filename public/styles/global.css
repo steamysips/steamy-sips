@@ -27,7 +27,37 @@ body > nav > ul li:nth-child(1) > a {
   justify-content: center;
 }
 
-#cart-modal .cart-items {
+#cart-modal article {
+  padding: 40px 30px;
+}
+
+#cart-modal article footer {
+  margin: 0;
+}
+
+#cart-modal article footer h5 {
+  display: grid;
+  place-items: center;
+  margin: 0;
+}
+
+
+#cart-modal #cart-items {
   height: 200px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
+}
+
+#cart-items article {
+  min-width: 40vw;
+  max-width: 100%;
+  margin: 0;
+  padding-bottom: 0;
+  padding-top: 20px;
+}
+
+#cart-items article button {
+  background-color: var(--del-color);
+  border: 0;
 }

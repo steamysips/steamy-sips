@@ -62,39 +62,36 @@
            class="close"
            data-target="cart-modal">
         </a>
-        <h3>Your shopping cart</h3>
-        <div class="cart-items">
-            <p>
-                Cras sit amet maximus risus.
-                Pellentesque sodales odio sit amet augue finibus pellentesque.
-                Nullam finibus risus non semper euismod.
-            </p>
+        <h3>Your shopping cart (3 items)</h3>
+        <div id="cart-items">
+            <article>
+                <hgroup><h4>Cappucino</h4>
+                    <h6>Total = Rs 434</h6></hgroup>
+                <div class="grid">
+                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
+                    <button>Remove</button>
+                </div>
+            </article>
+            <article>
+                <hgroup><h4>Cappucino</h4>
+                    <h6>Total = Rs 434</h6></hgroup>
+                <div class="grid">
+                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
+                    <button>Remove</button>
+                </div>
+            </article>
+            <article>
+                <hgroup><h4>Cappucino</h4>
+                    <h6>Total = Rs 434</h6></hgroup>
+                <div class="grid">
+                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
+                    <button>Remove</button>
+                </div>
+            </article>
 
-            <p>
-                Cras sit amet maximus risus.
-                Pellentesque sodales odio sit amet augue finibus pellentesque.
-                Nullam finibus risus non semper euismod.
-            </p>
-
-            <p>
-                Cras sit amet maximus risus.
-                Pellentesque sodales odio sit amet augue finibus pellentesque.
-                Nullam finibus risus non semper euismod.
-            </p>
-
-            <p>
-                Cras sit amet maximus risus.
-                Pellentesque sodales odio sit amet augue finibus pellentesque.
-                Nullam finibus risus non semper euismod.
-            </p>
-
-            <p>
-                Cras sit amet maximus risus.
-                Pellentesque sodales odio sit amet augue finibus pellentesque.
-                Nullam finibus risus non semper euismod.
-            </p></div>
-        <footer>
-
+        </div>
+        <footer class="grid">
+            <h5>Total Price = Rs 434</h5>
             <a href="#"
                role="button"
                data-target="cart-modal"
