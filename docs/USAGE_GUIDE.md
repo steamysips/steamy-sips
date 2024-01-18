@@ -19,10 +19,18 @@ sudo tail -f /var/log/apache2/error.log
 
 Go to http://localhost/steamy-sips/public/ in your browser to see the website.
 
-## Testing
+## Run tests
 
 To run tests:
 
 ```bash
 composer tests
+```
+
+## Backup database
+
+To export database using `mysqldumb`:
+
+```bash
+mysqldump -uroot -p cafe > cafe.sql
 ```
