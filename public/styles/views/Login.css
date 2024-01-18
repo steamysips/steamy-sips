@@ -7,13 +7,12 @@ body > main {
   padding: 1rem 0;
 }
 
-article {
+#login-form {
   padding: 0;
   overflow: hidden;
-  transform: translateX(-100%);
 }
 
-article div {
+#login-form div {
   padding: 1rem;
 }
 
@@ -22,7 +21,7 @@ article div {
     padding: 1.25rem 0;
   }
 
-  article div {
+  #login-form div {
     padding: 1.25rem;
   }
 }
@@ -32,7 +31,7 @@ article div {
     padding: 1.5rem 0;
   }
 
-  article div {
+  #login-form div {
     padding: 1.5rem;
   }
 }
@@ -42,7 +41,7 @@ article div {
     padding: 1.75rem 0;
   }
 
-  article div {
+  #login-form div {
     padding: 1.75rem;
   }
 }
@@ -52,29 +51,22 @@ article div {
     padding: 2rem 0;
   }
 
-  article div {
+  #login-form div {
     padding: 2rem;
   }
 }
 
-/* Nav */
-summary[role="link"].secondary:is([aria-current], :hover, :active, :focus) {
-  background-color: transparent;
-  /*noinspection CssUnresolvedCustomProperty*/
-  color: var(--secondary-hover); /* defined in picocss */
-}
-
 /* Hero Image */
-article div:nth-of-type(2) {
+#login-form div:nth-of-type(2) {
   display: none;
   background-color: #374956;
-  background-image: url("https://images.unsplash.com/photo-1702234893452-52302797f873?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D");
+  background-image: url("../../assets/img/login-milkshake.avif");
   background-position: center;
   background-size: cover;
 }
 
 @media (min-width: 992px) {
-  .grid > div:nth-of-type(2) {
+  #login-form > div:nth-of-type(2) {
     display: block;
   }
 }

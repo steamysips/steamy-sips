@@ -4,27 +4,36 @@
  * @var string $defaultName Default name in registration form
  * @var string $defaultPassword Default password in registration form
  */
+
 ?>
 
 <main class="container">
-    <article class="grid" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="500">
+    <article id="login-form" class="grid" data-aos="fade-left" data-aos-easing="linear" data-aos-duration="500">
         <div>
             <h1>Sign in</h1>
             <form method="post">
                 <input type="text" name="name" placeholder="Name" aria-label="Name" autocomplete="nickname"
-                       value="<?php echo $defaultName; ?>" required/>
+                       value="<?php
+                       echo $defaultName; ?>" required/>
 
-                <?php if (!empty($errors['name'])) : ?>
-                    <small class="warning"><?php echo $errors['name'] ?></small>
-                <?php endif; ?>
+                <?php
+                if (!empty($errors['name'])) : ?>
+                    <small class="warning"><?php
+                        echo $errors['name'] ?></small>
+                <?php
+                endif; ?>
 
 
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
-                       autocomplete="current-password" value="<?php echo $defaultPassword; ?>" required/>
+                       autocomplete="current-password" value="<?php
+                echo $defaultPassword; ?>" required/>
 
-                <?php if (!empty($errors['password'])) : ?>
-                    <small class="warning"><?php echo $errors['password'] ?></small>
-                <?php endif; ?>
+                <?php
+                if (!empty($errors['password'])) : ?>
+                    <small class="warning"><?php
+                        echo $errors['password'] ?></small>
+                <?php
+                endif; ?>
 
                 <fieldset>
                     <label for="remember">
@@ -33,11 +42,13 @@
                     </label>
                 </fieldset>
                 <button name="login_submit" type="submit" class="contrast">Login</button>
-                <?php if (!empty($errors['other'])) : ?>
-                    <small class="warning"><?php echo $errors['other'] ?></small>
-                <?php endif; ?>
-
-                <div><small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small></div>
+                <?php
+                if (!empty($errors['other'])) : ?>
+                    <small class="warning"><?php
+                        echo $errors['other'] ?></small>
+                <?php
+                endif; ?>
+                <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
             </form>
         </div>
         <div></div>
@@ -45,7 +56,7 @@
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        AOS.init();
-    });
+  document.addEventListener("DOMContentLoaded", function() {
+    AOS.init();
+  });
 </script>
