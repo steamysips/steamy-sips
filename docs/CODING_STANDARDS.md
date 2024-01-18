@@ -13,3 +13,7 @@ All PHP files follow the [PSR-12](https://www.php-fig.org/psr/psr-12/) coding st
 ## CSS
 
 `Prettier` is used for formatting.
+
+## SQL
+
+https://www.sqlstyle.guide
