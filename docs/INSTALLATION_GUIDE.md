@@ -5,13 +5,11 @@ some commands may differ. Please adapt accordingly.
 
 ## Prerequisites
 
-- PHP 8.1
-- phpMyAdmin 5.2  (optional)
+- PHP (v8.1 preferred)
 - Apache2
+- MySQL (v15.1 preferred)
 - Composer with its executable on your $PATH
 - Git
-
-> **Note**: The project has been tested only on PHP 8.1, but it might work for other versions as well.
 
 ## Setup project
 
@@ -41,15 +39,31 @@ composer update
 
 ## Setup database
 
-Create a MySQL database named `cafe` and import the SQL dump at `resources/db.sql`.
+Connect to your MySQL server:
+
+```bash
+mysql -u username -p
+```
+
+Create a database `cafe`:
+
+```bash
+create database cafe;
+```
+
+Import data to the database from SQL dump:
+
+```bash
+mysql -u username -p cafe < resources/cafe.sql
+```
 
 Insert your database information in [`src/core/config.php`](../src/core/config.php):
 
 ```php
 // define database credentials for localhost
-define('DBNAME', ''); // name of database
-define('DBUSER', ''); // name of database user
-define('DBPASS', ''); // password of database user
+define('DBNAME', 'cafe'); // name of database
+define('DBUSER', 'username'); // name of database user
+define('DBPASS', 'password'); // password of database user
 ```
 
 ## Setup linting and formatting
