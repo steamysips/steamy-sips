@@ -18,6 +18,7 @@
             Address:
             <input value="Mauritius" type="text" disabled>
         </label>
+        <button disabled>Edit</button>
     </form>
     <h2>Orders summary</h2>
 
@@ -54,12 +55,23 @@
 
         </tr>
     </table>
-    <h2>Preferences</h2>
-    <fieldset>
-
-        <div class="grid">
-            <legend>Theme</legend>
-
+    <h2>Settings</h2>
+    <div id="settings-container">
+        <article class="grid">
+            <hgroup>
+                <h5>Log out</h5>
+                <h6>Log out from website. You will lose access to your profile and will have to enter your login details
+                    again.</h6>
+            </hgroup>
+            <form method="post">
+                <button type="submit" name="logout_submit">Log out</button>
+            </form>
+        </article>
+        <article class="grid">
+            <hgroup>
+                <h5>Theme</h5>
+                <h6>Change the theme of the website.</h6>
+            </hgroup>
             <div class="grid">
                 <div>
                     <input data-theme-switcher="auto" type="radio" id="auto" name="theme"/>
@@ -76,12 +88,17 @@
                     <label for="dark">Dark</label>
                 </div>
             </div>
-        </div>
-    </fieldset>
-
-    <form method="post">
-        <button type="submit" name="logout_submit">Log out</button>
-    </form>
-    <button disabled>Delete account</button>
+        </article>
+        <article class="grid">
+            <hgroup>
+                <h5>Delete account</h5>
+                <h6>Permanently delete your account with all its associated information. This action is
+                    irreversible.</h6>
+            </hgroup>
+            <form method="post">
+                <button type="submit" name="account_delete_submit" disabled>Delete</button>
+            </form>
+        </article>
+    </div>
 
 </main>
