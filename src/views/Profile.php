@@ -1,6 +1,6 @@
 <main class="container">
     <h1>Your account</h1>
-    <h3>Personal details</h3>
+    <h2>Personal details</h2>
     <form action="">
         <label class="grid">
             Name:
@@ -19,7 +19,7 @@
             <input value="Mauritius" type="text" disabled>
         </label>
     </form>
-    <h2>Your orders</h2>
+    <h2>Orders summary</h2>
 
     <table>
         <tr>
@@ -79,7 +79,9 @@
         </div>
     </fieldset>
 
-    <button>Log out</button>
-    <button>Delete account</button>
+    <form method="post">
+        <button type="submit" name="logout_submit">Log out</button>
+    </form>
+    <button disabled>Delete account</button>
 
 </main>
