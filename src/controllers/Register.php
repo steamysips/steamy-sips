@@ -36,8 +36,7 @@ class Register
         $this->view(
             'Register',
             $data,
-            'Login',
-            "<link rel=\"stylesheet\" href=\"$css_file\"/>"
+            'Login'
         );
     }
 }

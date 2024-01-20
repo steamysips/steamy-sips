@@ -32,8 +32,7 @@ class Profile
         $this->view(
             'Profile',
             [],
-            'Profile',
-            "<link rel=\"stylesheet\" href=\"$css_file_path\"/>"
+            'Profile'
         );
     }
 }

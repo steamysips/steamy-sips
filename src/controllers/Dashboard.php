@@ -24,7 +24,6 @@ class Dashboard
             'Dashboard',
             $data,
             'Dashboard',
-            "<link rel=\"stylesheet\" href=\"$css_file\"></link>"
         );
     }
 }
