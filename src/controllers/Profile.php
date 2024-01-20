@@ -3,6 +3,7 @@
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\User;
 
 class Profile
@@ -16,13 +17,13 @@ class Profile
         // if user is not signed in, redirect to login page
         session_regenerate_id();
         if (!array_key_exists('user', $_SESSION) || !isset($_SESSION['user'])) {
-            redirect('login');
+            Utility::redirect('login');
         }
 
         // log out user if logout button clicked
         if (isset($_POST['logout_submit'])) {
             $_SESSION = array();
-            redirect('login');
+            Utility::redirect('login');
         }
 
         // fetch user details from database

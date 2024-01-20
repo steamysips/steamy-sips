@@ -11,11 +11,6 @@ class App
     // manage routes and methods 
     // $req = $_SERVER['REQUEST_URI'];
     //$method = $_SERVER['REQUEST_METHOD'];
-    private function splitURL(): array
-    {
-        $URL = $_GET['url'] ?? 'home';
-        return explode("/", trim($URL, '/'));
-    }
 
     /**
      * Calls appropriate controller class to deal with URL.
@@ -23,7 +18,7 @@ class App
      */
     public function loadController(): void
     {
-        $URL = $this->splitURL();
+        $URL = Utility::splitURL();
 
         $controllerClassName = 'Steamy\\Controller\\' . ucfirst($URL[0]);
 

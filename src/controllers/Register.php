@@ -3,6 +3,7 @@
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\User;
 
 class Register
@@ -28,7 +29,7 @@ class Register
                 unset($_POST['register_submit']);
                 unset($_POST['confirmPassword']);
                 $user->insert($_POST);
-                redirect('login');
+                Utility::redirect('login');
             }
             $data['errors'] = $user->errors;
         }

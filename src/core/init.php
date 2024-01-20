@@ -10,4 +10,3 @@ session_start(); // start a new session
 
 require '../vendor/autoload.php'; // autoload classes
 require 'config.php'; // define configurations for database and root path
-require 'functions.php'; // define global helper functions

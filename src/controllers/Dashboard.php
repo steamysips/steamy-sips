@@ -3,6 +3,7 @@
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\User;
 
 class Dashboard
@@ -14,7 +15,7 @@ class Dashboard
         // if user is unauthenticated, redirect to login page
         session_regenerate_id();
         if (!array_key_exists('user', $_SESSION) || !isset($_SESSION['user'])) {
-            redirect('login');
+            Utility::redirect('login');
         }
 
         $css_file = ROOT . "/styles/views/Dashboard.css";

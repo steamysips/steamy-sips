@@ -3,6 +3,7 @@
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\User;
 
 class Login
@@ -15,8 +16,6 @@ class Login
     {
         if ($user->validate($_POST)) {
             $user_profile = $user->where($_POST);
-
-            show($user_profile);
 
             if (empty($user_profile)) {
                 $this->data['errors']['other'] = 'Account does not exist';
@@ -32,7 +31,6 @@ class Login
     public function index(): void
     {
         $user = new User();
-        $css_file = ROOT . "/styles/views/Login.css";
 
         $this->data['defaultName'] = $user->getName();
         $this->data['defaultPassword'] = $user->getPassword();
@@ -52,7 +50,7 @@ class Login
                 // user details are correct
                 // setup session and redirect to dashboard
                 $_SESSION['user'] = $user->getName();
-                redirect('dashboard');
+                Utility::redirect('dashboard');
             }
         }
 
