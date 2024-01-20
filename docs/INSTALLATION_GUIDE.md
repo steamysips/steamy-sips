@@ -61,9 +61,9 @@ Insert your database information in [`src/core/config.php`](../src/core/config.p
 
 ```php
 // define database credentials for localhost
-define('DBNAME', 'cafe'); // name of database
-define('DBUSER', 'username'); // name of database user
-define('DBPASS', 'password'); // password of database user
+define('DB_NAME', 'cafe');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', 'aaa');
 ```
 
 ## Setup linting and formatting

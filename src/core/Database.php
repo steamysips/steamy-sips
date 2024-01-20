@@ -8,8 +8,8 @@ trait Database
 {
     private function connect(): PDO
     {
-        $string = "mysql:hostname=" . DBHOST . ";dbname=" . DBNAME;
-        return new PDO($string, DBUSER, DBPASS);
+        $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
+        return new PDO($string, DB_USERNAME, DB_PASSWORD);
     }
 
     public function query($query, $data = []): false|array
