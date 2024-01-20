@@ -11,8 +11,10 @@ final class UserTest extends TestCase
     {
         $user = new User();
 
-        $user->setName("john");
+        $all_users = $user->all();;
+        var_dump($all_users);
+        ob_flush();
 
-        $this->assertSame($user->getName(), "john");
+        $this->assertCount(12, $all_users);
     }
 }

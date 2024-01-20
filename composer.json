@@ -9,7 +9,7 @@
     "ext-mbstring": "*"
   },
   "scripts": {
-    "test": "phpunit tests"
+    "test": "phpunit --bootstrap src/core/config.php tests"
   },
   "autoload": {
     "psr-4": {
