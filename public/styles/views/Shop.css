@@ -20,6 +20,9 @@ article img {
   border-radius: 50%;
 }
 
+article a[role='button'] {
+  width: 100%;
+}
 
 article header {
   padding: 0;
