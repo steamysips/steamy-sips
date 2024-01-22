@@ -12,8 +12,6 @@ class Profile
 
     public function index(): void
     {
-        $css_file_path = ROOT . "/styles/views/Profile.css";
-
         // if user is not signed in, redirect to login page
         session_regenerate_id();
         if (!array_key_exists('user', $_SESSION) || !isset($_SESSION['user'])) {
@@ -32,8 +30,7 @@ class Profile
         // display user profile
         $this->view(
             'Profile',
-            [],
-            'Profile'
+            template_title: 'Profile'
         );
     }
 }

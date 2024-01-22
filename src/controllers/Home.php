@@ -10,6 +10,6 @@ class Home
 
     public function index(): void
     {
-        $this->view('Home', [], 'Home');
+        $this->view('Home', template_title: 'Home');
     }
 }

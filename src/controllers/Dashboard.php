@@ -18,7 +18,6 @@ class Dashboard
             Utility::redirect('login');
         }
 
-        $css_file = ROOT . "/styles/views/Dashboard.css";
         $data['users'] = (new User())->all();
 
         $this->view(

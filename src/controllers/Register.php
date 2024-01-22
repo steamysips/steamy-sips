@@ -12,8 +12,6 @@ class Register
 
     public function index(): void
     {
-        $css_file = ROOT . "/styles/views/Register.css";
-
         $user = new User();
         $data['defaultName'] = ''; // initial value for name before submit
         $data['defaultPassword'] = ''; // initial value for password before submit
