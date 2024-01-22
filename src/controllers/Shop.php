@@ -17,7 +17,7 @@ class Shop
         $URL = Utility::splitURL();
 
         // check if URL follows format /shop/products/<number>
-        if ($URL[1] == 'products' && sizeof($URL) == 3) {
+        if (sizeof($URL) == 3 && $URL[1] == 'products') {
             // call Product controller
             (new Product())->index();
             return;
