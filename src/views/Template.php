@@ -123,7 +123,7 @@
     </ul>
     <ul>
         <li>
-            <a href="<?= ROOT ?>/shop" class="contrast">
+            <a href="<?= ROOT ?>/shop" class="contrast" data-tooltip="Shop" data-placement="bottom">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +132,7 @@
                 </svg>
             </a>
         </li>
-        <li data-target="cart-modal">
+        <li data-target="cart-modal" data-tooltip="Shopping cart" data-placement="bottom">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                  height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -144,7 +144,7 @@
             </svg>
         </li>
         <li>
-            <a href="<?= ROOT ?>/profile" class="contrast">
+            <a href="<?= ROOT ?>/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                      stroke-linejoin="round">
