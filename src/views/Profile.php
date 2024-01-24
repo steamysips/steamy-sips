@@ -22,39 +22,36 @@
     </form>
     <h2>Orders summary</h2>
 
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Order ID</th>
-            <th>Total cost</th>
-            <th>Status</th>
-        </tr>
-        <tr>
-            <td>16/01/2024</td>
-            <td>432434343</td>
-            <td>100.00</td>
-            <td>
-                Completed
-            </td>
-        </tr>
-        <tr>
-            <td>12/01/2024</td>
-            <td>432434343</td>
-            <td>100.00</td>
-            <td>
-                Completed
-            </td>
-        </tr>
-        <tr>
-            <td>11/01/2024</td>
-            <td>432434343</td>
-            <td>100.00</td>
-            <td>
-                Completed
-            </td>
+    <figure>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Order ID</th>
+                <th>Total cost</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
 
-        </tr>
-    </table>
+            <?php
+            foreach ($orders as $order) {
+                echo <<< EOL
+                    <tr>
+                        <td>$order->date</td>
+                        <td>$order->id</td>
+                        <td>$order->cost</td>
+                        <td>$order->status</td>
+                        <td class="grid">
+                            <button>cancel</button>
+                        </td>
+                    </tr>
+                EOL;
+            }
+
+            ?>
+
+
+        </table>
+    </figure>
     <h2>Settings</h2>
     <div id="settings-container">
         <article class="grid">

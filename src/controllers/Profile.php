@@ -27,10 +27,23 @@ class Profile
         // fetch user details from database
         $current_user = new User();
 
+        // fetch 5 latest orders
+        $data["orders"] = array_fill(
+            0,
+            5,
+            (object)[
+                'date' => '16/01/2024',
+                'id' => 4343,
+                'cost' => 100.00,
+                'status' => 'Completed'
+            ]
+        );
+
         // display user profile
         $this->view(
             'Profile',
-            template_title: 'Profile'
+            $data,
+            'Profile'
         );
     }
 }

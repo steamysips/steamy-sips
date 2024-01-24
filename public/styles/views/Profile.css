@@ -17,3 +17,12 @@ button[name="account_delete_submit"] {
   border: 0;
   background-color: red;
 }
+
+table button{
+  padding:5px;
+}
+
+table tr button:first-of-type{
+  border: 0;
+  background-color: red;
+}
