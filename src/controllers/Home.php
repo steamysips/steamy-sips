@@ -10,6 +10,7 @@ class Home
 
     public function index(): void
     {
-        $this->view('Home', template_title: 'Home');
+        $carousel_script = "<script src=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js\"></script>";
+        $this->view('Home', template_title: 'Home', template_tags: $carousel_script);
     }
 }
