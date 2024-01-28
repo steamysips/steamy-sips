@@ -1,23 +1,24 @@
 <?php
 
-if ($_SERVER['SERVER_NAME'] ?? null == 'localhost') {
-    // setup configurations if code is running on localhost
-    define('DB_HOST', 'localhost'); // ! do not change
+// load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+if ($_ENV['APP_ENV'] == 'dev') {
+    // setup configurations localhost server
+    define('DB_HOST', 'localhost');
 
     // define absolute url for public folder
-    define('ROOT', 'http://localhost/steamy-sips/public'); // ! do not change
-
-    // define production database credentials
-    define('DB_NAME', 'test_db');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', 'aaa');
-} else {
-    // server is not localhost => testing ongoing
-    define('DB_HOST', '');
-    define('ROOT', '');
-
-    // define test database credentials
-    define('DB_NAME', 'test_db');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', 'aaa');
+    define('ROOT', 'http://localhost/steamy-sips/public');
 }
+
+if ($_ENV['APP_ENV'] == 'prod') {
+    // setup configurations for production server
+    define('DB_HOST', $_ENV['PROD_DB_HOST']);
+    define('ROOT', $_ENV['PROD_ROOT']);
+}
+
+// define database credentials
+define('DB_NAME', $_ENV['DB_NAME']);
+define('DB_USERNAME', $_ENV['DB_USERNAME']);
+define('DB_PASSWORD', $_ENV['DB_PASSWORD']);
