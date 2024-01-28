@@ -57,13 +57,14 @@ Import data to the database from SQL dump:
 mysql -u username -p cafe < resources/cafe.sql
 ```
 
-Insert your database information in [`src/core/config.php`](../src/core/config.php):
+In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
 
 ```php
-// define database credentials for localhost
-define('DB_NAME', 'cafe');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', 'aaa');
+APP_ENV="dev"
+DB_HOST="localhost"
+DB_NAME="cafe"
+DB_USERNAME="root" // update if needed
+DB_PASSWORD="" // update if needed
 ```
 
 ## Setup linting and formatting
