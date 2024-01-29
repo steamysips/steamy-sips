@@ -1,7 +1,6 @@
 # Filesystem
 
-The filesystem for this project was adapted from https://github.com/php-pds/skeleton. The code inside `src`
-follows the MVC pattern.
+The filesystem for this project was adapted from https://github.com/php-pds/skeleton.
 
 ## Summary
 
@@ -13,7 +12,7 @@ A package MUST use these names for these root-level directories:
 | configuration files                             | `config/`                  |
 | documentation files                             | `docs/`                    |
 | web server files                                | `public/`                  |
-| other resource files                            | `resources/`               |
+| other resource files (eg. sql files)            | `resources/`               |
 | PHP source code                                 | `src/`                     |
 | test code                                       | `tests/`                   |
 
@@ -58,15 +57,7 @@ directory.
 ### public/
 
 If the package provides a root-level directory for web server files, it MUST be
-named `public/`.
-
-This publication does not otherwise define the structure and contents of the
-directory.
-
-> N.b.: This directory MAY be intended as a web server document root.
-> Alternatively, it MAY be that the files will be served dynamically via other
-> code, copied or symlinked to the "real" document root, or otherwise managed so
-> that they become publicly available on the web.
+named `public/`. **This directory is intended as a web server document root.**
 
 ### resources/
 
@@ -76,13 +67,35 @@ be named `resources/`.
 This publication does not otherwise define the structure and contents of the
 directory.
 
+#### resources/database
+All SQL files must be placed inside the `database` sub-folder:
+
+```
+|-- /database
+|   |-- /schema
+|   |   |-- schema.sql           # Database schema definition
+|   |
+|   |-- /stored_procedures
+|   |   |-- procedure1.sql       # Stored procedure scripts
+|   |   |-- procedure2.sql
+|   |
+|   |-- /views
+|   |   |-- view1.sql            # Database view scripts
+|   |   |-- view2.sql
+|   |
+|   |-- /triggers
+|   |   |-- trigger1.sql         # Database trigger scripts
+|   |   |-- trigger2.sql
+|   |
+|   |-- /sqldump
+|       |-- backup.sql           # SQL dump of the database
+|
+```
+
 ### src/
 
-If the package provides a root-level directory for PHP source code files, it
-MUST be named `src/`.
-
-This publication does not otherwise define the structure and contents of the
-directory.
+If the package provides a root-level directory for **PHP source code files**, it
+MUST be named `src/`. The structure of this directory follows the MVC pattern.
 
 ### tests/
 
@@ -92,7 +105,7 @@ If the package provides a root-level directory for test files, it MUST be named
 This publication does not otherwise define the structure and contents of the
 directory.
 
-### Other Directories
+### Other directories
 
 The package MAY contain other root-level directories for purposes not described
 by this publication.

@@ -54,7 +54,7 @@ create database cafe;
 Import data to the database from SQL dump:
 
 ```bash
-mysql -u username -p cafe < resources/cafe.sql
+mysql -u username -p cafe < resources/database/dump/cafe.sql
 ```
 
 In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
