@@ -29,8 +29,8 @@ composer tests
 
 ## Backup database
 
-To export database use `mysqldump`:
+To export database with `mysqldump`:
 
 ```bash
-mysqldump -uroot -p cafe > cafe.sql
+mysqldump -u root -p cafe > cafe.sql
 ```
