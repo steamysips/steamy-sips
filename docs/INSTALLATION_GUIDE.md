@@ -42,8 +42,9 @@ composer update
 Connect to your MySQL server:
 
 ```bash
-mysql -u username -p
+mysql -u <username> -p
 ```
+> **Note**: `<username>` is a placeholder for your MySQL username.
 
 Create a database `cafe`:
 
@@ -54,7 +55,7 @@ create database cafe;
 Import data to the database from SQL dump:
 
 ```bash
-mysql -u username -p cafe < resources/database/dump/cafe.sql
+mysql -u <username> -p cafe < resources/database/dump/cafe.sql
 ```
 
 In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
@@ -63,9 +64,10 @@ In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with t
 APP_ENV="dev"
 DB_HOST="localhost"
 DB_NAME="cafe"
-DB_USERNAME="root" // update if needed
-DB_PASSWORD="" // update if needed
+DB_USERNAME="root"
+DB_PASSWORD=""
 ```
+Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
 
 ## Setup linting and formatting
 
