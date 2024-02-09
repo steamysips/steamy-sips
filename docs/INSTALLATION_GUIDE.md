@@ -39,11 +39,13 @@ composer update
 
 ## Setup database
 
-Connect to your MySQL server:
+Start your MySQL server and connect to its monitor:
 
 ```bash
+sudo service mysql start
 mysql -u <username> -p
 ```
+
 > **Note**: `<username>` is a placeholder for your MySQL username.
 
 Create a database `cafe`:
@@ -52,10 +54,16 @@ Create a database `cafe`:
 create database cafe;
 ```
 
-Import data to the database from SQL dump:
+Select the database:
+
+```
+use cafe;
+```
+
+Import data to the database from the SQL dump:
 
 ```bash
-mysql -u <username> -p cafe < resources/database/dump/cafe.sql
+source resources/database/dump/cafe.sql
 ```
 
 In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
@@ -67,6 +75,7 @@ DB_NAME="cafe"
 DB_USERNAME="root"
 DB_PASSWORD=""
 ```
+
 Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
 
 ## Setup linting and formatting
