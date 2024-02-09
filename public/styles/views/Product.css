@@ -3,9 +3,24 @@ ul > li {
   list-style-type: none;
 }
 
+#product-info > img {
+  width: 100%;
+}
+
 #reviews article {
+  position: relative;
   margin: 0;
   padding: 20px 30px;
+}
+
+#reviews article div:nth-child(1) {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#reviews .review-date {
+  font-size: 15px;
 }
 
 article > button {
