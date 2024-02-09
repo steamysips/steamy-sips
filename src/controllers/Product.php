@@ -42,19 +42,22 @@ class Product
             0,
             10,
             (object)[
-                'date' => 'today',
+                'date' => 'April 9, 2023',
                 'author' => 'User123',
                 'text' => 'This is a comment.',
                 'children' => [
                     (object)[
-                        'author' => 'User123',
+                        'date' => 'April 10, 2023',
+                        'author' => 'Administrator',
                         'text' => 'This is a comment.',
                         'children' => [
                             (object)[
+                                'date' => 'April 9, 2023',
                                 'author' => 'User123',
-                                'text' => 'This is a comment.',
+                                'text' => 'Yes.',
                                 'children' => [
                                     (object)[
+                                        'date' => 'April 9, 2023',
                                         'author' => 'User123',
                                         'text' => 'This is a comment.',
                                         'children' => []
