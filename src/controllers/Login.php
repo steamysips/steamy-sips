@@ -50,7 +50,7 @@ class Login
                 // user details are correct
                 // setup session and redirect to dashboard
                 $_SESSION['user'] = $user->getName();
-                Utility::redirect('dashboard');
+                Utility::redirect('profile');
             }
         }
 
