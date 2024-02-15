@@ -26,8 +26,8 @@
 | street          | Client's street address    | VARCHAR(255)    |                                                              |
 | city            | Client's city              | VARCHAR(255)    |                                                              |
 | district        | Client's district          | VARCHAR(255)    | Must be one of : Moka, Port Louis, Flacq,                    |
-|                                                                  Curepipe, Black River, Savanne, Grand Port,                  |
-|                                                                  Rivière du Rempart, Pamplemousses, Mahebourg, PlainesWilhems |
+|                 |                            |                 | Curepipe, Black River, Savanne, Grand Port,                  |
+|                 |                            |                 | Rivière du Rempart, Pamplemousses, Mahebourg, PlainesWilhems |
                                                      
 
 
@@ -41,9 +41,9 @@
 | street           | Delivery street address           | VARCHAR(255)    |                                                |
 | city             | Delivery city                     | VARCHAR(255)    |                                                |
 | district         | Delivery district                 | VARCHAR(255)    | Must be one of : Moka, Port Louis, Flacq,      |
-|                                                                          Curepipe, Black River, Savanne, Grand Port,    |
-|                                                                          Rivière du Rempart, Pamplemousses, Mahebourg,  |
-|                                                                          Plaines Wilhems                                |
+|                  |                                   |                 | Curepipe, Black River, Savanne, Grand Port,    |
+|                  |                                   |                 | Rivière du Rempart, Pamplemousses, Mahebourg,  |
+|                  |                                   |                 | Plaines Wilhems                                |
 | total_price      | Total price of the order          | DECIMAL(10,2)   | NOT NULL                                       |
 | user_id          | ID of user                        | INTEGER         | FOREIGN KEY REFERENCES client(user_id)         |
 
@@ -70,7 +70,7 @@
 | quantity           | Quantity of the product         | INTEGER       | NOT NULL                                                    |
 | cup_size           | Cup size of the product         | VARCHAR(50)   | Must be one of: 'small', 'medium', 'large'                  |
 | milk_type          | Type of milk                    | VARCHAR(50)   | Must be one of: almond, coconut, oat, soy,chocolate,        |
-|                                                                        coffee, strawberry and banana                               |
+|                    |                                 |               | coffee, strawberry and banana                               |
 
 
 ## review
