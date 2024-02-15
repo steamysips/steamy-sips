@@ -9,12 +9,15 @@
 | password        | User's password           | VARCHAR(255)    | NOT NULL, Must be greater than 8 characters                 |
 | phone_no        | User's phone number       | INTEGER         | Must be greater than 6 characters                           |
 
+
 # administrator
 | Attributes      | Description                                       | Data Type        | Constraints                                       |
 |-----------------|-------------------------------------------        |----------------- |---------------------------------------------------|
 | user_id         | Unique identifier, Foreign Key                    | INTEGER          | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id) |
 | job_title       | Job title of administrator                        | VARCHAR(255)     |                                                   |
 | is_superadmin   | Whether the administrator is a super admin or not | BOOLEAN          | DEFAULT false                                     |
+
+
 
 # clients
 | Attributes      | Description                    | Data Type       | Constraints                                                 |
