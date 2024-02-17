@@ -35,7 +35,7 @@
 | order_id     | ID of order                 | INTEGER       | PRIMARY KEY, auto-increment                                                   |
 | status       | Order status                | VARCHAR(50)   | NOT NULL, Must be one of: pending, cancelled, completed                       |
 | created_date | Date the order was created  | DATE          |                                                                               |
-| pickup_date  | Date of the order pickup    | DATE          |                                                                               |
+| pickup_date  | Date of the order pickup    | DATE          | Set to NULL when the client place the order                                   |
 | street       | Delivery street address     | VARCHAR(255)  | Must have length > 0                                                          |
 | city         | Delivery city               | VARCHAR(255)  | Must have length > 0                                                          |
 | district     | Delivery district           | VARCHAR(255)  | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,    |
@@ -70,15 +70,15 @@
 
 ## review
 
-| Attribute        | Description           | Data Type | Constraints                                |
-|------------------|-----------------------|-----------|--------------------------------------------|
-| review_id        | ID of review          | INTEGER   | PRIMARY KEY, auto-increment                |              
-| rating           | Rating of the product | INTEGER   | Must be between 1 and 5 inclusive          |
-| date             | Date of the review    | DATE      | NOT NULL                                   |
-| text             | Review text           | TEXT      | NOT NULL                                   |
-| user_id          | ID of user            | INTEGER   | FOREIGN KEY REFERENCES client(user_id)     |
-| product_id       | ID of product         | INTEGER   | FOREIGN KEY REFERENCES product(product_id) |
-| parent_review_id | Parent review ID      | INTEGER   | FOREIGN KEY REFERENCES review(review_id)   |
+| Attribute        | Description           | Data Type | Constraints                                                        |
+|------------------|-----------------------|-----------|--------------------------------------------------------------------|
+| review_id        | ID of review          | INTEGER   | PRIMARY KEY, auto-increment                                        |              
+| rating           | Rating of the product | INTEGER   | Must be between 1 and 5 inclusive                                  |
+| date             | Date of the review    | DATE      | NOT NULL                                                           |
+| text             | Review text           | TEXT      | NOT NULL                                                           |
+| user_id          | ID of user            | INTEGER   | FOREIGN KEY REFERENCES client(user_id)                             |
+| product_id       | ID of product         | INTEGER   | FOREIGN KEY REFERENCES product(product_id)                         |
+| parent_review_id | Parent review ID      | INTEGER   | NULL if nobody replies, FOREIGN KEY REFERENCES review(review_id)   |
 
 # Stored Procedures:
 
