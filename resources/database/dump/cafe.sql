@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 17, 2024 at 09:24 AM
+-- Generation Time: Feb 17, 2024 at 02:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,15 +33,6 @@ CREATE TABLE `administrator` (
   `is_superadmin` tinyint(1) DEFAULT 0
 ) ;
 
---
--- Dumping data for table `administrator`
---
-
-INSERT INTO `administrator` (`user_id`, `job_title`, `is_superadmin`) VALUES
-(1, 'Cafe Manager', 1),
-(2, 'Barista', 0),
-(3, 'Barista', 0);
-
 -- --------------------------------------------------------
 
 --
@@ -54,13 +45,6 @@ CREATE TABLE `client` (
   `city` varchar(255) NOT NULL,
   `district` varchar(255) NOT NULL
 ) ;
-
---
--- Dumping data for table `client`
---
-
-INSERT INTO `client` (`user_id`, `street`, `city`, `district`) VALUES
-(4, 'telfair', 'Port-louis', 'Moka');
 
 -- --------------------------------------------------------
 
@@ -76,7 +60,7 @@ CREATE TABLE `order` (
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `district` varchar(255) NOT NULL,
-  `total_price` decimal(10,2) NOT NULL,
+  `total_price` decimal(10,2) NOT NULL CHECK (`total_price` >= 0),
   `user_id` int(11) NOT NULL
 ) ;
 
@@ -97,21 +81,10 @@ INSERT INTO `order` (`order_id`, `status`, `created_date`, `pickup_date`, `stree
 CREATE TABLE `order_product` (
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
   `cup_size` varchar(50) NOT NULL,
   `milk_type` varchar(50) NOT NULL
 ) ;
-
---
--- Dumping data for table `order_product`
---
-
-INSERT INTO `order_product` (`order_id`, `product_id`, `quantity`, `cup_size`, `milk_type`) VALUES
-(1, 1, 2, 'medium', 'soy'),
-(1, 2, 1, 'large', 'oat'),
-(2, 3, 3, 'small', 'almond'),
-(2, 4, 1, 'medium', 'coconut'),
-(2, 5, 2, 'large', 'chocolate');
 
 -- --------------------------------------------------------
 
@@ -182,16 +155,6 @@ CREATE TABLE `user` (
 ) ;
 
 --
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`user_id`, `email`, `name`, `password`, `phone_no`) VALUES
-(1, 'divjok28@gmail.com', 'divyesh jokhoo', '123456789', '5674675432'),
-(2, 'tomabc@gmail.com', 'tom abc', '987654321', '593749393'),
-(3, 'devsing@gmail.com', 'deving soopal', '8484848484', '538937439'),
-(4, 'jerry@gmail.com', 'jerry sawyer', '5555555555', '57473999283');
-
---
 -- Indexes for dumped tables
 --
 
@@ -218,8 +181,8 @@ ALTER TABLE `order`
 -- Indexes for table `order_product`
 --
 ALTER TABLE `order_product`
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `product_id` (`product_id`);
+  ADD PRIMARY KEY (`order_id`,`product_id`),
+  ADD KEY `order_product_2fk` (`product_id`);
 
 --
 -- Indexes for table `product`
@@ -291,7 +254,7 @@ ALTER TABLE `client`
 -- Constraints for table `order`
 --
 ALTER TABLE `order`
-  ADD CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`);
 
 --
 -- Constraints for table `order_product`
