@@ -20,26 +20,28 @@
 
 ## client
 
-| Attribute | Description             | Data Type    | Constraints                                                                                                                                          |
-|-----------|-------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| user_id   | ID of client            | INTEGER      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id)                                                                                                    |
-| street    | Client's street address | VARCHAR(255) | Must have length > 0                                                                                                                                 |
-| city      | Client's city           | VARCHAR(255) | Must have length > 0                                                                                                                                 |
-| district  | Client's district       | VARCHAR(255) | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne, Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems |
+| Attribute | Description             | Data Type    | Constraints                                                                    |
+|-----------|-------------------------|--------------|--------------------------------------------------------------------------------|
+| user_id   | ID of client            | INTEGER      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id)                              |
+| street    | Client's street address | VARCHAR(255) | Must have length > 0                                                           |
+| city      | Client's city           | VARCHAR(255) | Must have length > 0                                                           |
+| district  | Client's district       | VARCHAR(255) | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,     | 
+|           |                         |              | Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems      |
 
 ## order
 
-| Attribute    | Description                 | Data Type     | Constraints                                                                                                                                          |
-|--------------|-----------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| order_id     | ID of order                 | INTEGER       | PRIMARY KEY, auto-increment                                                                                                                          |
-| status       | Order status                | VARCHAR(50)   | NOT NULL                                                                                                                                             |
-| created_date | Date the order was created  | DATE          | Must be one of: pending, cancelled, completed                                                                                                        |
-| pickup_date  | Date of the order pickup    | DATE          |                                                                                                                                                      |
-| street       | Delivery street address     | VARCHAR(255)  | Must have length > 0                                                                                                                                 |
-| city         | Delivery city               | VARCHAR(255)  | Must have length > 0                                                                                                                                 |
-| district     | Delivery district           | VARCHAR(255)  | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne, Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems |
-| total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL                                                                                                                                             |
-| user_id      | ID of user who placed order | INTEGER       | FOREIGN KEY REFERENCES client(user_id)                                                                                                               |
+| Attribute    | Description                 | Data Type     | Constraints                                                                   |
+|--------------|-----------------------------|---------------|-------------------------------------------------------------------            |
+| order_id     | ID of order                 | INTEGER       | PRIMARY KEY, auto-increment                                                   |
+| status       | Order status                | VARCHAR(50)   | NOT NULL, Must be one of: pending, cancelled, completed                       |
+| created_date | Date the order was created  | DATE          |                                                                               |
+| pickup_date  | Date of the order pickup    | DATE          |                                                                               |
+| street       | Delivery street address     | VARCHAR(255)  | Must have length > 0                                                          |
+| city         | Delivery city               | VARCHAR(255)  | Must have length > 0                                                          |
+| district     | Delivery district           | VARCHAR(255)  | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,    |
+|              |                             |               | Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems     |
+| total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL                                                                      |
+| user_id      | ID of user who placed order | INTEGER       | FOREIGN KEY REFERENCES client(user_id)                                        |
 
 ## product
 
@@ -57,13 +59,14 @@
 
 ## order_product
 
-| Attribute  | Description             | Data Type   | Constraints                                                                                         |
-|------------|-------------------------|-------------|-----------------------------------------------------------------------------------------------------|
-| order_id   | ID of order             | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES order(order_id)                                                 |
-| product_id | ID of product           | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES product(product_id)                                             |
-| quantity   | Quantity of the product | INTEGER     | NOT NULL                                                                                            |
-| cup_size   | Cup size of the product | VARCHAR(50) | Must be one of: `small`, `medium`, `large`                                                          |
-| milk_type  | Type of milk            | VARCHAR(50) | Must be one of: `almond`, `coconut`, `oat`, `soy`,`chocolate`, `coffee`, `strawberry`, and `banana` |
+| Attribute  | Description             | Data Type   | Constraints                                                                         |
+|------------|-------------------------|-------------|-------------------------------------------------------------------------------------|
+| order_id   | ID of order             | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES order(order_id)                                 |
+| product_id | ID of product           | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES product(product_id)                             |
+| quantity   | Quantity of the product | INTEGER     | NOT NULL                                                                            |
+| cup_size   | Cup size of the product | VARCHAR(50) | Must be one of: `small`, `medium`, `large`                                          |
+| milk_type  | Type of milk            | VARCHAR(50) | Must be one of: `almond`, `coconut`, `oat`, `soy`,`chocolate`, `coffee`,            |
+|            |                         |             |     `strawberry`, and `banana`                                                      |
 
 ## review
 
