@@ -40,7 +40,7 @@
 | city         | Delivery city               | VARCHAR(255)  | Must have length > 0                                                          |
 | district     | Delivery district           | VARCHAR(255)  | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,    |
 |              |                             |               | Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems     |
-| total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL                                                                      |
+| total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL, total_price is >= 0                                                 |
 | user_id      | ID of user who placed order | INTEGER       | FOREIGN KEY REFERENCES client(user_id)                                        |
 
 ## product
@@ -63,10 +63,9 @@
 |------------|-------------------------|-------------|-------------------------------------------------------------------------------------|
 | order_id   | ID of order             | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES order(order_id)                                 |
 | product_id | ID of product           | INTEGER     | PRIMARY KEY, FOREIGN KEY REFERENCES product(product_id)                             |
-| quantity   | Quantity of the product | INTEGER     | NOT NULL                                                                            |
+| quantity   | Quantity of the product | INTEGER     | NOT NULL, quantity > 0 (cannot be 0)                                                |
 | cup_size   | Cup size of the product | VARCHAR(50) | Must be one of: `small`, `medium`, `large`                                          |
-| milk_type  | Type of milk            | VARCHAR(50) | Must be one of: `almond`, `coconut`, `oat`, `soy`,`chocolate`, `coffee`,            |
-|            |                         |             |     `strawberry`, and `banana`                                                      |
+| milk_type  | Type of milk            | VARCHAR(50) | Must be one of: `almond`, `coconut`, `oat`, and `soy`                               |
 
 ## review
 
@@ -78,7 +77,8 @@
 | text             | Review text           | TEXT      | NOT NULL                                                           |
 | user_id          | ID of user            | INTEGER   | FOREIGN KEY REFERENCES client(user_id)                             |
 | product_id       | ID of product         | INTEGER   | FOREIGN KEY REFERENCES product(product_id)                         |
-| parent_review_id | Parent review ID      | INTEGER   | NULL if nobody replies, FOREIGN KEY REFERENCES review(review_id)   |
+| parent_review_id | Parent review ID      | INTEGER   | NULL only when a review is a top-level comment , FOREIGN KEY       |
+|                  |                       |           | REFERENCES review(review_id)                                       |
 
 # Stored Procedures:
 
