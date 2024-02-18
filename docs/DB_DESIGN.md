@@ -26,7 +26,7 @@
 | street    | Client's street address | VARCHAR(255) | Must have length > 0                                                           |
 | city      | Client's city           | VARCHAR(255) | Must have length > 0                                                           |
 | district  | Client's district       | VARCHAR(255) | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,     | 
-|           |                         |              | Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems      |
+|           |                         |              | Grand Port, Riviere du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems      |
 
 ## order
 
@@ -39,7 +39,7 @@
 | street       | Delivery street address     | VARCHAR(255)  | Must have length > 0                                                          |
 | city         | Delivery city               | VARCHAR(255)  | Must have length > 0                                                          |
 | district     | Delivery district           | VARCHAR(255)  | Must be one of : Moka, Port Louis, Flacq,  Curepipe, Black River, Savanne,    |
-|              |                             |               | Grand Port, Rivière du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems     |
+|              |                             |               | Grand Port, Riviere du Rempart, Pamplemousses, Mahebourg, Plaines Wilhems     |
 | total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL, total_price is >= 0                                                 |
 | user_id      | ID of user who placed order | INTEGER       | FOREIGN KEY REFERENCES client(user_id)                                        |
 
