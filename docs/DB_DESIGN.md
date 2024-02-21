@@ -121,15 +121,7 @@ Functionality: Checks if the user attempting to add the administrator account ha
 insertion is aborted.
 Constraints: Ensure only users with superadmin privileges can add new administrator accounts.
 
-3. Send Email Notification Trigger:
-
-This trigger sends an email notification to the client when an order is placed.
-Trigger Type: AFTER INSERT ON order table.
-Functionality: Retrieves the client's email address associated with the order and sends an email notification confirming
-the order placement.
-Constraints: Ensure the email is successfully sent without errors.
-
-4. Update Order History Trigger:
+3. Update Order History Trigger:
 
 This trigger updates the order history when an order is placed.
 Trigger Type: AFTER INSERT ON order table.
