@@ -12,6 +12,18 @@ class Shop
 {
     use Controller;
 
+    private function match_keyword($product): bool
+    {
+        $search_keyword = $_GET['keyword'];
+        if (!isset($search_keyword)) {
+            return true;
+        }
+        $search_keyword = trim($search_keyword);
+
+        // TODO: Improve searching algorithm. Use fuzzy searching + regex perha
+        return strtolower($product->name) == strtolower($search_keyword);
+    }
+
     public function index(): void
     {
         $URL = Utility::splitURL();
@@ -44,6 +56,16 @@ class Shop
                 'rating' => 3.1
             ]
         );
+        $data['products'][] = (object)[
+            'name' => 'Cafe Express',
+            'description' => 'Personalize your coffee blend, selecting from diverse beans, roasts, and flavors
+                 for a truly unique brew tailored to your preferences.',
+            'rating' => 3.1
+        ];
+
+        $filtered_array = array_filter($data['products'], array($this, "match_keyword"));
+        $data['products'] = $filtered_array;
+        $data['search_keyword'] = $_GET['keyword'];
 
         $this->view(
             'Shop',
