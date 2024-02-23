@@ -9,7 +9,7 @@ if ($_ENV['APP_ENV'] == 'dev') {
     define('DB_HOST', 'localhost');
 
     // define absolute url for public folder
-    define('ROOT', 'http://localhost/steamy-sips/public');
+    define('ROOT', $_ENV['DEV_ROOT']);
 }
 
 if ($_ENV['APP_ENV'] == 'prod') {

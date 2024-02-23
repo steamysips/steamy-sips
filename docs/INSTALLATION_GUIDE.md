@@ -70,6 +70,7 @@ In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with t
 
 ```php
 APP_ENV="dev"
+DEV_ROOT="http://localhost/steamy-sips/public"
 DB_HOST="localhost"
 DB_NAME="cafe"
 DB_USERNAME="root"
@@ -77,6 +78,7 @@ DB_PASSWORD=""
 ```
 
 Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
+If your Apache server is serving from a port other than the default one, update `DEV_ROOT`.
 
 ## Setup linting and formatting
 
