@@ -14,12 +14,13 @@ class Shop
 
     private function match_keyword($product): bool
     {
+        if(!empty($_GET['keyword'])) {
         $search_keyword = $_GET['keyword'];
+        }
         if (!isset($search_keyword)) {
             return true;
         }
         $search_keyword = trim($search_keyword);
-
         // TODO: Improve searching algorithm. Use fuzzy searching + regex perha
         return strtolower($product->name) == strtolower($search_keyword);
     }
@@ -65,7 +66,9 @@ class Shop
 
         $filtered_array = array_filter($data['products'], array($this, "match_keyword"));
         $data['products'] = $filtered_array;
+        if(!empty($_GET['keyword'])) {
         $data['search_keyword'] = $_GET['keyword'];
+        }
 
         $this->view(
             'Shop',

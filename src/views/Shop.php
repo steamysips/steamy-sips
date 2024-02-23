@@ -5,7 +5,7 @@
  *     name:string,
  *     password:string
  * } $products Array of all products as fetched from database
- * @var $search_keyword string keyword used to filter products
+ * @var string $search_keyword keyword used to filter products (if provided)
  */
 
 ?>
@@ -14,12 +14,20 @@
     <form name="search_submit" method="get" role="search">
         <label>
             <input value="<?php
-            echo $search_keyword; ?>" name="keyword" type="search" placeholder="Search"/>
+            echo isset($_GET['keyword']) ? $_GET['keyword'] : ""; ?>" name="keyword" type="search" placeholder="Search"/>
         </label>
     </form>
     <div id="item-grid">
         <?php
+        // Check for $search_keyword and assign a default value if not set
+        $search_keyword = isset($search_keyword) ? $search_keyword : "";
+
         foreach ($products as $product) {
+            // Use $search_keyword for filtering or display, ensuring it's not null
+            if ($search_keyword !== "" && strpos($product->name, $search_keyword) === false) {
+                continue; // Skip product if it doesn't match the search keyword
+            }
+
             $product_href = ROOT . '/shop/products/1';
             $product_img_src = ROOT . "/assets/coffee.jpg";
             echo <<<EOL
@@ -39,4 +47,4 @@
   document.addEventListener("DOMContentLoaded", function() {
     AOS.init();
   });
-</script>
+</script>  
