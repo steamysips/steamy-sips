@@ -1,13 +1,13 @@
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cafe
 -- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
+-- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -27,8 +27,8 @@ CREATE TABLE `administrator` (
   `job_title` varchar(255) NOT NULL,
   `is_superadmin` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`user_id`),
-  CONSTRAINT `admin_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `check_job_title_length` CHECK (char_length(`job_title`) > 0)
+  CONSTRAINT `admin_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `job_title_length` CHECK (char_length(`job_title`) > 3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -40,41 +40,6 @@ LOCK TABLES `administrator` WRITE;
 /*!40000 ALTER TABLE `administrator` DISABLE KEYS */;
 /*!40000 ALTER TABLE `administrator` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `AdminAccountRestriction` BEFORE INSERT ON `administrator`
-
-FOR EACH ROW
-
-BEGIN
-
-  DECLARE is_superadmin_count INT;
-
-  
-
-  SELECT COUNT(*) INTO is_superadmin_count FROM `administrator` WHERE is_superadmin = 1;
-
-  
-
-  IF is_superadmin_count = 0 THEN
-
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only superadmins can add new administrators';
-
-  END IF;
-
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `client`
@@ -87,11 +52,11 @@ CREATE TABLE `client` (
   `user_id` int(11) NOT NULL,
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
-  `district` varchar(255) NOT NULL,
+  `district` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
-  CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `check_street_length` CHECK (char_length(`street`) > 0),
-  CONSTRAINT `check_city_length` CHECK (char_length(`city`) > 0)
+  CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
+  CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -113,20 +78,21 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` varchar(50) NOT NULL CHECK (`status` in ('pending','cancelled','completed')),
-  `created_date` date NOT NULL,
-  `pickup_date` date DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `pickup_date` datetime DEFAULT NULL,
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
-  `district` varchar(255) DEFAULT NULL CHECK (`district` in ('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems')),
+  `district` varchar(30) DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL CHECK (`total_price` >= 0),
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `order_fk` (`user_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`),
-  CONSTRAINT `check_street_length` CHECK (char_length(`street`) > 0),
-  CONSTRAINT `check_city_length` CHECK (char_length(`city`) > 0)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`),
+  CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
+  CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,34 +101,8 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'pending','2024-02-17','2024-02-18','123 Main St','Port-louis','Moka',50.00,4),(2,'cancelled','2024-02-18','2024-02-19','456 Elm St','Port-louis','Moka',75.00,4);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `UpdateOrderHistory` AFTER INSERT ON `order`
-
-FOR EACH ROW
-
-BEGIN
-
-  INSERT INTO `order_history` (order_id, status, pickup_date, created_date, street, city, district, total_price, user_id)
-
-  VALUES (NEW.order_id, NEW.status, NEW.pickup_date, NEW.created_date, NEW.street, NEW.city, NEW.district, NEW.total_price, NEW.user_id);
-
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `order_product`
@@ -174,15 +114,16 @@ DROP TABLE IF EXISTS `order_product`;
 CREATE TABLE `order_product` (
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL CHECK (`quantity` > 0),
-  `cup_size` varchar(50) NOT NULL,
-  `milk_type` varchar(50) NOT NULL,
+  `cup_size` varchar(20) DEFAULT NULL,
+  `milk_type` varchar(20) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `order_product_2fk` (`product_id`),
-  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
+  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE,
   CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `check_cup_size` CHECK (`cup_size` in ('small','medium','large')),
-  CONSTRAINT `check_milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy'))
+  CONSTRAINT `quantity_range` CHECK (`quantity` >= 0),
+  CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
+  CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -207,19 +148,19 @@ DELIMITER ;;
 
 BEGIN
 
-  DECLARE quantity_ordered INT;
+    DECLARE quantity_ordered INT;
 
-  DECLARE product_id INT;
+    DECLARE product_id INT;
 
-  
 
-  SET quantity_ordered = NEW.quantity;
 
-  SET product_id = NEW.product_id;
+    SET quantity_ordered = NEW.quantity;
 
-  
+    SET product_id = NEW.product_id;
 
-  UPDATE `product` SET stock_level = stock_level - quantity_ordered WHERE product_id = product_id;
+
+
+    UPDATE `product` SET stock_level = stock_level - quantity_ordered WHERE product_id = product_id;
 
 END */;;
 DELIMITER ;
@@ -246,9 +187,10 @@ CREATE TABLE `product` (
   `price` decimal(10,2) NOT NULL,
   `description` text DEFAULT NULL CHECK (char_length(`description`) > 0),
   PRIMARY KEY (`product_id`),
-  CONSTRAINT `check_img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif'),
-  CONSTRAINT `check_img_alt_text_length` CHECK (char_length(`img_alt_text`) between 5 and 150),
-  CONSTRAINT `check_category_length` CHECK (char_length(`category`) > 0)
+  CONSTRAINT `name_length` CHECK (char_length(`name`) > 2),
+  CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif'),
+  CONSTRAINT `img_alt_text_length` CHECK (char_length(`img_alt_text`) between 5 and 150),
+  CONSTRAINT `category_length` CHECK (char_length(`category`) > 2)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -274,17 +216,18 @@ CREATE TABLE `review` (
   `rating` int(11) NOT NULL,
   `date` date NOT NULL,
   `text` text NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
   `parent_review_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`review_id`),
   KEY `review_1fk` (`user_id`),
   KEY `review_2fk` (`product_id`),
   KEY `review_3fk` (`parent_review_id`),
-  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`),
-  CONSTRAINT `check_rating` CHECK (`rating` between 1 and 5)
+  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE,
+  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`) ON DELETE SET NULL,
+  CONSTRAINT `check_rating` CHECK (`rating` between 1 and 5),
+  CONSTRAINT `text_length` CHECK (char_length(`text`) >= 2)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -294,7 +237,6 @@ CREATE TABLE `review` (
 
 LOCK TABLES `review` WRITE;
 /*!40000 ALTER TABLE `review` DISABLE KEYS */;
-INSERT INTO `review` VALUES (1,5,'2024-02-17','Excellent coffee, loved the taste and aroma!',1,1,NULL),(2,4,'2024-02-18','Great service, but the coffee was a bit too bitter for my liking.',2,1,NULL),(3,3,'2024-02-19','I agree with the previous review, the coffee was indeed excellent!',3,1,1);
 /*!40000 ALTER TABLE `review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -308,14 +250,17 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(320) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `password` varchar(60) DEFAULT NULL,
   `phone_no` varchar(255) NOT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `unique_email` (`email`),
   CONSTRAINT `email_format` CHECK (`email` like '%@%.%'),
   CONSTRAINT `password_length` CHECK (char_length(`password`) > 8),
-  CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6)
+  CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
+  CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
+  CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -327,201 +272,6 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'cafe'
---
-
---
--- Dumping routines for database 'cafe'
---
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `AddAdministratorAccount` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddAdministratorAccount`(
-
-  IN p_email VARCHAR(320),
-
-  IN p_name VARCHAR(255),
-
-  IN p_password VARCHAR(255),
-
-  IN p_phone_no VARCHAR(20),
-
-  IN p_job_title VARCHAR(255),
-
-  IN p_is_superadmin BOOLEAN
-
-)
-BEGIN
-
-  DECLARE hashed_password VARCHAR(255);
-
-  DECLARE current_user_id INT;
-
-
-
-  -- Check if the caller is a superadmin
-
-  SELECT user_id INTO current_user_id FROM administrator WHERE is_superadmin = 1;
-
-  IF current_user_id IS NULL THEN
-
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only superadmins can create new admins';
-
-  END IF;
-
-
-
-  -- Hash the password using a secure hashing algorithm (e.g., bcrypt)
-
-  SET hashed_password = SHA2(p_password, 256);
-
-
-
-  -- Check if email already exists
-
-  IF EXISTS (SELECT 1 FROM `user` WHERE email = p_email) THEN
-
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email already exists';
-
-  END IF;
-
-
-
-  -- Insert new user record
-
-  INSERT INTO `user` (email, name, password, phone_no)
-
-  VALUES (p_email, p_name, hashed_password, p_phone_no);
-
-
-
-  -- Insert new administrator record
-
-  INSERT INTO `administrator` (user_id, job_title, is_superadmin)
-
-  VALUES (LAST_INSERT_ID(), p_job_title, p_is_superadmin);
-
-
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `AddUserAccount` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddUserAccount`(
-
-  IN email VARCHAR(320),
-
-  IN name VARCHAR(255),
-
-  IN password VARCHAR(255),
-
-  IN phone_no VARCHAR(20)
-
-)
-BEGIN
-
-  DECLARE hashed_password VARCHAR(255);
-
-
-
-  -- Hash the password using a secure hashing algorithm (e.g., bcrypt)
-
-  SET hashed_password = PASSWORD(password);
-
-
-
-  -- Check if email already exists
-
-  INSERT INTO user (email, name, password, phone_no)
-
-  VALUES (email, name, hashed_password, phone_no);
-
-
-
-  IF FOUND_ROWS() > 0 THEN
-
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email already exists';
-
-  END IF;
-
-
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `PlaceOrder` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `PlaceOrder`(
-
-    IN `status` VARCHAR(50),
-
-    IN `pickup_date` DATE,
-
-    IN `created_date` DATE,
-
-    IN `street` VARCHAR(255),
-
-    IN `city` VARCHAR(255),
-
-    IN `district` VARCHAR(255),
-
-    IN `total_price` DECIMAL(10,2),
-
-    IN `user_id` INT
-
-)
-BEGIN
-
-    IF EXISTS (SELECT 1 FROM `client` WHERE `user_id` = user_id) THEN
-
-        INSERT INTO `order` (`status`, `pickup_date`, `created_date`, `street`, `city`, `district`, `total_price`, `user_id`)
-
-        VALUES (status, pickup_date, created_date, street, city, district, total_price, user_id);
-
-    ELSE
-
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Client with the provided user_id does not exist';
-
-    END IF;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -532,4 +282,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-21 12:57:29
+-- Dump completed on 2024-02-23 14:21:09
