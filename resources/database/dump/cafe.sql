@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `administrator`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `administrator` (
-  `user_id` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
   `job_title` varchar(255) NOT NULL,
   `is_superadmin` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`user_id`),
@@ -49,11 +49,13 @@ DROP TABLE IF EXISTS `client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `client` (
-  `user_id` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
-  `district` varchar(30) DEFAULT NULL,
+  `district_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_id`),
+  KEY `client_district_district_id_fk` (`district_id`),
+  CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
   CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
   CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
@@ -70,6 +72,32 @@ LOCK TABLES `client` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `district`
+--
+
+DROP TABLE IF EXISTS `district`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `district` (
+  `district_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`district_id`),
+  UNIQUE KEY `name` (`name`),
+  CONSTRAINT `name_values` CHECK (`name` in ('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems'))
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `district`
+--
+
+LOCK TABLES `district` WRITE;
+/*!40000 ALTER TABLE `district` DISABLE KEYS */;
+INSERT INTO `district` VALUES (4,'Black River'),(3,'Flacq'),(6,'Grand Port'),(1,'Moka'),(8,'Pamplemousses'),(9,'Plaines Wilhems'),(2,'Port Louis'),(7,'Riviere du Rempart'),(5,'Savanne');
+/*!40000 ALTER TABLE `district` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `order`
 --
 
@@ -77,17 +105,19 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
-  `order_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `status` varchar(20) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `pickup_date` datetime DEFAULT NULL,
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
-  `district` varchar(30) DEFAULT NULL,
+  `district_id` int(11) unsigned DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL CHECK (`total_price` >= 0),
-  `user_id` int(11) UNSIGNED DEFAULT NULL,
+  `user_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `order_fk` (`user_id`),
+  KEY `order_district_district_id_fk` (`district_id`),
+  CONSTRAINT `order_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
   CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL,
   CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`),
   CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
@@ -112,11 +142,11 @@ DROP TABLE IF EXISTS `order_product`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order_product` (
-  `order_id` int(11) UNSIGNED NOT NULL,
-  `product_id` int(11) UNSIGNED NOT NULL,
+  `order_id` int(11) unsigned NOT NULL,
+  `product_id` int(11) unsigned NOT NULL,
   `cup_size` varchar(20) DEFAULT NULL,
   `milk_type` varchar(20) DEFAULT NULL,
-  `quantity` int(11) UNSIGNED DEFAULT NULL,
+  `quantity` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `order_product_2fk` (`product_id`),
   CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE,
@@ -177,10 +207,10 @@ DROP TABLE IF EXISTS `product`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product` (
-  `product_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `calories` int(11) UNSIGNED DEFAULT NULL CHECK (`calories` >= 0),
-  `stock_level` int(11) UNSIGNED DEFAULT NULL CHECK (`stock_level` >= 0),
+  `calories` int(11) unsigned DEFAULT NULL CHECK (`calories` >= 0),
+  `stock_level` int(11) unsigned DEFAULT NULL CHECK (`stock_level` >= 0),
   `img_url` varchar(255) NOT NULL,
   `img_alt_text` varchar(150) NOT NULL,
   `category` varchar(50) NOT NULL,
@@ -212,13 +242,13 @@ DROP TABLE IF EXISTS `review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `review` (
-  `review_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `rating` int(11) UNSIGNED NOT NULL,
+  `review_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `rating` int(11) unsigned NOT NULL,
   `date` date NOT NULL,
   `text` text NOT NULL,
-  `user_id` int(11) UNSIGNED DEFAULT NULL,
-  `product_id` int(11) UNSIGNED DEFAULT NULL,
-  `parent_review_id` int(11) UNSIGNED DEFAULT NULL,
+  `user_id` int(11) unsigned DEFAULT NULL,
+  `product_id` int(11) unsigned DEFAULT NULL,
+  `parent_review_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`review_id`),
   KEY `review_1fk` (`user_id`),
   KEY `review_2fk` (`product_id`),
@@ -248,7 +278,7 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
-  `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(320) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `password` varchar(60) DEFAULT NULL,
@@ -282,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-23 14:21:09
+-- Dump completed on 2024-02-24 10:37:26
