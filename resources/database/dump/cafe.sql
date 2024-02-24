@@ -235,7 +235,7 @@ CREATE TABLE `product` (
   `img_alt_text` varchar(150) NOT NULL,
   `category` varchar(50) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `description` text DEFAULT NULL,
+  `description` text DEFAULT NULL CHECK (char_length(`description`) > 0),
   PRIMARY KEY (`product_id`),
   CONSTRAINT `name_length` CHECK (char_length(`name`) > 2),
   CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif'),
@@ -340,4 +340,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-24 13:08:20
+-- Dump completed on 2024-02-24 13:44:24
