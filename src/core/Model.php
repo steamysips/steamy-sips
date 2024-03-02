@@ -6,20 +6,17 @@ trait Model
 {
     use Database;
 
-    protected string $table = 'user';
     protected int $limit = 10; // restricts how many rows SQL query returns
     protected int $offset = 0; // number of rows to skip from the beginning of the returned data
-    public array $errors = []; // list of errors when validating data
-
 
     /**
      * Returns all records from a table, ignoring $limit.
      * @return false|array
      */
-    public function all(): false|array
+    protected function all(): false|array
     {
         $query = "SELECT * FROM $this->table";
-        return $this->query($query);
+        return self::query($query);
     }
 
     /**
@@ -30,7 +27,7 @@ trait Model
      *
      * @return false|array Returns false if the query execution fails, otherwise returns an array of the query results.
      */
-    public function where(array $data, array $data_not = []): false|array
+    protected function where(array $data, array $data_not = []): false|array
     {
         $keys = array_keys($data);
         $keys_not = array_keys($data_not);
@@ -47,19 +44,23 @@ trait Model
 
         $query .= " limit $this->limit offset $this->offset";
 
-        return $this->query($query, array_merge($data, $data_not));
+        return self::query($query, array_merge($data, $data_not));
     }
 
     /**
      * Returns the first result from an executed SELECT query
      * @param array $data
-     * @return array
+     * @return \stdClass|null
      */
-    public function first(array $data): array
+    protected function first(array $data): ?\stdClass
     {
         $result = $this->where($data);
 
-        return count($data) > 0 ? $result [0] : [];
+        if (!$result) {
+            return null;
+        }
+
+        return count($result) > 0 ? $result [0] : null;
     }
 
     /**
@@ -67,7 +68,7 @@ trait Model
      * @param array $data An associative array representing the values to be inserted.
      * @return void
      */
-    public function insert(array $data): void
+    protected function insert(array $data): void
     {
         $keys = array_keys($data);
         $query = "INSERT INTO $this->table(" . join(", ", $keys) . ") ";
@@ -83,7 +84,7 @@ trait Model
 
         $query .= ")";
 
-        $this->query($query, $data);
+        self::query($query, $data);
     }
 
     /**
@@ -95,7 +96,7 @@ trait Model
      *
      * @return void
      */
-    public function update(int|string $id, array $data, string $id_column = 'id'): void
+    protected function update(int|string $id, array $data, string $id_column = 'id'): void
     {
         $keys = array_keys($data);
         $query = "UPDATE $this->table SET ";
@@ -111,7 +112,7 @@ trait Model
         // add where condition
         $query .= " WHERE $id_column = $id;";
 
-        $this->query($query, $data);
+        self::query($query, $data);
     }
 
     /**
@@ -120,9 +121,9 @@ trait Model
      * @param string $id_column primary key of table or name of column in WHERE clause.
      * @return void
      */
-    public function delete(mixed $id, string $id_column = 'id'): void
+    protected function delete(mixed $id, string $id_column = 'id'): void
     {
         $query = "DELETE FROM $this->table WHERE $id_column = :id";
-        $this->query($query, array($id_column => $id));
+        self::query($query, array($id_column => $id));
     }
 }
