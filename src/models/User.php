@@ -26,7 +26,7 @@ abstract class User
         $this->email = $email;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
-        $this->password = password_hash($password, PASSWORD_BCRYPT);;
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
         $this->phone_no = $phone_no;
     }
 
@@ -43,19 +43,32 @@ abstract class User
             ];
     }
 
-    public function validate()
+    public function validate(): array
     {
-        // validate current object
-    }
+        $errors = []; // list of errors
 
-    public function save()
-    {
-        // if errors present exit
-        if (count($this->validate()) > 0) {
-            return;
+        // perform existence checks
+        if (empty($this->email)) {
+            $errors['email'] = "Email is required";
         }
 
-        // else insert current object to database
+        if (empty($this->first_name)) {
+            $errors['first_name'] = "First name is required";
+        }
+        if (empty($this->password)) {
+            $errors['password'] = "Password is required";
+        }
+
+        if (empty($this->phone_no)) {
+            $errors['phone_no'] = "Phone number is required";
+        }
+
+        if (empty($this->last_name)) {
+            $errors['last_name'] = "Last name is required";
+        }
+
+        // TODO: Add range checks
+        return $errors;
     }
 
     public function setEmail(string $email): void
@@ -101,6 +114,11 @@ abstract class User
     public function getFullName(): string
     {
         return "$this->first_name $this->last_name";
+    }
+
+    public function getUserID(): int
+    {
+        return $this->user_id;
     }
 
     public function getPassword(): string
