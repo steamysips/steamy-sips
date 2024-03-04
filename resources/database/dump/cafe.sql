@@ -1,13 +1,13 @@
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cafe
 -- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
+-- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `administrator`;
 CREATE TABLE `administrator` (
   `user_id` int(11) unsigned NOT NULL,
   `job_title` varchar(255) NOT NULL,
-  `is_superadmin` tinyint(1) DEFAULT 0,
+  `is_super_admin` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `admin_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `job_title_length` CHECK (char_length(`job_title`) > 3)
@@ -165,7 +165,6 @@ LOCK TABLES `order_product` WRITE;
 /*!40000 ALTER TABLE `order_product` DISABLE KEYS */;
 /*!40000 ALTER TABLE `order_product` ENABLE KEYS */;
 UNLOCK TABLES;
-ALTER DATABASE `cafe` CHARACTER SET utf8 COLLATE utf8_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -217,7 +216,6 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `cafe` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 
 --
 -- Table structure for table `product`
@@ -301,7 +299,7 @@ CREATE TABLE `user` (
   `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(320) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
-  `password` varchar(60) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `phone_no` varchar(255) NOT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
@@ -311,7 +309,7 @@ CREATE TABLE `user` (
   CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
   CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
   CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,14 +320,6 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'cafe'
---
-
---
--- Dumping routines for database 'cafe'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -340,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-24 13:44:24
+-- Dump completed on 2024-03-04 15:26:14
