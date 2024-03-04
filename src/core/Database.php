@@ -3,16 +3,28 @@
 namespace Steamy\Core;
 
 use PDO;
+use stdClass;
 
 trait Database
 {
+
+    /**
+     * Connects to database and returns a PDO object
+     * @return PDO
+     */
     private static function connect(): PDO
     {
         $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
         return new PDO($string, DB_USERNAME, DB_PASSWORD);
     }
 
-    protected static function query($query, $data = []): false|array
+    /**
+     * Executes a prepared statement
+     * @param $query string prepared statement
+     * @param $data array associative array
+     * @return false|array
+     */
+    protected static function query(string $query, array $data = []): false|array
     {
         $con = self::connect();
         $stm = $con->prepare($query);
@@ -29,7 +41,13 @@ trait Database
         return false;
     }
 
-    protected static function get_row($query, $data = [])
+    /**
+     * Returns the first row after executing a prepared statement.
+     * @param $query string prepared statement
+     * @param array $data data for prepared statement
+     * @return false|stdClass
+     */
+    protected static function get_row(string $query, array $data = []): false|\stdClass
     {
         $result = self::query($query, $data);
 
