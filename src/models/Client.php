@@ -25,14 +25,12 @@ class Client extends User
 
         Utility::show($query);
 
-        $result = self::query($query, array('user_id' => $id));
+        $result = self::get_row($query, array('user_id' => $id));
         Utility::show($result);
 
         if (!$result) {
             return false;
         }
-
-        $result = $result[0];
 
         return new Client(
             $result->email,
