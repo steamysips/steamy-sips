@@ -30,4 +30,9 @@ class District
     {
         return $this->name;
     }
+
+    public function getID(): int
+    {
+        return $this->district_id;
+    }
 }
