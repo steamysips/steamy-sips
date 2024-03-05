@@ -105,7 +105,7 @@ class Administrator extends User
         $this->job_title = $job_title;
     }
 
-    public function setSuperAdmin(string $is_super_admin): void
+    public function setSuperAdmin(bool $is_super_admin): void
     {
         $this->is_super_admin = $is_super_admin;
     }
