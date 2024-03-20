@@ -169,9 +169,12 @@ class Review
     {
         // Query the database to check if the review with the given review_id belongs to the user who wrote it
         $query = <<<EOL
-        SELECT COUNT(*) FROM review 
-        WHERE review_id = :review_id 
-        AND product_id = :product_id
+        SELECT COUNT(*) 
+        FROM order_product op
+        JOIN `order` o ON op.order_id = o.order_id
+        JOIN review r ON r.user_id = o.user_id
+        WHERE r.review_id = :review_id 
+        AND op.product_id = :product_id
         EOL;
     
         $result = self::get_row($query, ['product_id' => $product_id, 'review_id' => $review_id]);

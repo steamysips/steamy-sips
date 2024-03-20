@@ -54,7 +54,7 @@ class Order
     {
     // If attributes of the object are invalid, exit
     if (count($this->validate()) > 0) {
-        Utility::show($this->validate());
+        //Utility::show($this->validate());
         return;
     }
 
