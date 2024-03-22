@@ -4,7 +4,8 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
-use Steamy\Model\User;
+use Steamy\Model\Client;
+use Steamy\Model\District;
 
 class Register
 {
@@ -12,30 +13,60 @@ class Register
 
     public function index(): void
     {
-        $user = new User();
-        $data['defaultName'] = ''; // initial value for name before submit
-        $data['defaultPassword'] = ''; // initial value for password before submit
-        $data['defaultConfirmPassword'] = ''; // initial  value for confirm password
+        $data['defaultFirstName'] = "";
+        $data['defaultLastName'] = "";
+        $data['defaultPhoneNumber'] = "";
+        $data['defaultDistrictID'] = 7;
+        $data['defaultStreet'] = "";
+        $data['defaultCity'] = "";
+        $data['defaultEmail'] = "";
+        $data['defaultPassword'] = "";
+        $data['defaultConfirmPassword'] = "";
 
         if (isset($_POST['register_submit'])) {
-            $data['defaultName'] = $_POST['name'];
-            $data['defaultPassword'] = $_POST['password'];
-            $data['defaultConfirmPassword'] = $_POST['confirmPassword'];
+            // sanitize data
+            // update default form values
+            $data['defaultFirstName'] = $_POST['first_name'] ?? "";
+            $data['defaultLastName'] = $_POST['last_name'] ?? "";
+            $data['defaultPhoneNumber'] = $_POST['phone_no'] ?? "";
+            $data['defaultDistrictID'] = $_POST['district'] ?? 1;
+            $data['defaultStreet'] = $_POST['street'] ?? "";
+            $data['defaultCity'] = $_POST['city'] ?? "";
+            $data['defaultEmail'] = $_POST['email'] ?? "";
+            $data['defaultPassword'] = $_POST['password'] ?? "";
+            $data['defaultConfirmPassword'] = $_POST['confirmPassword'] ?? "";
 
-            if ($user->validate($_POST)) {
-                // remove extraneous $post values before insertion to database
-                unset($_POST['register_submit']);
-                unset($_POST['confirmPassword']);
-                $user->insert($_POST);
+            // create a new client object
+            $client = new Client(
+                $data['defaultEmail'],
+                $data['defaultFirstName'],
+                $data['defaultLastName'],
+                $data['defaultPassword'],
+                $data['defaultPhoneNumber'],
+                new District($data['defaultDistrictID']),
+                $data['defaultStreet'],
+                $data['defaultCity']
+            );
+
+            // validate all attributes
+            $data['errors'] = $client->validate();
+
+            // check if passwords do not match
+            if ($data['defaultConfirmPassword'] !== $data['defaultPassword']) {
+                $data['errors']['confirmPassword'] = 'Passwords do not match';
+            }
+
+            // if all data valid, save new record and redirect to login page
+            if (empty($data['errors'])) {
+                $client->save();
                 Utility::redirect('login');
             }
-            $data['errors'] = $user->errors;
         }
 
         $this->view(
             'Register',
             $data,
-            'Login'
+            'Register'
         );
     }
 }
