@@ -37,7 +37,7 @@ trait Controller
 
         // add link tag for stylesheet if it exists
         if (file_exists($view_relative_css_path)) {
-            $template_tags .= "<link rel=\"stylesheet\" href=\"$view_css_path\"></link>";
+            $template_tags .= "<link rel='stylesheet' href='$view_relative_css_path'>";
         }
 
         // get content from view file to be placed in global view template
