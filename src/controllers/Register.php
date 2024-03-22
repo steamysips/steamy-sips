@@ -38,14 +38,14 @@ class Register
 
             // create a new client object
             $client = new Client(
-                $data['defaultEmail'],
-                $data['defaultFirstName'],
-                $data['defaultLastName'],
-                $data['defaultPassword'],
-                $data['defaultPhoneNumber'],
-                new District($data['defaultDistrictID']),
-                $data['defaultStreet'],
-                $data['defaultCity']
+                email: $data['defaultEmail'],
+                first_name: $data['defaultFirstName'],
+                last_name: $data['defaultLastName'],
+                password: $data['defaultPassword'],
+                phone_no: $data['defaultPhoneNumber'],
+                district: new District($data['defaultDistrictID']),
+                street: $data['defaultStreet'],
+                city: $data['defaultCity']
             );
 
             // validate all attributes
