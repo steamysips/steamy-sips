@@ -1,8 +1,8 @@
 <?php
 /**
- * Variables below are defined in controllers/Login.php.
- * @var string $defaultName Default name in registration form
- * @var string $defaultPassword Default password in registration form
+ * Variables below are defined in Login controller
+ * @var string $defaultEmail
+ * @var string $defaultPassword
  */
 
 ?>
@@ -12,28 +12,11 @@
         <div>
             <h1>Sign in</h1>
             <form method="post">
-                <input type="text" name="name" placeholder="Name" aria-label="Name" autocomplete="nickname"
-                       value="<?php
-                       echo $defaultName; ?>" required/>
-
-                <?php
-                if (!empty($errors['name'])) : ?>
-                    <small class="warning"><?php
-                        echo $errors['name'] ?></small>
-                <?php
-                endif; ?>
-
+                <input autofocus type="email" name="email" placeholder="Email" aria-label="Email"
+                       value="<?= $defaultEmail ?>" required/>
 
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
-                       autocomplete="current-password" value="<?php
-                echo $defaultPassword; ?>" required/>
-
-                <?php
-                if (!empty($errors['password'])) : ?>
-                    <small class="warning"><?php
-                        echo $errors['password'] ?></small>
-                <?php
-                endif; ?>
+                       value="<?= $defaultPassword ?>" required/>
 
                 <fieldset>
                     <label for="remember">

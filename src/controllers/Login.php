@@ -4,7 +4,7 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
-use Steamy\Model\User;
+use Steamy\Model\Client;
 
 class Login
 {
@@ -12,44 +12,49 @@ class Login
 
     private array $data;
 
-    private function validateUser($user): bool
+    private function validateUser(): bool
     {
-        if ($user->validate($_POST)) {
-            $user_profile = $user->where($_POST);
+        // default error
+        $this->data['errors']['other'] = 'You have entered a wrong email or password';
 
-            if (empty($user_profile)) {
-                $this->data['errors']['other'] = 'Account does not exist';
-                return false;
-            }
-
-            return true;
+        $client = Client::getByEmail($this->data['defaultEmail']);
+        Utility::show($client);
+        if (empty($client)) {
+            Utility::show("account does not exist");
+            return false;
         }
-        $this->data['errors'] = $user->errors;
-        return false;
+
+        // validate password
+        if (!password_verify($this->data['defaultPassword'], $client->getPassword())) {
+            Utility::show("invalid password");
+            Utility::show($this->data['defaultPassword']);
+            Utility::show($client->getPassword());
+
+            return false;
+        }
+
+        // no errors
+        unset($this->data['errors']['other']);
+        return true;
     }
 
     public function index(): void
     {
-        $user = new User();
-
-        $this->data['defaultName'] = $user->getName();
-        $this->data['defaultPassword'] = $user->getPassword();
+        // initialize default values
+        $this->data['defaultEmail'] = "";
+        $this->data['defaultPassword'] = "";
 
         if (isset($_POST['login_submit'])) {
-            // save values entered by user so that form
-            // maintains its state if an error occurs
-            $this->data['defaultName'] = $_POST['name'];
-            $this->data['defaultPassword'] = $_POST['password'];
+            // TODO: sanitize values
 
-            $user->setName($_POST['name']);
-            $user->setPassword($_POST['password']);
+            // update default form values
+            $this->data['defaultEmail'] = $_POST['email'] ?? "";
+            $this->data['defaultPassword'] = $_POST['password'] ?? "";
 
-            unset($_POST['login_submit']);
-
-            if ($this->validateUser($user)) {
-                // user details are correct
+            // check if credentials are correct
+            if ($this->validateUser()) {
                 // setup session and redirect to dashboard
-                $_SESSION['user'] = $user->getName();
+                $_SESSION['user'] = $this->data['defaultEmail'];
                 Utility::redirect('profile');
             }
         }
