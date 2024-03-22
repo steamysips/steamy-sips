@@ -125,12 +125,14 @@
                             endif; ?>
                         </div>
                     </div>
-                    <label>
-                        <small>Show password</small>
-                        <input type="checkbox" onclick="togglePasswordVisibility()">
-                    </label>
                 </fieldset>
 
+                <fieldset>
+                    <label>
+                        <input type="checkbox" role="switch" onclick="togglePasswordVisibility()">
+                        Show password
+                    </label>
+                </fieldset>
                 <button type="submit" name="register_submit">Register</button>
                 <small>Already have an account? <a href="<?= ROOT ?>/login">Login</a></small>
             </form>
