@@ -59,11 +59,21 @@ class Client extends User
             $result->street,
             $result->city
         );
+        $client->setUserID($result->user_id);
 
         // store hash of true password
         $client->setPassword($result->password);
 
         return $client;
+    }
+
+    public function deleteUser(): void
+    {
+        // delete record from client table
+        $this->delete($this->user_id, 'client', 'user_id');
+
+        // delete record from user table
+        $this->delete($this->user_id, 'user', 'user_id');
     }
 
     public function save(): void
@@ -97,6 +107,11 @@ class Client extends User
 
         // perform insertion to client table
         $this->insert($client_data, $this->table);
+    }
+
+    public function getAddress(): string
+    {
+        return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
     }
 
     public function validate(): array
