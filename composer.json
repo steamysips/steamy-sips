@@ -2,6 +2,18 @@
   "name": "creme332/steamy-sips",
   "type": "project",
   "description": "A coffee shop website built using LAMP stack.",
+  "authors": [
+    {
+      "name": "creme332",
+      "email": "c34560814@gmail.com",
+      "role": "Lead Developer"
+    },
+    {
+      "name": "Divyesh Jokhoo",
+      "email": "divjok28@outlook.com",
+      "role": "Lead Developer"
+    }
+  ],
   "homepage": "https://github.com/creme332/steamy-sips",
   "license": "CC-BY-SA-4.0",
   "require": {
