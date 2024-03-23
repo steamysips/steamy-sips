@@ -38,11 +38,11 @@ class Product
     public function toArray(): array
     {
         return
-            (array)[
+            [
                 'product_id' => $this->product_id,
                 'name' => $this->name,
                 'calories' => $this->calories,
-                'stocl_level' => $this->stock_level,
+                'stock_level' => $this->stock_level,
                 'img_url' => $this->img_url,
                 'image_alt_text' => $this->image_alt_text,
                 'category' => $this->category,
@@ -50,6 +50,7 @@ class Product
                 'description' => $this->description
             ];
     }
+
     public function getProductID(): int
     {
         return $this->product_id;
@@ -142,69 +143,72 @@ class Product
 
     public function save(): void
     {
-    // If attributes of the object are invalid, exit
-    if (count($this->validate()) > 0) {
-        Utility::show($this->validate());
-        return;
+        // If attributes of the object are invalid, exit
+        if (count($this->validate()) > 0) {
+            Utility::show($this->validate());
+            return;
+        }
+
+        // Get data to be inserted into the product table
+        $productData = $this->toArray();
+        unset($productData['product_id']); // Remove product_id as it's auto-incremented
+
+        // Perform insertion to the product table
+        $this->insert($productData, 'product');
     }
-
-    // Get data to be inserted into the product table
-    $productData = $this->toArray();
-    unset($productData['product_id']); // Remove product_id as it's auto-incremented
-
-    // Perform insertion to the product table
-    $this->insert($productData, 'product'); 
-    } 
 
     public function validate(): array
     {
         $errors = [];
-    
+
         // Validate name
         if (empty($this->name)) {
             $errors['name'] = "Product name is required";
         }
-    
+
         // Validate calories
         if ($this->calories < 0) {
             $errors['calories'] = "Calories must be non-negative";
         }
-    
+
         // Validate stock level
         if ($this->stock_level < 0) {
             $errors['stock_level'] = "Stock level must be non-negative";
         }
-    
+
         // Validate img_url
         if (!preg_match('/\.(png|jpeg|avif)$/', $this->img_url)) {
             $errors['img_url'] = "Image URL must end with .png, .jpeg, or .avif";
         }
-    
+
         // Validate img_alt_text
         $altTextLength = strlen($this->image_alt_text);
         if ($altTextLength < 5 || $altTextLength > 150) {
             $errors['img_alt_text'] = "Image alternative text must be between 5 and 150 characters";
         }
-    
+
         // Validate category
         if (strlen($this->category) === 0) {
             $errors['category'] = "Category must have length greater than 0";
         }
-    
+
         // Validate price
         if ($this->price <= 0) {
             $errors['price'] = "Price must be greater than 0";
         }
-    
+
         // Validate description
         if (strlen($this->description) === 0) {
             $errors['description'] = "Description must have length greater than 0";
         }
-    
+
         return $errors;
     }
-    
 
+
+    /**
+     * @throws Exception
+     */
     public function getReviews(): array
     {
         // Initialize an empty array to store review objects
@@ -230,5 +234,5 @@ class Product
 
         return $reviews;
     }
-    
+
 }

@@ -3,8 +3,9 @@
 namespace Steamy\Model;
 
 use DateTime;
+use Exception;
 use Steamy\Core\Model;
-use Steamy\Core\Utility;
+
 class Order
 {
     use Model;
@@ -12,13 +13,16 @@ class Order
     private int $order_id;
     private string $status;
     private DateTime $created_date;
-    private ?DateTime $pickup_date; //?DateTime type allows $pickup_date to be null, providing flexibility when working with orders.
+    private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private string $street;
     private string $city;
     private District $district;
     private float $total_price;
     private int $user_id;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(int $order_id)
     {
         $record = $this->first(['order_id' => $order_id]);
@@ -37,7 +41,7 @@ class Order
     public function toArray(): array
     {
         return
-            (array)[
+            [
                 'order_id' => $this->order_id,
                 'status' => $this->status,
                 'created_date' => $this->created_date,
@@ -52,27 +56,20 @@ class Order
 
     public function save(): void
     {
-    // If attributes of the object are invalid, exit
-    if (count($this->validate()) > 0) {
-        //Utility::show($this->validate());
-        return;
+        // If attributes of the object are invalid, exit
+        if (count($this->validate()) > 0) {
+            return;
+        }
+
+        // Get data to be inserted into the order table
+        $order_data = $this->toArray();
+        unset($order_data['order_id']); // Remove order_id as it's auto-incremented
+        unset($order_data['status']); // Remove status as it's set to 'pending' by default
+        unset($order_data['pickup_date']); // Remove pickup_date as it's set to NULL by default
+
+        // Perform insertion into the order table
+        $this->insert($order_data, 'order');
     }
-
-    // Get data to be inserted into the order table
-    $order_data = $this->toArray();
-    unset($order_data['order_id']); // Remove order_id as it's auto-incremented
-    unset($order_data['status']); // Remove status as it's set to 'pending' by default
-    unset($order_data['pickup_date']); // Remove pickup_date as it's set to NULL by default
-
-    // Perform insertion into the order table
-    $this->insert($order_data, 'order');
-
-    $inserted_record = self::first($order_data, 'order');
-
-    if (!$inserted_record) {
-        return;
-    }
-}
 
     public function getOrderID(): int
     {
@@ -200,7 +197,6 @@ class Order
 
         return $products;
     }
-
 
 
 }
