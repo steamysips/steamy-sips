@@ -131,14 +131,13 @@ trait Model
      * Delete a record from the table
      * @param mixed $id value of column name in WHERE clause.
      * @param string $table_name Name of table. Defaults to $this->table.
-     * @param string $id_column primary key of table or name of column in WHERE clause.
+     * @param string $id_column_name primary key of table or name of column in WHERE clause.
      * @return void
      */
-    protected function delete(mixed $id, string $table_name, string $id_column = 'id'): void
+    protected function (mixed $id, string $table_name, string $id_column_name = 'id'): void
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
-
-        $query = "DELETE FROM $table_name WHERE $id_column = :id";
-        self::query($query, array($id_column => $id));
+        $query = "DELETE FROM $table_name WHERE $id_column_name = :id";
+        self::query($query, array('id' => $id));
     }
 }
