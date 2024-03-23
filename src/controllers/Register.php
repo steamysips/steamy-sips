@@ -41,15 +41,21 @@ class Register
                 email: $data['defaultEmail'],
                 first_name: $data['defaultFirstName'],
                 last_name: $data['defaultLastName'],
-                password: $data['defaultPassword'],
+                plain_password: $data['defaultPassword'],
                 phone_no: $data['defaultPhoneNumber'],
                 district: new District($data['defaultDistrictID']),
                 street: $data['defaultStreet'],
                 city: $data['defaultCity']
             );
 
-            // validate all attributes
+            // validate all attributes, except password
             $data['errors'] = $client->validate();
+
+            // validate plain text password
+            $password_errors = Client::validatePlainPassword($data['defaultPassword']);
+            if (!empty($password_errors)) {
+                $data['errors']['password'] = $password_errors [0];
+            }
 
             // check if passwords do not match
             if ($data['defaultConfirmPassword'] !== $data['defaultPassword']) {
