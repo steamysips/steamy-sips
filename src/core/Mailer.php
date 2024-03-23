@@ -5,7 +5,13 @@ namespace Steamy\Core;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
+use Steamy\Model\Client;
 
+/**
+ * Class for sending mails to clients
+ *
+ * Reference: https://github.com/PHPMailer/PHPMailer/blob/master/examples/gmail.phps
+ */
 class Mailer
 {
     private PHPMailer $mail;
@@ -47,45 +53,36 @@ class Mailer
         $this->mail->SMTPAuth = true;
 
         //Username to use for SMTP authentication - use full email address for gmail
-        $this->mail->Username = 'example@gmail.com';
+        $this->mail->Username = $_ENV['BUSINESS_GMAIL'];
 
         //Password to use for SMTP authentication
-        $this->mail->Password = 'app-password';
+        $this->mail->Password = $_ENV['BUSINESS_GMAIL_PASSWORD'];
 
         //Set who the message is to be sent from
         //Note that with gmail you can only use your account address (same as `Username`)
-        //or predefined aliases that you have configured within your account.
-        //Do not use user-submitted addresses in here
-        $this->mail->setFrom('rhog1867@gmail.com', 'Steamy Sips');
+        $this->mail->setFrom($_ENV['BUSINESS_GMAIL'], 'Steamy Sips');
     }
 
     /**
      * @throws Exception
      */
-    public function sendMail(): void
+    public function sendMail(Client $client): void
     {
         //Set who the message is to be sent to
-        $this->mail->addAddress('cosmiczorve@gmail.com', 'John Doe');
+        $this->mail->addAddress($client->getEmail(), $client->getFullName());
 
         //Set the subject line
         $this->mail->Subject = 'PHPMailer GMail SMTP test';
 
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
-        $this->mail->msgHTML('helloe world');
+        $this->mail->msgHTML('hello world');
 
         //Replace the plain text body with one created manually
         $this->mail->AltBody = 'This is a plain-text message body';
 
-        //Attach an image file
-//        $this->mail->addAttachment('images/phpmailer_mini.png');
-
-        //send the message, check for errors
-        if (!$this->mail->send()) {
-            echo 'Mailer Error: ' . $this->mail->ErrorInfo;
-        } else {
-            echo 'Message sent!';
-        }
+        //send the message
+        $this->mail->send();
     }
 }
 
