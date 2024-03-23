@@ -14,12 +14,12 @@ class Administrator extends User
         string $email,
         string $first_name,
         string $last_name,
-        string $password,
+        string $plain_password,
         string $phone_no,
         string $job_title,
         bool $is_super_admin
     ) {
-        parent::__construct($email, $first_name, $last_name, $password, $phone_no);
+        parent::__construct($email, $first_name, $last_name, $plain_password, $phone_no);
         $this->job_title = $job_title;
         $this->is_super_admin = $is_super_admin;
     }

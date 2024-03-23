@@ -7,41 +7,73 @@ use Steamy\Core\Utility;
 class Client extends User
 {
     protected string $table = 'client';
-
     private District $district;
-
     private string $street;
-
     private string $city;
 
-    public static function getByID(int $id): Client|false
+    public function __construct(
+        string $email,
+        string $first_name,
+        string $last_name,
+        string $plain_password,
+        string $phone_no,
+        District $district,
+        string $street,
+        string $city
+    ) {
+        parent::__construct($email, $first_name, $last_name, $plain_password, $phone_no);
+        $this->district = $district;
+        $this->street = $street;
+        $this->city = $city;
+    }
+
+    /**
+     * Returns a Client object for a given email. If email not found,
+     * false is returned.
+     *
+     * @param string $email email of client
+     * @return Client|false
+     */
+    public static function getByEmail(string $email): Client|false
     {
         $query = <<<EOL
         SELECT * FROM user
         INNER JOIN client
         ON user.user_id = client.user_id
-        WHERE user.user_id = :user_id;
+        WHERE user.email = :email;
         EOL;
 
-        Utility::show($query);
-
-        $result = self::get_row($query, array('user_id' => $id));
-        Utility::show($result);
+        $result = self::get_row($query, array("email" => $email));
 
         if (!$result) {
             return false;
         }
 
-        return new Client(
+        $client = new Client(
             $result->email,
             $result->first_name,
             $result->last_name,
-            $result->password,
+            "dummy-password", // a dummy is used since original password is unknown
             $result->phone_no,
             new District($result->district_id),
             $result->street,
             $result->city
         );
+        $client->setUserID($result->user_id);
+
+        // store hash of true password
+        $client->setPassword($result->password);
+
+        return $client;
+    }
+
+    public function deleteUser(): void
+    {
+        // delete record from client table
+        $this->delete($this->user_id, 'client', 'user_id');
+
+        // delete record from user table
+        $this->delete($this->user_id, 'user', 'user_id');
     }
 
     public function save(): void
@@ -53,11 +85,8 @@ class Client extends User
         }
 
         // get data to be inserted to user table
-        $user_data = $this->toArray();
+        $user_data = parent::toArray();
         unset($user_data['user_id']);
-        unset($user_data['district']);
-        unset($user_data['street']);
-        unset($user_data['city']);
 
         // perform insertion to user table
         $this->insert($user_data, 'user');
@@ -69,7 +98,7 @@ class Client extends User
         }
 
         // get data to be inserted to client table
-        $client_data = (array)[
+        $client_data = [
             'user_id' => $inserted_record->user_id,
             'street' => $this->street,
             'city' => $this->city,
@@ -80,6 +109,10 @@ class Client extends User
         $this->insert($client_data, $this->table);
     }
 
+    public function getAddress(): string
+    {
+        return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
+    }
 
     public function validate(): array
     {
@@ -99,22 +132,6 @@ class Client extends User
         }
 
         return $errors;
-    }
-
-    public function __construct(
-        string $email,
-        string $first_name,
-        string $last_name,
-        string $password,
-        string $phone_no,
-        District $district,
-        string $street,
-        string $city
-    ) {
-        parent::__construct($email, $first_name, $last_name, $password, $phone_no);
-        $this->district = $district;
-        $this->street = $street;
-        $this->city = $city;
     }
 
     public function toArray(): array

@@ -40,6 +40,6 @@ class Utility
     public static function redirect(string $path): void
     {
         header("Location: " . ROOT . "/" . $path);
-        die;
+        die();
     }
 }
