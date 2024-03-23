@@ -96,6 +96,12 @@
                     <legend><strong>Account information</strong></legend>
                     <label for="email">Email</label>
                     <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required/>
+                    <?php
+                    if (!empty($errors['email'])) : ?>
+                        <small class="warning"><?= $errors['email'] ?></small>
+                    <?php
+                    endif;
+                    ?>
 
                     <div class="grid">
                         <div class="container">

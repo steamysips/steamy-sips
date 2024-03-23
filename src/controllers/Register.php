@@ -51,6 +51,11 @@ class Register
             // validate all attributes, except password
             $data['errors'] = $client->validate();
 
+            // check if email already exists
+            if (!empty(Client::getByEmail($client->getEmail()))) {
+                $data['errors']['email'] = "Email already in use";
+            }
+
             // validate plain text password
             $password_errors = Client::validatePlainPassword($data['defaultPassword']);
             if (!empty($password_errors)) {
