@@ -168,4 +168,9 @@ abstract class User
     {
         return $this->user_id;
     }
+
+    public function setUserID(int $new_id): void
+    {
+        $this->user_id = $new_id;
+    }
 }
