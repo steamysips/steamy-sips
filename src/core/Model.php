@@ -134,7 +134,7 @@ trait Model
      * @param string $id_column_name primary key of table or name of column in WHERE clause.
      * @return void
      */
-    protected function (mixed $id, string $table_name, string $id_column_name = 'id'): void
+    protected function delete(mixed $id, string $table_name, string $id_column_name = 'id'): void
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
         $query = "DELETE FROM $table_name WHERE $id_column_name = :id";
