@@ -75,10 +75,17 @@ DB_HOST="localhost"
 DB_NAME="cafe"
 DB_USERNAME="root"
 DB_PASSWORD=""
+BUSINESS_GMAIL=""
+BUSINESS_GMAIL_PASSWORD=""
 ```
 
 Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
 If your Apache server is serving from a port other than the default one, update `DEV_ROOT`.
+
+`BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
+whenever a client places an order. It is recommended to use
+a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
+for `BUSINESS_GMAIL_PASSWORD` instead of your actual gmail account password.
 
 ## Setup linting and formatting
 
