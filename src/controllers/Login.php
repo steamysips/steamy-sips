@@ -17,19 +17,15 @@ class Login
         // default error
         $this->data['errors']['other'] = 'You have entered a wrong email or password';
 
+        // fetch client record
         $client = Client::getByEmail($this->data['defaultEmail']);
-        Utility::show($client);
+
         if (empty($client)) {
-            Utility::show("account does not exist");
             return false;
         }
 
         // validate password
-        if (!password_verify($this->data['defaultPassword'], $client->getPassword())) {
-            Utility::show("invalid password");
-            Utility::show($this->data['defaultPassword']);
-            Utility::show($client->getPassword());
-
+        if ($client->verifyPassword($this->data['defaultPassword'])) {
             return false;
         }
 
