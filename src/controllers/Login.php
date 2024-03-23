@@ -49,8 +49,14 @@ class Login
 
             // check if credentials are correct
             if ($this->validateUser()) {
-                // setup session and redirect to dashboard
+                // store user email in session
                 $_SESSION['user'] = $this->data['defaultEmail'];
+
+                // regenerate session id for security purposes
+                // Reference: https://stackoverflow.com/a/34206189/17627866
+                session_regenerate_id();
+
+                // redirect user to his profile
                 Utility::redirect('profile');
             }
         }
