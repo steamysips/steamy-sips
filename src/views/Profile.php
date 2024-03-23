@@ -4,19 +4,19 @@
     <form action="">
         <label class="grid">
             Name:
-            <input value="john" type="text" disabled>
+            <input value="<?= $name ?>" type="text" disabled>
         </label>
 
 
         <label class="grid">
             Email:
-            <input value="john@gmail.com" type="text" disabled>
+            <input value="<?= $email ?>" type="email" disabled>
         </label>
 
 
         <label class="grid">
             Address:
-            <input value="Mauritius" type="text" disabled>
+            <input value="<?= $address ?>" type="text" disabled>
         </label>
         <button disabled>Edit</button>
     </form>
@@ -93,7 +93,7 @@
                     irreversible.</h6>
             </hgroup>
             <form method="post">
-                <button type="submit" name="account_delete_submit" disabled>Delete</button>
+                <button type="submit" name="account_delete_submit">Delete</button>
             </form>
         </article>
     </div>
