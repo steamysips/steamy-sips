@@ -136,7 +136,7 @@ abstract class User
      */
     public function verifyPassword(string $plain_password): bool
     {
-        return password_verify($this->password, $plain_password);
+        return password_verify($plain_password, $this->password);
     }
 
     public function getEmail(): string

@@ -20,12 +20,12 @@ class Login
         // fetch client record
         $client = Client::getByEmail($this->data['defaultEmail']);
 
-        if (empty($client)) {
+        if (!$client) {
             return false;
         }
 
         // validate password
-        if ($client->verifyPassword($this->data['defaultPassword'])) {
+        if (!$client->verifyPassword($this->data['defaultPassword'])) {
             return false;
         }
 
