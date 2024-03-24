@@ -53,35 +53,6 @@ class Review
             ];
     }
 
-    public function asNested(int $productId): array
-    {
-        // Fetch all reviews for the given product ID
-        $reviews = $this->query("SELECT * FROM review WHERE product_id = :product_id", ['product_id' => $productId]);
-
-        // Create an associative array to store reviews by their review_id
-        $reviewMap = [];
-        foreach ($reviews as $review) {
-            $reviewMap[$review->review_id] = $review;
-            $reviewMap[$review->review_id]->children = [];
-        }
-
-        // Populate the children array for each review based on parent_review_id
-        foreach ($reviews as $review) {
-            if ($review->parent_review_id !== null) {
-                // Add the review as a child to its parent review
-                $reviewMap[$review->parent_review_id]->children[] = $reviewMap[$review->review_id];
-            }
-        }
-
-        // Filter out reviews that have a parent (i.e., retain only root-level reviews)
-        $nestedReviews = array_filter($reviewMap, function ($review) {
-            return $review->parent_review_id === null;
-        });
-
-        // Reset the keys of the array to maintain continuity
-        return array_values($nestedReviews);
-    }
-
     public function getReviewID(): int
     {
         return $this->review_id;
