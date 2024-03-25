@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use Steamy\Core\Utility;
@@ -80,7 +82,7 @@ class Administrator extends User
         }
 
         // get data to be inserted to administrator table
-        $admin_data = (array)[
+        $admin_data = [
             'user_id' => $inserted_record->user_id,
             'job_title' => $this->job_title,
             'is_super_admin' => $this->is_super_admin ? 1 : 0
@@ -105,7 +107,7 @@ class Administrator extends User
         $this->job_title = $job_title;
     }
 
-    public function setSuperAdmin(string $is_super_admin): void
+    public function setSuperAdmin(bool $is_super_admin): void
     {
         $this->is_super_admin = $is_super_admin;
     }

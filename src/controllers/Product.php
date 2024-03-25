@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
@@ -29,7 +31,7 @@ class Product
             // if product was not found, display error page
             $this->view(
                 '404',
-                template_title: 'Not found'
+                template_title: 'Product not found'
             );
             return;
         }
@@ -73,7 +75,7 @@ class Product
         $this->view(
             'Product',
             $data,
-            'Product name'
+            $data["product"]->name . ' | Steamy Sips'
         );
     }
 }

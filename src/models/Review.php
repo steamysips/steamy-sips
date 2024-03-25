@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use DateTime;
@@ -33,7 +35,7 @@ class Review
         $this->review_id = $record->review_id;
         $this->user_id = $record->user_id;
         $this->product_id = $record->product_id;
-        $this->parent_review_id = $record->parent_review_id ?: null;
+        $this->parent_review_id = $record->parent_review_id;
         $this->text = htmlspecialchars_decode(strip_tags($record->text));
         $this->rating = $record->rating;
         $this->date = new DateTime($record->date);

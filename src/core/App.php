@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Core;
 
 use Steamy\Controller\_404;
