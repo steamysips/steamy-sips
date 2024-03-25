@@ -8,30 +8,35 @@ use \Steamy\Model\District;
 
 final class ClientTest extends TestCase
 {
+    private ?Client $dummy_client;
+
+    public function setUp(): void
+    {
+        $this->dummy_client = new Client(
+            "john@gmail.com", "john", "johhny", "abcd",
+            "13213431", new District(1), "Royal Road", "Curepipe"
+        );
+    }
+
+    public function tearDown(): void
+    {
+        $this->dummy_client = null;
+    }
 
     public function testConstructor(): void
     {
-        $client = new Client(
-            "john@gmail.com", "john", "johhny", "abcd",
-            "11", new District(1), "Royal Road", "Curepipe"
-        );
-
         // check if fields were correctly set
-        self::assertEquals("john@gmail.com", $client->getEmail());
-        self::assertEquals("john", $client->getFirstName());
-        self::assertEquals("johhny", $client->getLastName());
-        self::assertEquals("11", $client->getPhoneNo());
-        self::assertEquals("Royal Road, Curepipe, Moka", $client->getAddress());
+        self::assertEquals(-1, $this->dummy_client->getUserID());
+        self::assertEquals("john@gmail.com", $this->dummy_client->getEmail());
+        self::assertEquals("john", $this->dummy_client->getFirstName());
+        self::assertEquals("johhny", $this->dummy_client->getLastName());
+        self::assertEquals("13213431", $this->dummy_client->getPhoneNo());
+        self::assertEquals("Royal Road, Curepipe, Moka", $this->dummy_client->getAddress());
     }
 
     public function testToArray(): void
     {
-        $client = new Client(
-            "john@gmail.com", "john", "johhny", "abcd",
-            "11", new District(1), "Royal Road", "Curepipe"
-        );
-
-        $result = $client->toArray();
+        $result = $this->dummy_client->toArray();
 
         // check if all required keys are present
         $this->assertArrayHasKey('user_id', $result);
@@ -48,7 +53,7 @@ final class ClientTest extends TestCase
         self::assertEquals("john@gmail.com", $result['email']);
         self::assertEquals("john", $result['first_name']);
         self::assertEquals("johhny", $result['last_name']);
-        self::assertEquals("11", $result['phone_no']);
+        self::assertEquals("13213431", $result['phone_no']);
         self::assertEquals("Royal Road", $result['street']);
         self::assertEquals("Curepipe", $result['city']);
         self::assertEquals("Moka", $result['district']);
@@ -78,20 +83,38 @@ final class ClientTest extends TestCase
 
     public function testVerifyPassword()
     {
-        $client = new Client(
-            "john@gmail.com", "john", "johhny", "abcd",
-            "11", new District(1), "Royal Road", "Curepipe"
-        );
-
         // verify true password
-        $this->assertTrue($client->verifyPassword("abcd"));
+        $this->assertTrue($this->dummy_client->verifyPassword("abcd"));
 
         // reject empty string
-        $this->assertNotTrue($client->verifyPassword(""));
+        $this->assertNotTrue($this->dummy_client->verifyPassword(""));
 
         // reject any other string
-        $this->assertNotTrue($client->verifyPassword("abcde"));
-        $this->assertNotTrue($client->verifyPassword("abcd "));
-        $this->assertNotTrue($client->verifyPassword(" abcd"));
+        $this->assertNotTrue($this->dummy_client->verifyPassword("abcde"));
+        $this->assertNotTrue($this->dummy_client->verifyPassword("abcd "));
+        $this->assertNotTrue($this->dummy_client->verifyPassword(" abcd"));
+    }
+
+    public function testGetByEmail()
+    {
+        // test for valid email
+
+        // save dummy record to database
+        $this->dummy_client->save();
+
+        $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
+        self::assertTrue($fetched_client->getUserID() > -1);
+        self::assertEquals("john@gmail.com", $fetched_client->getEmail());
+        self::assertEquals("john", $fetched_client->getFirstName());
+        self::assertEquals("johhny", $fetched_client->getLastName());
+        self::assertEquals("13213431", $fetched_client->getPhoneNo());
+        self::assertEquals("Royal Road, Curepipe, Moka", $fetched_client->getAddress());
+
+        // delete dummy record
+        $fetched_client->deleteUser();
+
+        // test for invalid email
+        $fetched_client = Client::getByEmail("john@gmail.com");
+        self::assertFalse($fetched_client);
     }
 }
