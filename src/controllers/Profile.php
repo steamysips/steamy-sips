@@ -10,16 +10,26 @@ class Profile
 {
     use Controller;
 
-    private Client $client;
+    private ?Client $signed_client; // currently signed in client
     private array $data;
 
     public function __construct()
     {
+        $this->signed_client = null;
+
         // filter out unsigned users
         $this->handleUnsignedUsers();
 
-        // fetch user details from database
-        $this->client = Client::getByEmail($_SESSION['user']);
+        // at this point, we know that current user was previously signed in
+
+        // fetch his user details from database
+        $client_record = Client::getByEmail($_SESSION['user']);
+        if ($client_record) {
+            $this->signed_client = $client_record;
+        } else {
+            // if user record is missing from database, redirect to login page
+            Utility::redirect('login');
+        }
     }
 
     private function handleLogOut(): void
@@ -38,13 +48,13 @@ class Profile
     private function handleAccountDeletion(): void
     {
         // delete user account if delete button clicked
-        $this->client->deleteUser();
+        $this->signed_client->deleteUser();
         $this->handleLogOut();
     }
 
     /**
-     * Check if current user is signed in and if not redirects
-     * him to login page
+     * Checks if there is session data stored about current user. If so, this means that client is signed in.
+     * If not signed in, redirect user to login page.
      *
      * @return void
      */
@@ -80,9 +90,9 @@ class Profile
         );
 
         // initialize user details for template
-        $this->data["name"] = $this->client->getFullName();
-        $this->data["email"] = $this->client->getEmail();
-        $this->data["address"] = $this->client->getAddress();
+        $this->data["name"] = $this->signed_client->getFullName();
+        $this->data["email"] = $this->signed_client->getEmail();
+        $this->data["address"] = $this->signed_client->getAddress();
 
         $this->view(
             'Profile',
