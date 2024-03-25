@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * TODO: Update me after database creation
  * @var array{

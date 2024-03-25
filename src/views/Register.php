@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Variables below are defined and initialized in Register controller.
  * @var string $defaultFirstName

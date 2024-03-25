@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use Steamy\Core\Model;
@@ -40,7 +42,7 @@ abstract class User
     public function toArray(): array
     {
         return
-            (array)[
+            [
                 'user_id' => $this->user_id,
                 'email' => $this->email,
                 'first_name' => $this->first_name,

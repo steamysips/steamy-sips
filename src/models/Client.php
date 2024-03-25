@@ -1,15 +1,15 @@
 <?php
 
-namespace Steamy\Model;
+declare(strict_types=1);
 
-use Steamy\Core\Utility;
+namespace Steamy\Model;
 
 class Client extends User
 {
     protected string $table = 'client';
-    private District $district;
-    private string $street;
-    private string $city;
+    private District $district; // name of district where client lives
+    private string $street; // name of street where client lives
+    private string $city; // name of city where client lives
 
     public function __construct(
         string $email,
@@ -67,6 +67,11 @@ class Client extends User
         return $client;
     }
 
+    /**
+     * Deletes user from database
+     *
+     * @return void
+     */
     public function deleteUser(): void
     {
         // delete record from client table
@@ -76,11 +81,15 @@ class Client extends User
         $this->delete($this->user_id, 'user', 'user_id');
     }
 
+    /**
+     * Saves user to database if user attributes are valid
+     *
+     * @return void
+     */
     public function save(): void
     {
         // if attributes of object are invalid, exit
         if (count($this->validate()) > 0) {
-            Utility::show($this->validate());
             return;
         }
 
@@ -109,11 +118,20 @@ class Client extends User
         $this->insert($client_data, $this->table);
     }
 
+    /**
+     * Returns address of user
+     * @return string String containing street name, city name, and district name
+     */
     public function getAddress(): string
     {
         return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
     }
 
+    /**
+     * Validates attributes of current user and returns an array of errors.
+     *
+     * @return array Associative array indexed by attribute name containing errors
+     */
     public function validate(): array
     {
         $errors = parent::validate(); // list of errors
@@ -134,6 +152,10 @@ class Client extends User
         return $errors;
     }
 
+    /**
+     * Converts user object to an array
+     * @return array Associative array indexed by attribute name
+     */
     public function toArray(): array
     {
         $base_array = parent::toArray();
@@ -143,5 +165,4 @@ class Client extends User
 
         return $base_array;
     }
-    // TODO: Add getters + setters
 }

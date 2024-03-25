@@ -24,7 +24,7 @@
     "opis/json-schema": "^2.3"
   },
   "scripts": {
-    "test": "phpunit --bootstrap src/core/config.php tests"
+    "test": "phpunit tests"
   },
   "autoload": {
     "psr-4": {

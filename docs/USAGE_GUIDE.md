@@ -21,7 +21,7 @@ Go to http://localhost/steamy-sips/public/ in your browser to see the website.
 
 ## Run tests
 
-To run tests:
+Assuming that your MySQL database is running, to run tests:
 
 ```bash
 composer test

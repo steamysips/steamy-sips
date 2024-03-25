@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use DateTime;
@@ -33,7 +35,7 @@ class Review
         $this->review_id = $record->review_id;
         $this->user_id = $record->user_id;
         $this->product_id = $record->product_id;
-        $this->parent_review_id = $record->parent_review_id ?: null;
+        $this->parent_review_id = $record->parent_review_id;
         $this->text = htmlspecialchars_decode(strip_tags($record->text));
         $this->rating = $record->rating;
         $this->date = new DateTime($record->date);
@@ -51,35 +53,6 @@ class Review
                 'date' => $this->date,
                 'rating' => $this->rating
             ];
-    }
-
-    public function asNested(int $productId): array
-    {
-        // Fetch all reviews for the given product ID
-        $reviews = $this->query("SELECT * FROM review WHERE product_id = :product_id", ['product_id' => $productId]);
-
-        // Create an associative array to store reviews by their review_id
-        $reviewMap = [];
-        foreach ($reviews as $review) {
-            $reviewMap[$review->review_id] = $review;
-            $reviewMap[$review->review_id]->children = [];
-        }
-
-        // Populate the children array for each review based on parent_review_id
-        foreach ($reviews as $review) {
-            if ($review->parent_review_id !== null) {
-                // Add the review as a child to its parent review
-                $reviewMap[$review->parent_review_id]->children[] = $reviewMap[$review->review_id];
-            }
-        }
-
-        // Filter out reviews that have a parent (i.e., retain only root-level reviews)
-        $nestedReviews = array_filter($reviewMap, function ($review) {
-            return $review->parent_review_id === null;
-        });
-
-        // Reset the keys of the array to maintain continuity
-        return array_values($nestedReviews);
     }
 
     public function getReviewID(): int

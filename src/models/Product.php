@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use Exception;
@@ -207,6 +209,9 @@ class Product
 
 
     /**
+     * Returns all reviews for product
+     *
+     * @return Review[] An array of Review objects
      * @throws Exception
      */
     public function getReviews(): array
@@ -235,4 +240,43 @@ class Product
         return $reviews;
     }
 
+    /**
+     * Returns an array of reviews where each review has a
+     * `children` attribute but no `parent_review_id` attribute.
+     * The `children` attribute contains an arrays of reviews who are children
+     * of the current review.
+     *
+     * @return array An array of reviews in nested format
+     */
+    public function getNestedReviews(): array
+    {
+        // Fetch all reviews for the given product ID
+        $reviews = $this->query(
+            "SELECT * FROM review WHERE product_id = :product_id",
+            ['product_id' => $this->product_id]
+        );
+
+        // Create an associative array to store reviews by their review_id
+        $reviewMap = [];
+        foreach ($reviews as $review) {
+            $reviewMap[$review->review_id] = $review;
+            $reviewMap[$review->review_id]->children = [];
+        }
+
+        // Populate the children array for each review based on parent_review_id
+        foreach ($reviews as $review) {
+            if ($review->parent_review_id !== null) {
+                // Add the review as a child to its parent review
+                $reviewMap[$review->parent_review_id]->children[] = $reviewMap[$review->review_id];
+            }
+        }
+
+        // Filter out reviews that have a parent (i.e., retain only root-level reviews)
+        $nestedReviews = array_filter($reviewMap, function ($review) {
+            return $review->parent_review_id === null;
+        });
+
+        // Reset the keys of the array to maintain continuity
+        return array_values($nestedReviews);
+    }
 }

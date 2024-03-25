@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Variables below are defined in controllers/Controller.php.
  * @var string $template_tags Additional tags for template

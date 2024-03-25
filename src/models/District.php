@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Steamy\Model;
 
 use Steamy\Core\Model;
@@ -9,14 +11,13 @@ class District
     use Model;
 
     protected string $table = 'district';
-
     private int $district_id;
     private string $name;
 
     public function __construct(int $id)
     {
         $record = $this->first(
-            (array)[
+            [
                 'district_id' => $id,
             ]
         );
