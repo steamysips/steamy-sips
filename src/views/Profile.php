@@ -1,3 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * The following attributes are defined in controllers/Profile.php
+ *
+ * @var $name string full name of client
+ * @var $email string email of client
+ * @var $address string full address of client
+ * @var $orders array array of orders
+ */
+
+?>
+
 <main class="container">
     <h1>Your account</h1>
     <h2>Personal details</h2>
