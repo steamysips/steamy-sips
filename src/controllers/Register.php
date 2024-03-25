@@ -31,7 +31,7 @@ class Register
             $data['defaultFirstName'] = $_POST['first_name'] ?? "";
             $data['defaultLastName'] = $_POST['last_name'] ?? "";
             $data['defaultPhoneNumber'] = $_POST['phone_no'] ?? "";
-            $data['defaultDistrictID'] = $_POST['district'] ?? 1;
+            $data['defaultDistrictID'] = filter_var($_POST['district'], FILTER_VALIDATE_INT) ?? 1;
             $data['defaultStreet'] = $_POST['street'] ?? "";
             $data['defaultCity'] = $_POST['city'] ?? "";
             $data['defaultEmail'] = $_POST['email'] ?? "";
