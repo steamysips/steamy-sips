@@ -21,6 +21,8 @@ class Order
     private District $district;
     private float $total_price;
     private int $user_id;
+    private array $products = []; // Array to store Product objects
+
 
     /**
      * @throws Exception
@@ -198,6 +200,36 @@ class Order
         }
 
         return $products;
+    }
+
+    public function addProduct(Product $product, string $milk_type, int $quantity, string $cup_size): void
+    {
+        $this->products[] = [
+            'product' => $product,
+            'milk_type' => $milk_type,
+            'quantity' => $quantity,
+            'cup_size' => $cup_size
+        ];
+    }
+
+    public function removeProduct(int $index): void
+    {
+        if (isset($this->products[$index])) {
+            unset($this->products[$index]);
+            // Reindex the array after removal
+            $this->products = array_values($this->products);
+        }
+    }
+
+    public function calculateTotalPrice(): float
+    {
+        $totalPrice = 0.0;
+        foreach ($this->products as $item) {
+            $product = $item['product'];
+            $quantity = $item['quantity'];
+            $totalPrice += $product->getPrice() * $quantity;
+        }
+        return $totalPrice;
     }
 
 
