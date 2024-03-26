@@ -22,14 +22,15 @@ declare(strict_types=1);
     <div id="item-grid">
         <?php
         foreach ($products as $product) {
-            $product_href = ROOT . '/shop/products/1';
-            $product_img_src = ROOT . "/assets/coffee.jpg";
+            $product_href = ROOT . '/shop/products/' . $product->product_id;
+            $product_img_src = ROOT . "/assets/img/" . $product->img_url;
             echo <<<EOL
                 <article data-aos="zoom-in">
-                    <img src="$product_img_src" alt="">
-                    <h5>$product->name</h5>
+                    <img src="$product_img_src" alt="$product->img_alt_text">
+                    <a href="$product_href">
+                        <h5>$product->name</h5>
+                    </a>
                     <p>$product->description</p>
-                    <a role="button" href="$product_href" class="contrast">View</a>
                 </article>
                 EOL;
         }

@@ -6,6 +6,7 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
+use Steamy\Model\Product;
 
 /**
  * Displays all products when URL is /shop or /shop/products
@@ -13,6 +14,8 @@ use Steamy\Core\Utility;
 class Shop
 {
     use Controller;
+
+    private array $data;
 
     private function match_keyword($product): bool
     {
@@ -26,15 +29,20 @@ class Shop
         return strtolower($product->name) == strtolower($search_keyword);
     }
 
-    public function index(): void
+    /**
+     * Determines whether Shop controller should handle current URL and deals with invalid URLs.
+     * @return bool True if Shop controller is responsible for handling URL
+     */
+    private function validateURL(): bool
     {
+        // TODO: Move routing logic outside of controller
         $URL = Utility::splitURL();
 
         // check if URL follows format /shop/products/<number>
         if (sizeof($URL) == 3 && $URL[1] == 'products') {
-            // call Product controller
-            (new Product())->index();
-            return;
+            // let Product controller handle this URL
+            (new \Steamy\Controller\Product())->index();
+            return false;
         }
 
         // check if URL does not follow required format /shop or /shop/products
@@ -44,34 +52,30 @@ class Shop
                 '404',
                 template_title: 'Error'
             );
+            return false;
+        }
+
+        return true;
+    }
+
+    public function index(): void
+    {
+        if (!$this->validateURL()) {
             return;
         }
 
         // fetch all products from database
-        $data['products'] = array_fill(
-            0,
-            10,
-            (object)[
-                'name' => 'Espresso',
-                'description' => 'Personalize your coffee blend, selecting from diverse beans, roasts, and flavors
-                 for a truly unique brew tailored to your preferences.',
-                'rating' => 3.1
-            ]
-        );
-        $data['products'][] = (object)[
-            'name' => 'Cafe Express',
-            'description' => 'Personalize your coffee blend, selecting from diverse beans, roasts, and flavors
-                 for a truly unique brew tailored to your preferences.',
-            'rating' => 3.1
-        ];
+        $this->data['products'] = Product::getAll();
 
-        $filtered_array = array_filter($data['products'], array($this, "match_keyword"));
-        $data['products'] = $filtered_array;
-        $data['search_keyword'] = $_GET['keyword'] ?? "";
+        $filtered_array = array_filter($this->data['products'], array($this, "match_keyword"));
+
+        // initialize view variables
+        $this->data['products'] = $filtered_array;
+        $this->data['search_keyword'] = $_GET['keyword'] ?? "";
 
         $this->view(
             'Shop',
-            $data,
+            $this->data,
             'Shop'
         );
     }
