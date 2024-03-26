@@ -1,22 +1,25 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * TODO: Update me after database creation
- * @var $product mixed product information
+ * @var $product Product product information
+ * @var $reviews array array of reviews for current product
  */
+
+use Steamy\Model\Product;
 
 ?>
 <main class="container">
     <div id="product-info" class="grid">
-        <img src="<?= ROOT ?>/assets/img/login-milkshake.avif" alt="">
+        <img src="<?= $product->getImgAbsolutePath() ?>" alt="<?= $product->getImgAltText() ?>">
         <div>
             <hgroup>
-                <h2><?= $product->name ?></h2>
+                <h2><?= $product->getName() ?></h2>
                 <h3>360 calories</h3>
             </hgroup>
             <p>
-                <?= $product->description ?>
+                <?= $product->getDescription() ?>
             </p>
             <h4>Size options</h4>
             <fieldset>
@@ -31,10 +34,6 @@ declare(strict_types=1);
                 <label for="large">
                     <input type="radio" id="large" name="size" value="large">
                     Large
-                </label>
-                <label for="extralarge">
-                    <input type="radio" id="extralarge" name="size" value="extralarge" disabled>
-                    Extra Large
                 </label>
             </fieldset>
             <h4>Customizations</h4>
@@ -57,7 +56,7 @@ declare(strict_types=1);
         </div>
     </div>
 
-    <h2>Customer Reviews (<?= count($product->reviews) ?>)</h2>
+    <h2>Customer Reviews (<?= count($reviews) ?>)</h2>
     <form action="" class="grid">
         <label>
             <input placeholder="Write a new review" type="text">
@@ -120,7 +119,7 @@ declare(strict_types=1);
             }
 
             // print top-level comments
-            foreach ($product->reviews as $review) {
+            foreach ($reviews as $review) {
                 recurse($review);
             }
             ?>

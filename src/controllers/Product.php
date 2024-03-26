@@ -14,20 +14,32 @@ class Product
 {
     use Controller;
 
-    public function index(): void
+    private \Steamy\Model\Product $product;
+    private bool $invalidProductID = false;
+
+    public function __construct()
     {
         // get product id from URL
-        $product_id = Utility::splitURL()[2];
+        $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
 
-        // fetch product data from database
-        $data["product"] = (object)[
-            'name' => 'Espresso',
-            'description' => 'Personalize your coffee blend, selecting from diverse beans, roasts, and flavors
-                 for a truly unique brew tailored to your preferences.',
-            'rating' => 3.1
-        ];
+        if (!$product_id) {
+            $this->invalidProductID = true;
+            return;
+        }
 
-        if ($data["product"] == null) {
+        // fetch product from database
+        $fetched_product = \Steamy\Model\Product::getByID($product_id);
+
+        if (!$fetched_product) {
+            $this->invalidProductID = true;
+        } else {
+            $this->product = $fetched_product;
+        }
+    }
+
+    public function index(): void
+    {
+        if ($this->invalidProductID) {
             // if product was not found, display error page
             $this->view(
                 '404',
@@ -35,12 +47,10 @@ class Product
             );
             return;
         }
-
-        // get average rating of product (calculated in sql)
-        $data["product"]->avg_rating = 3.1;
+        $data["product"] = $this->product;
 
         // get all reviews for product
-        $data["product"]->reviews = array_fill(
+        $data["reviews"] = array_fill(
             0,
             10,
             (object)[
@@ -75,7 +85,7 @@ class Product
         $this->view(
             'Product',
             $data,
-            $data["product"]->name . ' | Steamy Sips'
+            $data["product"]->getName() . ' | Steamy Sips'
         );
     }
 }
