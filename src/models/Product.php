@@ -12,29 +12,61 @@ class Product
 {
     use Model;
 
+    protected string $table = 'product';
+
     private int $product_id;
     private string $name;
     private int $calories;
     private int $stock_level;
     private string $img_url;
-    private string $image_alt_text;
+    private string $img_alt_text;
     private string $category;
     private float $price;
     private string $description;
 
-    public function __construct(int $product_id)
-    {
-        $record = $this->first(['product_id' => $product_id]);
+    public function __construct(
+        string $name,
+        int $calories,
+        int $stock_level,
+        string $img_url,
+        string $img_alt_text,
+        string $category,
+        float $price,
+        string $description
+    ) {
+        $this->product_id = -1; // product_id of a new product is determined by database
+        $this->name = $name;
+        $this->calories = $calories;
+        $this->stock_level = $stock_level;
+        $this->img_url = $img_url;
+        $this->img_alt_text = $img_alt_text;
+        $this->category = $category;
+        $this->price = $price;
+        $this->description = $description;
+    }
 
-        $this->product_id = $record->product_id;
-        $this->name = $record->name;
-        $this->calories = $record->calories;
-        $this->stock_level = $record->stock_level;
-        $this->img_url = $record->img_url;
-        $this->image_alt_text = $record->image_alt_text;
-        $this->category = $record->category;
-        $this->price = $record->price;
-        $this->description = $record->description;
+    public static function getByID(int $product_id): false|Product
+    {
+        $query = "SELECT * FROM product where product_id = :product_id";
+        $record = self::get_row($query, ['product_id' => $product_id]);
+
+        if (!$record) {
+            return false;
+        }
+
+        $product_obj = new Product(
+            $record->name,
+            $record->calories,
+            $record->stock_level,
+            $record->img_url,
+            $record->img_alt_text,
+            $record->category,
+            (float)$record->price,
+            $record->description
+        );
+
+        $product_obj->setProductID($record->product_id);
+        return $product_obj;
     }
 
     public function toArray(): array
@@ -46,11 +78,17 @@ class Product
                 'calories' => $this->calories,
                 'stock_level' => $this->stock_level,
                 'img_url' => $this->img_url,
-                'image_alt_text' => $this->image_alt_text,
+                'img_alt_text' => $this->img_alt_text,
                 'category' => $this->category,
                 'price' => $this->price,
                 'description' => $this->description
             ];
+    }
+
+    public static function getAll(): bool|array
+    {
+        $query = "SELECT * FROM product";
+        return self::query($query);
     }
 
     public function getProductID(): int
@@ -93,7 +131,18 @@ class Product
         $this->stock_level = $stock_level;
     }
 
-    public function getImgUrl(): string
+    /**
+     * @return string Absolute URL of image
+     */
+    public function getImgAbsolutePath(): string
+    {
+        return ROOT . "assets/img" . $this->img_url;
+    }
+
+    /**
+     * @return string Path to image relative to image folder
+     */
+    public function getImgRelativePath(): string
     {
         return $this->img_url;
     }
@@ -103,14 +152,14 @@ class Product
         $this->img_url = $img_url;
     }
 
-    public function getImageAltText(): string
+    public function getImgAltText(): string
     {
-        return $this->image_alt_text;
+        return $this->img_alt_text;
     }
 
-    public function setImageAltText(string $image_alt_text): void
+    public function setImgAltText(string $img_alt_text): void
     {
-        $this->image_alt_text = $image_alt_text;
+        $this->img_alt_text = $img_alt_text;
     }
 
     public function getCategory(): string
@@ -184,7 +233,7 @@ class Product
         }
 
         // Validate img_alt_text
-        $altTextLength = strlen($this->image_alt_text);
+        $altTextLength = strlen($this->img_alt_text);
         if ($altTextLength < 5 || $altTextLength > 150) {
             $errors['img_alt_text'] = "Image alternative text must be between 5 and 150 characters";
         }
