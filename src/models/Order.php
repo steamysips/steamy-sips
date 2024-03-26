@@ -232,5 +232,61 @@ class Order
         return $totalPrice;
     }
 
+    public function toHTML(): string
+    {
+        // Start building the HTML table
+        $html = "<table border='1'>\n";
+        $html .= "<thead>\n";
+        $html .= "<tr>\n";
+        $html .= "<th>Product</th>\n";
+        $html .= "<th>Quantity</th>\n";
+        $html .= "<th>Price per Unit</th>\n";
+        $html .= "<th>Total Price</th>\n";
+        $html .= "</tr>\n";
+        $html .= "</thead>\n";
+        $html .= "<tbody>\n";
+    
+        // Iterate through each product in the order
+        foreach ($this->getProducts() as $product) {
+            // Get the product details
+            $productName = $product->getName();
+            $quantity = $this->getQuantityForProduct($product); // Get the quantity for this product
+            $pricePerUnit = $product->getPrice();
+            $totalPrice = $quantity * $pricePerUnit;
+    
+            // Add a row for the product in the HTML table
+            $html .= "<tr>\n";
+            $html .= "<td>$productName</td>\n";
+            $html .= "<td>[Qty $quantity]</td>\n";
+            $html .= "<td>[$pricePerUnit]</td>\n";
+            $html .= "<td>[$totalPrice]</td>\n";
+            $html .= "</tr>\n";
+        }
+    
+        // Close the HTML table
+        $html .= "</tbody>\n";
+        $html .= "</table>\n";
+    
+        return $html;
+    }
+    
+    private function getQuantityForProduct(Product $product): int
+    {
+        // Query the order_product table to get the quantity for the specified product
+        $query = "SELECT quantity FROM order_product WHERE order_id = :order_id AND product_id = :product_id";
+        $params = ['order_id' => $this->getOrderID(), 'product_id' => $product->getProductID()];
+        $result = $this->query($query, $params);
+    
+        // If there are no results, return 0
+        if (empty($result)) {
+            return 0;
+        }
+    
+        // Otherwise, return the quantity
+        return $result[0]->quantity;
+    }
+    
+
+
 
 }
