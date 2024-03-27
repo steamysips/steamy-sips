@@ -279,4 +279,34 @@ class Product
         // Reset the keys of the array to maintain continuity
         return array_values($nestedReviews);
     }
+
+    public function getAverageRating(): float
+    {
+    // Query the database to get the sum of ratings and the count of verified reviews
+    $query = "SELECT SUM(rating) AS total_rating, COUNT(*) AS review_count
+              FROM review
+              WHERE product_id = :product_id AND parent_review_id IS NULL"; // Exclude child reviews
+    $params = ['product_id' => $this->product_id];
+
+    try {
+        $result = $this->query($query, $params);
+    } catch (Exception $e) {
+        error_log('Error fetching average rating: ' . $e->getMessage());
+        return 0; // Return 0 if there's an error fetching the rating
+    }
+
+    // Calculate the average rating
+    if (!empty($result)) {
+        $totalRating = $result[0]->total_rating;
+        $reviewCount = $result[0]->review_count;
+
+        if ($reviewCount > 0) {
+            $averageRating = $totalRating / $reviewCount;
+            return round($averageRating, 2); // Round to two decimal places
+        }
+    }
+
+    return 0; // No reviews, return 0 as the average rating
+    }
+
 }
