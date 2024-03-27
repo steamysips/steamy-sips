@@ -259,9 +259,9 @@ class Order
             $html .= <<<HTML
                 <tr>
                     <td>$productName</td>
-                    <td>[Qty $quantity]</td>
-                    <td>[\$$pricePerUnit]</td>
-                    <td>[\$$totalPrice]</td>
+                    <td>Qty $quantity</td>
+                    <td>\$$pricePerUnit</td>
+                    <td>\$$totalPrice</td>
                 </tr>
             HTML;
         }
