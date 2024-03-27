@@ -12,7 +12,7 @@ class Product
 {
     use Model;
 
-    private int $product_id;
+    private ?int $product_id = null;
     private string $name;
     private int $calories;
     private int $stock_level;
@@ -22,19 +22,16 @@ class Product
     private float $price;
     private string $description;
 
-    public function __construct(int $product_id)
+    public function __construct(string $name, int $calories, int $stock_level, string $img_url, string $image_alt_text, string $category, float $price, string $description)
     {
-        $record = $this->first(['product_id' => $product_id]);
-
-        $this->product_id = $record->product_id;
-        $this->name = $record->name;
-        $this->calories = $record->calories;
-        $this->stock_level = $record->stock_level;
-        $this->img_url = $record->img_url;
-        $this->image_alt_text = $record->image_alt_text;
-        $this->category = $record->category;
-        $this->price = $record->price;
-        $this->description = $record->description;
+        $this->name = $name;
+        $this->calories = $calories;
+        $this->stock_level = $stock_level;
+        $this->img_url = $img_url;
+        $this->image_alt_text = $image_alt_text;
+        $this->category = $category;
+        $this->price = $price;
+        $this->description = $description;
     }
 
     public function toArray(): array
