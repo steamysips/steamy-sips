@@ -232,5 +232,67 @@ class Order
         return $totalPrice;
     }
 
+    public function toHTML(): string
+    {
+        $html = <<<HTML
+        <table border='1'>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+        HTML;
+    
+        // Iterate through each product in the order
+        foreach ($this->products as $product) {
+            // Get the product details
+            $productName = $product['product']->getName();
+            $quantity = $product['quantity'];
+            $pricePerUnit = $product['product']->getPrice();
+            $totalPrice = $quantity * $pricePerUnit;
+    
+            // Add a row for the product in the HTML table
+            $html .= <<<HTML
+                <tr>
+                    <td>$productName</td>
+                    <td>Qty $quantity</td>
+                    <td>\$$pricePerUnit</td>
+                    <td>\$$totalPrice</td>
+                </tr>
+            HTML;
+        }
+    
+        // Close the HTML table
+        $html .= <<<HTML
+            </tbody>
+        </table>
+        HTML;
+    
+        return $html;
+    }
+    
+    
+    private function getQuantityForProduct(Product $product): int
+    {
+        // Query the order_product table to get the quantity for the specified product
+        $query = "SELECT quantity FROM order_product WHERE order_id = :order_id AND product_id = :product_id";
+        $params = ['order_id' => $this->getOrderID(), 'product_id' => $product->getProductID()];
+        $result = $this->query($query, $params);
+    
+        // If there are no results, return 0
+        if (empty($result)) {
+            return 0;
+        }
+    
+        // Otherwise, return the quantity
+        return $result[0]->quantity;
+    }
+    
+
+
 
 }
