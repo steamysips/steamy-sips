@@ -234,41 +234,47 @@ class Order
 
     public function toHTML(): string
     {
-        // Start building the HTML table
-        $html = "<table border='1'>\n";
-        $html .= "<thead>\n";
-        $html .= "<tr>\n";
-        $html .= "<th>Product</th>\n";
-        $html .= "<th>Quantity</th>\n";
-        $html .= "<th>Price per Unit</th>\n";
-        $html .= "<th>Total Price</th>\n";
-        $html .= "</tr>\n";
-        $html .= "</thead>\n";
-        $html .= "<tbody>\n";
+        $html = <<<HTML
+        <table border='1'>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price per Unit</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+        HTML;
     
         // Iterate through each product in the order
-        foreach ($this->getProducts() as $product) {
+        foreach ($this->products as $product) {
             // Get the product details
-            $productName = $product->getName();
-            $quantity = $this->getQuantityForProduct($product); // Get the quantity for this product
-            $pricePerUnit = $product->getPrice();
+            $productName = $product['product']->getName();
+            $quantity = $product['quantity'];
+            $pricePerUnit = $product['product']->getPrice();
             $totalPrice = $quantity * $pricePerUnit;
     
             // Add a row for the product in the HTML table
-            $html .= "<tr>\n";
-            $html .= "<td>$productName</td>\n";
-            $html .= "<td>[Qty $quantity]</td>\n";
-            $html .= "<td>[$pricePerUnit]</td>\n";
-            $html .= "<td>[$totalPrice]</td>\n";
-            $html .= "</tr>\n";
+            $html .= <<<HTML
+                <tr>
+                    <td>$productName</td>
+                    <td>[Qty $quantity]</td>
+                    <td>[\$$pricePerUnit]</td>
+                    <td>[\$$totalPrice]</td>
+                </tr>
+            HTML;
         }
     
         // Close the HTML table
-        $html .= "</tbody>\n";
-        $html .= "</table>\n";
+        $html .= <<<HTML
+            </tbody>
+        </table>
+        HTML;
     
         return $html;
     }
+    
     
     private function getQuantityForProduct(Product $product): int
     {
