@@ -1,14 +1,13 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * TODO: Update me after database creation
- * @var array{
- *     name:string,
- *     password:string
- * } $products Array of all products as fetched from database
+ * @var Product[] $products Array of all products as fetched from database
  * @var $search_keyword string keyword used to filter products
  */
+
+use Steamy\Model\Product;
 
 ?>
 
@@ -22,15 +21,19 @@ declare(strict_types=1);
     <div id="item-grid">
         <?php
         foreach ($products as $product) {
-            $product_href = ROOT . '/shop/products/' . $product->product_id;
-            $product_img_src = ROOT . "/assets/img/" . $product->img_url;
+            $product_href = ROOT . '/shop/products/' . $product->getProductID(); // link to product page
+            $product_img_src = $product->getImgAbsolutePath(); // url of image
+            $img_alt_text = $product->getImgAltText();
+            $description = $product->getDescription();
+            $name = $product->getName();
+
             echo <<<EOL
                 <article data-aos="zoom-in">
-                    <img src="$product_img_src" alt="$product->img_alt_text">
+                    <img src="$product_img_src" alt="$img_alt_text">
                     <a href="$product_href">
-                        <h5>$product->name</h5>
+                        <h5>$name</h5>
                     </a>
-                    <p>$product->description</p>
+                    <p>$description</p>
                 </article>
                 EOL;
         }

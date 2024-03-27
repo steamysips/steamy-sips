@@ -85,10 +85,31 @@ class Product
             ];
     }
 
-    public static function getAll(): bool|array
+    /**
+     * @return array An array of Product objects
+     */
+    public static function getAll(): array
     {
         $query = "SELECT * FROM product";
-        return self::query($query);
+        $results = self::query($query);
+
+        // convert results to an array of Product
+        $products = [];
+        foreach ($results as $result) {
+            $obj = new Product(
+                $result->name,
+                $result->calories,
+                $result->stock_level,
+                $result->img_url,
+                $result->img_alt_text,
+                $result->category,
+                (float)$result->price,
+                $result->description
+            );
+            $obj->setProductID($result->product_id);
+            $products[] = $obj;
+        }
+        return $products;
     }
 
     public function getProductID(): int
@@ -136,7 +157,7 @@ class Product
      */
     public function getImgAbsolutePath(): string
     {
-        return ROOT . "assets/img" . $this->img_url;
+        return ROOT . "/assets/img/product/" . $this->img_url;
     }
 
     /**
