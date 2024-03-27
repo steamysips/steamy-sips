@@ -17,7 +17,9 @@ Optionally, you can display a live error log:
 sudo tail -f /var/log/apache2/error.log
 ```
 
-Go to http://localhost/steamy-sips/public/ in your browser to see the website.
+Go to http://localhost/steamy-sips/public/ (or the value you have set for `PUBLIC_ROOT` in
+your [`src/core/.env`](../src/core/.env)
+in your browser to see the website.
 
 ## Run tests
 
