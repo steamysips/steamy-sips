@@ -20,26 +20,34 @@ class Order
     private string $city;
     private District $district;
     private float $total_price;
-    private int $user_id;
-    private array $products = []; // Array to store Product objects
+    private Client $client;
+    private array $products = []; // Each element of this array contains the following columns: product, milk_type, quantity, cup_size.
 
 
     /**
      * @throws Exception
      */
-    public function __construct(int $order_id)
+    public function __construct(Client $client, array $products)
     {
-        $record = $this->first(['order_id' => $order_id]);
+        // Set default values
+        $this->order_id = -1;
+        $this->status = "pending";
+        $this->created_date = new DateTime();
+        $this->pickup_date = null;
+        $this->total_price = 0;
+        $this->street = "";
+        $this->city = "";
 
-        $this->order_id = $record->order_id;
-        $this->status = $record->status;
-        $this->created_date = new DateTime($record->created_date);
-        $this->pickup_date = isset($record->pickup_date) ? new DateTime($record->pickup_date) : null;
-        $this->street = $record->street;
-        $this->city = $record->city;
-        $this->district = new District ($record->district);
-        $this->total_price = $record->total_price;
-        $this->user_id = $record->user_id;
+        // Set client attribute
+        $this->client = $client;
+
+        // Set products attribute
+        $this->setProducts($products);
+    }
+
+    public function setProducts(array $products): void
+    {
+        $this->products = $products; // Updated attribute name
     }
 
     public function toArray(): array
@@ -54,7 +62,7 @@ class Order
                 'city' => $this->city,
                 'district' => $this->district,
                 'total_price' => $this->total_price,
-                'user_id' => $this->user_id
+                'client' => $this->client->toArray()
             ];
     }
 
@@ -74,6 +82,44 @@ class Order
         // Perform insertion into the order table
         $this->insert($order_data, 'order');
     }
+
+    /**
+    * Fetches a Client from the database by their ID.
+    *
+    * @param int $client_id The ID of the client to fetch.
+    * @return Client|false The Client object if found, or false if not found.
+    */
+    public static function getByID(int $client_id): Client|false
+    {
+    // Perform query to fetch client from the database
+    $query = "SELECT * FROM client WHERE user_id = :user_id";
+    $result = self::get_row($query, ['user_id' => $client_id]);
+
+    // Check if client with the specified ID exists
+    if (!$result) {
+        return false;
+    }
+
+    // Extract client details from the query result
+    $client = new Client(
+        $result->email,
+        $result->first_name,
+        $result->last_name,
+        "dummy-password", // a dummy is used since original password is unknown
+        $result->phone_no,
+        new District($result->district_id),
+        $result->street,
+        $result->city
+    );
+
+    $client->setUserID($client_id);
+
+    // store hash of true password
+    $client->setPassword($result->password);
+
+    return $client;
+    }
+
 
     public function getOrderID(): int
     {
@@ -145,10 +191,11 @@ class Order
         $this->total_price = $total_price;
     }
 
-    public function getUserID(): int
+    public function getClient(): Client
     {
-        return $this->user_id;
+        return $this->client;
     }
+    
 
     public function validate(): array
     {
@@ -182,25 +229,37 @@ class Order
     {
         // Initialize an empty array to store Product objects
         $products = [];
-
+    
         // Query the database for products related to this order
         $query = <<<SQL
-        SELECT * FROM product 
-        WHERE product_id IN (SELECT product_id FROM order_product WHERE order_id = :order_id)
+            SELECT product_id, name, calories, stock_level, img_url, img_alt_text, category, price, description
+            FROM product 
+            WHERE product_id IN (SELECT product_id FROM order_product WHERE order_id = :order_id)
         SQL;
-
+    
         // Execute the query and fetch the product records
         $productRecords = $this->query($query, ['order_id' => $this->order_id]);
-
+    
         // Iterate through the retrieved product records and create Product objects
         foreach ($productRecords as $record) {
             // Create a new Product object and add it to the products array
-            $product = new Product($record->product_id);
+            $product = new Product(
+                $record->name,
+                $record->calories,
+                $record->stock_level,
+                $record->img_url,
+                $record->img_alt_text,
+                $record->category,
+                (float)$record->price,
+                $record->description
+            );
+            $product->setProductID($record->product_id); // Set the product ID
             $products[] = $product;
         }
-
+    
         return $products;
     }
+    
 
     public function addProduct(Product $product, string $milk_type, int $quantity, string $cup_size): void
     {
