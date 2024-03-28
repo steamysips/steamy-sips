@@ -13,7 +13,6 @@ class Product
     use Model;
 
     protected string $table = 'product';
-
     private int $product_id;
     private string $name;
     private int $calories;

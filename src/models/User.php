@@ -83,28 +83,31 @@ abstract class User
 
     public function validate(): array
     {
-        $errors = []; // list of errors
-
-        // perform existence checks
-        if (empty($this->email)) {
-            $errors['email'] = "Email is required";
+        $errors = []; // List of errors
+    
+        // Perform email format check
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = "Invalid email format";
         }
-
-        if (empty($this->first_name)) {
-            $errors['first_name'] = "First name is required";
+    
+        // Perform first name length check
+        if (strlen($this->first_name) < 2) {
+            $errors['first_name'] = "First name must be at least 2 characters long";
         }
-
-        if (empty($this->phone_no)) {
-            $errors['phone_no'] = "Phone number is required";
+    
+        // Perform last name length check
+        if (strlen($this->last_name) < 2) {
+            $errors['last_name'] = "Last name must be at least 2 characters long";
         }
-
-        if (empty($this->last_name)) {
-            $errors['last_name'] = "Last name is required";
+    
+        // Perform phone number length check
+        if (strlen($this->phone_no) < 7) {
+            $errors['phone_no'] = "Phone number must be at least 7 characters long";
         }
-
-        // TODO: Add range checks
+    
         return $errors;
     }
+    
 
     public function setEmail(string $email): void
     {

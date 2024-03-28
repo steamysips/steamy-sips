@@ -47,7 +47,10 @@ class Administrator extends User
             $errors['job_title'] = "Job title is required";
         }
 
-        // TODO: Add range checks
+        if (strlen($this->job_title) <= 3) {
+            $errors['job_title'] = "Job title must be longer than 3 characters";
+        }
+
         return $errors;
     }
 
