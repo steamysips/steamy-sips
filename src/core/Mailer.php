@@ -68,20 +68,20 @@ class Mailer
     /**
      * @throws Exception
      */
-    public function sendMail(Client $client): void
+    public function sendMail(string $email, string $subject, $html_message, $plain_message): void
     {
         //Set who the message is to be sent to
-        $this->mail->addAddress($client->getEmail(), $client->getFullName());
+        $this->mail->addAddress($email);
 
         //Set the subject line
-        $this->mail->Subject = 'PHPMailer GMail SMTP test';
+        $this->mail->Subject = $subject;
 
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
-        $this->mail->msgHTML('hello world');
+        $this->mail->msgHTML($html_message);
 
         //Replace the plain text body with one created manually
-        $this->mail->AltBody = 'This is a plain-text message body';
+        $this->mail->AltBody = $plain_message;
 
         //send the message
         $this->mail->send();
