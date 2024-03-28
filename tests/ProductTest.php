@@ -104,4 +104,37 @@ final class ProductTest extends TestCase
         $this->assertIsArray($nestedReviews);
         $this->assertNotEmpty($nestedReviews);
     }
+
+
+    public function testGetAverageRating(): void
+    {
+        // Mock the Product class to isolate the test from the database
+        $product = $this->getMockBuilder(Product::class)
+                        ->onlyMethods(['query']) // Mocking the query method
+                        ->disableOriginalConstructor()
+                        ->getMock();
+    
+        // Define the expected query and parameters
+        $expectedQuery = "SELECT AVG(rating) AS average_rating
+                          FROM review
+                          WHERE product_id = :product_id AND parent_review_id IS NULL";
+        $expectedParams = ['product_id' => 1]; // Use any product ID for testing
+    
+        // Define a sample result for the query
+        $sampleResult = [ (object) ['average_rating' => 4.5] ];
+    
+        // Set up the mock to return the sample result when query is called
+        $product->expects($this->once())
+                ->method('query')
+                ->with($expectedQuery, $expectedParams)
+                ->willReturn($sampleResult);
+    
+        // Call the getAverageRating method
+        $averageRating = $product->getAverageRating();
+    
+        // Check if the average rating matches the expected value
+        $this->assertEquals(4.5, $averageRating);
+    }
+    
+
 }
