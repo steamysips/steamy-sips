@@ -43,14 +43,14 @@ class Shop
      */
     private function match_keyword(Product $product): bool
     {
-        $search_keyword = trim($_GET['keyword'] ?? "");
-
-        if (strlen($search_keyword) == 0) {
+        // if there are no search key, accept product
+        if (empty($_GET['keyword'])) {
             return true;
         }
-
-        // TODO: Improve searching algorithm. Use fuzzy searching + regex perha
-        return strtolower($product->getName()) == strtolower($search_keyword);
+        // else accept only products within a levenshtein distance of 3
+        $search_keyword = strtolower(trim($_GET['keyword']));
+        $similarity_threshold = 3;
+        return Utility::levenshteinDistance($search_keyword, strtolower($product->getName())) <= $similarity_threshold;
     }
 
     private function sort_product(Product $a, Product $b): int
