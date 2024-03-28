@@ -156,6 +156,32 @@ class Product
         $this->insert($productData, 'product');
     }
 
+    public function getAverageRating(): float
+    {
+    // Query the database to calculate the average rating
+    $query = "SELECT AVG(rating) AS average_rating
+              FROM review
+              WHERE product_id = :product_id AND parent_review_id IS NULL"; // Exclude child reviews
+    $params = ['product_id' => $this->product_id];
+
+    try {
+        $result = $this->query($query, $params);
+    } catch (Exception $e) {
+        error_log('Error fetching average rating: ' . $e->getMessage());
+        return 0; // Return 0 if there's an error fetching the rating
+    }
+
+    // Extract the average rating from the result array
+    if (!empty($result)) {
+        $averageRating = $result[0]->average_rating;
+        return $averageRating !== null ? round($averageRating, 2) : 0; // Round to two decimal places
+    }
+
+    return 0; // No reviews, return 0 as the average rating
+    }
+     
+
+
     public function validate(): array
     {
         $errors = [];
