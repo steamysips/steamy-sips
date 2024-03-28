@@ -26,15 +26,14 @@ class Register
         $data['defaultConfirmPassword'] = "";
 
         if (isset($_POST['register_submit'])) {
-            // sanitize data
-            // update default form values
+            // TODO: Remove everything below and let validate() deal with it. update default form values with sanitized version
             $data['defaultFirstName'] = $_POST['first_name'] ?? "";
             $data['defaultLastName'] = $_POST['last_name'] ?? "";
             $data['defaultPhoneNumber'] = $_POST['phone_no'] ?? "";
-            $data['defaultDistrictID'] = filter_var($_POST['district'], FILTER_VALIDATE_INT) ?? 1;
+            $data['defaultDistrictID'] = filter_var($_POST['district'], FILTER_SANITIZE_NUMBER_INT);
             $data['defaultStreet'] = $_POST['street'] ?? "";
             $data['defaultCity'] = $_POST['city'] ?? "";
-            $data['defaultEmail'] = $_POST['email'] ?? "";
+            $data['defaultEmail'] = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
             $data['defaultPassword'] = $_POST['password'] ?? "";
             $data['defaultConfirmPassword'] = $_POST['confirmPassword'] ?? "";
 
