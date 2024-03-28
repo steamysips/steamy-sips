@@ -236,9 +236,9 @@ CREATE TABLE `product` (
   `description` text DEFAULT NULL CHECK (char_length(`description`) > 0),
   PRIMARY KEY (`product_id`),
   CONSTRAINT `name_length` CHECK (char_length(`name`) > 2),
-  CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif'),
   CONSTRAINT `img_alt_text_length` CHECK (char_length(`img_alt_text`) between 5 and 150),
-  CONSTRAINT `category_length` CHECK (char_length(`category`) > 2)
+  CONSTRAINT `category_length` CHECK (char_length(`category`) > 2),
+  CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif' or `img_url` like '%.jpg')
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -248,7 +248,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.png','Espresso Image','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.jpeg','Cappuccino Image','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.png','Latte Image','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.avif','Americano Image','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.jpeg','Mocha Image','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
+INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.jpg','Espresso in a white cup. Source: Coffee Hero','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.jpg','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Wikipedia','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.jpeg','A latte with a spoon. Source: Food Network.','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.jpeg','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Bean Box.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Olive Magazine','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,7 +309,7 @@ CREATE TABLE `user` (
   CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
   CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
   CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-04 15:26:14
+-- Dump completed on 2024-03-27 10:47:31
