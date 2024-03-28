@@ -69,6 +69,20 @@ class Product
         return $product_obj;
     }
 
+    public static function getCategories(): array
+    {
+        $query = "SELECT category FROM product";
+        $result = self::query($query);
+
+        if (empty($result)) {
+            return [];
+        }
+
+        $callback = fn($obj): string => $obj->category;
+
+        return array_map($callback, $result);
+    }
+
     public function toArray(): array
     {
         return
