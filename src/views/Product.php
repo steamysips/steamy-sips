@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 /**
  * @var $product Product product information
- * @var $reviews array array of reviews for current product
+ * @var $signed_in_user User
+ * @var $default_review string default review text in form
+ * @var $default_rating int default rating in form
  */
 
 use Steamy\Model\Product;
+use Steamy\Model\Review;
+use Steamy\Model\User;
 
 ?>
+
 <main class="container">
     <div id="product-info" class="grid">
         <img src="<?= $product->getImgAbsolutePath() ?>" alt="<?= $product->getImgAltText() ?>">
@@ -43,7 +48,7 @@ use Steamy\Model\Product;
             <select id="milk" required>
                 <option selected>Almond</option>
                 <option>Coconut</option>
-                <option>Oatmilk</option>
+                <option>Oat milk</option>
                 <option>Soy</option>
             </select>
             <label for="toppings">Toppings</label>
@@ -56,12 +61,31 @@ use Steamy\Model\Product;
         </div>
     </div>
 
-    <h2>Customer Reviews (<?= count($reviews) ?>)</h2>
-    <form action="" class="grid">
+    <h2>Customer Reviews (<?= count($product->getReviews()) ?>)</h2>
+    <form class="grid" method="post">
         <label>
-            <input placeholder="Write a new review" type="text">
+            <input value="<?= $default_review ?>"
+                   required placeholder="Write a new review"
+                   name="review_text" type="text"
+                <?php
+                if (isset($_POST['review_text'])) {
+                    echo empty($errors['text']) ? 'aria-invalid=false' : 'aria-invalid=true';
+                } ?>
+            >
         </label>
-        <button type="submit">Submit</button>
+        <label>
+            <input value="<?= $default_rating ?>"
+                   name=" review_rating" required
+                   type="number" min="1" max="5"
+                   placeholder="Rating"
+                <?php
+                if (isset($_POST['review_rating'])) {
+                    echo empty($errors['rating']) ? 'aria-invalid=false' : 'aria-invalid=true';
+                } ?>
+            >
+        </label>
+        <button type="submit" <?= $signed_in_user ? "" : "disabled" ?>>Submit
+        </button>
     </form>
 
     <label for="filter-by">Filter by</label>
@@ -73,12 +97,18 @@ use Steamy\Model\Product;
         <ul>
 
             <?php
-            function recurse($review): void
+            function recurse(Review $review, int $product_id): void
             {
+                global $product;
+
                 $reply_link = ROOT . "/reply/" . "id=?";
-                echo <<<EOL
-                <li>
-                <article>
+                $date = $review->getDate()->format('Y-m-d H:i:s');
+                $text = $review->getText();
+                $author = "user" . $review->getUserID(); // TODO: get username using getByID
+                $verified_badge = "";
+
+                if (Review::isVerified($product_id, $review->getReviewID())) {
+                    $verified_badge = <<< BADGE
                     <div data-tooltip="Verified Purchase" data-placement="left" >
                         <svg xmlns="http://www.w3.org/2000/svg"
                         class="icon-tabler-discount-check-filled"
@@ -87,13 +117,19 @@ use Steamy\Model\Product;
                          /><path d="M12.01 2.011a3.2 3.2 0 0 1 2.113 .797l.154 .145l.698 .698a1.2 1.2 0 0 0 .71 .341l.135 .008h1a3.2 3.2 0 0 1 3.195 3.018l.005 .182v1c0 .27 .092 .533 .258 .743l.09 .1l.697 .698a3.2 3.2 0 0 1 .147 4.382l-.145 .154l-.698 .698a1.2 1.2 0 0 0 -.341 .71l-.008 .135v1a3.2 3.2 0 0 1 -3.018 3.195l-.182 .005h-1a1.2 1.2 0 0 0 -.743 .258l-.1 .09l-.698 .697a3.2 3.2 0 0 1 -4.382 .147l-.154 -.145l-.698 -.698a1.2 1.2 0 0 0 -.71 -.341l-.135 -.008h-1a3.2 3.2 0 0 1 -3.195 -3.018l-.005 -.182v-1a1.2 1.2 0 0 0 -.258 -.743l-.09 -.1l-.697 -.698a3.2 3.2 0 0 1 -.147 -4.382l.145 -.154l.698 -.698a1.2 1.2 0 0 0 .341 -.71l.008 -.135v-1l.005 -.182a3.2 3.2 0 0 1 3.013 -3.013l.182 -.005h1a1.2 1.2 0 0 0 .743 -.258l.1 -.09l.698 -.697a3.2 3.2 0 0 1 2.269 -.944zm3.697 7.282a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor" />
                          </svg>
                     </div>
+                BADGE;
+                }
 
+                echo <<<EOL
+                <li>
+                <article>
+                    $verified_badge
                    <hgroup> 
-                        <h5>$review->author</h5>
-                        <h6 class="review-date">$review->date</h6>
+                        <h5>$author</h5>
+                        <h6 class="review-date">$date</h6>
                    </hgroup>
                    
-                    <p>$review->text</p>
+                    <p>$text</p>
                     <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
                          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
                          width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -110,7 +146,7 @@ use Steamy\Model\Product;
                 if (isset($review->children)) {
                     foreach ($review->children as $child_comment) {
                         echo "<ul>";
-                        recurse($child_comment);
+                        recurse($child_comment, $product->getProductID());
                         echo "</ul>";
                     }
                 }
@@ -119,8 +155,9 @@ use Steamy\Model\Product;
             }
 
             // print top-level comments
+            $reviews = $product->getReviews();
             foreach ($reviews as $review) {
-                recurse($review);
+                recurse($review, $product->getProductID());
             }
             ?>
         </ul>
