@@ -212,8 +212,8 @@ class Review
     public function validate(): array
     {
         $errors = [];
-        if (empty($this->text)) {
-            $errors['text'] = "Review text is required";
+        if (strlen($this->text) < 2) {
+            $errors['text'] = "Review text must have at least 2 characters";
         }
         if ($this->rating < 1 || $this->rating > 5) {
             $errors['rating'] = "Rating must be between 1 and 5";
