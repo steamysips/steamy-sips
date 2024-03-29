@@ -24,21 +24,15 @@ class Review
     /**
      * @throws Exception Invalid date
      */
-    public function __construct(int $id)
+    public function __construct(int $user_id, int $product_id, int $parent_review_id, string $text, int $rating, DateTime $date)
     {
-        // Fetch data from the database based on the ID
-        $record = $this->first(
-            [
-                'review_id' => $id,
-            ]
-        );
-        $this->review_id = $record->review_id;
-        $this->user_id = $record->user_id;
-        $this->product_id = $record->product_id;
-        $this->parent_review_id = $record->parent_review_id;
-        $this->text = htmlspecialchars_decode(strip_tags($record->text));
-        $this->rating = $record->rating;
-        $this->date = new DateTime($record->date);
+        $this->review_id = -1;
+        $this->user_id = $user_id;
+        $this->product_id = $product_id;
+        $this->parent_review_id = $parent_review_id;
+        $this->text = htmlspecialchars_decode(strip_tags($text));
+        $this->rating = $rating;
+        $this->date = $date;
     }
 
     public function toArray(): array
@@ -53,6 +47,40 @@ class Review
                 'date' => $this->date,
                 'rating' => $this->rating
             ];
+    }
+
+    /**
+     * Retrieves a review by its ID.
+     *
+     * @param int $id The ID of the review to retrieve.
+     * @return Review|null The review object if found, otherwise null.
+     * @throws Exception If an error occurs during the database query.
+     */
+    public static function getByID(int $id): ?Review
+    {
+        $query = "SELECT * FROM review WHERE review_id = :id";
+        $params = ['id' => $id];
+
+        try {
+            $result = Review::query($query, $params); // Execute the query
+            if (!empty($result)) {
+                // Create a new Review object using the retrieved data
+                $review = new Review(
+                    $result[0]->user_id,
+                    $result[0]->product_id,
+                    $result[0]->parent_review_id,
+                    $result[0]->text,
+                    $result[0]->rating,
+                    $result[0]->date
+                );
+                $review->setReviewID($id); // Set the review ID
+                return $review;
+            }
+        } catch (Exception $e) {
+            throw new Exception("Error fetching review: " . $e->getMessage());
+        }
+
+        return null; // Return null if review not found
     }
 
     public function getReviewID(): int
