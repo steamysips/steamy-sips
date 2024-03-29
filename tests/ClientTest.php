@@ -67,10 +67,10 @@ final class ClientTest extends TestCase
         );
         // test if existence checks work
         self::assertEquals([
-            'email' => 'Email is required',
-            'first_name' => 'First name is required',
-            'phone_no' => 'Phone number is required',
-            'last_name' => 'Last name is required',
+            'email' => 'Invalid email format',
+            'first_name' => 'First name must be at least 2 characters long',
+            'last_name' => 'Last name must be at least 2 characters long',
+            'phone_no' => 'Phone number must be at least 7 characters long',
             'city' => 'City name is required',
             'street' => 'Street name is required'
         ],
