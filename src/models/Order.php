@@ -29,22 +29,22 @@ class Order
      */
     public function __construct(Client $client, array $products)
     {
-        // Set default values
-        $this->order_id = -1;
-        $this->status = "pending";
-        $this->created_date = new DateTime();
-        $this->pickup_date = null;
-        $this->total_price = 0;
-        $this->street = "";
-        $this->city = "";
-
-        // Set client attribute
-        $this->client = $client;
-
-        // Set products attribute
-        $this->setProducts($products);
-    }
-
+                // Set default values
+                $this->order_id = -1;
+                $this->status = "pending";
+                $this->created_date = new DateTime();
+                $this->pickup_date = null;
+                $this->total_price = 0;
+                $this->street = "";
+                $this->city = "";
+        
+                // Set client attribute
+                $this->client = $client;
+        
+                // Set products attribute
+                $this->setProducts($products);
+            }
+        
     public function setProducts(array $products): void
     {
         $this->products = $products; // Updated attribute name
@@ -62,7 +62,7 @@ class Order
                 'city' => $this->city,
                 'district' => $this->district,
                 'total_price' => $this->total_price,
-                'client' => $this->client->toArray()
+                'client_id' => $this->client
             ];
     }
 
@@ -83,43 +83,73 @@ class Order
         $this->insert($order_data, 'order');
     }
 
-    /**
-    * Fetches a Client from the database by their ID.
-    *
-    * @param int $client_id The ID of the client to fetch.
-    * @return Client|false The Client object if found, or false if not found.
-    */
-    public static function getByID(int $client_id): Client|false
+    public function getProducts(): array
     {
-    // Perform query to fetch client from the database
-    $query = "SELECT * FROM client WHERE user_id = :user_id";
-    $result = self::get_row($query, ['user_id' => $client_id]);
-
-    // Check if client with the specified ID exists
-    if (!$result) {
-        return false;
+        return $this->products;
     }
-
-    // Extract client details from the query result
-    $client = new Client(
-        $result->email,
-        $result->first_name,
-        $result->last_name,
-        "dummy-password", // a dummy is used since original password is unknown
-        $result->phone_no,
-        new District($result->district_id),
-        $result->street,
-        $result->city
-    );
-
-    $client->setUserID($client_id);
-
-    // store hash of true password
-    $client->setPassword($result->password);
-
-    return $client;
+    
+    public static function getByID(int $order_id): Order|false
+    {
+        // Perform query to fetch order from the database
+        $query = "SELECT * FROM `order` WHERE order_id = :order_id";
+        $orderData = self::query($query, ['order_id' => $order_id]);
+    
+        // Check if order with the specified ID exists
+        if (empty($orderData)) {
+            return false;
+        }
+    
+        // Extract order details from the query result
+        $orderData = $orderData[0];
+    
+        // Fetch client associated with the order
+        $client = Client::getByID($orderData->client_id);
+    
+        if (!$client) {
+            return false;
+        }
+    
+        // Fetch products associated with the order
+        $products = self::getOrderProducts($order_id);
+    
+        // Create Order object with retrieved data
+        $order = new Order($client, $products);
+        $order->order_id = $orderData->order_id;
+        $order->status = $orderData->status;
+        $order->created_date = new DateTime($orderData->created_date);
+        $order->pickup_date = $orderData->pickup_date ? new DateTime($orderData->pickup_date) : null;
+        $order->street = $orderData->street;
+        $order->city = $orderData->city;
+        $order->total_price = $orderData->total_price;
+    
+        return $order;
     }
-
+    
+    private static function getOrderProducts(int $order_id): array
+    {
+        $query = "SELECT product, milk_type, quantity, cup_size FROM order_product WHERE order_id = :order_id";
+        $productsData = self::query($query, ['order_id' => $order_id]);
+    
+        // Initialize an empty array to store products
+        $products = [];
+    
+        // Iterate through each product data and create Product objects
+        foreach ($productsData as $productData) {
+            // Create a product array with necessary information
+            $product = [
+                'product' => $productData->product,
+                'milk_type' => $productData->milk_type,
+                'quantity' => $productData->quantity,
+                'cup_size' => $productData->cup_size
+            ];
+    
+            // Add the product array to the products array
+            $products[] = $product;
+        }
+    
+        return $products;
+    }
+    
 
     public function getOrderID(): int
     {
@@ -195,7 +225,6 @@ class Order
     {
         return $this->client;
     }
-    
 
     public function validate(): array
     {
@@ -225,51 +254,65 @@ class Order
         return $errors;
     }
 
-    public function getProducts(): array
+    /**
+     * Loads and returns an array of products associated with this order from the database.
+     *
+     * @return array An array of Product objects associated with this order.
+     */
+    public function loadProducts(): array
     {
-        // Initialize an empty array to store Product objects
-        $products = [];
-    
-        // Query the database for products related to this order
-        $query = <<<SQL
-            SELECT product_id, name, calories, stock_level, img_url, img_alt_text, category, price, description
-            FROM product 
-            WHERE product_id IN (SELECT product_id FROM order_product WHERE order_id = :order_id)
-        SQL;
-    
-        // Execute the query and fetch the product records
-        $productRecords = $this->query($query, ['order_id' => $this->order_id]);
-    
-        // Iterate through the retrieved product records and create Product objects
-        foreach ($productRecords as $record) {
-            // Create a new Product object and add it to the products array
-            $product = new Product(
-                $record->name,
-                $record->calories,
-                $record->stock_level,
-                $record->img_url,
-                $record->img_alt_text,
-                $record->category,
-                (float)$record->price,
-                $record->description
-            );
-            $product->setProductID($record->product_id); // Set the product ID
-            $products[] = $product;
-        }
-    
-        return $products;
-    }
-    
+    // Initialize an empty array to store Product objects
+    $products = [];
 
+    // Query the database for products related to this order
+    $query = <<<SQL
+        SELECT product_id, name, calories, stock_level, img_url, img_alt_text, category, price, description
+        FROM product 
+        WHERE product_id IN (SELECT product_id FROM order_product WHERE order_id = :order_id)
+    SQL;
+
+    // Execute the query and fetch the product records
+    $productRecords = $this->query($query, ['order_id' => $this->order_id]);
+
+    // Iterate through the retrieved product records and create Product objects
+    foreach ($productRecords as $record) {
+        // Create a new Product object and add it to the products array
+        $product = new Product(
+            $record->name,
+            $record->calories,
+            $record->stock_level,
+            $record->img_url,
+            $record->img_alt_text,
+            $record->category,
+            (float)$record->price,
+            $record->description
+        );
+        $product->setProductID($record->product_id); // Set the product ID
+        $products[] = $product;
+    }
+
+    return $products;
+    }
+
+       /**
+        * Adds a product to the order.
+        *
+        * @param Product $product The product to add.
+        * @param string $milk_type The type of milk.
+        * @param int $quantity The quantity of the product.
+        * @param string $cup_size The cup size.
+        * @return void
+        */
     public function addProduct(Product $product, string $milk_type, int $quantity, string $cup_size): void
     {
         $this->products[] = [
-            'product' => $product,
-            'milk_type' => $milk_type,
-            'quantity' => $quantity,
-            'cup_size' => $cup_size
-        ];
-    }
+          'product' => $product,
+          'milk_type' => $milk_type,
+          'quantity' => $quantity,
+          'cup_size' => $cup_size
+          ];
+     }
+
 
     public function removeProduct(int $index): void
     {

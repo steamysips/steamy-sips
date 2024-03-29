@@ -67,6 +67,45 @@ class Client extends User
         return $client;
     }
 
+        /**
+     * Returns a Client object for a given user ID. If the user ID is not found, returns false.
+     *
+     * @param int $user_id The ID of the user/client.
+     * @return Client|false The Client object if found, otherwise false.
+     */
+    public static function getByID(int $user_id): Client|false
+    {
+        $query = <<<EOL
+        SELECT * FROM user
+        INNER JOIN client
+        ON user.user_id = client.user_id
+        WHERE user.user_id = :user_id;
+        EOL;
+
+        $result = self::get_row($query, ['user_id' => $user_id]);
+
+        if (!$result) {
+            return false;
+        }
+
+        $client = new Client(
+            $result->email,
+            $result->first_name,
+            $result->last_name,
+            "dummy-password", // a dummy is used since the original password is unknown
+            $result->phone_no,
+            new District($result->district_id),
+            $result->street,
+            $result->city
+        );
+        $client->setUserID($result->user_id);
+
+        // Store the hash of the true password
+        $client->setPassword($result->password);
+
+        return $client;
+    }
+
     /**
      * Deletes user from database
      *
