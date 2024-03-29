@@ -244,6 +244,11 @@ class Product
 
     public function getAverageRating(): float
     {
+    // Ensure that $product_id is initialized
+    if (!isset($this->product_id)) {
+        return 0; // Return 0 if $product_id is not set
+    }
+
     // Query the database to calculate the average rating
     $query = "SELECT AVG(rating) AS average_rating
               FROM review
@@ -265,9 +270,8 @@ class Product
 
     return 0; // No reviews, return 0 as the average rating
     }
+
      
-
-
     public function validate(): array
     {
         $errors = [];
