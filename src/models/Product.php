@@ -244,11 +244,6 @@ class Product
 
     public function getAverageRating(): float
     {
-    // Ensure that $product_id is initialized
-    if (!isset($this->product_id)) {
-        return 0; // Return 0 if $product_id is not set
-    }
-
     // Query the database to calculate the average rating
     $query = "SELECT AVG(rating) AS average_rating
               FROM review
@@ -270,8 +265,9 @@ class Product
 
     return 0; // No reviews, return 0 as the average rating
     }
-
      
+
+
     public function validate(): array
     {
         $errors = [];
@@ -321,38 +317,44 @@ class Product
     }
 
 
-    /**
-     * Returns all reviews for product
-     *
-     * @return Review[] An array of Review objects
-     * @throws Exception
-     */
-    public function getReviews(): array
-    {
-        // Initialize an empty array to store review objects
-        $reviews = [];
+/**
+ * Returns all reviews for the product.
+ *
+ * @return Review[] An array of Review objects representing the reviews for the product.
+ */
+public function getReviews(): array
+{
+    // Initialize an empty array to store review objects
+    $reviews = [];
 
-        // Query the database for reviews related to this product
-        $query = "SELECT * FROM review WHERE product_id = :product_id";
-        $params = ['product_id' => $this->product_id];
+    // Query the database for reviews related to this product
+    $query = "SELECT * FROM review WHERE product_id = :product_id";
+    $params = ['product_id' => $this->product_id];
 
-        try {
-            $reviewRecords = $this->query($query, $params);
-        } catch (Exception $e) {
-            error_log('Error fetching reviews: ' . $e->getMessage());
-            return $reviews;
-        }
-
-        // Iterate through the retrieved review records and create Review objects
-        foreach ($reviewRecords as $record) {
-            // Create a new Review object and add it to the reviews array
-            $review = new Review($record->review_id);
-            $reviews[] = $review;
-        }
-
+    try {
+        $reviewRecords = $this->query($query, $params);
+    } catch (Exception $e) {
+        error_log('Error fetching reviews: ' . $e->getMessage());
         return $reviews;
     }
 
+    // Iterate through the retrieved review records and create Review objects
+    foreach ($reviewRecords as $record) {
+        // Create a new Review object and add it to the reviews array
+        $review = new Review(
+            $record->user_id,
+            $record->product_id,
+            $record->parent_review_id,
+            $record->text,
+            $record->rating,
+            $record->date
+        );
+        $review->setReviewID($record->review_id); // Set the review ID
+        $reviews[] = $review;
+    }
+
+    return $reviews;
+}
     /**
      * Returns an array of reviews where each review has a
      * `children` attribute but no `parent_review_id` attribute.
@@ -391,5 +393,47 @@ class Product
 
         // Reset the keys of the array to maintain continuity
         return array_values($nestedReviews);
+    }
+
+    /**
+     * Returns an associative array containing the distribution of ratings for the product.
+     * The key is the rating value (1 to 5) and the value is the percentage of reviews with that rating.
+     * 
+     * @return array An associative array representing the rating distribution
+     */
+    public function getRatingDistribution(): array
+    {
+        //  Query the database to get the number of reviews for each rating
+        $query = "SELECT rating, COUNT(*) AS count
+              FROM review
+              WHERE product_id = :product_id
+              GROUP BY rating";
+        $params = ['product_id' => $this->product_id];
+
+        try {
+            $result = $this->query($query, $params);
+        } catch (Exception $e) {
+            error_log('Error fetching rating distribution: ' . $e->getMessage());
+            return []; // Return empty array on error
+        }
+
+        // Calculate total number of reviews
+        $totalReviews = 0;
+        foreach ($result as $row) {
+            $totalReviews += $row->count;
+        }
+
+        // Calculate percentage for each rating
+        $distribution = [];
+        foreach ($result as $row) {
+            $rating = $row->rating;
+            $count = $row->count;
+            $percentage = round(($count / $totalReviews) * 100, 1); // Round to 1 decimal place
+
+            // Add rating and percentage to the distribution array
+            $distribution[$rating] = $percentage;
+        }
+
+        return $distribution;
     }
 }
