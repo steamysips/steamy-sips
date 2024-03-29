@@ -58,10 +58,6 @@ class Product
         $new_comment = trim($_POST['review_text'] ?? "");
         $rating = filter_var($_POST['review_rating'], FILTER_VALIDATE_INT);
 
-        // unset POST values for next submission. this prevents duplicate form submission
-//        unset($_POST['review_text']);
-//        unset($_POST['review_rating']);
-
         // ignore requests from users who are not logged in
         if (empty($this->signed_user)) {
             return;
@@ -82,6 +78,9 @@ class Product
         if (empty($this->view_data['errors'])) {
             // save to database
             $review->save();
+
+            // redirect user to same page to prevent multiple submissions of the same form if user reloads
+            Utility::redirect('shop/products/' . $this->product->getProductID());
         } else {
             // form values are invalid
             Utility::show($this->view_data['errors']);
