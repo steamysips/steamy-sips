@@ -5,22 +5,22 @@ These endpoints cover actions related to products, orders, users, and authentica
 
 ## Public
 
-|  Endpoint                                   |  Meaning                                                                    |
-|---------------------------------------------|-----------------------------------------------------------------------------|
-| GET /products                               | Get the list of all products available in the store.                        | 
-| GET /products/?sort=<field>&order=<asc|desc>| Get the list of products sorted by a field in ascending or descending order.|
-| GET /products/[id]                          | Get the details of a specific product by its ID.                            |
-| GET /products/categories                    | Get the list of product categories.                                         | 
-| GET /products/tags                          | Get the list of product tags.                                               |
-| GET /products/{id}/reviews                  | Get all reviews for a particular product by its ID.                         |
-| GET /products/?group-by=category            | Get the list of products grouped by category.                               |
-| GET /orders/?group-by=status                | Get the list of orders grouped by status.                                   |
-| GET /users                                  | Get the list of all users.                                                  |
-| GET /users/{id}                             | Get the details of a specific user by their ID.                             |
-| GET /clients                                | Get the list of all clients.                                                |
-| GET /clients/{id}                           | Get the details of a specific client by their ID.                           |
-| GET /administrators                         | Get the list of all administrators.                                         |
-| GET /administrators/{id}                    | Get the details of a specific administrator by their ID.                    |
+|  Endpoint                                    |  Meaning                                                                    |
+|----------------------------------------------|-----------------------------------------------------------------------------|
+| GET /products                                | Get the list of all products available in the store.                        | 
+| GET /products/?sort=<field>&order=<asc, desc>| Get the list of products sorted by a field in ascending or descending order.|
+| GET /products/[id]                           | Get the details of a specific product by its ID.                            |
+| GET /products/categories                     | Get the list of product categories.                                         | 
+| GET /products/tags                           | Get the list of product tags.                                               |
+| GET /products/{id}/reviews                   | Get all reviews for a particular product by its ID.                         |
+| GET /products/?group-by=category             | Get the list of products grouped by category.                               |
+| GET /orders/?group-by=status                 | Get the list of orders grouped by status.                                   |
+| GET /users                                   | Get the list of all users.                                                  |
+| GET /users/{id}                              | Get the details of a specific user by their ID.                             |
+| GET /clients                                 | Get the list of all clients.                                                |
+| GET /clients/{id}                            | Get the details of a specific client by their ID.                           |
+| GET /administrators                          | Get the list of all administrators.                                         |
+| GET /administrators/{id}                     | Get the details of a specific administrator by their ID.                    |
  
 
 ## Protected
