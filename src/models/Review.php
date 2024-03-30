@@ -53,7 +53,7 @@ class Review
             // convert date to DateTime object
             $date_obj = null;
             try {
-                $date_obj = new \DateTime($result->date);
+                $date_obj = new DateTime($result->date);
             } catch (Exception $e) {
                 error_log('Error converting date: ' . $e->getMessage());
             }
@@ -75,17 +75,17 @@ class Review
 
     public function toArray(): array
     {
-        return
-            [
-                'user_id' => $this->user_id,
-                'review_id' => $this->review_id,
-                'product_id' => $this->product_id,
-                'parent_review_id' => $this->parent_review_id,
-                'text' => $this->text,
-                'date' => $this->date->format('Y-m-d H:i:s'),
-                'rating' => $this->rating
-            ];
+        return [
+            'user_id' => $this->user_id,
+            'review_id' => $this->review_id,
+            'product_id' => $this->product_id,
+            'parent_review_id' => $this->parent_review_id,
+            'text' => $this->text,
+            'date' => $this->date,
+            'rating' => $this->rating
+        ];
     }
+    
 
     /**
      * Retrieves a review by its ID.
