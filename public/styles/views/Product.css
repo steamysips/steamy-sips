@@ -23,6 +23,10 @@ ul > li {
   font-size: 15px;
 }
 
+.fill-star{
+  fill: orange;
+}
+
 article > button {
   width: min-content;
 }

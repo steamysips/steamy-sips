@@ -20,8 +20,9 @@ use Steamy\Model\User;
         <img src="<?= $product->getImgAbsolutePath() ?>" alt="<?= $product->getImgAltText() ?>">
         <div>
             <hgroup>
-                <h2><?= $product->getName() ?></h2>
-                <h3>360 calories</h3>
+                <h1><?= $product->getName() ?></h1>
+                <h4>Rs <?= $product->getPrice() ?></h4>
+                <p>360 calories</p>
             </hgroup>
             <p>
                 <?= $product->getDescription() ?>
@@ -95,20 +96,17 @@ use Steamy\Model\User;
     </select>
     <div id="reviews">
         <ul>
-
             <?php
-            function recurse(Review $review, int $product_id): void
+
+            /**
+             * Returns the HTML code for the badge of a review depending on whether review is verified or not
+             * @param Review $review Review
+             * @return string HTML code of badge
+             */
+            function getBadge(Review $review): string
             {
-                global $product;
-
-                $reply_link = ROOT . "/reply/" . "id=?";
-                $date = $review->getDate()->format('Y-m-d H:i:s');
-                $text = $review->getText();
-                $author = "user" . $review->getUserID(); // TODO: get username using getByID
-                $verified_badge = "";
-
-                if (Review::isVerified($product_id, $review->getReviewID())) {
-                    $verified_badge = <<< BADGE
+                if (Review::isVerified($review->getProductID(), $review->getReviewID())) {
+                    return <<< BADGE
                     <div data-tooltip="Verified Purchase" data-placement="left" >
                         <svg xmlns="http://www.w3.org/2000/svg"
                         class="icon-tabler-discount-check-filled"
@@ -119,11 +117,67 @@ use Steamy\Model\User;
                     </div>
                 BADGE;
                 }
+                return <<< BADGE
+                    <div data-tooltip="This user did not buy the product" data-placement="left" >
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-alert-octagon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+                    </div>
+                BADGE;
+            }
+
+            /**
+             * Returns the HTML code for the rating in terms of stars
+             * @param Review $review
+             * @return string
+             */
+            function getStars(Review $review): string
+            {
+                $checked_stars = $review->getRating();
+                $unchecked_stars = 5 - $checked_stars;
+                $html = "";
+
+                while ($checked_stars > 0) {
+                    $html .= <<< EOL
+                        <svg xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
+                          fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"
+                            stroke-linejoin="round"  class="fill-star icon icon-tabler icons-tabler-outline icon-tabler-star">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                    EOL;
+                    $checked_stars--;
+                }
+
+
+                while ($unchecked_stars > 0) {
+                    $html .= <<< EOL
+                        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
+                          fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"
+                            stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-star">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                    EOL;
+                    $unchecked_stars--;
+                }
+                return $html;
+            }
+
+            /**
+             * Returns the HTML code to display a review and its children.
+             * @param Review $review
+             * @return void
+             */
+            function recurse(Review $review): void
+            {
+                $reply_link = ROOT . "/reply/" . "id=?";
+                $date = $review->getDate()->format('d M Y');
+                $text = $review->getText();
+                $author = "user" . $review->getUserID(); // TODO: get username using getByID
+                $verified_badge = getBadge($review);
+                $rating_stars = getStars($review);
+
 
                 echo <<<EOL
                 <li>
                 <article>
                     $verified_badge
+                    $rating_stars
                    <hgroup> 
                         <h5>$author</h5>
                         <h6 class="review-date">$date</h6>
@@ -146,7 +200,7 @@ use Steamy\Model\User;
                 if (isset($review->children)) {
                     foreach ($review->children as $child_comment) {
                         echo "<ul>";
-                        recurse($child_comment, $product->getProductID());
+                        recurse($child_comment);
                         echo "</ul>";
                     }
                 }
@@ -157,7 +211,7 @@ use Steamy\Model\User;
             // print top-level comments
             $reviews = $product->getReviews();
             foreach ($reviews as $review) {
-                recurse($review, $product->getProductID());
+                recurse($review);
             }
             ?>
         </ul>
