@@ -52,19 +52,19 @@ class Order
 
     public function toArray(): array
     {
-        return
-            [
-                'order_id' => $this->order_id,
-                'status' => $this->status,
-                'created_date' => $this->created_date,
-                'pickup_date' => $this->pickup_date,
-                'street' => $this->street,
-                'city' => $this->city,
-                'district' => $this->district,
-                'total_price' => $this->total_price,
-                'client_id' => $this->client
-            ];
+        return [
+            'order_id' => $this->order_id,
+            'status' => $this->status,
+            'created_date' => $this->created_date->format('Y-m-d H:i:s'),
+            'pickup_date' => $this->pickup_date ? $this->pickup_date->format('Y-m-d H:i:s') : null,
+            'street' => $this->street,
+            'city' => $this->city,
+            'district' => $this->district->getID(), // Return the district ID
+            'total_price' => $this->total_price,
+            'client_id' => $this->client->getUserID() // Return the client ID 
+        ];
     }
+    
 
     public function save(): void
     {
