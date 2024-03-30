@@ -64,7 +64,7 @@ class Client extends User
             $result->last_name,
             "dummy-password", // A dummy password is used since the original password is unknown
             $result->phone_no,
-            new District($result->district_id),
+            $result->district_id->getID(),
             $result->street,
             $result->city
         );

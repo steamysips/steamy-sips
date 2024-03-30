@@ -14,19 +14,21 @@ class District
     private int $district_id;
     private string $name;
 
-    public function __construct(int $id)
+    public function __construct(int $id, string $name)
     {
-        $record = $this->first(
-            [
-                'district_id' => $id,
-            ]
-        );
-
-        $this->district_id = $record->district_id ?? -1;
-        $this->name = $record->name ?? "";
+        $this->district_id = $id;
+        $this->name = $name;
     }
 
-    // NOTE: No setters required for this class as districts are constants.
+    public static function getByID(int $id): District
+    {
+        $record = self::query("SELECT * FROM district WHERE district_id = :id", ['id' => $id]);
+        if (!$record) {
+            throw new \Exception("District not found with ID: $id");
+        }
+        return new District($record[0]->district_id, $record[0]->name);
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -35,5 +37,15 @@ class District
     public function getID(): int
     {
         return $this->district_id;
+    }
+
+    public static function getAll(): array
+    {
+        $districts = self::query("SELECT * FROM district");
+        $districtNames = [];
+        foreach ($districts as $district) {
+            $districtNames[] = $district->name;
+        }
+        return $districtNames;
     }
 }
