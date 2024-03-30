@@ -196,7 +196,6 @@ class Review
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            Utility::show($this->validate());
             return;
         }
         // Get data to be inserted into the review table
