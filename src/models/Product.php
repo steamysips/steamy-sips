@@ -395,45 +395,40 @@ public function getReviews(): array
         return array_values($nestedReviews);
     }
 
-    /**
+   /**
      * Returns an associative array containing the distribution of ratings for the product.
      * The key is the rating value (1 to 5) and the value is the percentage of reviews with that rating.
      * 
      * @return array An associative array representing the rating distribution
-     */
-    public function getRatingDistribution(): array
-    {
-        //  Query the database to get the number of reviews for each rating
-        $query = "SELECT rating, COUNT(*) AS count
-              FROM review
-              WHERE product_id = :product_id
-              GROUP BY rating";
-        $params = ['product_id' => $this->product_id];
+    */
+      public function getRatingDistribution(): array
+      {
+         // Query the database to get the percentage distribution of ratings
+              $query = "SELECT rating, 
+                                    COUNT(*) * 100.0 / (SELECT COUNT(*) FROM review WHERE product_id = :product_id) AS percentage
+                         FROM review
+                         WHERE product_id = :product_id
+                         GROUP BY rating";
+             $params = ['product_id' => $this->product_id];
 
-        try {
-            $result = $this->query($query, $params);
-        } catch (Exception $e) {
-            error_log('Error fetching rating distribution: ' . $e->getMessage());
-            return []; // Return empty array on error
-        }
-
-        // Calculate total number of reviews
-        $totalReviews = 0;
-        foreach ($result as $row) {
-            $totalReviews += $row->count;
-        }
-
-        // Calculate percentage for each rating
-        $distribution = [];
-        foreach ($result as $row) {
-            $rating = $row->rating;
-            $count = $row->count;
-            $percentage = round(($count / $totalReviews) * 100, 1); // Round to 1 decimal place
-
-            // Add rating and percentage to the distribution array
-            $distribution[$rating] = $percentage;
-        }
-
-        return $distribution;
+    try {
+        $result = $this->query($query, $params);
+    } catch (Exception $e) {
+        error_log('Error fetching rating distribution: ' . $e->getMessage());
+        return []; // Return empty array on error
     }
+
+    // Initialize the distribution array
+    $distribution = [];
+
+    // Populate the distribution array with rating and percentage
+    foreach ($result as $row) {
+        $rating = $row->rating;
+        $percentage = round($row->percentage, 1); // Round to 1 decimal place
+        $distribution[$rating] = $percentage;
+    }
+
+    return $distribution;
+    }
+
 }
