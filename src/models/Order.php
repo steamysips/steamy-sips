@@ -88,7 +88,7 @@ class Order
         return $this->products;
     }
     
-    public static function getByID(int $order_id): Order|false
+    public static function getByID(int $order_id): ?Order
     {
         // Perform query to fetch order from the database
         $query = "SELECT * FROM `order` WHERE order_id = :order_id";
@@ -96,7 +96,7 @@ class Order
     
         // Check if order with the specified ID exists
         if (empty($orderData)) {
-            return false;
+            return null;
         }
     
         // Extract order details from the query result
@@ -106,7 +106,7 @@ class Order
         $client = Client::getByID($orderData->client_id);
     
         if (!$client) {
-            return false;
+            return null;
         }
     
         // Fetch products associated with the order

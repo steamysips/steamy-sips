@@ -35,7 +35,7 @@ class Client extends User
      * @param int|null $user_id The user ID of the client. If null, the email will be used.
      * @return Client|false The Client object if found, otherwise false.
      */
-    private static function getClientByCondition(?string $email, ?int $user_id): Client|false
+    private static function getClientByCondition(?string $email, ?int $user_id): ?Client
     {
         // Determine the condition to use (email or user ID)
         $condition = $email !== null ? 'user.email = :email' : 'user.user_id = :user_id';
@@ -54,7 +54,7 @@ class Client extends User
 
         // Check if the result is empty
         if (!$result) {
-            return false;
+            return null;
         }
 
         // Create a new Client object
@@ -82,7 +82,7 @@ class Client extends User
      * @param string $email The email of the client.
      * @return Client|false The Client object if found, otherwise false.
      */
-    public static function getByEmail(string $email): Client|false
+    public static function getByEmail(string $email): ?Client
     {
         return self::getClientByCondition($email, null);
     }
@@ -93,7 +93,7 @@ class Client extends User
      * @param int $user_id The ID of the user/client.
      * @return Client|false The Client object if found, otherwise false.
      */
-    public static function getByID(int $user_id): Client|false
+    public static function getByID(int $user_id): ?Client
     {
         return self::getClientByCondition(null, $user_id);
     }
