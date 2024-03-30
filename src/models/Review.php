@@ -53,7 +53,7 @@ class Review
             // convert date to DateTime object
             $date_obj = null;
             try {
-                $date_obj = new \DateTime($result->date);
+                $date_obj = new DateTime($result->date);
             } catch (Exception $e) {
                 error_log('Error converting date: ' . $e->getMessage());
             }
