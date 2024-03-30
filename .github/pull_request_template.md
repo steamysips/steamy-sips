@@ -8,7 +8,7 @@ _Confirm you have completed the following actions prior to submitting this PR._
 - [ ] I have created a feature branch.
 - [ ] My commit messages are detailed.
 - [ ] All of my commits are relevant to the issue.
-- [ ] `composer test` does not throw any error. (Mark as checked if the tests were already failing before your commits)
+- [ ] `composer test` does not throw any error.
 
 ## Issue Resolution
 
