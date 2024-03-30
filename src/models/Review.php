@@ -15,17 +15,20 @@ class Review
 
     private int $product_id;
     private int $user_id;
-    private int $parent_review_id;
+    private ?int $parent_review_id; // a top-level review does not have a parent
     private int $review_id;
     private string $text;
     private int $rating;
     private Datetime $date;
 
-    /**
-     * @throws Exception Invalid date
-     */
-    public function __construct(int $user_id, int $product_id, int $parent_review_id, string $text, int $rating, DateTime $date)
-    {
+    public function __construct(
+        int $user_id,
+        int $product_id,
+        ?int $parent_review_id,
+        string $text,
+        int $rating,
+        DateTime $date
+    ) {
         $this->review_id = -1;
         $this->user_id = $user_id;
         $this->product_id = $product_id;
@@ -33,6 +36,41 @@ class Review
         $this->text = htmlspecialchars_decode(strip_tags($text));
         $this->rating = $rating;
         $this->date = $date;
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public static function getAll(): array
+    {
+        $query = "SELECT * FROM review";
+        $results = self::query($query);
+
+        // convert results to an array of Review
+        $reviews = [];
+        foreach ($results as $result) {
+            // convert date to DateTime object
+            $date_obj = null;
+            try {
+                $date_obj = new \DateTime($result->date);
+            } catch (Exception $e) {
+                error_log('Error converting date: ' . $e->getMessage());
+            }
+
+            $obj = new Review(
+                $result->user_id,
+                $result->product_id,
+                $result->parent_review_id,
+                $result->text,
+                $result->rating,
+                $date_obj,
+            );
+
+            $obj->setReviewID($result->review_id);
+            $reviews[] = $obj;
+        }
+        return $reviews;
     }
 
     public function toArray(): array
@@ -44,7 +82,7 @@ class Review
                 'product_id' => $this->product_id,
                 'parent_review_id' => $this->parent_review_id,
                 'text' => $this->text,
-                'date' => $this->date,
+                'date' => $this->date->format('Y-m-d H:i:s'),
                 'rating' => $this->rating
             ];
     }
@@ -113,7 +151,7 @@ class Review
         $this->product_id = $productID;
     }
 
-    public function getParentReviewID(): int
+    public function getParentReviewID(): ?int
     {
         return $this->parent_review_id;
     }
@@ -163,7 +201,10 @@ class Review
         }
         // Get data to be inserted into the review table
         $reviewData = $this->toArray();
-        unset($reviewData['review_id']); // Remove review_id as it's auto-incremented
+
+        // Remove review_id as it is auto-incremented in database
+        unset($reviewData['review_id']);
+
         // Perform insertion to the review table
         $this->insert($reviewData, 'review');
     }
@@ -171,8 +212,8 @@ class Review
     public function validate(): array
     {
         $errors = [];
-        if (empty($this->text)) {
-            $errors['text'] = "Review text is required";
+        if (strlen($this->text) < 2) {
+            $errors['text'] = "Review text must have at least 2 characters";
         }
         if ($this->rating < 1 || $this->rating > 5) {
             $errors['rating'] = "Rating must be between 1 and 5";
@@ -204,8 +245,8 @@ class Review
 
         $result = self::get_row($query, ['product_id' => $product_id, 'review_id' => $review_id]);
 
-        // If the result is greater than 0, the user has written the review for the product
-        return $result > 0;
+        // If result is empty, the user has written the review for the product
+        return empty($result);
     }
 
 }

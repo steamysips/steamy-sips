@@ -244,29 +244,32 @@ class Product
 
     public function getAverageRating(): float
     {
-    // Query the database to calculate the average rating
-    $query = "SELECT AVG(rating) AS average_rating
+        // Ensure that $product_id is initialized
+        if (!isset($this->product_id)) {
+            return 0; // Return 0 if $product_id is not set
+        }
+
+        // Query the database to calculate the average rating
+        $query = "SELECT AVG(rating) AS average_rating
               FROM review
               WHERE product_id = :product_id AND parent_review_id IS NULL"; // Exclude child reviews
-    $params = ['product_id' => $this->product_id];
+        $params = ['product_id' => $this->product_id];
 
-    try {
-        $result = $this->query($query, $params);
-    } catch (Exception $e) {
-        error_log('Error fetching average rating: ' . $e->getMessage());
-        return 0; // Return 0 if there's an error fetching the rating
+        try {
+            $result = $this->query($query, $params);
+        } catch (Exception $e) {
+            error_log('Error fetching average rating: ' . $e->getMessage());
+            return 0; // Return 0 if there's an error fetching the rating
+        }
+
+        // Extract the average rating from the result array
+        if (!empty($result)) {
+            $averageRating = $result[0]->average_rating;
+            return $averageRating !== null ? round($averageRating, 2) : 0; // Round to two decimal places
+        }
+
+        return 0; // No reviews, return 0 as the average rating
     }
-
-    // Extract the average rating from the result array
-    if (!empty($result)) {
-        $averageRating = $result[0]->average_rating;
-        return $averageRating !== null ? round($averageRating, 2) : 0; // Round to two decimal places
-    }
-
-    return 0; // No reviews, return 0 as the average rating
-    }
-     
-
 
     public function validate(): array
     {
@@ -316,45 +319,58 @@ class Product
         return $errors;
     }
 
+    /**
+     * Returns all reviews for product.
+     *
+     * @return Review[] An array of Review objects
+     */
+    public function getReviews(bool $orderByDate = true): array
+    {
+        // Initialize an empty array to store review objects
+        $reviews = [];
 
-/**
- * Returns all reviews for the product.
- *
- * @return Review[] An array of Review objects representing the reviews for the product.
- */
-public function getReviews(): array
-{
-    // Initialize an empty array to store review objects
-    $reviews = [];
+        // Query the database for reviews related to this product
+        $query = "SELECT * FROM review WHERE product_id = :product_id";
 
-    // Query the database for reviews related to this product
-    $query = "SELECT * FROM review WHERE product_id = :product_id";
-    $params = ['product_id' => $this->product_id];
+        if ($orderByDate) {
+            $query .= ' ORDER BY date;';
+        }
 
-    try {
-        $reviewRecords = $this->query($query, $params);
-    } catch (Exception $e) {
-        error_log('Error fetching reviews: ' . $e->getMessage());
-        return $reviews;
-    }
+        $params = ['product_id' => $this->product_id];
 
-    // Iterate through the retrieved review records and create Review objects
-    foreach ($reviewRecords as $record) {
-        // Create a new Review object and add it to the reviews array
-        $review = new Review(
-            $record->user_id,
-            $record->product_id,
-            $record->parent_review_id,
-            $record->text,
-            $record->rating,
-            $record->date
-        );
-        $review->setReviewID($record->review_id); // Set the review ID
-        $reviews[] = $review;
-    }
+        try {
+            $reviewRecords = $this->query($query, $params);
+        } catch (Exception $e) {
+            error_log('Error fetching reviews: ' . $e->getMessage());
+            return $reviews;
+        }
 
-    return $reviews;
-}
+        if (empty($reviewRecords)) {
+            return [];
+        }
+
+        // Iterate through the retrieved review records and create Review objects
+        foreach ($reviewRecords as $result) {
+            // convert date to DateTime object
+            $date_obj = null;
+            try {
+                $date_obj = new \DateTime($result->date);
+            } catch (Exception $e) {
+                error_log('Error converting date: ' . $e->getMessage());
+            }
+
+            // Create a new Review object and add it to the reviews array
+            $review = new Review(
+                $result->user_id,
+                $result->product_id,
+                $result->parent_review_id,
+                $result->text,
+                $result->rating,
+                $date_obj,
+            );
+            $reviews[] = $review;
+        }
+  
     /**
      * Returns an array of reviews where each review has a
      * `children` attribute but no `parent_review_id` attribute.
