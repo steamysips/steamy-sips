@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @var string $defaultEmail
  * @var string $defaultPassword
  * @var string $defaultConfirmPassword
+ * @var array $errors
  */
 
 ?>
@@ -31,28 +32,19 @@ declare(strict_types=1);
                         <div class="container">
                             <label for="first_name">First Name</label>
                             <input autofocus id="first_name" type="text" name="first_name"
-                                   value="<?= $defaultFirstName ?>" required/>
-                            <?php
-                            if (!empty($errors['name'])) : ?>
-                                <small class="warning"><?php
-                                    echo $errors['name'] ?></small>
-                            <?php
-                            endif;
-                            ?>
+                                   value="<?= $defaultFirstName ?>" required<?= !empty($errors['name']) ? ' aria-invalid="true"' : '' ?> />
+                            <?php if (!empty($errors['name'])) : ?>
+                                <small class="warning"><?= $errors['name'] ?></small>
+                            <?php endif; ?>
                         </div>
-
 
                         <div class="container">
                             <label for="last_name">Last Name</label>
                             <input id="last_name" type="text" name="last_name"
-                                   value="<?= $defaultLastName ?>" required/>
-                            <?php
-                            if (!empty($errors['name'])) : ?>
-                                <small class="warning"><?php
-                                    echo $errors['name'] ?></small>
-                            <?php
-                            endif;
-                            ?>
+                                   value="<?= $defaultLastName ?>" required<?= !empty($errors['name']) ? ' aria-invalid="true"' : '' ?> />
+                            <?php if (!empty($errors['name'])) : ?>
+                                <small class="warning"><?= $errors['name'] ?></small>
+                            <?php endif; ?>
                         </div>
 
                     </div>
@@ -63,23 +55,23 @@ declare(strict_types=1);
                     </label>
                     <input value="<?= $defaultPhoneNumber ?>" id="telephone" type="tel" name="phone_no"
                            pattern="\+230-5-[0-9]{3}-[0-9]{4}"
-                           title="eg., +230-5-123-4567" required/>
+                           title="eg., +230-5-123-4567" required<?= !empty($errors['phone_no']) ? ' aria-invalid="true"' : '' ?> />
 
                     <div class="grid">
                         <div class="container">
                             <label for="street">Street</label>
-                            <input name="street" value="<?= $defaultStreet ?>" id="street" type="text">
+                            <input name="street" value="<?= $defaultStreet ?>" id="street" type="text"<?= !empty($errors['street']) ? ' aria-invalid="true"' : '' ?> />
                         </div>
 
                         <div class="container">
                             <label for="city">City</label>
-                            <input name="city" value="<?= $defaultCity ?>" id="city" type="text">
+                            <input name="city" value="<?= $defaultCity ?>" id="city" type="text"<?= !empty($errors['city']) ? ' aria-invalid="true"' : '' ?> />
                         </div>
                     </div>
 
                     <label for="districts">District</label>
                     <!--  TODO: generate district list dynamically-->
-                    <select name="district" id="districts">
+                    <select name="district" id="districts"<?= !empty($errors['district']) ? ' aria-invalid="true"' : '' ?>>
                         <option value="8" <?= $defaultDistrictID == 8 ? "selected" : "" ?>>Pamplemousses</option>
                         <option value="7" <?= $defaultDistrictID == 7 ? "selected" : "" ?>>Riviere du Rempart</option>
                         <option value="2" <?= $defaultDistrictID == 2 ? "selected" : "" ?>>Port Louis</option>
@@ -97,13 +89,10 @@ declare(strict_types=1);
                 <fieldset>
                     <legend><strong>Account information</strong></legend>
                     <label for="email">Email</label>
-                    <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required/>
-                    <?php
-                    if (!empty($errors['email'])) : ?>
+                    <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required<?= !empty($errors['email']) ? ' aria-invalid="true"' : '' ?> />
+                    <?php if (!empty($errors['email'])) : ?>
                         <small class="warning"><?= $errors['email'] ?></small>
-                    <?php
-                    endif;
-                    ?>
+                    <?php endif; ?>
 
                     <div class="grid">
                         <div class="container">
@@ -111,26 +100,21 @@ declare(strict_types=1);
                             <input id="password" type="password" name="password"
                                    aria-label="Password"
                                    value="<?= $defaultPassword ?>"
-                                   required/>
+                                   required<?= !empty($errors['password']) ? ' aria-invalid="true"' : '' ?> />
 
-                            <?php
-                            if (!empty($errors['password'])) : ?>
+                            <?php if (!empty($errors['password'])) : ?>
                                 <small class="warning"><?= $errors['password'] ?></small>
-                            <?php
-                            endif;
-                            ?>
+                            <?php endif; ?>
                         </div>
 
                         <div class="container">
                             <label for="confirmPassword">Confirm password</label>
                             <input id="confirmPassword" type="password" name="confirmPassword"
                                    aria-label="Confirm password"
-                                   value="<?= $defaultConfirmPassword ?>" required/>
-                            <?php
-                            if (!empty($errors['confirmPassword'])) : ?>
+                                   value="<?= $defaultConfirmPassword ?>" required<?= !empty($errors['confirmPassword']) ? ' aria-invalid="true"' : '' ?> />
+                            <?php if (!empty($errors['confirmPassword'])) : ?>
                                 <small class="warning"><?= $errors['confirmPassword'] ?></small>
-                            <?php
-                            endif; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </fieldset>
@@ -149,18 +133,18 @@ declare(strict_types=1);
 </main>
 
 <script>
-  function togglePasswordVisibility() {
-    // Reference: https://www.w3schools.com/howto/howto_js_toggle_password.asp
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
+    function togglePasswordVisibility() {
+        // Reference: https://www.w3schools.com/howto/howto_js_toggle_password.asp
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
 
-    if (passwordInput.type === "password") {
-      passwordInput.type = "text";
-      confirmPasswordInput.type = "text";
-    } else {
-      passwordInput.type = "password";
-      confirmPasswordInput.type = "password";
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            confirmPasswordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+            confirmPasswordInput.type = "password";
 
+        }
     }
-  }
 </script>
