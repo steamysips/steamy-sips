@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @var $default_rating int default rating in form
  */
 
+use Steamy\Model\Client;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
 use Steamy\Model\User;
@@ -168,7 +169,7 @@ use Steamy\Model\User;
                 $reply_link = ROOT . "/reply/" . "id=?";
                 $date = $review->getDate()->format('d M Y');
                 $text = $review->getText();
-                $author = "user" . $review->getUserID(); // TODO: get username using getByID
+                $author = Client::getByID($review->getUserID())->getFullName();
                 $verified_badge = getBadge($review);
                 $rating_stars = getStars($review);
 
