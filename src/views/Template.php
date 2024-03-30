@@ -160,7 +160,7 @@ declare(strict_types=1);
 
 <footer id="page-footer" class="container-fluid">
     <small class="secondary">
-        © 2024 Steamy Sips Café
+        © <?= date("Y") ?> Steamy Sips Café
     </small>
 </footer>
 </body>

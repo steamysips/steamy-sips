@@ -28,45 +28,76 @@ class Client extends User
     }
 
     /**
-     * Returns a Client object for a given email. If email not found,
-     * false is returned.
+     * Returns a Client object based on a specified condition (email or user ID).
+     * If the user is not found, returns false.
      *
-     * @param string $email email of client
-     * @return Client|false
+     * @param string|null $email The email of the client. If null, the user ID will be used.
+     * @param int|null $user_id The user ID of the client. If null, the email will be used.
+     * @return Client|false The Client object if found, otherwise false.
      */
-    public static function getByEmail(string $email): Client|false
+    private static function getClientByCondition(?string $email, ?int $user_id): Client|false
     {
+        // Determine the condition to use (email or user ID)
+        $condition = $email !== null ? 'user.email = :email' : 'user.user_id = :user_id';
+        $params = $email !== null ? ['email' => $email] : ['user_id' => $user_id];
+
+        // Construct the SQL query
         $query = <<<EOL
         SELECT * FROM user
         INNER JOIN client
         ON user.user_id = client.user_id
-        WHERE user.email = :email;
+        WHERE {$condition};
         EOL;
 
-        $result = self::get_row($query, array("email" => $email));
+        // Execute the query and retrieve the result
+        $result = self::get_row($query, $params);
 
+        // Check if the result is empty
         if (!$result) {
             return false;
         }
 
+        // Create a new Client object
         $client = new Client(
             $result->email,
             $result->first_name,
             $result->last_name,
-            "dummy-password", // a dummy is used since original password is unknown
+            "dummy-password", // A dummy password is used since the original password is unknown
             $result->phone_no,
             new District($result->district_id),
             $result->street,
             $result->city
         );
-        $client->setUserID($result->user_id);
 
-        // store hash of true password
+        // Set the user ID and password hash
+        $client->setUserID($result->user_id);
         $client->setPassword($result->password);
 
         return $client;
     }
 
+    /**
+     * Returns a Client object for a given email. If the email is not found, returns false.
+     *
+     * @param string $email The email of the client.
+     * @return Client|false The Client object if found, otherwise false.
+     */
+    public static function getByEmail(string $email): Client|false
+    {
+        return self::getClientByCondition($email, null);
+    }
+
+    /**
+     * Returns a Client object for a given user ID. If the user ID is not found, returns false.
+     *
+     * @param int $user_id The ID of the user/client.
+     * @return Client|false The Client object if found, otherwise false.
+     */
+    public static function getByID(int $user_id): Client|false
+    {
+        return self::getClientByCondition(null, $user_id);
+    }
+    
     /**
      * Deletes user from database
      *
