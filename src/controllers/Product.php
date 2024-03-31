@@ -83,7 +83,6 @@ class Product
             Utility::redirect('shop/products/' . $this->product->getProductID());
         } else {
             // form values are invalid
-            Utility::show($this->view_data['errors']);
 
             // set default values on form for submitting reviews
             $this->view_data["default_review"] = $new_comment;
