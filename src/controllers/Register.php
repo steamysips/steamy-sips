@@ -25,6 +25,9 @@ class Register
         $data['defaultPassword'] = "";
         $data['defaultConfirmPassword'] = "";
 
+        // Initialize district names
+        $data['district_names'] = District::getAll();
+
         if (isset($_POST['register_submit'])) {
             // TODO: Remove everything below and let validate() deal with it. update default form values with sanitized version
             $data['defaultFirstName'] = $_POST['first_name'] ?? "";
@@ -44,7 +47,7 @@ class Register
                 last_name: $data['defaultLastName'],
                 plain_password: $data['defaultPassword'],
                 phone_no: $data['defaultPhoneNumber'],
-                district: new District($data['defaultDistrictID']),
+                district: $data['defaultDistrictID'],
                 street: $data['defaultStreet'],
                 city: $data['defaultCity']
             );
