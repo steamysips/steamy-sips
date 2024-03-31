@@ -14,6 +14,13 @@ class Login
 
     private array $data;
 
+    public function __construct()
+    {
+        // initialize default values
+        $this->data['defaultEmail'] = "";
+        $this->data['defaultPassword'] = "";
+    }
+
     private function validateUser(): bool
     {
         // default error
@@ -38,16 +45,12 @@ class Login
 
     public function index(): void
     {
-        // initialize default values
-        $this->data['defaultEmail'] = "";
-        $this->data['defaultPassword'] = "";
-
         if (isset($_POST['login_submit'])) {
             // TODO: sanitize values
 
             // update default form values
-            $this->data['defaultEmail'] = $_POST['email'] ?? "";
-            $this->data['defaultPassword'] = $_POST['password'] ?? "";
+            $this->data['defaultEmail'] = trim($_POST['email'] ?? "");
+            $this->data['defaultPassword'] = trim($_POST['password'] ?? "");
 
             // check if credentials are correct
             if ($this->validateUser()) {

@@ -33,18 +33,18 @@ class Register
 
     private function handleFormSubmission(): void
     {
-        // display submitted values back to form
+        // set view data so that submitted values are displayed back to form
 
         // TODO: add more sanitization
-        $this->view_data['defaultFirstName'] = $_POST['first_name'] ?? "";
-        $this->view_data['defaultLastName'] = $_POST['last_name'] ?? "";
-        $this->view_data['defaultPhoneNumber'] = $_POST['phone_no'] ?? "";
-        $this->view_data['defaultDistrictID'] = (int)filter_var($_POST['district'], FILTER_SANITIZE_NUMBER_INT);
-        $this->view_data['defaultStreet'] = $_POST['street'] ?? "";
-        $this->view_data['defaultCity'] = $_POST['city'] ?? "";
-        $this->view_data['defaultEmail'] = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-        $this->view_data['defaultPassword'] = $_POST['password'] ?? "";
-        $this->view_data['defaultConfirmPassword'] = $_POST['confirmPassword'] ?? "";
+        $this->view_data['defaultFirstName'] = trim($_POST['first_name'] ?? "");
+        $this->view_data['defaultLastName'] = trim($_POST['last_name'] ?? "");
+        $this->view_data['defaultPhoneNumber'] = trim($_POST['phone_no'] ?? "");
+        $this->view_data['defaultDistrictID'] = (int)filter_var(trim($_POST['district']), FILTER_SANITIZE_NUMBER_INT);
+        $this->view_data['defaultStreet'] = trim($_POST['street'] ?? "");
+        $this->view_data['defaultCity'] = trim($_POST['city'] ?? "");
+        $this->view_data['defaultEmail'] = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+        $this->view_data['defaultPassword'] = trim($_POST['password'] ?? "");
+        $this->view_data['defaultConfirmPassword'] = trim($_POST['confirmPassword'] ?? "");
 
         // TODO: If district ID is invalid, handle
         // create a new client object
