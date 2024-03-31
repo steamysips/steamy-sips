@@ -108,13 +108,13 @@ abstract class User
         }
     
         // Perform first name length check
-        if (strlen($this->first_name) < 2) {
-            $errors['first_name'] = "First name must be at least 2 characters long";
+        if (strlen($this->first_name) < 3) {
+            $errors['first_name'] = "First name must be at least 3 characters long";
         }
     
         // Perform last name length check
-        if (strlen($this->last_name) < 2) {
-            $errors['last_name'] = "Last name must be at least 2 characters long";
+        if (strlen($this->last_name) < 3) {
+            $errors['last_name'] = "Last name must be at least 3 characters long";
         }
     
         // Perform phone number length check
