@@ -1,8 +1,8 @@
--- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
 -- Host: localhost    Database: cafe
 -- ------------------------------------------------------
--- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
+-- Server version	10.4.32-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -178,11 +178,23 @@ DELIMITER ;;
 
 
 
+
+
+
+
 BEGIN
 
 
 
+
+
+
+
     DECLARE quantity_ordered INT;
+
+
+
+
 
 
 
@@ -194,7 +206,19 @@ BEGIN
 
 
 
+
+
+
+
+
+
+
+
     SET quantity_ordered = NEW.quantity;
+
+
+
+
 
 
 
@@ -206,7 +230,19 @@ BEGIN
 
 
 
+
+
+
+
+
+
+
+
     UPDATE `product` SET stock_level = stock_level - quantity_ordered WHERE product_id = product_id;
+
+
+
+
 
 
 
@@ -216,6 +252,32 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `password_change_requests`
+--
+
+DROP TABLE IF EXISTS `password_change_requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_change_requests` (
+  `pw_change_requests_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`pw_change_requests_id`),
+  KEY `pw_change` (`user_id`),
+  CONSTRAINT `pw_change` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_change_requests`
+--
+
+LOCK TABLES `password_change_requests` WRITE;
+/*!40000 ALTER TABLE `password_change_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_change_requests` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `product`
@@ -330,4 +392,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-27 10:47:31
+-- Dump completed on 2024-03-30 20:16:18

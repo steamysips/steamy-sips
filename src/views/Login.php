@@ -20,19 +20,18 @@ declare(strict_types=1);
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
                        value="<?= $defaultPassword ?>" required/>
 
-                <fieldset>
-                    <label for="remember">
-                        <input type="checkbox" role="switch" id="remember" name="remember"/>
-                        Remember me
-                    </label>
-                </fieldset>
+                       <fieldset>
+                           <label for="remember">
+                                 <input type="checkbox" role="switch" id="remember" name="remember"/>
+                                     Remember me
+                                  </label>
+                                  <a href="<?= ROOT ?>/password">Forgot Password?</a>
+                        </fieldset>
+
                 <button name="login_submit" type="submit" class="contrast">Login</button>
-                <?php
-                if (!empty($errors['other'])) : ?>
-                    <small class="warning"><?php
-                        echo $errors['other'] ?></small>
-                <?php
-                endif; ?>
+                <?php if (!empty($errors['other'])) : ?>
+                    <small class="warning"><?php echo $errors['other'] ?></small>
+                <?php endif; ?>
                 <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
             </form>
         </div>
