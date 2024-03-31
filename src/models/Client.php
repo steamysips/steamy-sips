@@ -29,11 +29,10 @@ class Client extends User
 
     /**
      * Returns a Client object based on a specified condition (email or user ID).
-     * If the user is not found, returns false.
      *
      * @param string|null $email The email of the client. If null, the user ID will be used.
      * @param int|null $user_id The user ID of the client. If null, the email will be used.
-     * @return Client|false The Client object if found, otherwise false.
+     * @return ?Client The Client object if found, otherwise null.
      */
     private static function getClientByCondition(?string $email, ?int $user_id): ?Client
     {
@@ -46,7 +45,7 @@ class Client extends User
         SELECT * FROM user
         INNER JOIN client
         ON user.user_id = client.user_id
-        WHERE {$condition};
+        WHERE $condition;
         EOL;
 
         // Execute the query and retrieve the result
@@ -64,7 +63,7 @@ class Client extends User
             $result->last_name,
             "dummy-password", // A dummy password is used since the original password is unknown
             $result->phone_no,
-            $result->district_id->getID(),
+            District::getByID($result->district_id),
             $result->street,
             $result->city
         );
@@ -77,10 +76,10 @@ class Client extends User
     }
 
     /**
-     * Returns a Client object for a given email. If the email is not found, returns false.
+     * Returns a Client object for a given email.
      *
      * @param string $email The email of the client.
-     * @return Client|false The Client object if found, otherwise false.
+     * @return ?Client The Client object if found, otherwise null.
      */
     public static function getByEmail(string $email): ?Client
     {
@@ -88,7 +87,7 @@ class Client extends User
     }
 
     /**
-     * Returns a Client object for a given user ID. If the user ID is not found, returns false.
+     * Returns a Client object for a given user ID.
      *
      * @param int $user_id The ID of the user/client.
      * @return Client|false The Client object if found, otherwise false.
@@ -97,7 +96,7 @@ class Client extends User
     {
         return self::getClientByCondition(null, $user_id);
     }
-    
+
     /**
      * Deletes user from database
      *
@@ -172,12 +171,12 @@ class Client extends User
             $errors['district'] = 'District name is required';
         }
 
-        if (empty($this->city)) {
-            $errors['city'] = 'City name is required';
+        if (strlen($this->city) < 3) {
+            $errors['city'] = 'City name must have at least 3 characters';
         }
 
-        if (empty($this->street)) {
-            $errors['street'] = 'Street name is required';
+        if (strlen($this->street) < 4) {
+            $errors['street'] = 'Street name must have at least 4 characters';
         }
 
         return $errors;
