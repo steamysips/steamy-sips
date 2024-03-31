@@ -20,11 +20,11 @@ class District
         $this->name = $name;
     }
 
-    public static function getByID(int $id): District
+    public static function getByID(int $id): ?District
     {
         $record = self::query("SELECT * FROM district WHERE district_id = :id", ['id' => $id]);
         if (!$record) {
-            throw new \Exception("District not found with ID: $id");
+            return null;
         }
         return new District($record[0]->district_id, $record[0]->name);
     }
