@@ -1,15 +1,14 @@
 # API Documentation
 
 - [API Documentation](#api-documentation)
-  - [Endpoints](#endpoints)
-    - [Authentication](#authentication)
-    - [Documentation](#documentation)
-    - [User](#user)
-    - [Product](#product)
-    - [Order](#order)
-    - [Review](#review)
-    - [District](#district)
-  - [Query string parameters](#query-string-parameters)
+    - [Endpoints](#endpoints)
+        - [Authentication](#authentication)
+        - [User](#user)
+        - [Product](#product)
+        - [Order](#order)
+        - [Review](#review)
+        - [District](#district)
+    - [Query string parameters](#query-string-parameters)
 - [References](#references)
 
 The Steamy Sips API is a REST API.
@@ -24,25 +23,19 @@ There are two types of endpoints:
 ### Authentication
 
 | Endpoint            | Description                                 | Protected |
-| ------------------- | ------------------------------------------- | --------- |
+|---------------------|---------------------------------------------|-----------|
 | `GET /api/v1/login` | Authenticates user and returns a JWT token. | No        |
 
 Note:
 
 - Only administrators can receive a JWT token.
+- Only administrators can access protected endpoints.
 - The JWT token expires after 24 hours and a new one must be requested.
-
-
-### Documentation
-
-| Endpoint           | Description                                            | Protected |
-| ------------------ | ------------------------------------------------------ | --------- |
-| `GET /api/v1/docs` | Displays the documentation for the API in HTML format. | No        |
 
 ### User
 
 | Endpoint                          | Description                                         | Protected |
-| --------------------------------- | --------------------------------------------------- | --------- |
+|-----------------------------------|-----------------------------------------------------|-----------|
 | `GET /api/v1/users`               | Get the list of all users.                          | Yes       |
 | `GET /api/v1/users/[id]`          | Get the details of a specific user by their ID.     | Yes       |
 | `POST /api/v1/users`              | Create a new user entry in the database.            | Yes       |
@@ -54,7 +47,7 @@ Note:
 ### Product
 
 | Endpoint                          | Description                                            | Protected | Query string parameters |
-| --------------------------------- | ------------------------------------------------------ | --------- | ----------------------- |
+|-----------------------------------|--------------------------------------------------------|-----------|-------------------------|
 | `GET /api/v1/products`            | Get the list of all products available in the store.   | No        | `sort`, `group-by`      |
 | `GET /api/v1/products/[id]`       | Get the details of a specific product by its ID.       | No        |
 | `GET /api/v1/products/categories` | Get the list of product categories.                    | No        |
@@ -65,7 +58,7 @@ Note:
 ### Order
 
 | Endpoint                     | Description                                           | Protected | Query string parameters      |
-| ---------------------------- | ----------------------------------------------------- | --------- | ---------------------------- |
+|------------------------------|-------------------------------------------------------|-----------|------------------------------|
 | `GET /api/v1/orders/`        | Get the list of all orders.                           | Yes       | `sort`, `group-by`, `status` |
 | `GET /api/v1/orders/[id]`    | Get the details of a specific order by its ID.        | Yes       |
 | `POST /api/v1/orders`        | Create a new order for products.                      | Yes       |
@@ -75,7 +68,7 @@ Note:
 ### Review
 
 | Endpoint                            | Description                                           | Protected | Query string parameters |
-| ----------------------------------- | ----------------------------------------------------- | --------- | ----------------------- |
+|-------------------------------------|-------------------------------------------------------|-----------|-------------------------|
 | `GET /api/v1/reviews`               | Get all reviews for a particular product by its ID.   | No        | `sort`                  |
 | `GET /api/v1/products/[id]/reviews` | Get all reviews for a particular product by its ID.   | No        |
 | `POST /api/v1/reviews`              | Create a new review for a product.                    | Yes       |
@@ -85,14 +78,14 @@ Note:
 ### District
 
 | Endpoint                     | Description                                       | Protected |
-| ---------------------------- | ------------------------------------------------- | --------- |
+|------------------------------|---------------------------------------------------|-----------|
 | `GET /api/v1/districts`      | Get the list of all districts.                    | No        |
 | `GET /api/v1/districts/[id]` | Get the details of a specific district by its ID. | No        |
 
 ## Query string parameters
 
 | Parameter | Possible values | Description                           |
-| --------- | --------------- | ------------------------------------- |
+|-----------|-----------------|---------------------------------------|
 | `sort`    | `asc`, `desc`   | Sort in ascending or descending order |
 
 # References
