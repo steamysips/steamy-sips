@@ -55,7 +55,7 @@ CREATE TABLE `client` (
   `district_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `client_district_district_id_fk` (`district_id`),
-  CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
+  CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
   CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
   CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
@@ -117,8 +117,8 @@ CREATE TABLE `order` (
   PRIMARY KEY (`order_id`),
   KEY `order_fk` (`user_id`),
   KEY `order_district_district_id_fk` (`district_id`),
-  CONSTRAINT `order_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `order_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
+  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`),
   CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
   CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
@@ -149,8 +149,8 @@ CREATE TABLE `order_product` (
   `quantity` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `order_product_2fk` (`product_id`),
-  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE,
-  CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
+  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON UPDATE CASCADE,
   CONSTRAINT `quantity_range` CHECK (`quantity` >= 0),
   CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
   CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy'))
@@ -271,12 +271,12 @@ CREATE TABLE `review` (
   KEY `review_1fk` (`user_id`),
   KEY `review_2fk` (`product_id`),
   KEY `review_3fk` (`parent_review_id`),
-  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE,
-  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`) ON DELETE SET NULL,
+  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `check_rating` CHECK (`rating` between 1 and 5),
   CONSTRAINT `text_length` CHECK (char_length(`text`) >= 2)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +309,7 @@ CREATE TABLE `user` (
   CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
   CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
   CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-27 10:47:31
+-- Dump completed on 2024-03-31 11:11:46
