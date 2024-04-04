@@ -78,38 +78,19 @@ class Shop
         return 0;
     }
 
-    /**
-     * Determines whether Shop controller should handle current URL and deals with invalid URLs.
-     * @return bool True if Shop controller is responsible for handling URL
-     */
-    private function validateURL(): bool
-    {
-        // TODO: Move routing logic outside of controller
-        $URL = Utility::splitURL();
-
-        // check if URL follows format /shop/products/<number>
-        if (sizeof($URL) == 3 && $URL[1] == 'products') {
-            // let Product controller handle this URL
-            (new \Steamy\Controller\Product())->index();
-            return false;
-        }
-
-        // check if URL does not follow required format /shop or /shop/products
-        if (!(sizeof($URL) == 2 && $URL[1] == 'products' || sizeof($URL) == 1)) {
-            // display error page
-            $this->view(
-                '404',
-                template_title: 'Error'
-            );
-            return false;
-        }
-
-        return true;
-    }
-
     public function index(): void
     {
-        if (!$this->validateURL()) {
+        // check if URL follows format /shop/products/<number>
+        if (preg_match("/^shop\/products\/[0-9]+/", $_GET['url'])) {
+            // let Product controller handle this
+            (new \Steamy\Controller\Product())->index();
+            return;
+        }
+
+        // check if URL is not /shop or /shop/products
+        if (!($_GET['url'] == "shop" || $_GET['url'] == "shop/products")) {
+            // let 404 controller handle this
+            (new _404())->index();
             return;
         }
 
