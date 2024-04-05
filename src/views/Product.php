@@ -53,12 +53,6 @@ use Steamy\Model\User;
                 <option>Oat milk</option>
                 <option>Soy</option>
             </select>
-            <label for="toppings">Toppings</label>
-            <select id="milk" required>
-                <option selected>Topping 1</option>
-                <option>Topping 2</option>
-                <option>Topping 3</option>
-            </select>
             <button>Add to cart</button>
         </div>
     </div>
@@ -219,3 +213,5 @@ use Steamy\Model\User;
 
     </div>
 </main>
+
+<script defer src="<?= ROOT ?>/js/cart.js"></script>
