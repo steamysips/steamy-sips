@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Core;
 
 use PDO;
+use PDOException;
 use stdClass;
 
 trait Database
@@ -17,7 +18,16 @@ trait Database
     private static function connect(): PDO
     {
         $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
-        return new PDO($string, DB_USERNAME, DB_PASSWORD);
+        try {
+            $pdo_object = new PDO($string, DB_USERNAME, DB_PASSWORD);
+        } catch (PDOException $e) {
+            // TODO: Create a page to display the error
+            Utility::show(
+                "Error establishing a connection to the database."
+            );
+            die();
+        }
+        return $pdo_object;
     }
 
     /**
