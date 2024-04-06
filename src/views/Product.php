@@ -28,32 +28,37 @@ use Steamy\Model\User;
             <p>
                 <?= $product->getDescription() ?>
             </p>
-            <h4>Size options</h4>
-            <fieldset>
-                <label for="small">
-                    <input type="radio" id="small" name="size" value="small" checked>
-                    Small
+            <form id="product-customization-form">
+                <input type="hidden" value="1" name="quantity">
+                <input type="hidden" value="<?= $product->getProductID() ?>" name="product_id">
+                <h4>Size options</h4>
+                <fieldset>
+                    <label for="small">
+                        <input type="radio" id="small" name="cupSize" value="small" checked>
+                        Small
+                    </label>
+                    <label for="medium">
+                        <input type="radio" id="medium" name="cupSize" value="medium">
+                        Medium
+                    </label>
+                    <label for="large">
+                        <input type="radio" id="large" name="cupSize" value="large">
+                        Large
+                    </label>
+                </fieldset>
+                <h4>Customizations</h4>
+                <label for="milk">
+                    Milk
                 </label>
-                <label for="medium">
-                    <input type="radio" id="medium" name="size" value="medium">
-                    Medium
-                </label>
-                <label for="large">
-                    <input type="radio" id="large" name="size" value="large">
-                    Large
-                </label>
-            </fieldset>
-            <h4>Customizations</h4>
-            <label for="milk">
-                Milk
-            </label>
-            <select id="milk" required>
-                <option selected>Almond</option>
-                <option>Coconut</option>
-                <option>Oat milk</option>
-                <option>Soy</option>
-            </select>
-            <button>Add to cart</button>
+                <select id="milk" name="milkType" required>
+                    <option value="almond" selected>Almond</option>
+                    <option value="coconut">Coconut</option>
+                    <option value="oat">Oat milk</option>
+                    <option value="soy">Soy</option>
+                </select>
+                <button type="submit">Add to cart</button>
+            </form>
+
         </div>
     </div>
 
@@ -114,7 +119,8 @@ use Steamy\Model\User;
                 }
                 return <<< BADGE
                     <div data-tooltip="This user did not buy the product" data-placement="left" >
-                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-alert-octagon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
+                      fill="none"  stroke="red"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-alert-octagon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
                     </div>
                 BADGE;
             }
@@ -215,3 +221,24 @@ use Steamy\Model\User;
 </main>
 
 <script defer src="<?= ROOT ?>/js/cart.js"></script>
+
+<script defer>
+
+  function handleAddToCart(e) {
+    // capture form submission
+    e.preventDefault();
+
+    // extract form data
+    const formData = new FormData(e.target);
+    const formProps = Object.fromEntries(formData);
+
+    const item = CartItem(parseInt(formProps.product_id, 10), parseInt(formProps.quantity, 10), formProps.cupSize,
+        formProps.milkType);
+    cart().addItem(item);
+  }
+
+  window.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("product-customization-form").addEventListener("submit", handleAddToCart);
+  });
+
+</script>
