@@ -7,8 +7,10 @@ declare(strict_types=1);
  * @var $signed_in_user User
  * @var $default_review string default review text in form
  * @var $default_rating int default rating in form
+ * @var $rating_distribution string An array containing the percentages of ratings
  */
 
+use Steamy\Model\Client;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
 use Steamy\Model\User;
@@ -89,6 +91,10 @@ use Steamy\Model\User;
         </button>
     </form>
 
+    <div style="width: 500px;">
+        <canvas id="customer_rating_chart"></canvas>
+    </div>
+
     <label for="filter-by">Filter by</label>
     <select id="filter-by" required>
         <option selected>All reviewers</option>
@@ -168,7 +174,7 @@ use Steamy\Model\User;
                 $reply_link = ROOT . "/reply/" . "id=?";
                 $date = $review->getDate()->format('d M Y');
                 $text = $review->getText();
-                $author = "user" . $review->getUserID(); // TODO: get username using getByID
+                $author = Client::getByID($review->getUserID())->getFullName();
                 $verified_badge = getBadge($review);
                 $rating_stars = getStars($review);
 
@@ -218,3 +224,34 @@ use Steamy\Model\User;
 
     </div>
 </main>
+
+<script>
+  const labels = ["5 star", "4 star", "3 star", "2 star", "1 star"];
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        axis: "y",
+        label: "Percentage",
+        data: <?= $rating_distribution?>,
+        fill: true,
+        backgroundColor: "rgb(255, 159, 64)",
+        borderWidth: 1,
+      }],
+  };
+
+  const config = {
+    type: "bar",
+    data,
+    options: {
+      indexAxis: "y",
+    },
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    new Chart(
+        document.getElementById("customer_rating_chart"), config,
+    );
+  });
+
+</script>

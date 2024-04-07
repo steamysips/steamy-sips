@@ -28,6 +28,7 @@ class Product
         $this->view_data["default_rating"] = "";
         $this->view_data["signed_in_user"] = null;
         $this->view_data["product"] = null;
+        $this->view_data["rating_distribution"] = "[]";
 
         // get product id from URL
         $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
@@ -83,12 +84,28 @@ class Product
             Utility::redirect('shop/products/' . $this->product->getProductID());
         } else {
             // form values are invalid
-            Utility::show($this->view_data['errors']);
 
             // set default values on form for submitting reviews
             $this->view_data["default_review"] = $new_comment;
             $this->view_data["default_rating"] = $rating;
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function formatRatingDistribution(): string
+    {
+        $percents = $this->product->getRatingDistribution();
+        $str = "";
+
+        for ($x = 5; $x > 0; $x--) {
+            $str .= $percents[$x] ?? 0;
+            if ($x != 1) {
+                $str .= ',';
+            }
+        }
+        return "[" . $str . "]";
     }
 
     public function index(): void
@@ -107,10 +124,18 @@ class Product
             $this->handleReviewSubmission();
         }
 
+        $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
+
+        $tags = <<< EOL
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+         integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        EOL;
         $this->view(
             'Product',
             $this->view_data,
-            $this->product->getName() . ' | Steamy Sips'
+            $this->product->getName() . ' | Steamy Sips',
+            $tags
         );
     }
 }

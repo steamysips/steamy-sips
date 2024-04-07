@@ -8,12 +8,6 @@ use Steamy\Controller\_404;
 
 class App
 {
-    private string $method = 'index';
-
-    // manage routes and methods 
-    // $req = $_SERVER['REQUEST_URI'];
-    //$method = $_SERVER['REQUEST_METHOD'];
-
     /**
      * Calls appropriate controller class to deal with URL.
      * @return void

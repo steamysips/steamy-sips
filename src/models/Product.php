@@ -44,13 +44,13 @@ class Product
         $this->description = $description;
     }
 
-    public static function getByID(int $product_id): false|Product
+    public static function getByID(int $product_id): ?Product
     {
         $query = "SELECT * FROM product where product_id = :product_id";
         $record = self::get_row($query, ['product_id' => $product_id]);
 
         if (!$record) {
-            return false;
+            return null;
         }
 
         $product_obj = new Product(
@@ -436,13 +436,17 @@ class Product
             return []; // Return empty array on error
         }
 
+        if (empty($result)) {
+            return [];
+        }
+
         // Initialize the distribution array
         $distribution = [];
 
         // Populate the distribution array with rating and percentage
         foreach ($result as $row) {
             $rating = $row->rating;
-            $percentage = round($row->percentage, 1); // Round to 1 decimal place
+            $percentage = round((float)$row->percentage, 1); // Round to 1 decimal place
             $distribution[$rating] = $percentage;
         }
 

@@ -12,6 +12,6 @@ class _404
 
     public function index(): void
     {
-        $this->view('404.php');
+        $this->view('404', template_title: "Page not found");
     }
 }

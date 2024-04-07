@@ -75,8 +75,25 @@ abstract class User
             $errors[] = "Password must be between $min_length and $max_length characters long";
         }
 
-        // TODO: Add more validation checks here, such as checking for specific characters,
-        // enforcing complexity requirements, etc.
+        // Check if password length is at least 5 characters
+        if (strlen($plain_password) < 5) {
+            $errors[] = "Password must be at least 5 characters long";
+        }
+
+        // Check if password contains at least one uppercase letter
+        if (!preg_match('/[A-Z]/', $plain_password)) {
+            $errors[] = "Password must contain at least one uppercase letter";
+        }
+
+        // Check if password contains at least one lowercase letter
+        if (!preg_match('/[a-z]/', $plain_password)) {
+            $errors[] = "Password must contain at least one lowercase letter";
+        }
+
+        // Check if password contains at least one digit
+        if (!preg_match('/\d/', $plain_password)) {
+            $errors[] = "Password must contain at least one digit";
+        }
 
         return $errors;
     }
@@ -91,13 +108,13 @@ abstract class User
         }
     
         // Perform first name length check
-        if (strlen($this->first_name) < 2) {
-            $errors['first_name'] = "First name must be at least 2 characters long";
+        if (strlen($this->first_name) < 3) {
+            $errors['first_name'] = "First name must be at least 3 characters long";
         }
     
         // Perform last name length check
-        if (strlen($this->last_name) < 2) {
-            $errors['last_name'] = "Last name must be at least 2 characters long";
+        if (strlen($this->last_name) < 3) {
+            $errors['last_name'] = "Last name must be at least 3 characters long";
         }
     
         // Perform phone number length check

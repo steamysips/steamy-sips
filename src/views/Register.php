@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+use Steamy\Model\District;
+
 /**
  * Variables below are defined and initialized in Register controller.
  * @var string $defaultFirstName
@@ -12,7 +15,30 @@ declare(strict_types=1);
  * @var string $defaultEmail
  * @var string $defaultPassword
  * @var string $defaultConfirmPassword
+ * @var array $errors list of errors in form after submission
+ * @var District[] $districts list of all district objects
  */
+
+
+/**
+ * Returns an aria-invalid attribute for an input tag after a form submission
+ * @param $input_name string value in name attribute of input tag
+ * @return string
+ */
+$ariaInvalid = function (string $input_name) use ($errors) {
+    // if form is loaded for the first time (form has not been submitted)
+    // do not add aria-invalid attribute
+    if (!isset($_POST['register_submit'])) {
+        return '';
+    }
+
+    // if there are no errors for the input tag set aria-invalid to false
+    if (empty($errors[$input_name])) {
+        return ' aria-invalid="false"';
+    }
+
+    return ' aria-invalid="true"'; // Submitted value is correct
+};
 
 ?>
 <main class="container">
@@ -23,7 +49,6 @@ declare(strict_types=1);
                 <h2>Create a new account for free</h2>
             </hgroup>
             <form method="post">
-
                 <fieldset>
                     <legend><strong>Personal details</strong></legend>
                     <div class="grid">
@@ -31,28 +56,23 @@ declare(strict_types=1);
                         <div class="container">
                             <label for="first_name">First Name</label>
                             <input autofocus id="first_name" type="text" name="first_name"
-                                   value="<?= $defaultFirstName ?>" required/>
+                                   value="<?= $defaultFirstName ?>" required<?= $ariaInvalid('first_name') ?> />
                             <?php
-                            if (!empty($errors['name'])) : ?>
-                                <small class="warning"><?php
-                                    echo $errors['name'] ?></small>
+                            if (!empty($errors['first_name'])) : ?>
+                                <small class="warning"><?= $errors['first_name'] ?></small>
                             <?php
-                            endif;
-                            ?>
+                            endif; ?>
                         </div>
-
 
                         <div class="container">
                             <label for="last_name">Last Name</label>
                             <input id="last_name" type="text" name="last_name"
-                                   value="<?= $defaultLastName ?>" required/>
+                                   value="<?= $defaultLastName ?>" required<?= $ariaInvalid('last_name') ?> />
                             <?php
-                            if (!empty($errors['name'])) : ?>
-                                <small class="warning"><?php
-                                    echo $errors['name'] ?></small>
+                            if (!empty($errors['last_name'])) : ?>
+                                <small class="warning"><?= $errors['last_name'] ?></small>
                             <?php
-                            endif;
-                            ?>
+                            endif; ?>
                         </div>
 
                     </div>
@@ -63,32 +83,41 @@ declare(strict_types=1);
                     </label>
                     <input value="<?= $defaultPhoneNumber ?>" id="telephone" type="tel" name="phone_no"
                            pattern="\+230-5-[0-9]{3}-[0-9]{4}"
-                           title="eg., +230-5-123-4567" required/>
+                           title="eg., +230-5-123-4567" required<?= $ariaInvalid('phone_no') ?> />
 
                     <div class="grid">
                         <div class="container">
                             <label for="street">Street</label>
-                            <input name="street" value="<?= $defaultStreet ?>" id="street" type="text">
+                            <input name="street" value="<?= $defaultStreet ?>" id="street" type="text"<?= $ariaInvalid(
+                                'street'
+                            ) ?> />
+                            <?php
+                            if (!empty($errors['street'])) : ?>
+                                <small class="warning"><?= $errors['street'] ?></small>
+                            <?php
+                            endif; ?>
                         </div>
 
                         <div class="container">
                             <label for="city">City</label>
-                            <input name="city" value="<?= $defaultCity ?>" id="city" type="text">
+                            <input name="city" value="<?= $defaultCity ?>" id="city" type="text"<?= $ariaInvalid(
+                                'city'
+                            ) ?> />
+                            <?php
+                            if (!empty($errors['city'])) : ?>
+                                <small class="warning"><?= $errors['city'] ?></small>
+                            <?php
+                            endif; ?>
                         </div>
                     </div>
 
                     <label for="districts">District</label>
-                    <!--  TODO: generate district list dynamically-->
-                    <select name="district" id="districts">
-                        <option value="8" <?= $defaultDistrictID == 8 ? "selected" : "" ?>>Pamplemousses</option>
-                        <option value="7" <?= $defaultDistrictID == 7 ? "selected" : "" ?>>Riviere du Rempart</option>
-                        <option value="2" <?= $defaultDistrictID == 2 ? "selected" : "" ?>>Port Louis</option>
-                        <option value="1" <?= $defaultDistrictID == 1 ? "selected" : "" ?>>Moka</option>
-                        <option value="3" <?= $defaultDistrictID == 3 ? "selected" : "" ?>>Flacq</option>
-                        <option value="9" <?= $defaultDistrictID == 9 ? "selected" : "" ?>>Plaines Wilhems</option>
-                        <option value="4" <?= $defaultDistrictID == 4 ? "selected" : "" ?>>Black River</option>
-                        <option value="5" <?= $defaultDistrictID == 5 ? "selected" : "" ?>>Savanne</option>
-                        <option value="6" <?= $defaultDistrictID == 6 ? "selected" : "" ?>>Grand Port</option>
+                    <select name="district" id="districts"<?= $ariaInvalid('district') ?>>
+                        <?php
+                        foreach ($districts as $id => $name) : ?>
+                            <option value="<?= $id ?>" <?= $defaultDistrictID == $id ? "selected" : "" ?>><?= $name ?></option>
+                        <?php
+                        endforeach; ?>
                     </select>
 
 
@@ -97,13 +126,14 @@ declare(strict_types=1);
                 <fieldset>
                     <legend><strong>Account information</strong></legend>
                     <label for="email">Email</label>
-                    <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required/>
+                    <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required<?= $ariaInvalid(
+                        'email'
+                    ) ?> />
                     <?php
                     if (!empty($errors['email'])) : ?>
                         <small class="warning"><?= $errors['email'] ?></small>
                     <?php
-                    endif;
-                    ?>
+                    endif; ?>
 
                     <div class="grid">
                         <div class="container">
@@ -111,21 +141,22 @@ declare(strict_types=1);
                             <input id="password" type="password" name="password"
                                    aria-label="Password"
                                    value="<?= $defaultPassword ?>"
-                                   required/>
+                                   required<?= $ariaInvalid('password') ?> />
 
                             <?php
                             if (!empty($errors['password'])) : ?>
                                 <small class="warning"><?= $errors['password'] ?></small>
                             <?php
-                            endif;
-                            ?>
+                            endif; ?>
                         </div>
 
                         <div class="container">
                             <label for="confirmPassword">Confirm password</label>
                             <input id="confirmPassword" type="password" name="confirmPassword"
                                    aria-label="Confirm password"
-                                   value="<?= $defaultConfirmPassword ?>" required/>
+                                   value="<?= $defaultConfirmPassword ?>" required<?= $ariaInvalid(
+                                'confirmPassword'
+                            ) ?> />
                             <?php
                             if (!empty($errors['confirmPassword'])) : ?>
                                 <small class="warning"><?= $errors['confirmPassword'] ?></small>
