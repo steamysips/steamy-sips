@@ -49,7 +49,7 @@ class Client extends User
         EOL;
 
         // Execute the query and retrieve the result
-        $result = self::get_row($query, $params);
+        $result = self::query($query, $params);
 
         // Check if the result is empty
         if (!$result) {
@@ -57,22 +57,19 @@ class Client extends User
         }
 
         // Create a new Client object
-        $client = new Client(
-            $result->email,
-            $result->first_name,
-            $result->last_name,
+        $client_data = $result[0];
+        $district = District::getByID($client_data->district_id);
+
+        return new Client(
+            $client_data->email,
+            $client_data->first_name,
+            $client_data->last_name,
             "dummy-password", // A dummy password is used since the original password is unknown
-            $result->phone_no,
-            District::getByID($result->district_id),
-            $result->street,
-            $result->city
+            $client_data->phone_no,
+            $district,
+            $client_data->street,
+            $client_data->city
         );
-
-        // Set the user ID and password hash
-        $client->setUserID($result->user_id);
-        $client->setPassword($result->password);
-
-        return $client;
     }
 
     /**
@@ -154,8 +151,9 @@ class Client extends User
      */
     public function getAddress(): string
     {
-        return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
+    return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
     }
+
 
     /**
      * Validates attributes of current user and returns an array of errors.

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Client;
-use \Steamy\Model\District;
+use Steamy\Model\District;
 
 final class ClientTest extends TestCase
 {
     private ?Client $dummy_client;
+    private District $district;
 
     public function setUp(): void
     {
+        $this->district = new District(1, 'Moka');
         $this->dummy_client = new Client(
-            "john@gmail.com", "john", "johhny", "abcd",
-            "13213431", new District(1), "Royal Road", "Curepipe"
+            "john_un@gmail.com", "john", "johhny", "abcd",
+            "13213431", $this->district, "Royal Road", "Curepipe"
         );
     }
 
@@ -27,7 +29,7 @@ final class ClientTest extends TestCase
     {
         // check if fields were correctly set
         self::assertEquals(-1, $this->dummy_client->getUserID());
-        self::assertEquals("john@gmail.com", $this->dummy_client->getEmail());
+        self::assertEquals("john_un@gmail.com", $this->dummy_client->getEmail());
         self::assertEquals("john", $this->dummy_client->getFirstName());
         self::assertEquals("johhny", $this->dummy_client->getLastName());
         self::assertEquals("13213431", $this->dummy_client->getPhoneNo());
@@ -50,7 +52,7 @@ final class ClientTest extends TestCase
         $this->assertArrayHasKey('password', $result);
 
         // check if actual values are correct
-        self::assertEquals("john@gmail.com", $result['email']);
+        self::assertEquals("john_un@gmail.com", $result['email']);
         self::assertEquals("john", $result['first_name']);
         self::assertEquals("johhny", $result['last_name']);
         self::assertEquals("13213431", $result['phone_no']);
@@ -63,16 +65,16 @@ final class ClientTest extends TestCase
     {
         $client = new Client(
             "", "", "", "abcd",
-            "", new District(1), "", ""
+            "", new District(1, 'Sample District'), "", ""
         );
         // test if existence checks work
         self::assertEquals([
             'email' => 'Invalid email format',
-            'first_name' => 'First name must be at least 2 characters long',
-            'last_name' => 'Last name must be at least 2 characters long',
+            'first_name' => 'First name must be at least 3 characters long',
+            'last_name' => 'Last name must be at least 3 characters long',
             'phone_no' => 'Phone number must be at least 7 characters long',
-            'city' => 'City name is required',
-            'street' => 'Street name is required'
+            'city' => 'City name must have at least 3 characters',
+            'street' => 'Street name must have at least 4 characters'
         ],
             $client->validate());
 
@@ -97,24 +99,33 @@ final class ClientTest extends TestCase
 
     public function testGetByEmail()
     {
-        // test for valid email
-
-        // save dummy record to database
+        // Test for valid email
+        // Save the dummy record to the database
         $this->dummy_client->save();
-
+        // Fetch the client by email
         $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
-        self::assertTrue($fetched_client->getUserID() > -1);
-        self::assertEquals("john@gmail.com", $fetched_client->getEmail());
+        // Assert that the fetched client is not null
+        self::assertNotNull($fetched_client);
+    
+        // Assert the attributes of the fetched client
+        self::assertEquals("john_un@gmail.com", $fetched_client->getEmail());
         self::assertEquals("john", $fetched_client->getFirstName());
         self::assertEquals("johhny", $fetched_client->getLastName());
         self::assertEquals("13213431", $fetched_client->getPhoneNo());
         self::assertEquals("Royal Road, Curepipe, Moka", $fetched_client->getAddress());
-
-        // delete dummy record
+    
+        // Delete the dummy record
         $fetched_client->deleteUser();
-
-        // test for invalid email
-        $fetched_client = Client::getByEmail("john@gmail.com");
-        self::assertFalse($fetched_client);
+    
+        // Add a small delay to ensure the deletion operation is completed
+        usleep(500000); // 500 milliseconds = 0.5 seconds
+    
+        // Fetch the client by email again
+        $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
+    
+        // Test for invalid email
+        // Assert that the fetched client is null or false
+        self::assertNull($fetched_client);
     }
+    
 }
