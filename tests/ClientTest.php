@@ -15,7 +15,7 @@ final class ClientTest extends TestCase
     {
         $this->district = new District(1, 'Moka');
         $this->dummy_client = new Client(
-            "john_un@gmail.com", "john", "johhny", "abcd",
+            "john_u@gmail.com", "john", "johhny", "abcd",
             "13213431", $this->district, "Royal Road", "Curepipe"
         );
     }
@@ -29,7 +29,7 @@ final class ClientTest extends TestCase
     {
         // check if fields were correctly set
         self::assertEquals(-1, $this->dummy_client->getUserID());
-        self::assertEquals("john_un@gmail.com", $this->dummy_client->getEmail());
+        self::assertEquals("john_u@gmail.com", $this->dummy_client->getEmail());
         self::assertEquals("john", $this->dummy_client->getFirstName());
         self::assertEquals("johhny", $this->dummy_client->getLastName());
         self::assertEquals("13213431", $this->dummy_client->getPhoneNo());
@@ -52,7 +52,7 @@ final class ClientTest extends TestCase
         $this->assertArrayHasKey('password', $result);
 
         // check if actual values are correct
-        self::assertEquals("john_un@gmail.com", $result['email']);
+        self::assertEquals("john_u@gmail.com", $result['email']);
         self::assertEquals("john", $result['first_name']);
         self::assertEquals("johhny", $result['last_name']);
         self::assertEquals("13213431", $result['phone_no']);
@@ -108,7 +108,7 @@ final class ClientTest extends TestCase
         self::assertNotNull($fetched_client);
     
         // Assert the attributes of the fetched client
-        self::assertEquals("john_un@gmail.com", $fetched_client->getEmail());
+        self::assertEquals("john_u@gmail.com", $fetched_client->getEmail());
         self::assertEquals("john", $fetched_client->getFirstName());
         self::assertEquals("johhny", $fetched_client->getLastName());
         self::assertEquals("13213431", $fetched_client->getPhoneNo());
