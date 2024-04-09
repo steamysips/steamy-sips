@@ -1,4 +1,4 @@
-import cart from "./cart";
+import { cart } from "./cart";
 
 /**
  * This script is executed when user accesses /cart. It sends the cart

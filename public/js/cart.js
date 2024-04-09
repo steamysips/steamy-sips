@@ -132,4 +132,4 @@ function cart() {
 //   console.log("Cart == empty ?", myCart.isEmpty());
 // }
 
-export default cart;
+export { cart, CartItem };
