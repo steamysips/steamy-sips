@@ -5,23 +5,38 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
+use Steamy\Model\Product;
 
 class Cart
 {
     use Controller;
 
+    private array $view_data = ['cart_items'];
+
     private function displayOrder(): void
     {
-        $this->view('cart', template_title: "Review order");
+        // display cart
+//        Utility::show($_SESSION['cart']);
+
+        foreach ($_SESSION['cart'] as $item) {
+            $product_id = filter_var($item['productID'], FILTER_VALIDATE_INT);
+            $cart_item['quantity'] = filter_var($item['quantity'], FILTER_VALIDATE_INT);
+            $cart_item['product'] = Product::getByID($product_id);
+            $cart_item['milkType'] = ucfirst($item['milkType']);
+            $cart_item['cupSize'] = ucfirst($item['cupSize']);
+            $cart_item['subtotal'] = $cart_item['quantity'] * $cart_item['product']->getPrice();
+
+            $this->view_data['cart_items'][] = $cart_item;
+        }
+
+        $this->view('cart', $this->view_data, template_title: "Review order");
     }
 
     public function index(): void
     {
         // check if the latest cart data is available
         if (isset($_SESSION['cart'])) {
-            // display cart
-//            Utility::show($_SESSION['cart']);
-
             $this->displayOrder();
 
             // unset variable for next request to ensure that the latest cart is always fetched
