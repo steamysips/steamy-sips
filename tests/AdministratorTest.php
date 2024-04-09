@@ -66,9 +66,9 @@ final class AdministratorTest extends TestCase
         // test if existence checks work
         self::assertEquals([
             'email' => 'Invalid email format',
-            'first_name' => 'First name must be at least 2 characters long',
+            'first_name' => 'First name must be at least 3 characters long',
             'phone_no' => 'Phone number must be at least 7 characters long',
-            'last_name' => 'Last name must be at least 2 characters long',
+            'last_name' => 'Last name must be at least 3 characters long',
             'job_title' => 'Job title is required',
             'job_title' => 'Job title must be longer than 3 characters'
 
