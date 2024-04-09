@@ -61,7 +61,7 @@ class Cart
         $script_src = ROOT . "/js/cart-uploader.js";
 
         $cart_script_tag = <<< EOL
-            <script type="module" defer src="$script_src"></script>
+            <script type="module" src="$script_src"></script>
             EOL;
 
         $this->view('loading', template_title: "Review order", template_tags: $cart_script_tag);

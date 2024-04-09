@@ -220,5 +220,5 @@ use Steamy\Model\User;
     </div>
 </main>
 
-<script type="module" src="<?= ROOT ?>/js/add-to-cart.js" defer>
+<script type="module" src="<?= ROOT ?>/js/add-to-cart.js">
 </script>
