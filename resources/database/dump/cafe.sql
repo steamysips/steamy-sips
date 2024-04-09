@@ -248,7 +248,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.webp','Espresso in a white cup. Source: Coffee Hero','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.webp','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Wikipedia','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.avif','A latte with a spoon. Source: Food Network.','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.png','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Bean Box.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Olive Magazine','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
+INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.webp','Espresso in a white cup. Source: Dolce Gusto','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.webp','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Discount Coffee','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.avif','A latte with a spoon. Source: Peet\'s Coffee.','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.webp','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Peet\'s Coffee.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-06 13:47:36
+-- Dump completed on 2024-04-09 11:07:45
