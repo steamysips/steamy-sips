@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
-use Steamy\Core\Utility;
 use Steamy\Model\Product;
 
 class Cart
 {
     use Controller;
 
-    private array $view_data = ['cart_items'];
+    private array $view_data = ['cart_items' => []];
 
     private function displayOrder(): void
     {
         // display cart
-//        Utility::show($_SESSION['cart']);
-
         foreach ($_SESSION['cart'] as $item) {
             $product_id = filter_var($item['productID'], FILTER_VALIDATE_INT);
             $cart_item['quantity'] = filter_var($item['quantity'], FILTER_VALIDATE_INT);

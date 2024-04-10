@@ -48,6 +48,9 @@ declare(strict_types=1);
     </select>
 
     <?php
+    if (count($cart_items) == 0) {
+        echo "<p>Your cart is empty 😥</p>";
+    }
     foreach ($cart_items as $item) {
         $product_name = $item['product']->getName();
         $image_url = $item['product']->getImgAbsolutePath();
@@ -69,7 +72,7 @@ declare(strict_types=1);
                 </div>
                 <label for="">
                     Quantity
-                    <input value="$quantity" type="number" id="">
+                    <input min="1" max="20" value="$quantity" type="number" id="">
                 </label>                
                 
                 <button style="width: auto;">
