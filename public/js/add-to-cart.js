@@ -1,4 +1,7 @@
 import { cart, CartItem } from "./cart";
+import ModalManager from "./modal";
+
+const modal = ModalManager("my-modal");
 
 function handleAddToCart(e) {
   // capture form submission
@@ -15,7 +18,9 @@ function handleAddToCart(e) {
     formProps.milkType,
   );
   cart().addItem(item);
-  console.log("Added new item to cart!");
+
+  // open modal to display success
+  modal.openModal();
 }
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -23,3 +28,5 @@ window.addEventListener("DOMContentLoaded", function () {
     .getElementById("product-customization-form")
     .addEventListener("submit", handleAddToCart);
 });
+
+modal.init();

@@ -16,6 +16,33 @@ use Steamy\Model\User;
 
 ?>
 
+<dialog id="my-modal">
+    <article>
+        <a href="#"
+           aria-label="Close"
+           class="close"
+           data-target="my-modal"
+        >
+        </a>
+        <h3>Item successfully added!</h3>
+        <footer>
+            <a href="#"
+               role="button"
+               class="secondary"
+               data-target="my-modal"
+            >
+                Ok
+            </a>
+            <a href="<?= ROOT ?>/cart"
+               role="button"
+               data-target="my-modal"
+            >
+                View cart
+            </a>
+        </footer>
+    </article>
+</dialog>
+
 <main class="container">
     <div id="product-info" class="grid">
         <img src="<?= $product->getImgAbsolutePath() ?>" alt="<?= $product->getImgAltText() ?>">
@@ -28,7 +55,7 @@ use Steamy\Model\User;
             <p>
                 <?= $product->getDescription() ?>
             </p>
-            <form id="product-customization-form">
+            <form id="product-customization-form" method="post">
                 <input type="hidden" value="1" name="quantity">
                 <input type="hidden" value="<?= $product->getProductID() ?>" name="product_id">
                 <h4>Size options</h4>
@@ -220,5 +247,4 @@ use Steamy\Model\User;
     </div>
 </main>
 
-<script type="module" src="<?= ROOT ?>/js/add-to-cart.js">
-</script>
+<script type="module" src="<?= ROOT ?>/js/add-to-cart.js"></script>
