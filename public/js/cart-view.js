@@ -1,4 +1,8 @@
-import { cart, CartItem } from "./cart";
+/**
+ * This script is executed on /cart page. It allows users to modify their cart in real-time and view the updated totals.
+ */
+
+import { Cart, CartItem } from "./cart";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
@@ -11,7 +15,7 @@ function updateCart(e) {
     sectionNode.getAttribute("data-milktype"),
   );
 
-  console.log("Old item", currentCartItem);
+  // console.log("Old item", currentCartItem);
 
   // calculate new subtotal
   const newQuantity = parseInt(e.target.value, 10);
@@ -26,9 +30,10 @@ function updateCart(e) {
   sectionNode.setAttribute("data-quantity", newQuantity);
 
   // update localstorage
-  const currentCart = cart();
+  const currentCart = Cart();
   currentCart.removeItem(currentCartItem);
 
+  // a quantity of 0 means to remove the item from cart
   if (newQuantity > 0) {
     currentCartItem.quantity = newQuantity;
     currentCart.addItem(currentCartItem);

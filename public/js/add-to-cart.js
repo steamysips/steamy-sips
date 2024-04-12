@@ -1,4 +1,4 @@
-import { cart, CartItem } from "./cart";
+import { Cart, CartItem } from "./cart";
 import ModalManager from "./modal";
 
 const modal = ModalManager("my-modal");
@@ -17,7 +17,7 @@ function handleAddToCart(e) {
     formProps.cupSize,
     formProps.milkType,
   );
-  cart().addItem(item);
+  Cart().addItem(item);
 
   // open modal to display success
   modal.openModal();

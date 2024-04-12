@@ -20,7 +20,7 @@ const CartItem = (productID, quantity, cupSize, milkType) => {
  * @returns {{getItems: (function(): CartItem[]), removeItem: (function(CartItem): void), isEmpty: (function(): boolean),
  * clear: (function(): void), addItem: (function(CartItem): void)}}
  */
-function cart() {
+function Cart() {
   /**
    * Adds a new item to shopping cart
    * @param {CartItem} item
@@ -132,4 +132,4 @@ function cart() {
 //   console.log("Cart == empty ?", myCart.isEmpty());
 // }
 
-export { cart, CartItem };
+export { Cart, CartItem };

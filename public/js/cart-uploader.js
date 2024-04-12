@@ -1,4 +1,4 @@
-import { cart } from "./cart";
+import { Cart } from "./cart";
 
 /**
  * This script is executed when user accesses /cart. It sends the cart
@@ -7,16 +7,16 @@ import { cart } from "./cart";
  */
 async function uploadCart() {
   // send cart data to server
-  const items = cart().getItems();
+  const items = Cart().getItems();
   console.log(items);
   const request = await fetch(window.location.href, {
     method: "POST",
-    redirect: "follow",
+    // redirect: "follow",
     body: JSON.stringify(items),
   });
-  console.log(request);
+  // console.log(request);
 
-  // wait 1s
+  // add loading delay of 1s
   await new Promise((r) => setTimeout(r, 1000));
 
   // reload page so that server can display the order details

@@ -110,7 +110,7 @@ function ModalManager(modalID) {
       .querySelector(`#${modalID} article > footer a[data-target="${modalID}"]`)
       .addEventListener("click", (e) => toggleModal(e)); // close button in footer
 
-    console.log("Event listeners added for modal");
+    // console.log("Event listeners added for modal");
   };
 
   return { openModal, closeModal, init };
