@@ -38,9 +38,6 @@ declare(strict_types=1);
     <!-- theme switcher-->
     <script src="<?= ROOT ?>/js/minimal-theme-switcher.js" defer></script>
 
-    <!-- shopping cart modal-->
-    <script src="<?= ROOT ?>/js/modal.js" defer></script>
-
     <!--    scroll animations-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
             integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
@@ -50,57 +47,7 @@ declare(strict_types=1);
     <?= $template_tags ?>
     <title><?= $template_title ?></title>
 </head>
-
 <body>
-
-<!-- Modal -->
-<dialog id="cart-modal">
-    <article>
-        <a href="#"
-           aria-label="Close"
-           class="close"
-           data-target="cart-modal">
-        </a>
-        <h3>Your shopping cart (3 items)</h3>
-        <div id="cart-items">
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-
-        </div>
-        <footer class="grid">
-            <h5>Total Price = Rs 434</h5>
-            <a href="#"
-               role="button"
-               class="contrast"
-               data-target="cart-modal"
-            >
-                Checkout
-            </a>
-        </footer>
-    </article>
-</dialog>
 
 <nav class="container-fluid">
     <ul>
@@ -131,16 +78,18 @@ declare(strict_types=1);
                 </svg>
             </a>
         </li>
-        <li data-target="cart-modal" data-tooltip="Shopping cart" data-placement="bottom">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                 stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                <path d="M17 17h-11v-14h-2"/>
-                <path d="M6 5l14 1l-1 7h-13"/>
-            </svg>
+        <li>
+            <a href="<?= ROOT ?>/cart" class="contrast" data-tooltip="Shopping cart" data-placement="bottom">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                    <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                    <path d="M17 17h-11v-14h-2"/>
+                    <path d="M6 5l14 1l-1 7h-13"/>
+                </svg>
+            </a>
         </li>
         <li>
             <a href="<?= ROOT ?>/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">
