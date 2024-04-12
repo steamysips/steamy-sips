@@ -99,7 +99,8 @@ class Profile
         $this->view(
             'Profile',
             $this->data,
-            'Profile'
+            'Profile',
+            template_meta_description: "Welcome to your personalized corner at Steamy Sips. Manage your orders, update your preferences, and track your coffee journey effortlessly. Your satisfaction is our priority."
         );
     }
 }

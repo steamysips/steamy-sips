@@ -12,7 +12,11 @@ class Home
 
     public function index(): void
     {
-        $carousel_script = "<script src=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js\"></script>";
-        $this->view('Home', template_title: 'Home', template_tags: $carousel_script);
+        $this->view(
+            'Home',
+            template_title: 'Home',
+            template_tags: $this->getLibrariesTags(['aos', 'splide']),
+            template_meta_description: "Welcome to Steamy Sips Café, where every sip is an experience. Step into our cozy world of aromatic delights, where the perfect brew meets community and conversation."
+        );
     }
 }

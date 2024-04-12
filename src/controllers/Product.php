@@ -92,7 +92,7 @@ class Product
     }
 
     /**
-     * @return void
+     * @return string
      */
     private function formatRatingDistribution(): string
     {
@@ -126,16 +126,12 @@ class Product
 
         $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
 
-        $tags = <<< EOL
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-         integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        EOL;
         $this->view(
             'Product',
             $this->view_data,
             $this->product->getName() . ' | Steamy Sips',
-            $tags
+            template_tags: $this->getLibrariesTags(['chartjs']),
+            template_meta_description: $this->product->getName() . " - " . $this->product->getDescription()
         );
     }
 }

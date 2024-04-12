@@ -34,7 +34,12 @@ class Cart
             $this->view_data['cart_items'][] = $cart_item;
         }
 
-        $this->view('cart', $this->view_data, template_title: "Review order");
+        $this->view(
+            'cart',
+            $this->view_data,
+            template_title: "Review order",
+            template_meta_description: "Your ultimate shopping cart at Steamy Sips. Review your chosen items, adjust quantities, and proceed to checkout seamlessly. Savor the convenience of online shopping with us."
+        );
     }
 
     public function index(): void
@@ -68,6 +73,11 @@ class Cart
             <script type="module" src="$script_src"></script>
             EOL;
 
-        $this->view('loading', template_title: "Review order", template_tags: $cart_script_tag);
+        $this->view(
+            'loading',
+            template_title: "Review order",
+            template_tags: $cart_script_tag,
+            template_meta_description: "Experience anticipation as your journey begins at Steamy Sips. Our loading page sets the stage for your flavorful adventure. Sit back, relax, and prepare for a tantalizing experience ahead."
+        );
     }
 }
