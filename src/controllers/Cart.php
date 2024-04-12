@@ -13,15 +13,22 @@ class Cart
 
     private array $view_data = ['cart_items' => []];
 
-    private function displayOrder(): void
+    private function displayCart(): void
     {
-        // display cart
+        // loop through each cart item
         foreach ($_SESSION['cart'] as $item) {
+            // fetch corresponding product based on product ID
             $product_id = filter_var($item['productID'], FILTER_VALIDATE_INT);
-            $cart_item['quantity'] = filter_var($item['quantity'], FILTER_VALIDATE_INT);
             $cart_item['product'] = Product::getByID($product_id);
-            $cart_item['milkType'] = ucfirst($item['milkType']);
-            $cart_item['cupSize'] = ucfirst($item['cupSize']);
+
+            // ignore invalid cart items with invalid product IDs
+            if (empty($cart_item['product'])) {
+                continue;
+            }
+
+            $cart_item['quantity'] = filter_var($item['quantity'], FILTER_VALIDATE_INT);
+            $cart_item['milkType'] = htmlspecialchars(strtolower($item['milkType']));
+            $cart_item['cupSize'] = htmlspecialchars(strtolower($item['cupSize']));
             $cart_item['subtotal'] = $cart_item['quantity'] * $cart_item['product']->getPrice();
 
             $this->view_data['cart_items'][] = $cart_item;
@@ -34,9 +41,9 @@ class Cart
     {
         // check if the latest cart data is available
         if (isset($_SESSION['cart'])) {
-            $this->displayOrder();
+            $this->displayCart();
 
-            // unset variable for next request to ensure that the latest cart is always fetched
+            // unset variable for next request to ensure that the latest cart is always fetched from client
             unset($_SESSION['cart']);
 
             return;

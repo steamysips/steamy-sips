@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 /**
- * Variables below are defined in Login controller
- * @var array $cart_items
+ * Variables below are defined in Cart controller.
+ *
+ * @var array $cart_items Represents an array of cart items, where each item is an object containing information
+ * about a product, including its quantity, cupSize and milkType attributes.
  */
 ?>
 
@@ -64,20 +66,22 @@ declare(strict_types=1);
         $milkType = $item['milkType'];
         $quantity = $item['quantity'];
         $subtotal = $item['subtotal'];
-
-        // convert cupSize and milkType to lowercase because this information
+        // Note: cupSize and milkType must be in lowercase because this information
         // is stored in lowercase in localstorage.
-        $lower_cupsize = strtolower($cupSize);
-        $lower_milktype = strtolower($milkType);
+
+
+        // capitalize first letter of cup size and milk type when displayed on page
+        $uc_cupsize = ucfirst($cupSize);
+        $uc_milktype = ucfirst($milkType);
 
         echo <<< EOL
-            <section class="cart-item" data-productid = "$product_id"  data-quantity="$quantity" data-cupsize="$lower_cupsize"
-             data-milktype="$lower_milktype" data-unitprice="$unit_price" >
+            <section class="cart-item" data-productid = "$product_id"  data-quantity="$quantity" data-cupsize="$cupSize"
+             data-milktype="$milkType" data-unitprice="$unit_price" >
                 <img width="40" src="$image_url" alt="$image_alt">
                 <div class="container">
                     <div class="" style="margin-bottom:10px">
                         <h3 style="margin-bottom:0">$product_name</h3>
-                        <small> $cupSize | $milkType | In stock</small>
+                        <small> $uc_cupsize | $uc_milktype | In stock</small>
                     </div>
                     <strong>Rs $subtotal</strong>
                 </div>

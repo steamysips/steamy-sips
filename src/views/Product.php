@@ -80,7 +80,7 @@ use Steamy\Model\User;
                 <select id="milk" name="milkType" required>
                     <option value="almond" selected>Almond</option>
                     <option value="coconut">Coconut</option>
-                    <option value="oat">Oat milk</option>
+                    <option value="oat">Oat</option>
                     <option value="soy">Soy</option>
                 </select>
                 <button type="submit">Add to cart</button>

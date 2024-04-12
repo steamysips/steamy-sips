@@ -38,9 +38,6 @@ declare(strict_types=1);
     <!-- theme switcher-->
     <script src="<?= ROOT ?>/js/minimal-theme-switcher.js" defer></script>
 
-    <!-- shopping cart modal-->
-<!--    <script src="--><?php //= ROOT ?><!--/js/modal.js" defer></script>-->
-
     <!--    scroll animations-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
             integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
