@@ -57,7 +57,7 @@ declare(strict_types=1);
         $product = $item['product'];
         $product_id = $product->getProductID();
         $product_name = $product->getName();
-
+        $product_link = ROOT. "/shop/products/". $product_id;
         $image_url = $product->getImgAbsolutePath();
         $image_alt = $product->getImgAltText();
         $unit_price = $product->getPrice();
@@ -80,7 +80,7 @@ declare(strict_types=1);
                 <img width="40" src="$image_url" alt="$image_alt">
                 <div class="container">
                     <div class="" style="margin-bottom:10px">
-                        <h3 style="margin-bottom:0">$product_name</h3>
+                    <a href="$product_link"><h3 style="margin-bottom:0">$product_name</h3></a>
                         <small> $uc_cupsize | $uc_milktype | In stock</small>
                     </div>
                     <strong>Rs $subtotal</strong>
