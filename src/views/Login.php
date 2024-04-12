@@ -5,8 +5,8 @@ declare(strict_types=1);
  * Variables below are defined in Login controller
  * @var string $defaultEmail
  * @var string $defaultPassword
+ * @var array $errors Error if any is available in $errors['other']
  */
-
 ?>
 
 <main class="container">
@@ -15,24 +15,14 @@ declare(strict_types=1);
             <h1>Sign in</h1>
             <form method="post">
                 <input autofocus type="email" name="email" placeholder="Email" aria-label="Email"
+                       aria-invalid="<?= isset($_POST['login_submit']) && !empty($errors['other']) ? 'true' : '' ?>"
                        value="<?= $defaultEmail ?>" required/>
 
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
+                       aria-invalid="<?= isset($_POST['login_submit']) && !empty($errors['other']) ? 'true' : '' ?>"
                        value="<?= $defaultPassword ?>" required/>
 
-                <fieldset>
-                    <label for="remember">
-                        <input type="checkbox" role="switch" id="remember" name="remember"/>
-                        Remember me
-                    </label>
-                </fieldset>
                 <button name="login_submit" type="submit" class="contrast">Login</button>
-                <?php
-                if (!empty($errors['other'])) : ?>
-                    <small class="warning"><?php
-                        echo $errors['other'] ?></small>
-                <?php
-                endif; ?>
                 <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
             </form>
         </div>
