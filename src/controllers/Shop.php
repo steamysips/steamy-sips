@@ -114,7 +114,9 @@ class Shop
         $this->view(
             'Shop',
             $this->data,
-            'Shop'
+            'Shop',
+            template_tags: $this->getLibrariesTags(['aos']),
+            template_meta_description: "Explore a delightful selection of aromatic coffees, teas, and delectable treats at Steamy Sips. Discover your perfect brew and elevate your coffee experience today."
         );
     }
 }

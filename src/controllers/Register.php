@@ -94,7 +94,8 @@ class Register
         $this->view(
             'Register',
             $this->view_data,
-            'Register'
+            'Register',
+            template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers, personalized recommendations, and a richer coffee experience. Start your journey towards flavorful indulgence."
         );
     }
 }
