@@ -69,8 +69,8 @@ class Client extends User
         );
 
         // Set the user ID and password hash
-        $client->setUserID($result->user_id);
-        $client->setPassword($result->password);
+        $client->user_id = $result->user_id;
+        $client->password = $result->password;
 
         return $client;
     }
