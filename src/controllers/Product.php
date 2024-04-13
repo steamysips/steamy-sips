@@ -26,7 +26,7 @@ class Product
         // initialize some view data
         $this->view_data["default_review"] = "";
         $this->view_data["default_rating"] = "";
-        $this->view_data["signed_in_user"] = null;
+        $this->view_data["signed_in_user"] = false;
         $this->view_data["product"] = null;
         $this->view_data["rating_distribution"] = "[]";
 
@@ -40,7 +40,7 @@ class Product
         $user_account = Client::getByEmail($reviewer_email);
         if (!empty($user_account)) {
             $this->signed_user = $user_account;
-            $this->view_data["signed_in_user"] = $user_account;
+            $this->view_data["signed_in_user"] = true;
         }
 
         // if product id valid fetch product from db

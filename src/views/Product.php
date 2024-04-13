@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var $product Product product information
- * @var $signed_in_user User
+ * @var $signed_in_user bool Is current user signed in?
  * @var $default_review string default review text in form
  * @var $default_rating int default rating in form
  * @var $rating_distribution string An array containing the percentages of ratings
@@ -13,7 +13,6 @@ declare(strict_types=1);
 use Steamy\Model\Client;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
-use Steamy\Model\User;
 
 ?>
 
