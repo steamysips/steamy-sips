@@ -17,9 +17,9 @@ Optionally, you can display a live error log:
 sudo tail -f /var/log/apache2/error.log
 ```
 
-Go to http://localhost/steamy-sips/public/ (or the value you have set for `PUBLIC_ROOT` in
-your [`src/core/.env`](../src/core/.env)
-in your browser to see the website.
+Enter the `PUBLIC_ROOT` value (e.g., http://localhost/steamy-sips/public/) from [`src/core/.env`](../src/core/.env) in
+your browser
+to access the client website.
 
 ## Run tests
 
@@ -34,5 +34,5 @@ composer test
 To export database with `mysqldump`:
 
 ```bash
-mysqldump -u root -p cafe > cafe.sql
+mysqldump -u root -p cafe > resources/database/dump/cafe.sql
 ```
