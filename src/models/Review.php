@@ -90,14 +90,18 @@ class Review
     /**
      * Retrieves a review by its ID.
      *
-     * @param int $id The ID of the review to retrieve.
+     * @param int $review_id The ID of the review to retrieve.
      * @return Review|null The review object if found, otherwise null.
      * @throws Exception If an error occurs during the database query.
      */
-    public static function getByID(int $id): ?Review
+    public static function getByID(int $review_id): ?Review
     {
+        if ($review_id < 0) {
+            return null;
+        }
+
         $query = "SELECT * FROM review WHERE review_id = :id";
-        $params = ['id' => $id];
+        $params = ['id' => $review_id];
 
         try {
             $result = Review::query($query, $params); // Execute the query
@@ -111,7 +115,7 @@ class Review
                     $result[0]->rating,
                     $result[0]->date
                 );
-                $review->setReviewID($id); // Set the review ID
+                $review->setReviewID($review_id); // Set the review ID
                 return $review;
             }
         } catch (Exception $e) {

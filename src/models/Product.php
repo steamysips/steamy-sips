@@ -46,6 +46,10 @@ class Product
 
     public static function getByID(int $product_id): ?Product
     {
+        if ($product_id < 0) {
+            return null;
+        }
+
         $query = "SELECT * FROM product where product_id = :product_id";
         $record = self::get_row($query, ['product_id' => $product_id]);
 

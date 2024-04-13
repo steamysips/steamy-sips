@@ -83,6 +83,11 @@ class Client extends User
      */
     public static function getByEmail(string $email): ?Client
     {
+        if (strlen($email) < 3) {
+            // email must have at least 3 characters
+            // Ref: https://stackoverflow.com/a/1423203/17627866
+            return null;
+        }
         return self::getClientByCondition($email, null);
     }
 
@@ -94,6 +99,10 @@ class Client extends User
      */
     public static function getByID(int $user_id): ?Client
     {
+        if ($user_id < 0) {
+            // user id cannot be negative
+            return null;
+        }
         return self::getClientByCondition(null, $user_id);
     }
 
