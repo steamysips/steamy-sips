@@ -32,11 +32,11 @@
 
 ### administrator
 
-| Attribute     | Description                                       | Data Type    | Constraints                                       |
-| ------------- | ------------------------------------------------- | ------------ | ------------------------------------------------- |
-| user_id       | ID of administrator                               | INT(11)      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id) |
-| job_title     | Job title of administrator                        | VARCHAR(255) | NOT NULL, Must have length > 0                    |
-| is_superadmin | Whether the administrator is a super admin or not | TINYINT(1)   | DEFAULT false                                     |
+| Attribute      | Description                                       | Data Type    | Constraints                                       |
+|----------------| ------------------------------------------------- | ------------ | ------------------------------------------------- |
+| user_id        | ID of administrator                               | INT(11)      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id) |
+| job_title      | Job title of administrator                        | VARCHAR(255) | NOT NULL, Must have length > 0                    |
+| is_super_admin | Whether the administrator is a super admin or not | TINYINT(1)   | DEFAULT false                                     |
 
 ### client
 
