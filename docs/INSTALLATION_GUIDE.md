@@ -57,7 +57,7 @@ Some important notes:
 
 - Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
 - If your Apache server is serving from a port other than the default one, add the new port number to `PUBLIC_ROOT` (
-  eg., `http://localhost:443/steamy-sips/public`) .
+  e.g., `http://localhost:443/steamy-sips/public`) .
 - `BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
   whenever a client places an order. It is recommended to use
   a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
@@ -96,7 +96,7 @@ The path to the SQL dump might must be modified if you are not in the root direc
 
 ## Setup testing database
 
-If you want to run tests for the application, you must setup a database for testing. To do so, repeat the same
+If you want to run tests for the application, you must set up a database for testing. To do so, repeat the same
 instructions as the setup for the production database except name the testing database `cafe_test`.
 
 ## Setup linting and formatting
