@@ -43,13 +43,32 @@ class District
         return $this->district_id;
     }
 
-    public static function getAll(): array
+    /**
+     * Returns all districts from the database as an object
+     * @param bool $sanitizeAttributes Whether the attributes should be sanitized. Set this to true if data will
+     * be displayed on browser.
+     * @return District[] Array of District objects
+     */
+    public static function getAll(bool $sanitizeAttributes = false): array
     {
-        $districts = self::query("SELECT * FROM district");
-        $districtNames = [];
-        foreach ($districts as $district) {
-            $districtNames[] = $district->name;
+        $results = self::query("SELECT * FROM district;");
+
+        if (empty($results)) {
+            return [];
         }
-        return $districtNames;
+
+        $districts = [];
+        foreach ($results as $district) {
+            if ($sanitizeAttributes) {
+                $districts[] = new District (
+                    (int)filter_var($district->district_id, FILTER_SANITIZE_NUMBER_INT),
+                    htmlspecialchars($district->name)
+                );
+            } else {
+                $districts[] = new District($district->district_id, $district->name);
+            }
+        }
+
+        return $districts;
     }
 }
