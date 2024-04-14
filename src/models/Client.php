@@ -121,15 +121,20 @@ class Client extends User
     }
 
     /**
-     * Saves user to database if user attributes are valid
+     * Saves client to database
      *
-     * @return void
+     * @return bool Whether client was successfully saved to database
      */
-    public function save(): void
+    public function save(): bool
     {
-        // if attributes of object are invalid, exit
+        // if attributes are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
+        }
+
+        // check if email already exists in database
+        if (!empty(Client::getByEmail($this->email))) {
+            return false;
         }
 
         // get data to be inserted to user table
@@ -142,7 +147,7 @@ class Client extends User
         $inserted_record = self::first($user_data, 'user');
 
         if (!$inserted_record) {
-            return;
+            return false;
         }
 
         // get data to be inserted to client table
@@ -155,6 +160,8 @@ class Client extends User
 
         // perform insertion to client table
         $this->insert($client_data, $this->table);
+
+        return true; // insertion was successful
     }
 
     /**
@@ -175,9 +182,10 @@ class Client extends User
     {
         $errors = parent::validate(); // list of errors
 
-        // perform existence checks
-        if (empty($this->district->getName())) {
-            $errors['district'] = 'District name is required';
+        // verify existence of district
+        $valid_district = District::getByID($this->district->getID()); // fetch corresponding district in database
+        if (empty($valid_district) || $valid_district->getName() !== $this->district->getName()) {
+            $errors['district'] = 'District does not exist';
         }
 
         if (strlen($this->city) < 3) {
