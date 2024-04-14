@@ -114,11 +114,17 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                     <label for="districts">District</label>
                     <select name="district" id="districts"<?= $ariaInvalid('district') ?>>
                         <?php
-                        foreach ($districts as $id => $name) : ?>
-                            <option value="<?= $id ?>" <?= $defaultDistrictID == $id ? "selected" : "" ?>><?= $name ?></option>
+                        foreach ($districts as $district) : ?>
+                            <option value="<?= $district->getID() ?>" <?= $defaultDistrictID == $district->getID(
+                            ) ? "selected" : "" ?>><?= $district->getName() ?></option>
                         <?php
                         endforeach; ?>
                     </select>
+                    <?php
+                    if (!empty($errors['district'])) : ?>
+                        <small class="warning"><?= $errors['district'] ?></small>
+                    <?php
+                    endif; ?>
 
 
                 </fieldset>
