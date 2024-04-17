@@ -30,7 +30,7 @@ class Register
         $this->view_data['errors'] = [];
 
         // get list of districts to be displayed on form
-        $this->view_data['districts'] = District::getAll(true);
+        $this->view_data['districts'] = District::getAll();
     }
 
     /**
@@ -60,39 +60,7 @@ class Register
         $form_data['password'] = $_POST['password'] ?? "";
         $form_data['confirm_password'] = $_POST['confirmPassword'] ?? "";
 
-        // Note: We want to store the un-sanitized data in the database and only sanitize it
-        // when displaying it on website.
-        // apply htmlspecialchars_decode() to undo any modifications made by loadSanitizedFormDataToView()
-        // when form was displayed back to user.
-        $form_data['first_name'] = htmlspecialchars_decode($form_data['first_name']);
-        $form_data['last_name'] = htmlspecialchars_decode($form_data['last_name']);
-        $form_data['phone_no'] = htmlspecialchars_decode($form_data['phone_no']);
-        $form_data['street'] = htmlspecialchars_decode($form_data['street']);
-        $form_data['city'] = htmlspecialchars_decode($form_data['city']);
-        $form_data['email'] = htmlspecialchars_decode($form_data['email']);
-
         return $form_data;
-    }
-
-    /**
-     * Updates view data with data from form. The form data is first sanitized.
-     * @param array $form_data
-     * @return void
-     */
-    private function loadSanitizedFormDataToView(array $form_data): void
-    {
-        // load sanitized version of form data to view
-        $this->view_data['defaultFirstName'] = htmlspecialchars($form_data['first_name']);
-        $this->view_data['defaultLastName'] = htmlspecialchars($form_data['last_name']);
-        $this->view_data['defaultPhoneNumber'] = htmlspecialchars($form_data['phone_no']);
-        $this->view_data['defaultStreet'] = htmlspecialchars($form_data['street']);
-        $this->view_data['defaultCity'] = htmlspecialchars($form_data['city']);
-        $this->view_data['defaultEmail'] = htmlspecialchars($form_data['email']);
-        $this->view_data['defaultDistrictID'] = filter_var($form_data['district'], FILTER_SANITIZE_NUMBER_INT);
-
-        // ! do not make any modifications to the submitted passwords because they may contain special chars and spaces
-        $this->view_data['defaultPassword'] = $form_data['password'];
-        $this->view_data['defaultConfirmPassword'] = $form_data['confirm_password'];
     }
 
     private function handleFormSubmission(): void
@@ -149,9 +117,6 @@ class Register
 
             // TODO: redirect to some error page
             Utility::redirect('home');
-        } else {
-            // form data is invalid so update view data with submitted form data
-            $this->loadSanitizedFormDataToView($form_data);
         }
     }
 
