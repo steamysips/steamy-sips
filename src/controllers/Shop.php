@@ -9,7 +9,7 @@ use Steamy\Core\Utility;
 use Steamy\Model\Product;
 
 /**
- * Displays all products when URL is /shop or /shop/products
+ * Displays all products when URL is /shop
  */
 class Shop
 {
@@ -81,14 +81,14 @@ class Shop
     public function index(): void
     {
         // check if URL follows format /shop/products/<number>
-        if (preg_match("/^shop\/products\/[0-9]+/", $_GET['url'])) {
+        if (preg_match("/^shop\/products\/[0-9]+$/", $_GET['url'])) {
             // let Product controller handle this
             (new \Steamy\Controller\Product())->index();
             return;
         }
 
-        // check if URL is not /shop or /shop/products
-        if (!($_GET['url'] == "shop" || $_GET['url'] == "shop/products")) {
+        // check if URL is not /shop
+        if ($_GET['url'] !== "shop") {
             // let 404 controller handle this
             (new _404())->index();
             return;
