@@ -1,0 +1,26 @@
+section {
+  margin-bottom: 0;
+}
+
+.cart-item {
+  padding-top: 10px;
+  display: flex;
+  gap: 1em;
+  border-bottom: 1px solid gray;
+}
+
+section:nth-child(2) {
+  border-top: 1px solid gray;
+}
+
+.cart-item > img {
+  flex: 1;
+}
+
+.cart-item > .container {
+  flex: 2;
+}
+
+.cart-item > label {
+  flex: 1;
+}

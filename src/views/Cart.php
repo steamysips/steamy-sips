@@ -9,35 +9,6 @@ declare(strict_types=1);
  */
 ?>
 
-<style>
-  section {
-    margin-bottom: 0;
-  }
-
-  .cart-item {
-    display: flex;
-    gap: 1em;
-    border-bottom: 1px solid gray;
-  }
-
-  section:nth-child(2) {
-    border-top: 1px solid gray;
-  }
-
-  .cart-item > img {
-    flex: 1;
-  }
-
-  .cart-item > .container {
-    flex: 2;
-  }
-
-  .cart-item > label {
-    flex: 1;
-  }
-
-</style>
-
 <main class="container">
     <h1>Shopping Cart</h1>
 
@@ -57,7 +28,7 @@ declare(strict_types=1);
         $product = $item['product'];
         $product_id = $product->getProductID();
         $product_name = $product->getName();
-        $product_link = ROOT. "/shop/products/". $product_id;
+        $product_link = ROOT . "/shop/products/" . $product_id;
         $image_url = $product->getImgAbsolutePath();
         $image_alt = $product->getImgAltText();
         $unit_price = $product->getPrice();
