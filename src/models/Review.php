@@ -21,6 +21,9 @@ class Review
     private int $rating;
     private Datetime $date;
 
+    public const MAX_RATING = 5;
+    public const MIN_RATING = 1;
+
     public function __construct(
         int $user_id,
         int $product_id,
@@ -216,15 +219,24 @@ class Review
     public function validate(): array
     {
         $errors = [];
+
         if (strlen($this->text) < 2) {
             $errors['text'] = "Review text must have at least 2 characters";
         }
-        if ($this->rating < 1 || $this->rating > 5) {
-            $errors['rating'] = "Rating must be between 1 and 5";
+
+        if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
+            "options" => [
+                "min_range" => Review::MIN_RATING,
+                "max_range" => Review::MAX_RATING
+            ]
+        ])) {
+            $errors['rating'] = sprintf("Review must be between %d and %d", Review::MIN_RATING, Review::MAX_RATING);
         }
+
         if ($this->date > new DateTime()) {
             $errors['date'] = "Review date cannot be in the future";
         }
+
         return $errors;
     }
 
