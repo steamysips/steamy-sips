@@ -18,12 +18,13 @@ trait Database
     private static function connect(): PDO
     {
         $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
+        $pdo_object = new PDO($string, DB_USERNAME, DB_PASSWORD);
+
         try {
-            $pdo_object = new PDO($string, DB_USERNAME, DB_PASSWORD);
         } catch (PDOException $e) {
             // TODO: Create a page to display the error
             Utility::show(
-                "Error establishing a connection to the database."
+                $e
             );
             die();
         }
