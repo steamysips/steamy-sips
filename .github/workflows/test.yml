@@ -26,6 +26,7 @@ jobs:
           sudo /etc/init.d/mysql start
           mysql -e "CREATE DATABASE IF NOT EXISTS $TEST_DB_NAME;" -u$DB_USER -p$DB_PASSWORD
           mysql -D$TEST_DB_NAME -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/dump/cafe.sql"
+          mysql -e "USE cafe_test; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
 
       - name: Create .env file
         env:
@@ -37,7 +38,9 @@ jobs:
               TEST_DB_NAME="cafe_test"
               BUSINESS_GMAIL=""
               BUSINESS_GMAIL_PASSWORD=""
-        run: echo "$ENV" > src/core/.env
+        run: |
+          echo "$ENV" > src/core/.env
+          cat src/core/.env
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
