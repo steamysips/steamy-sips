@@ -57,8 +57,8 @@ CREATE TABLE `client` (
   KEY `client_district_district_id_fk` (`district_id`),
   CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
   CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `street_length` CHECK (char_length(`street`) > 3),
-  CONSTRAINT `client_city_length` CHECK (char_length(`city`) > 2)
+  CONSTRAINT `client_city_length` CHECK (char_length(`city`) > 2),
+  CONSTRAINT `client_street_length` CHECK (char_length(`street`) > 3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-18 13:13:42
+-- Dump completed on 2024-04-18 13:18:52
