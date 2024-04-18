@@ -19,15 +19,18 @@ trait Database
     {
         $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
         try {
-            $pdo_object = new PDO($string, DB_USERNAME, DB_PASSWORD);
+            return new PDO($string, DB_USERNAME, DB_PASSWORD);
         } catch (PDOException $e) {
-            // TODO: Create a page to display the error
-            Utility::show(
-                "Error establishing a connection to the database."
-            );
-            die();
+            // if PHPUnit is not running, handle the exception
+            if (!defined('PHPUNIT_STEAMY_TESTSUITE')) {
+                // TODO: Display a user-friendly error message
+                Utility::show("Sorry, we're unable to process your request at the moment. Please try again later.");
+                die();
+            } else {
+                // if PHPUnit is running, re-throw the exception to allow it to propagate
+                throw $e;
+            }
         }
-        return $pdo_object;
     }
 
     /**
