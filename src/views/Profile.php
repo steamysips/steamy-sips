@@ -14,24 +14,24 @@ declare(strict_types=1);
 ?>
 
 <main class="container">
-    <h1>Your account</h1>
+    <h1>My account</h1>
     <h2>Personal details</h2>
     <form action="">
         <label class="grid">
             Name:
-            <input value="<?= $name ?>" type="text" disabled>
+            <input value="<?= htmlspecialchars($name) ?>" type="text" disabled>
         </label>
 
 
         <label class="grid">
             Email:
-            <input value="<?= $email ?>" type="email" disabled>
+            <input value="<?= htmlspecialchars($email) ?>" type="email" disabled>
         </label>
 
 
         <label class="grid">
             Address:
-            <input value="<?= $address ?>" type="text" disabled>
+            <input value="<?= htmlspecialchars($address) ?>" type="text" disabled>
         </label>
         <button disabled>Edit</button>
     </form>
@@ -49,12 +49,16 @@ declare(strict_types=1);
 
             <?php
             foreach ($orders as $order) {
+                $date = htmlspecialchars($order->date);
+                $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
+                $cost = filter_var($order->cost, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                $status = htmlspecialchars($order->status);
                 echo <<< EOL
                     <tr>
-                        <td>$order->date</td>
-                        <td>$order->id</td>
-                        <td>$order->cost</td>
-                        <td>$order->status</td>
+                        <td>$date</td>
+                        <td>$id</td>
+                        <td>$cost</td>
+                        <td>$status</td>
                         <td class="grid">
                             <button>cancel</button>
                         </td>
@@ -72,8 +76,8 @@ declare(strict_types=1);
         <article class="grid">
             <hgroup>
                 <h5>Log out</h5>
-                <h6>Log out from website. You will lose access to your profile and will have to enter your login details
-                    again.</h6>
+                <h6>Log out from website. You will lose access to your profile and will have to enter your login
+                    details again.</h6>
             </hgroup>
             <form method="post">
                 <button type="submit" name="logout_submit">Log out</button>

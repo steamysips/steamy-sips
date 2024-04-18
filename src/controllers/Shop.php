@@ -9,7 +9,7 @@ use Steamy\Core\Utility;
 use Steamy\Model\Product;
 
 /**
- * Displays all products when URL is /shop or /shop/products
+ * Displays all products when URL is /shop
  */
 class Shop
 {
@@ -50,7 +50,10 @@ class Shop
         // else accept only products within a levenshtein distance of 3
         $search_keyword = strtolower(trim($_GET['keyword']));
         $similarity_threshold = 3;
-        return Utility::levenshteinDistance($search_keyword, strtolower($product->getName())) <= $similarity_threshold;
+        return Utility::levenshteinDistance(
+                $search_keyword,
+                strtolower($product->getName())
+            ) <= $similarity_threshold;
     }
 
     private function sort_product(Product $a, Product $b): int
@@ -81,14 +84,14 @@ class Shop
     public function index(): void
     {
         // check if URL follows format /shop/products/<number>
-        if (preg_match("/^shop\/products\/[0-9]+/", $_GET['url'])) {
+        if (preg_match("/^shop\/products\/[0-9]+$/", $_GET['url'])) {
             // let Product controller handle this
             (new \Steamy\Controller\Product())->index();
             return;
         }
 
-        // check if URL is not /shop or /shop/products
-        if (!($_GET['url'] == "shop" || $_GET['url'] == "shop/products")) {
+        // check if URL is not /shop
+        if ($_GET['url'] !== "shop") {
             // let 404 controller handle this
             (new _404())->index();
             return;
@@ -114,7 +117,10 @@ class Shop
         $this->view(
             'Shop',
             $this->data,
-            'Shop'
+            'Shop',
+            template_tags: $this->getLibrariesTags(['aos']),
+            template_meta_description: "Explore a delightful selection of aromatic coffees, teas, and delectable
+             treats at Steamy Sips. Discover your perfect brew and elevate your coffee experience today."
         );
     }
 }

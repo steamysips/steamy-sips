@@ -12,64 +12,81 @@ class Login
 {
     use Controller;
 
-    private array $data;
+    private array $view_data;
 
     public function __construct()
     {
-        // initialize default values
-        $this->data['defaultEmail'] = "";
-        $this->data['defaultPassword'] = "";
+        // initialize default form value
+        $this->view_data['defaultEmail'] = "";
     }
 
-    private function validateUser(): bool
+    /**
+     * Checks if user record exists in database
+     * @param string $email
+     * @param string $password
+     * @return bool True if it exists, false otherwise
+     */
+    private function validateUser(string $email, string $password): bool
     {
-        // default error
-        $this->data['errors']['other'] = 'You have entered a wrong email or password';
-
         // fetch client record
-        $client = Client::getByEmail($this->data['defaultEmail']);
+        $client = Client::getByEmail($email);
 
         if (!$client) {
             return false;
         }
 
         // validate password
-        if (!$client->verifyPassword($this->data['defaultPassword'])) {
+        if (!$client->verifyPassword($password)) {
             return false;
         }
 
         // no errors
-        unset($this->data['errors']['other']);
         return true;
+    }
+
+    private function handleFormSubmission(): void
+    {
+        // get un-sanitized version of email which may contain special characters
+        // Ref: https://blog.mutantmail.com/can-email-addresses-have-special-characters/
+        $entered_email = htmlspecialchars_decode(trim($_POST['email'] ?? ""));
+
+        // leave password unchanged as leading/trailing spaces can be part of password
+        // Ref: https://stackoverflow.com/a/7240898/17627866
+        $entered_password = $_POST['password'] ?? "";
+
+
+        // check if credentials are correct
+        if ($this->validateUser($entered_email, $entered_password)) {
+            // store user email in session
+            $_SESSION['user'] = $entered_email;
+
+            // regenerate session id for security purposes
+            // Ref: https://stackoverflow.com/a/34206189/17627866
+            session_regenerate_id();
+
+            // redirect user to his profile
+            Utility::redirect('profile');
+        } else {
+            // user entered invalid credentials
+
+            // update default form value
+            $this->view_data['defaultEmail'] = $entered_email;
+        }
     }
 
     public function index(): void
     {
         if (isset($_POST['login_submit'])) {
-            // TODO: sanitize values
-
-            // update default form values
-            $this->data['defaultEmail'] = trim($_POST['email'] ?? "");
-            $this->data['defaultPassword'] = trim($_POST['password'] ?? "");
-
-            // check if credentials are correct
-            if ($this->validateUser()) {
-                // store user email in session
-                $_SESSION['user'] = $this->data['defaultEmail'];
-
-                // regenerate session id for security purposes
-                // Reference: https://stackoverflow.com/a/34206189/17627866
-                session_regenerate_id();
-
-                // redirect user to his profile
-                Utility::redirect('profile');
-            }
+            $this->handleFormSubmission();
         }
 
         $this->view(
             'Login',
-            $this->data,
-            'Login'
+            $this->view_data,
+            'Login',
+            template_tags: $this->getLibrariesTags(['aos']),
+            template_meta_description: "Sign in to Steamy Sips and unlock a world of aromatic delights.
+             Access your account, manage orders, and enjoy a seamless shopping experience tailored just for you."
         );
     }
 }
