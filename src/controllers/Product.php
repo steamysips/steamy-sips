@@ -26,7 +26,7 @@ class Product
         // initialize some view data
         $this->view_data["default_review"] = "";
         $this->view_data["default_rating"] = "";
-        $this->view_data["signed_in_user"] = null;
+        $this->view_data["signed_in_user"] = false;
         $this->view_data["product"] = null;
         $this->view_data["rating_distribution"] = "[]";
 
@@ -40,7 +40,7 @@ class Product
         $user_account = Client::getByEmail($reviewer_email);
         if (!empty($user_account)) {
             $this->signed_user = $user_account;
-            $this->view_data["signed_in_user"] = $user_account;
+            $this->view_data["signed_in_user"] = true;
         }
 
         // if product id valid fetch product from db
@@ -56,13 +56,13 @@ class Product
 
     private function handleReviewSubmission(): void
     {
-        $new_comment = trim($_POST['review_text'] ?? "");
-        $rating = filter_var($_POST['review_rating'], FILTER_VALIDATE_INT);
-
         // ignore requests from users who are not logged in
         if (empty($this->signed_user)) {
             return;
         }
+
+        $new_comment = trim($_POST['review_text'] ?? "");
+        $rating = filter_var($_POST['review_rating'] ?? -1, FILTER_VALIDATE_INT);
 
         $review = new Review(
             $this->signed_user->getUserID(),
@@ -92,7 +92,9 @@ class Product
     }
 
     /**
-     * @return void
+     * Converts the output of getRatingDistribution into a comma separated list
+     * of numbers
+     * @return string
      */
     private function formatRatingDistribution(): string
     {
@@ -126,16 +128,12 @@ class Product
 
         $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
 
-        $tags = <<< EOL
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-         integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        EOL;
         $this->view(
             'Product',
             $this->view_data,
             $this->product->getName() . ' | Steamy Sips',
-            $tags
+            template_tags: $this->getLibrariesTags(['chartjs']),
+            template_meta_description: $this->product->getName() . " - " . $this->product->getDescription()
         );
     }
 }

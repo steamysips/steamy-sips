@@ -4,16 +4,19 @@ Adhering to a standard helps maintain code quality, readability, and consistency
 
 ## PHP
 
-All PHP files follow the [PSR-12](https://www.php-fig.org/psr/psr-12/) coding style.
+- All PHP files follow the [PSR-12](https://www.php-fig.org/psr/psr-12/) coding style.
+- `phpDocs` is used for documentation.
 
 ## JavaScript
 
-`Prettier` is used for formatting and `ESLint` is used for linting.
+- [`jsDocs`](https://en.wikipedia.org/wiki/JSDoc) is used for documentation.
+- `Prettier` is used for formatting
+- `ESLint` is used for linting.
 
 ## CSS
 
-`Prettier` is used for formatting.
+- `Prettier` is used for formatting.
 
 ## SQL
 
-https://www.sqlstyle.guide
+- Some guidelines from the [SQL Style Guide](https://www.sqlstyle.guide) have been followed.
