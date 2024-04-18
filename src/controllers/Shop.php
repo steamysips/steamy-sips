@@ -50,7 +50,10 @@ class Shop
         // else accept only products within a levenshtein distance of 3
         $search_keyword = strtolower(trim($_GET['keyword']));
         $similarity_threshold = 3;
-        return Utility::levenshteinDistance($search_keyword, strtolower($product->getName())) <= $similarity_threshold;
+        return Utility::levenshteinDistance(
+                $search_keyword,
+                strtolower($product->getName())
+            ) <= $similarity_threshold;
     }
 
     private function sort_product(Product $a, Product $b): int
@@ -116,7 +119,8 @@ class Shop
             $this->data,
             'Shop',
             template_tags: $this->getLibrariesTags(['aos']),
-            template_meta_description: "Explore a delightful selection of aromatic coffees, teas, and delectable treats at Steamy Sips. Discover your perfect brew and elevate your coffee experience today."
+            template_meta_description: "Explore a delightful selection of aromatic coffees, teas, and delectable
+             treats at Steamy Sips. Discover your perfect brew and elevate your coffee experience today."
         );
     }
 }
