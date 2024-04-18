@@ -12,26 +12,20 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          # The MySQL docker container requires these environment variables to be set,
-          # so we can create and migrate the test database.
-          # See: https://hub.docker.com/_/mysql
-          MYSQL_DATABASE: cafe_test
-          MYSQL_ROOT_PASSWORD: password
-        ports:
-          # Opens port 3306 on service container and host
-          # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
-          - 3306:3306
-          # Before continuing, verify the mysql container is reachable from the ubuntu host
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      TEST_DB_NAME: cafe_test
+      DB_USER: root # do not change
+      DB_PASSWORD: root # do not change
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Import SQL dump to cafe_test database
-        run: mysql -Dcafe_test -uroot -ppassword -h127.0.0.1 -P3306 < "resources/database/dump/cafe.sql"
+      - name: Setup database
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS $TEST_DB_NAME;" -u$DB_USER -p$DB_PASSWORD
+          mysql -D$TEST_DB_NAME -u$DB_USER -p$DB_PASSWORD -h127.0.0.1 -P3306 < "resources/database/dump/cafe.sql"
 
       - name: Create .env file
         env:
@@ -39,14 +33,11 @@ jobs:
               PUBLIC_ROOT="http://localhost/steamy-sips/public"
               DB_HOST="127.0.0.1"
               DB_USERNAME="root"
-              DB_PASSWORD="password"
+              DB_PASSWORD="root"
               TEST_DB_NAME="cafe_test"
               BUSINESS_GMAIL=""
               BUSINESS_GMAIL_PASSWORD=""
         run: echo "$ENV" > src/core/.env
-
-      - name: Output contents of .env
-        run: cat src/core/.env
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
