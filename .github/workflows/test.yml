@@ -28,7 +28,7 @@ jobs:
           # Before continuing, verify the mysql container is reachable from the ubuntu host
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Import SQL dump to cafe_test database
         run: mysql -Dcafe_test -uroot -ppassword -h127.0.0.1 -P3306 < "resources/database/dump/cafe.sql"
@@ -50,7 +50,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
