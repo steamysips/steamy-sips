@@ -56,13 +56,13 @@ class Product
 
     private function handleReviewSubmission(): void
     {
-        $new_comment = trim($_POST['review_text'] ?? "");
-        $rating = filter_var($_POST['review_rating'], FILTER_VALIDATE_INT);
-
         // ignore requests from users who are not logged in
         if (empty($this->signed_user)) {
             return;
         }
+
+        $new_comment = trim($_POST['review_text'] ?? "");
+        $rating = filter_var($_POST['review_rating'] ?? -1, FILTER_VALIDATE_INT);
 
         $review = new Review(
             $this->signed_user->getUserID(),
@@ -92,6 +92,8 @@ class Product
     }
 
     /**
+     * Converts the output of getRatingDistribution into a comma separated list
+     * of numbers
      * @return string
      */
     private function formatRatingDistribution(): string
