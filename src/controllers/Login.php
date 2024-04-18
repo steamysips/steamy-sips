@@ -69,8 +69,8 @@ class Login
         } else {
             // user entered invalid credentials
 
-            // update default form value to sanitized version of entered email
-            $this->view_data['defaultEmail'] = htmlspecialchars($entered_email);
+            // update default form value
+            $this->view_data['defaultEmail'] = $entered_email;
         }
     }
 
@@ -85,7 +85,8 @@ class Login
             $this->view_data,
             'Login',
             template_tags: $this->getLibrariesTags(['aos']),
-            template_meta_description: "Sign in to Steamy Sips and unlock a world of aromatic delights. Access your account, manage orders, and enjoy a seamless shopping experience tailored just for you."
+            template_meta_description: "Sign in to Steamy Sips and unlock a world of aromatic delights.
+             Access your account, manage orders, and enjoy a seamless shopping experience tailored just for you."
         );
     }
 }
