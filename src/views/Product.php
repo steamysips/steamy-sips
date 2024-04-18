@@ -37,7 +37,14 @@ function getBadge(Review $review): string
     return <<< BADGE
                     <div data-tooltip="This user did not buy the product" data-placement="left" >
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
-                      fill="none"  stroke="red"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-alert-octagon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388 5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574 2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388 -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574 -2.388a2.036 2.036 0 0 1 1.604 0z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+                      fill="none"  stroke="red"  stroke-width="2"  stroke-linecap="round"
+                        stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline
+                         icon-tabler-alert-octagon"><path stroke="none" d="M0 0h24v24H0z"
+                          fill="none"/><path d="M12.802 2.165l5.575 2.389c.48 .206 .863 .589 1.07 1.07l2.388
+                           5.574c.22 .512 .22 1.092 0 1.604l-2.389 5.575c-.206 .48 -.589 .863 -1.07 1.07l-5.574
+                            2.388c-.512 .22 -1.092 .22 -1.604 0l-5.575 -2.389a2.036 2.036 0 0 1 -1.07 -1.07l-2.388
+                             -5.574a2.036 2.036 0 0 1 0 -1.604l2.389 -5.575c.206 -.48 .589 -.863 1.07 -1.07l5.574
+                              -2.388a2.036 2.036 0 0 1 1.604 0z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
                     </div>
                 BADGE;
 }
@@ -57,8 +64,10 @@ function getStars(Review $review): string
         $html .= <<< EOL
                         <svg xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
                           fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"
-                            stroke-linejoin="round"  class="fill-star icon icon-tabler icons-tabler-outline icon-tabler-star">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                            stroke-linejoin="round"  class="fill-star icon icon-tabler icons-tabler
+                            -outline icon-tabler-star">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179
+                             -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
                     EOL;
         $checked_stars--;
     }
@@ -69,7 +78,8 @@ function getStars(Review $review): string
                         <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"
                           fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"
                             stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-star">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179
+                             -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
                     EOL;
         $unchecked_stars--;
     }
@@ -105,7 +115,8 @@ function recurse(Review $review): void
                          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
                          width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                           stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
-                           fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+                           fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
+                            -3v-8a3 3 0 0 1 3 -3h12z" />
                            <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
                          </svg>
                     </a>
@@ -156,19 +167,28 @@ function recurse(Review $review): void
 
 <main class="container">
     <div id="product-info" class="grid">
-        <img src="<?= $product->getImgAbsolutePath() ?>" alt="<?= $product->getImgAltText() ?>">
+        <img src="<?= htmlspecialchars($product->getImgAbsolutePath()) ?>"
+             alt="<?= htmlspecialchars($product->getImgAltText()) ?>">
         <div>
             <hgroup>
-                <h1><?= $product->getName() ?></h1>
-                <h4>Rs <?= $product->getPrice() ?></h4>
+                <h1><?= htmlspecialchars($product->getName()) ?></h1>
+                <h4>Rs <?= filter_var(
+                        $product->getPrice(),
+                        FILTER_SANITIZE_NUMBER_FLOAT,
+                        FILTER_FLAG_ALLOW_FRACTION
+                    ) ?></h4>
                 <p>360 calories</p>
             </hgroup>
             <p>
-                <?= $product->getDescription() ?>
+                <?= htmlspecialchars($product->getDescription()) ?>
             </p>
             <form id="product-customization-form" method="post">
                 <input type="hidden" value="1" name="quantity">
-                <input type="hidden" value="<?= $product->getProductID() ?>" name="product_id">
+                <input type="hidden" value="<?= filter_var(
+                    $product->getProductID(),
+                    FILTER_SANITIZE_NUMBER_INT
+                ) ?>"
+                       name="product_id">
                 <h4>Size options</h4>
                 <fieldset>
                     <label for="small">
@@ -203,7 +223,7 @@ function recurse(Review $review): void
     <h2>Customer Reviews (<?= count($product->getReviews()) ?>)</h2>
     <form class="grid" method="post">
         <label>
-            <input value="<?= $default_review ?>"
+            <input value="<?= htmlspecialchars($default_review) ?>"
                    required placeholder="Write a new review"
                    name="review_text" type="text"
                 <?php
@@ -213,7 +233,7 @@ function recurse(Review $review): void
             >
         </label>
         <label>
-            <input value="<?= $default_rating ?>"
+            <input value="<?= filter_var($default_rating, FILTER_SANITIZE_NUMBER_INT) ?>"
                    name=" review_rating" required
                    type="number" min="1" max="5"
                    placeholder="Rating"
@@ -260,7 +280,7 @@ function recurse(Review $review): void
       {
         axis: "y",
         label: "Percentage",
-        data: <?= filter_var($rating_distribution, FILTER_SANITIZE_NUMBER_INT)?>,
+        data: <?= $rating_distribution ?>,
         fill: true,
         backgroundColor: "rgb(255, 159, 64)",
         borderWidth: 1,

@@ -5,7 +5,8 @@ declare(strict_types=1);
 use Steamy\Model\District;
 
 /**
- * Variables below are defined and initialized in Register controller.
+ * View for registration form.
+ *
  * @var string $defaultFirstName
  * @var string $defaultLastName
  * @var string $defaultPhoneNumber
@@ -56,7 +57,9 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                         <div class="container">
                             <label for="first_name">First Name</label>
                             <input autofocus id="first_name" type="text" name="first_name"
-                                   value="<?= $defaultFirstName ?>" required<?= $ariaInvalid('first_name') ?> />
+                                   value="<?= htmlspecialchars($defaultFirstName) ?>" required<?= $ariaInvalid(
+                                'first_name'
+                            ) ?> />
                             <?php
                             if (!empty($errors['first_name'])) : ?>
                                 <small class="warning"><?= $errors['first_name'] ?></small>
@@ -67,7 +70,9 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                         <div class="container">
                             <label for="last_name">Last Name</label>
                             <input id="last_name" type="text" name="last_name"
-                                   value="<?= $defaultLastName ?>" required<?= $ariaInvalid('last_name') ?> />
+                                   value="<?= htmlspecialchars($defaultLastName) ?>" required<?= $ariaInvalid(
+                                'last_name'
+                            ) ?> />
                             <?php
                             if (!empty($errors['last_name'])) : ?>
                                 <small class="warning"><?= $errors['last_name'] ?></small>
@@ -81,14 +86,16 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                         Phone Number
                         <small>(eg., +230-5-123-4567)</small>
                     </label>
-                    <input value="<?= $defaultPhoneNumber ?>" id="telephone" type="tel" name="phone_no"
+                    <input value="<?= htmlspecialchars($defaultPhoneNumber) ?>" id="telephone" type="tel"
+                           name="phone_no"
                            pattern="\+230-5-[0-9]{3}-[0-9]{4}"
                            title="eg., +230-5-123-4567" required<?= $ariaInvalid('phone_no') ?> />
 
                     <div class="grid">
                         <div class="container">
                             <label for="street">Street</label>
-                            <input name="street" value="<?= $defaultStreet ?>" id="street" type="text"<?= $ariaInvalid(
+                            <input name="street" value="<?= htmlspecialchars($defaultStreet) ?>" id="street"
+                                   type="text"<?= $ariaInvalid(
                                 'street'
                             ) ?> />
                             <?php
@@ -100,7 +107,8 @@ $ariaInvalid = function (string $input_name) use ($errors) {
 
                         <div class="container">
                             <label for="city">City</label>
-                            <input name="city" value="<?= $defaultCity ?>" id="city" type="text"<?= $ariaInvalid(
+                            <input name="city" value="<?= htmlspecialchars($defaultCity) ?>" id="city"
+                                   type="text"<?= $ariaInvalid(
                                 'city'
                             ) ?> />
                             <?php
@@ -115,8 +123,11 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                     <select name="district" id="districts"<?= $ariaInvalid('district') ?>>
                         <?php
                         foreach ($districts as $district) : ?>
-                            <option value="<?= $district->getID() ?>" <?= $defaultDistrictID == $district->getID(
-                            ) ? "selected" : "" ?>><?= $district->getName() ?></option>
+                            <option value="<?= filter_var(
+                                $district->getID(),
+                                FILTER_SANITIZE_NUMBER_INT
+                            ) ?>" <?= $defaultDistrictID == $district->getID(
+                            ) ? "selected" : "" ?>><?= htmlspecialchars($district->getName()) ?></option>
                         <?php
                         endforeach; ?>
                     </select>
@@ -132,7 +143,8 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                 <fieldset>
                     <legend><strong>Account information</strong></legend>
                     <label for="email">Email</label>
-                    <input value="<?= $defaultEmail ?>" id="email" type="email" name="email" required<?= $ariaInvalid(
+                    <input value="<?= htmlspecialchars($defaultEmail) ?>" id="email" type="email" name="email"
+                           required<?= $ariaInvalid(
                         'email'
                     ) ?> />
                     <?php
@@ -146,7 +158,7 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                             <label for="password">Password</label>
                             <input id="password" type="password" name="password"
                                    aria-label="Password"
-                                   value="<?= $defaultPassword ?>"
+                                   value="<?= htmlspecialchars($defaultPassword) ?>"
                                    required<?= $ariaInvalid('password') ?> />
 
                             <?php
@@ -160,9 +172,8 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                             <label for="confirmPassword">Confirm password</label>
                             <input id="confirmPassword" type="password" name="confirmPassword"
                                    aria-label="Confirm password"
-                                   value="<?= $defaultConfirmPassword ?>" required<?= $ariaInvalid(
-                                'confirmPassword'
-                            ) ?> />
+                                   value="<?= htmlspecialchars($defaultConfirmPassword) ?>"
+                                   required<?= $ariaInvalid('confirmPassword') ?> />
                             <?php
                             if (!empty($errors['confirmPassword'])) : ?>
                                 <small class="warning"><?= $errors['confirmPassword'] ?></small>

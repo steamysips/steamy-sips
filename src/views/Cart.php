@@ -26,17 +26,25 @@ declare(strict_types=1);
     }
     foreach ($cart_items as $item) {
         $product = $item['product'];
-        $product_id = $product->getProductID();
-        $product_name = $product->getName();
-        $product_link = ROOT . "/shop/products/" . $product_id;
-        $image_url = $product->getImgAbsolutePath();
-        $image_alt = $product->getImgAltText();
-        $unit_price = $product->getPrice();
+        $product_id = filter_var($product->getProductID(), FILTER_SANITIZE_NUMBER_INT);
+        $product_name = htmlspecialchars($product->getName());
+        $product_link = htmlspecialchars(ROOT . "/shop/products/" . $product_id);
+        $image_url = htmlspecialchars($product->getImgAbsolutePath());
+        $image_alt = htmlspecialchars($product->getImgAltText());
+        $unit_price = filter_var(
+            $product->getPrice(),
+            FILTER_SANITIZE_NUMBER_FLOAT,
+            FILTER_FLAG_ALLOW_FRACTION
+        );
 
-        $cupSize = $item['cupSize'];
-        $milkType = $item['milkType'];
-        $quantity = $item['quantity'];
-        $subtotal = $item['subtotal'];
+        $cupSize = htmlspecialchars($item['cupSize']);
+        $milkType = htmlspecialchars($item['milkType']);
+        $quantity = filter_var($item['quantity'], FILTER_SANITIZE_NUMBER_INT);
+        $subtotal = filter_var(
+            $item['subtotal'],
+            FILTER_SANITIZE_NUMBER_FLOAT,
+            FILTER_FLAG_ALLOW_FRACTION
+        );
         // Note: cupSize and milkType must be in lowercase because this information
         // is stored in lowercase in localstorage.
 
@@ -46,7 +54,8 @@ declare(strict_types=1);
         $uc_milktype = ucfirst($milkType);
 
         echo <<< EOL
-            <section class="cart-item" data-productid = "$product_id"  data-quantity="$quantity" data-cupsize="$cupSize"
+            <section class="cart-item" data-productid = "$product_id"
+              data-quantity="$quantity" data-cupsize="$cupSize"
              data-milktype="$milkType" data-unitprice="$unit_price" >
                 <img width="40" src="$image_url" alt="$image_alt">
                 <div class="container">
