@@ -51,7 +51,7 @@ declare(strict_types=1);
             foreach ($orders as $order) {
                 $date = htmlspecialchars($order->date);
                 $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
-                $cost = htmlspecialchars($order->cost);
+                $cost = filter_var($order->cost, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                 $status = htmlspecialchars($order->status);
                 echo <<< EOL
                     <tr>
