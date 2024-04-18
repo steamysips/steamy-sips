@@ -74,7 +74,8 @@ final class ClientTest extends TestCase
             'last_name' => 'Last name must be at least 3 characters long',
             'phone_no' => 'Phone number must be at least 7 characters long',
             'city' => 'City name must have at least 3 characters',
-            'street' => 'Street name must have at least 4 characters'
+            'street' => 'Street name must have at least 4 characters',
+            'district' => 'District does not exist'
         ],
             $client->validate());
 
@@ -106,26 +107,26 @@ final class ClientTest extends TestCase
         $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
         // Assert that the fetched client is not null
         self::assertNotNull($fetched_client);
-    
+
         // Assert the attributes of the fetched client
         self::assertEquals("john_u@gmail.com", $fetched_client->getEmail());
         self::assertEquals("john", $fetched_client->getFirstName());
         self::assertEquals("johhny", $fetched_client->getLastName());
         self::assertEquals("13213431", $fetched_client->getPhoneNo());
         self::assertEquals("Royal Road, Curepipe, Moka", $fetched_client->getAddress());
-    
+
         // Delete the dummy record
         $fetched_client->deleteUser();
-    
+
         // Add a small delay to ensure the deletion operation is completed
         usleep(500000); // 500 milliseconds = 0.5 seconds
-    
+
         // Fetch the client by email again
         $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
-    
+
         // Test for invalid email
         // Assert that the fetched client is null or false
         self::assertNull($fetched_client);
     }
-    
+
 }
