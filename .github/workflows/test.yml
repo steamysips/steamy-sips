@@ -36,10 +36,13 @@ jobs:
       - name: Create environment file
         env:
             ENV: |
+              PUBLIC_ROOT="http://localhost/steamy-sips/public"
               DB_HOST="127.0.0.1"
               DB_USERNAME="root"
               DB_PASSWORD="password"
               TEST_DB_NAME="cafe_test"
+              BUSINESS_GMAIL=""
+              BUSINESS_GMAIL_PASSWORD=""
         run: echo "$ENV" > src/core/.env
 
       - name: Validate composer.json and composer.lock
