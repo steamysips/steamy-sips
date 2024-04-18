@@ -34,7 +34,8 @@ class Register
     }
 
     /**
-     * Returns the un-sanitized version of the form data. Form data attributes are guaranteed to have the right data types.
+     * Returns the un-sanitized version of the form data. Form data attributes are guaranteed to have the right
+     * data types.
      * @return array An array indexed by attribute name. It contains all the required attributes.
      */
     private function getFormData(): array
@@ -56,7 +57,8 @@ class Register
         $form_data['city'] = trim($_POST['city'] ?? "");
         $form_data['email'] = filter_var(trim($_POST['email'] ?? ""), FILTER_VALIDATE_EMAIL);
 
-        // ! do not make any modifications to the submitted passwords because they may contain special chars and spaces
+        // do not make any modifications to the submitted passwords because they may contain special
+        // chars and spaces
         $form_data['password'] = $_POST['password'] ?? "";
         $form_data['confirm_password'] = $_POST['confirmPassword'] ?? "";
 
@@ -117,7 +119,27 @@ class Register
 
             // TODO: redirect to some error page
             Utility::redirect('home');
+        } else {
+            $this->loadDataToForm($form_data);
         }
+    }
+
+    /**
+     * Updates view data with data from form. Invalid data entered by user persists.
+     * @param array $form_data
+     * @return void
+     */
+    private function loadDataToForm(array $form_data): void
+    {
+        $this->view_data['defaultFirstName'] = $form_data['first_name'];
+        $this->view_data['defaultLastName'] = $form_data['last_name'];
+        $this->view_data['defaultPhoneNumber'] = $form_data['phone_no'];
+        $this->view_data['defaultStreet'] = $form_data['street'];
+        $this->view_data['defaultCity'] = $form_data['city'];
+        $this->view_data['defaultEmail'] = $form_data['email'];
+        $this->view_data['defaultDistrictID'] = $form_data['district'];
+        $this->view_data['defaultPassword'] = $form_data['password'];
+        $this->view_data['defaultConfirmPassword'] = $form_data['confirm_password'];
     }
 
     public function index(): void
@@ -130,7 +152,9 @@ class Register
             'Register',
             $this->view_data,
             'Register',
-            template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers, personalized recommendations, and a richer coffee experience. Start your journey towards flavorful indulgence."
+            template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers,
+             personalized recommendations, and a richer coffee experience. Start your journey towards
+              flavorful indulgence."
         );
     }
 }
