@@ -98,33 +98,40 @@ abstract class User
         return $errors;
     }
 
+    /**
+     * Validates all attributes of user through existence checks, length checks, format checks, ...
+     *
+     * Note: This function does not check if an email is unique.
+     *
+     * @return array Array of errors indexed by attribute name
+     */
     public function validate(): array
     {
         $errors = []; // List of errors
-    
+
         // Perform email format check
         if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = "Invalid email format";
         }
-    
+
         // Perform first name length check
         if (strlen($this->first_name) < 3) {
             $errors['first_name'] = "First name must be at least 3 characters long";
         }
-    
+
         // Perform last name length check
         if (strlen($this->last_name) < 3) {
             $errors['last_name'] = "Last name must be at least 3 characters long";
         }
-    
+
         // Perform phone number length check
         if (strlen($this->phone_no) < 7) {
             $errors['phone_no'] = "Phone number must be at least 7 characters long";
         }
-    
+
         return $errors;
     }
-    
+
 
     public function setEmail(string $email): void
     {

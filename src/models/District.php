@@ -20,9 +20,13 @@ class District
         $this->name = $name;
     }
 
-    public static function getByID(int $id): ?District
+    public static function getByID(int $district_id): ?District
     {
-        $record = self::query("SELECT * FROM district WHERE district_id = :id", ['id' => $id]);
+        if ($district_id < 0) {
+            return null;
+        }
+
+        $record = self::query("SELECT * FROM district WHERE district_id = :id", ['id' => $district_id]);
         if (!$record) {
             return null;
         }
@@ -39,13 +43,23 @@ class District
         return $this->district_id;
     }
 
+    /**
+     * Returns all districts from the database as an object
+     * @return District[] Array of District objects
+     */
     public static function getAll(): array
     {
-        $districts = self::query("SELECT * FROM district");
-        $districtNames = [];
-        foreach ($districts as $district) {
-            $districtNames[] = $district->name;
+        $results = self::query("SELECT * FROM district;");
+
+        if (empty($results)) {
+            return [];
         }
-        return $districtNames;
+
+        $districts = [];
+        foreach ($results as $district) {
+            $districts[] = new District($district->district_id, $district->name);
+        }
+
+        return $districts;
     }
 }

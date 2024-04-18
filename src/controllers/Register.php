@@ -28,38 +28,69 @@ class Register
         $this->view_data['defaultPassword'] = "";
         $this->view_data['defaultConfirmPassword'] = "";
         $this->view_data['errors'] = [];
+
+        // get list of districts to be displayed on form
         $this->view_data['districts'] = District::getAll();
+    }
+
+    /**
+     * Returns the un-sanitized version of the form data. Form data attributes are guaranteed to have the right
+     * data types.
+     * @return array An array indexed by attribute name. It contains all the required attributes.
+     */
+    private function getFormData(): array
+    {
+        $form_data = [];
+        // $form_data will store all attributes and missing attributes are set to empty string
+
+        $form_data['first_name'] = trim($_POST['first_name'] ?? "");
+        $form_data['last_name'] = trim($_POST['last_name'] ?? "");
+        $form_data['phone_no'] = trim($_POST['phone_no'] ?? "");
+
+        // get district id as an integer. If districtID is missing, set it to -1
+        $form_data['district'] = (int)filter_var(
+            trim($_POST['district'] ?? "-1"),
+            FILTER_SANITIZE_NUMBER_INT
+        );
+
+        $form_data['street'] = trim($_POST['street'] ?? "");
+        $form_data['city'] = trim($_POST['city'] ?? "");
+        $form_data['email'] = filter_var(trim($_POST['email'] ?? ""), FILTER_VALIDATE_EMAIL);
+
+        // do not make any modifications to the submitted passwords because they may contain special
+        // chars and spaces
+        $form_data['password'] = $_POST['password'] ?? "";
+        $form_data['confirm_password'] = $_POST['confirmPassword'] ?? "";
+
+        return $form_data;
     }
 
     private function handleFormSubmission(): void
     {
-        // set view data so that submitted values are displayed back to form
+        $form_data = $this->getFormData();
 
-        // TODO: add more sanitization
-        $this->view_data['defaultFirstName'] = trim($_POST['first_name'] ?? "");
-        $this->view_data['defaultLastName'] = trim($_POST['last_name'] ?? "");
-        $this->view_data['defaultPhoneNumber'] = trim($_POST['phone_no'] ?? "");
-        $this->view_data['defaultDistrictID'] = (int)filter_var(trim($_POST['district']), FILTER_SANITIZE_NUMBER_INT);
-        $this->view_data['defaultStreet'] = trim($_POST['street'] ?? "");
-        $this->view_data['defaultCity'] = trim($_POST['city'] ?? "");
-        $this->view_data['defaultEmail'] = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
-        $this->view_data['defaultPassword'] = trim($_POST['password'] ?? "");
-        $this->view_data['defaultConfirmPassword'] = trim($_POST['confirmPassword'] ?? "");
+        // get the district object corresponding to the submitted district id
+        $submitted_district = District::getByID($form_data['district']);
 
-        // TODO: If district ID is invalid, handle
+        // if district does not exist, create a temporary invalid district object to pass to Client constructor
+        // Note: A District object (invalid or not) must be passed to the Client constructor
+        if (empty($submitted_district)) {
+            $submitted_district = new District(-1, "");
+        }
+
         // create a new client object
         $client = new Client(
-            email: $this->view_data['defaultEmail'],
-            first_name: $this->view_data['defaultFirstName'],
-            last_name: $this->view_data['defaultLastName'],
-            plain_password: $this->view_data['defaultPassword'],
-            phone_no: $this->view_data['defaultPhoneNumber'],
-            district: District::getByID($this->view_data['defaultDistrictID']),
-            street: $this->view_data['defaultStreet'],
-            city: $this->view_data['defaultCity']
+            email: $form_data['email'],
+            first_name: $form_data['first_name'],
+            last_name: $form_data['last_name'],
+            plain_password: $form_data['password'],
+            phone_no: $form_data['phone_no'],
+            district: $submitted_district,
+            street: $form_data['street'],
+            city: $form_data['city']
         );
 
-        // validate all attributes, except password
+        // validate all attributes (except password) and store errors
         $this->view_data['errors'] = $client->validate();
 
         // check if email already exists in database
@@ -68,21 +99,47 @@ class Register
         }
 
         // validate plain text password
-        $password_errors = Client::validatePlainPassword($this->view_data['defaultPassword']);
+        $password_errors = Client::validatePlainPassword($form_data['password']);
         if (!empty($password_errors)) {
             $this->view_data['errors']['password'] = $password_errors [0];
         }
 
         // check if passwords do not match
-        if ($this->view_data['defaultConfirmPassword'] !== $this->view_data['defaultPassword']) {
+        if ($form_data['confirm_password'] !== $form_data['password']) {
             $this->view_data['errors']['confirmPassword'] = 'Passwords do not match';
         }
 
-        // if all data valid, save new record and redirect to login page
+        // if all data valid, save record and redirect to login page
         if (empty($this->view_data['errors'])) {
-            $client->save();
-            Utility::redirect('login');
+            $success = $client->save();
+
+            if ($success) {
+                Utility::redirect('login');
+            }
+
+            // TODO: redirect to some error page
+            Utility::redirect('home');
+        } else {
+            $this->loadDataToForm($form_data);
         }
+    }
+
+    /**
+     * Updates view data with data from form. Invalid data entered by user persists.
+     * @param array $form_data
+     * @return void
+     */
+    private function loadDataToForm(array $form_data): void
+    {
+        $this->view_data['defaultFirstName'] = $form_data['first_name'];
+        $this->view_data['defaultLastName'] = $form_data['last_name'];
+        $this->view_data['defaultPhoneNumber'] = $form_data['phone_no'];
+        $this->view_data['defaultStreet'] = $form_data['street'];
+        $this->view_data['defaultCity'] = $form_data['city'];
+        $this->view_data['defaultEmail'] = $form_data['email'];
+        $this->view_data['defaultDistrictID'] = $form_data['district'];
+        $this->view_data['defaultPassword'] = $form_data['password'];
+        $this->view_data['defaultConfirmPassword'] = $form_data['confirm_password'];
     }
 
     public function index(): void
@@ -95,7 +152,9 @@ class Register
             'Register',
             $this->view_data,
             'Register',
-            template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers, personalized recommendations, and a richer coffee experience. Start your journey towards flavorful indulgence."
+            template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers,
+             personalized recommendations, and a richer coffee experience. Start your journey towards
+              flavorful indulgence."
         );
     }
 }

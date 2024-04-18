@@ -15,7 +15,9 @@ class _404
         $this->view(
             '404',
             template_title: "Page not found",
-            template_meta_description: "Oops! It seems you've wandered off the beaten path. Let us guide you back to the aromatic world of Steamy Sips. Return to our delightful offerings or explore anew. Flavorful surprises await your next click."
+            template_meta_description: "Oops! It seems you've wandered off the beaten path.
+             Let us guide you back to the aromatic world of Steamy Sips.
+             Return to our delightful offerings or explore anew. Flavorful surprises await your next click."
         );
     }
 }

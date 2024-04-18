@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 /**
- * Variables below are defined in controllers/Controller.php.
- * @var string $template_tags Additional tags for page
- * @var string $template_title Title of current page
- * @var string $template_content HTML of the main content of current page
- * @var string $template_meta_description Meta description of current page
+ * Template for all web pages. Variables below are defined in src/core/Controller.php.
+ * @var string $template_title Title of page
+ * @var string $template_content HTML of the main content of page
+ * @var string $template_meta_description Meta description of page
+ * @var string $template_tags Additional tags (script, link, ...) for page
  */
 
 ?>
@@ -18,7 +18,7 @@ declare(strict_types=1);
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description"  content="<?= $template_meta_description ?>"/>
+    <meta name="description" content="<?= $template_meta_description ?>"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <link rel="icon"

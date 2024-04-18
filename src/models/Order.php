@@ -24,27 +24,24 @@ class Order
     private array $products = []; // Each element of this array contains the following columns: product, milk_type, quantity, cup_size.
 
 
-    /**
-     * @throws Exception
-     */
     public function __construct(Client $client, array $products)
     {
-                // Set default values
-                $this->order_id = -1;
-                $this->status = "pending";
-                $this->created_date = new DateTime();
-                $this->pickup_date = null;
-                $this->total_price = 0;
-                $this->street = "";
-                $this->city = "";
-        
-                // Set client attribute
-                $this->client = $client;
-        
-                // Set products attribute
-                $this->setProducts($products);
-            }
-        
+        // Set default values
+        $this->order_id = -1;
+        $this->status = "pending";
+        $this->created_date = new DateTime();
+        $this->pickup_date = null;
+        $this->total_price = 0;
+        $this->street = "";
+        $this->city = "";
+
+        // Set client attribute
+        $this->client = $client;
+
+        // Set products attribute
+        $this->setProducts($products);
+    }
+
     public function setProducts(array $products): void
     {
         $this->products = $products; // Updated attribute name
@@ -56,7 +53,7 @@ class Order
             'order_id' => $this->order_id,
             'status' => $this->status,
             'created_date' => $this->created_date->format('Y-m-d H:i:s'),
-            'pickup_date' => $this->pickup_date ? $this->pickup_date->format('Y-m-d H:i:s') : null,
+            'pickup_date' => $this->pickup_date?->format('Y-m-d H:i:s'),
             'street' => $this->street,
             'city' => $this->city,
             'district' => $this->district->getID(), // Return the district ID
@@ -64,7 +61,7 @@ class Order
             'client_id' => $this->client->getUserID() // Return the client ID 
         ];
     }
-    
+
 
     public function save(): void
     {
@@ -87,52 +84,67 @@ class Order
     {
         return $this->products;
     }
-    
+
     public static function getByID(int $order_id): ?Order
     {
+        if ($order_id < 0) {
+            return null;
+        }
+
         // Perform query to fetch order from the database
         $query = "SELECT * FROM `order` WHERE order_id = :order_id";
         $orderData = self::query($query, ['order_id' => $order_id]);
-    
+
         // Check if order with the specified ID exists
         if (empty($orderData)) {
             return null;
         }
-    
+
         // Extract order details from the query result
         $orderData = $orderData[0];
-    
+
         // Fetch client associated with the order
         $client = Client::getByID($orderData->client_id);
-    
+
         if (!$client) {
             return null;
         }
-    
+
         // Fetch products associated with the order
         $products = self::getOrderProducts($order_id);
-    
+
         // Create Order object with retrieved data
         $order = new Order($client, $products);
         $order->order_id = $orderData->order_id;
         $order->status = $orderData->status;
-        $order->created_date = new DateTime($orderData->created_date);
-        $order->pickup_date = $orderData->pickup_date ? new DateTime($orderData->pickup_date) : null;
+
+        try {
+            $order->created_date = new DateTime($orderData->created_date);
+        } catch (Exception $e) {
+            error_log('Error converting date: ' . $e->getMessage());
+        }
+
+        try {
+            $order->pickup_date = $orderData->pickup_date ? new DateTime($orderData->pickup_date) : null;
+        } catch (Exception $e) {
+            error_log('Error converting date: ' . $e->getMessage());
+        }
+
         $order->street = $orderData->street;
         $order->city = $orderData->city;
         $order->total_price = $orderData->total_price;
-    
+
         return $order;
     }
-    
+
     private static function getOrderProducts(int $order_id): array
     {
-        $query = "SELECT product, milk_type, quantity, cup_size FROM order_product WHERE order_id = :order_id";
+        $query = "SELECT product_id, milk_type, quantity, cup_size FROM order_product WHERE order_id = :order_id";
         $productsData = self::query($query, ['order_id' => $order_id]);
-    
+
         // Initialize an empty array to store products
         $products = [];
-    
+
         // Iterate through each product data and create Product objects
         foreach ($productsData as $productData) {
             // Create a product array with necessary information
@@ -142,14 +154,14 @@ class Order
                 'quantity' => $productData->quantity,
                 'cup_size' => $productData->cup_size
             ];
-    
+
             // Add the product array to the products array
             $products[] = $product;
         }
-    
+
         return $products;
     }
-    
+
 
     public function getOrderID(): int
     {
@@ -261,57 +273,57 @@ class Order
      */
     public function loadProducts(): array
     {
-    // Initialize an empty array to store Product objects
-    $products = [];
+        // Initialize an empty array to store Product objects
+        $products = [];
 
-    // Query the database for products related to this order
-    $query = <<<SQL
+        // Query the database for products related to this order
+        $query = <<<SQL
         SELECT product_id, name, calories, stock_level, img_url, img_alt_text, category, price, description
         FROM product 
         WHERE product_id IN (SELECT product_id FROM order_product WHERE order_id = :order_id)
     SQL;
 
-    // Execute the query and fetch the product records
-    $productRecords = $this->query($query, ['order_id' => $this->order_id]);
+        // Execute the query and fetch the product records
+        $productRecords = $this->query($query, ['order_id' => $this->order_id]);
 
-    // Iterate through the retrieved product records and create Product objects
-    foreach ($productRecords as $record) {
-        // Create a new Product object and add it to the products array
-        $product = new Product(
-            $record->name,
-            $record->calories,
-            $record->stock_level,
-            $record->img_url,
-            $record->img_alt_text,
-            $record->category,
-            (float)$record->price,
-            $record->description
-        );
-        $product->setProductID($record->product_id); // Set the product ID
-        $products[] = $product;
+        // Iterate through the retrieved product records and create Product objects
+        foreach ($productRecords as $record) {
+            // Create a new Product object and add it to the products array
+            $product = new Product(
+                $record->name,
+                $record->calories,
+                $record->stock_level,
+                $record->img_url,
+                $record->img_alt_text,
+                $record->category,
+                (float)$record->price,
+                $record->description
+            );
+            $product->setProductID($record->product_id); // Set the product ID
+            $products[] = $product;
+        }
+
+        return $products;
     }
 
-    return $products;
-    }
-
-       /**
-        * Adds a product to the order.
-        *
-        * @param Product $product The product to add.
-        * @param string $milk_type The type of milk.
-        * @param int $quantity The quantity of the product.
-        * @param string $cup_size The cup size.
-        * @return void
-        */
+    /**
+     * Adds a product to the order.
+     *
+     * @param Product $product The product to add.
+     * @param string $milk_type The type of milk.
+     * @param int $quantity The quantity of the product.
+     * @param string $cup_size The cup size.
+     * @return void
+     */
     public function addProduct(Product $product, string $milk_type, int $quantity, string $cup_size): void
     {
         $this->products[] = [
-          'product' => $product,
-          'milk_type' => $milk_type,
-          'quantity' => $quantity,
-          'cup_size' => $cup_size
-          ];
-     }
+            'product' => $product,
+            'milk_type' => $milk_type,
+            'quantity' => $quantity,
+            'cup_size' => $cup_size
+        ];
+    }
 
 
     public function removeProduct(int $index): void
@@ -337,7 +349,7 @@ class Order
     public function toHTML(): string
     {
         $html = <<<HTML
-        <table border='1'>
+        <table>
             <thead>
                 <tr>
                     <th>Product</th>
@@ -348,7 +360,7 @@ class Order
             </thead>
             <tbody>
         HTML;
-    
+
         // Iterate through each product in the order
         foreach ($this->products as $product) {
             // Get the product details
@@ -356,7 +368,7 @@ class Order
             $quantity = $product['quantity'];
             $pricePerUnit = $product['product']->getPrice();
             $totalPrice = $quantity * $pricePerUnit;
-    
+
             // Add a row for the product in the HTML table
             $html .= <<<HTML
                 <tr>
@@ -367,34 +379,32 @@ class Order
                 </tr>
             HTML;
         }
-    
+
         // Close the HTML table
         $html .= <<<HTML
             </tbody>
         </table>
         HTML;
-    
+
         return $html;
     }
-    
-    
-    private function getQuantityForProduct(Product $product): int
+
+
+    public function getQuantityForProduct(Product $product): int
     {
         // Query the order_product table to get the quantity for the specified product
         $query = "SELECT quantity FROM order_product WHERE order_id = :order_id AND product_id = :product_id";
         $params = ['order_id' => $this->getOrderID(), 'product_id' => $product->getProductID()];
         $result = $this->query($query, $params);
-    
+
         // If there are no results, return 0
         if (empty($result)) {
             return 0;
         }
-    
+
         // Otherwise, return the quantity
         return $result[0]->quantity;
     }
-    
-
 
 
 }
