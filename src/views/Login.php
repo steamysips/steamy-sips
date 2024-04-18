@@ -23,9 +23,8 @@ declare(strict_types=1);
                        <fieldset>
                            <label for="remember">
                                  <input type="checkbox" role="switch" id="remember" name="remember"/>
-                                     Remember me
+                                     Remember me <a href="<?= ROOT ?>/reset-password" style="position: relative; left: 25%;">Forgot Password?</a>
                                   </label>
-                                  <a href="<?= ROOT ?>/password">Forgot Password?</a>
                         </fieldset>
 
                 <button name="login_submit" type="submit" class="contrast">Login</button>

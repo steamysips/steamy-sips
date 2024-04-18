@@ -195,4 +195,46 @@ abstract class User
     {
         $this->user_id = $new_id;
     }
+
+    public function findUserByEmailOrUsername($email, $username)
+    {
+        $data = [
+            'usersUid' => $username,
+            'usersEmail' => $email
+        ];
+        return $this->first($data); // Use the 'first' method from the Model trait
+    }
+
+    // Register User
+    public function register($data)
+    {
+        // Use the 'insert' method from the Model trait
+        return $this->insert($data);
+    }
+
+    // Login user
+    public function login($nameOrEmail, $password)
+    {
+        $row = $this->findUserByEmailOrUsername($nameOrEmail, $nameOrEmail);
+
+        if ($row === false) return false;
+
+        $hashedPassword = $row->usersPwd;
+        if (password_verify($password, $hashedPassword)) {
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    // Reset Password
+    public function resetPassword($newPwdHash, $tokenEmail)
+    {
+        $data = [
+            'usersPwd' => $newPwdHash,
+            'usersEmail' => $tokenEmail
+        ];
+        // Use the 'update' method from the Model trait
+        return $this->update($tokenEmail, $data, $this->table, 'usersEmail');
+    }
 }
