@@ -30,13 +30,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      #      - name: Install Ubuntu dependencies
-      #        run: |
-      #          sudo apt-get update
-      #          sudo apt-get install libcurl4-openssl-dev libmysqlclient-dev libgirepository1.0-dev
-
       - name: Import SQL dump to cafe_test database
         run: mysql -Dcafe_test -uroot -ppassword -h127.0.0.1 -P3306 < "resources/database/dump/cafe.sql"
+
+      - name: Create environment file
+        env:
+            ENV: |
+              DB_HOST="127.0.0.1"
+              DB_USERNAME="root"
+              DB_PASSWORD="password"
+              TEST_DB_NAME="cafe_test"
+        run: echo "$ENV" > src/core/.env
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -53,13 +57,5 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress
 
-      #      - name: Start database service
-      #        run: sudo systemctl start mysql.service
-
       - name: Run test suite
-        env:
-          DB_HOST: 127.0.0.1
-          DB_USERNAME: root
-          DB_PASSWORD: password
-          TEST_DB_NAME: cafe_test
         run: composer test
