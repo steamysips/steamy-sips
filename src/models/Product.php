@@ -99,7 +99,7 @@ class Product
     }
 
     /**
-     * @return array An array of Product objects
+     * @return Product[] An array of Product objects
      */
     public static function getAll(): array
     {
