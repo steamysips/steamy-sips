@@ -36,3 +36,7 @@ To export database with `mysqldump`:
 ```bash
 mysqldump -u root -p cafe > cafe.sql
 ```
+
+## Update autoload files
+
+Whenever changes are made to the autoload settings in `composer.json`, you must run `composer dump-autoload`.
