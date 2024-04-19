@@ -110,3 +110,6 @@ In the root directory of the project, run:
 ```bash
 npm install
 ```
+## Autoload setup
+
+Whenever changes are made to the autoload settings in `composer.json`, you must run `composer dump-autoload`.
