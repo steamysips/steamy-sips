@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Steamy\Model;
 
 use Steamy\Core\Model;
+use Steamy\Core\Database;
+use Steamy\Core\Mailer;
 
 abstract class User
 {
@@ -196,45 +198,45 @@ abstract class User
         $this->user_id = $new_id;
     }
 
-    public function findUserByEmailOrUsername($email, $username)
+    public static function getUserIdByEmail(string $email): ?int
     {
-        $data = [
-            'usersUid' => $username,
-            'usersEmail' => $email
-        ];
-        return $this->first($data); // Use the 'first' method from the Model trait
+        //Implement logic to fetch user ID by email from the database
+        $query = "SELECT user_id FROM user WHERE email = :email";
+        $result = Database::query($query, ['email' => $email]);
+        return $result[0]['user_id'] ?? null;
     }
 
-    // Register User
-    public function register($data)
+    public static function savePasswordChangeRequest(int $userId, string $tokenHash, string $expiryDate)
     {
-        // Use the 'insert' method from the Model trait
-        return $this->insert($data);
+        //Implement logic to save password change request in the database
+        $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date) VALUES (:userId, :tokenHash, :expiryDate)";
+        Database::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
+        
     }
 
-    // Login user
-    public function login($nameOrEmail, $password)
+    public static function sendResetEmail(string $email, string $resetLink)
     {
-        $row = $this->findUserByEmailOrUsername($nameOrEmail, $nameOrEmail);
-
-        if ($row === false) return false;
-
-        $hashedPassword = $row->usersPwd;
-        if (password_verify($password, $hashedPassword)) {
-            return $row;
-        } else {
-            return false;
-        }
+        //Implement logic to send reset email using Mailer class
+         $mailer = new Mailer();
+         $subject = "Reset Your Password";
+        $htmlMessage = "Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
+        $plainMessage = "Click the link below to reset your password:\n$resetLink";
+        $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
     }
 
-    // Reset Password
-    public function resetPassword($newPwdHash, $tokenEmail)
-    {
-        $data = [
-            'usersPwd' => $newPwdHash,
-            'usersEmail' => $tokenEmail
-        ];
-        // Use the 'update' method from the Model trait
-        return $this->update($tokenEmail, $data, $this->table, 'usersEmail');
-    }
+    public static function getUserIdByToken(string $token): ?int
+{
+    //Implement logic to fetch user ID by token from the database
+    $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = false";
+    $result = Database::query($query, ['token' => $token]);
+    return $result[0]['user_id'] ?? null;
+}
+
+public static function updatePassword(int $userId, string $hashedPassword): void
+{
+    // Implement logic to update user's password in the database
+    $query = "UPDATE user SET password = :password WHERE user_id = :userId";
+    Database::query($query, ['password' => $hashedPassword, 'userId' => $userId]);
+}
+
 }
