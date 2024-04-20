@@ -21,14 +21,37 @@ class Products
         echo json_encode($result);
     }
 
+    private function addProduct(): void
+    {
+    }
+
+    private function deleteProduct(): void
+    {
+    }
+
+    private function updateProduct(): void
+    {
+    }
+
+
     public function index(): void
     {
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET':
                 $this->getProducts();
                 break;
+            case 'POST':
+                $this->addProduct();
+                break;
+            case 'DELETE':
+                $this->deleteProduct();
+                break;
+            case 'PUT':
+                $this->updateProduct();
+                break;
             default:
-                echo json_encode("Error");
+                http_response_code(400);
+                die();
         }
     }
 }
