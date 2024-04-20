@@ -7,69 +7,48 @@ use Steamy\Core\Utility;
 
 class FuzzyTest extends TestCase
 {
-    public function testFuzzySearch(): void
+    /**
+     * @dataProvider fuzzySearchDataProvider
+     */
+    public function testFuzzySearch(string $searchTerm, array $strings, int $threshold, array $expected): void
     {
-        $strings = ['Espresso', 'Cappuccino', 'Latte', 'Americano', 'Mocha'];
-
-        // Test with normal data (correct spelling)
-        $searchTerm = 'Espresso';
-        $threshold = 1;
         $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertContains('Espresso', $result);
-        $this->assertNotContains('Mocha', $result);
-
-        // Test with misspelling within threshold
-        $searchTerm = 'Espreso'; // Missing 's'
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertContains('Espresso', $result);
-
-        // Test with misspelling exceeding threshold
-        $searchTerm = 'Espressso'; // Extra 's'
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertContains('Espresso', $result);
-
-        // Test with empty search term
-        $searchTerm = '';
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertEquals([], $result); // Expect no matches
-
-        // Test with non-string search term (integer)
-        $searchTerm = (string) 123;
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertEquals([], $result); // Expect no matches (type mismatch)
-
-        // Test with search term containing special characters
-        $searchTerm = 'Latte!';
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-
-        $this->assertContains('Latte', $result); // Should still match 'Latte'
-
-        // Test with case sensitivity (optional, depending on your needs)
-        $searchTerm = 'eSPRESSO'; // All uppercase
-        $threshold = 1;
-        $result = Utility::fuzzySearch($searchTerm, $strings, $threshold);
-        // Depending on your implementation, this might match (case-insensitive)
-        // or not match (case-sensitive). Update assertions accordingly.
-
+        $this->assertEquals($expected, $result);
     }
 
-    public function testLevenshteinDistance(): void
+    public static function fuzzySearchDataProvider(): array
     {
-        $str1 = 'Almond';
-        $str2 = 'Coconut';
+        $strings = ['Espresso', 'Cappuccino', 'Latte', 'Americano', 'Mocha'];
+        return [
+            ['Espresso', $strings, 1, ['Espresso']],
+            ['Espreso', $strings, 1, ['Espresso']], // Missing 's'
+            ['Espressso', $strings, 1, ['Espresso']], // Extra 's'
+            ['', $strings, 1, []], // Empty search term
+            [(string) 123, $strings, 1, []], // Non-string search term (integer)
+            ['Latte!', $strings, 1, ['Latte']], // Search term containing special characters
+            ['eSPRESSO', $strings, 1, ['Espresso']], // Case sensitivity test
+        ];
+    }
 
+    /**
+     * @dataProvider levenshteinDistanceDataProvider
+     */
+    public function testLevenshteinDistance(string $str1, string $str2, int $expected): void
+    {
         $result = Utility::levenshteinDistance($str1, $str2);
+        $this->assertEquals($expected, $result);
+    }
 
-        $this->assertEquals(5, $result);
+    public static function levenshteinDistanceDataProvider(): array
+    {
+        return [
+            ['Almond', 'Coconut', 5],
+            ['Almond', 'Almond', 0], // Same strings
+            ['Almond', 'Almon', 1], // Missing character
+            ['Almond', 'Almondd', 1], // Extra character
+            ['Almond', 'Almend', 1], // Different character
+            ['Almond', '', 6], // One string is empty
+            ['', '', 0], // Both strings are empty
+        ];
     }
 }
