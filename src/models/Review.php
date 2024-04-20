@@ -219,9 +219,9 @@ class Review
     {
         $errors = [];
 
-        if (strlen($this->text) < 2) {
-            $errors['text'] = "Review text must have at least 2 characters";
-        }
+        if (empty($this->text) || strlen($this->text) < 2) {
+            $errors['text'] = 'Review text must have at least 2 characters';
+          }
 
         if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
             "options" => [

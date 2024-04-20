@@ -7,149 +7,160 @@ use Steamy\Model\Review;
 
 final class ReviewTest extends TestCase
 {
-    private ?Review $dummy_review;
+  private ?Review $dummy_review;
 
-    public function setUp(): void
-    {
-        // Create a dummy review for testing
-        $this->dummy_review = new Review(
-            1, // user_id
-            1, // product_id
-            0, // parent_review_id
-            "This is a test review.",
-            5,
-            new DateTime("2024-03-10")
-        );
-    }
+  public function setUp(): void
+  {
+    $this->dummy_review = new Review(
+      1, // user_id
+      1, // product_id
+      0, // parent_review_id
+      "This is a test review.",
+      5,
+      new DateTime("2024-03-10")
+    );
+  }
 
-    public function tearDown(): void
-    {
-        $this->dummy_review = null;
-    }
+  public function tearDown(): void
+  {
+    $this->dummy_review = null;
+  }
 
-    public function testConstructor(): void
-    {
-        // Check if review attributes are correctly set
-        self::assertEquals(1, $this->dummy_review->getUserID());
-        self::assertEquals(1, $this->dummy_review->getProductID());
-        self::assertEquals(0, $this->dummy_review->getParentReviewID());
-        self::assertEquals("This is a test review.", $this->dummy_review->getText());
-        self::assertEquals(5, $this->dummy_review->getRating());
-        self::assertEquals(new DateTime("2024-03-10"), $this->dummy_review->getDate());
-    }
+  public function testConstructor(): void
+  {
+    // Check if review attributes are correctly set
+    self::assertEquals(1, $this->dummy_review->getUserID());
+    self::assertEquals(1, $this->dummy_review->getProductID());
+    self::assertEquals(0, $this->dummy_review->getParentReviewID());
+    self::assertEquals("This is a test review.", $this->dummy_review->getText());
+    self::assertEquals(5, $this->dummy_review->getRating());
+    self::assertEquals(new DateTime("2024-03-10"), $this->dummy_review->getDate());
+  }
 
-    public function testToArray(): void
-    {
-        $result = $this->dummy_review->toArray();
+  public function testToArray(): void
+  {
+    $result = $this->dummy_review->toArray();
 
-        // Check if all required keys are present
-        $this->assertArrayHasKey('user_id', $result);
-        $this->assertArrayHasKey('product_id', $result);
-        $this->assertArrayHasKey('parent_review_id', $result);
-        $this->assertArrayHasKey('text', $result);
-        $this->assertArrayHasKey('date', $result);
-        $this->assertArrayHasKey('rating', $result);
+    // Check if all required keys are present
+    $this->assertArrayHasKey('user_id', $result);
+    $this->assertArrayHasKey('product_id', $result);
+    $this->assertArrayHasKey('parent_review_id', $result);
+    $this->assertArrayHasKey('text', $result);
+    $this->assertArrayHasKey('date', $result);
+    $this->assertArrayHasKey('rating', $result);
 
-        // Check if the actual values are correct
-        self::assertEquals(1, $result['user_id']);
-        self::assertEquals(1, $result['product_id']);
-        self::assertEquals(0, $result['parent_review_id']);
-        self::assertEquals("This is a test review.", $result['text']);
-        self::assertEquals(new DateTime("2024-03-10"), $result['date']);
-        self::assertEquals(5, $result['rating']);
-    }
+    // Check if the actual values are correct
+    self::assertEquals(1, $result['user_id']);
+    self::assertEquals(1, $result['product_id']);
+    self::assertEquals(0, $result['parent_review_id']);
+    self::assertEquals("This is a test review.", $result['text']);
+    self::assertEquals(new DateTime("2024-03-10"), $result['date']);
+    self::assertEquals(5, $result['rating']);
+  }
 
-    public function testValidate(): void
-    {
-        // Test validation with valid data
-        $errors = $this->dummy_review->validate();
-        $this->assertEmpty($errors);
+  public function testValidate(): void
+  {
+    // Test validation with valid data
+    $errors = $this->dummy_review->validate();
+    $this->assertEmpty($errors);
 
-        // Test validation with invalid data
-        $invalidReview = new Review(
-            1,
-            1,
-            0,
-            "", // empty text
-            0,  // invalid rating
-            new DateTime("2024-03-10")
-        );
-        $errors = $invalidReview->validate();
-        $this->assertNotEmpty($errors);
-        $this->assertArrayHasKey('text', $errors);
-        $this->assertArrayHasKey('rating', $errors);
-    }
+    // Test validation with empty text
+    $invalidReview = new Review(
+      1, 1, 0, "", 0, new DateTime("2024-03-10")
+    );
+    $errors = $invalidReview->validate();
+    $this->assertNotEmpty($errors);
+    $this->assertArrayHasKey('text', $errors);
+    $this->assertEquals('Review text must have at least 2 characters', $errors['text']); // Assert specific message
 
-    public function testGetByID(): void
-    {
-        // Mock data for the test
-        $review_id = 1;
-        $user_id = 1;
-        $product_id = 1;
-        $parent_review_id = null; // Assuming the parent review ID is 0 for simplicity
-        $text = "Test review";
-        $rating = 5;
-        $date = new DateTime();
-    
-        // Call the getByID method directly on the Review class
-        $review = Review::getByID($review_id);
-    
-        // Assert that the returned object is an instance of Review
-        $this->assertInstanceOf(Review::class, $review);
-    
-        // Assert that the properties of the returned Review object match the mock data
-        $this->assertEquals($user_id, $review->getUserID());
-        $this->assertEquals($product_id, $review->getProductID());
-        $this->assertEquals($parent_review_id, $review->getParentReviewID());
-        $this->assertEquals($text, $review->getText());
-        $this->assertEquals($rating, $review->getRating());
-        $this->assertEquals($date, $review->getDate());
-    }
-    
-    
-    
+    // Test validation with invalid rating
+    $invalidReview = new Review(
+      1, 1, 0, "Valid Text", -1, new DateTime("2024-03-10")
+    );
+    $errors = $invalidReview->validate();
+    $this->assertNotEmpty($errors);
+    $this::assertArrayHasKey('rating', $errors);
+    $this->assertEquals('Rating must be between 1 and 5', $errors['rating']); // Assert specific message
 
-    public function testSave(): void
-    {
-        // Create a DateTime object for the review date
-        $date = new DateTime('now');
-    
-        // Create a mock Review object with mock data
-        $review = $this->getMockBuilder(Review::class)
-                       ->setConstructorArgs([1, 1, null, 'Test review', 5, $date])
-                       ->onlyMethods(['save']) // Mocking the save method
-                       ->getMock();
-        
-        // Set up the mock to expect the save method to be called once
-        $review->expects($this->once())
-               ->method('save');
-    
-        // Call the save method
-        $review->save();
-    }
-    
+    // Test validation with invalid date format
+    $invalidReview = new Review(
+      1, 1, 0, "Valid Text", 5, "invalid_date_format"
+    );
+    $errors = $invalidReview->validate();
+    $this->assertNotEmpty($errors);
+    $this->assertArrayHasKey('date', $errors); // Assert error for invalid date
+  }
 
-    public function testIsVerified(): void
-    {
-        // Mock the Review class to isolate the test from the database
-        $review = $this->getMockBuilder(Review::class)
-            ->onlyMethods(['get_row']) // Mocking the get_row method
-            ->disableOriginalConstructor()
-            ->getMock();
-        
-        // Define the expected return value for the mocked get_row method
-        $expectedResult = (object) [
-            'count' => 1 // Assuming there's a match in the database
-        ];
+  public function testGetByID(): void
+  {
+    // Mock data for the test
+    $review_id = 1;
+    $user_id = 1;
+    $product_id = 1;
+    $parent_review_id = null; // Assuming the parent review ID is 0 for simplicity
+    $text = "Test review";
+    $rating = 5;
+    $date = new DateTime();
 
-        // Set up the mock to return the expected result when get_row is called
-        $review->expects($this->once())
-            ->method('get_row')
-            ->willReturn($expectedResult);
+    // Call the getByID method directly on the Review class
+    $review = Review::getByID($review_id);
 
-        // Call the isVerified method and assert that it returns true
-        $isVerified = $review->isVerified(1, 7); // Assuming product_id = 1 and review_id = 1
-        $this->assertTrue($isVerified);
-    }
-    
+    // Assert that the returned object is an instance of Review
+    $this->assertInstanceOf(Review::class, $review);
+
+    // Assert that the properties of the returned Review object match the mock data
+    $this->assertEquals($user_id, $review->getUserID());
+    $this->assertEquals($product_id, $review->getProductID());
+    $this->assertEquals($parent_review_id, $review->getParentReviewID());
+    $this->assertEquals($text, $review->getText());
+    $this->assertEquals($rating, $review->getRating());
+    $this->assertEquals($date->format('Y-m-d'), $review->getDate()->format('Y-m-d')); // Compare dates by formatting
+
+    // Test getByID with invalid ID (assuming it returns null on failure)
+    $invalid_id = 999;
+    $review = Review::getByID($invalid_id);
+    $this->assertNull($review); // Assert null for invalid ID
+  }
+
+  public function testSave(): void
+  {
+    // Create a DateTime object for the review date
+    $date = new DateTime('now');
+
+    // Create a mock Review object with mock data
+    $review = $this->getMockBuilder(Review::class)
+      ->setConstructorArgs([1, 1, null, 'Test review', 5, $date])
+      ->onlyMethods(['save']) // Mocking the save method
+      ->getMock();
+
+    // Set up the mock to expect the save method to be called once
+    $review->expects($this->once())
+      ->method('save');
+
+    // Call the save method
+    $review->save();
+  }
+
+  public function testIsVerified(): void
+  {
+    // Mock the Review class to isolate the test from the database
+    $review = $this->getMockBuilder(Review::class)
+      ->onlyMethods(['get_row']) // Mocking the get_row method
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    // Define the expected return value for the mocked get_row method
+    $expectedResult = (object)[
+      'count' => 1 // Assuming there's a match in the database
+    ];
+
+    // Set up the mock to return the expected result when get_row is called
+    $review->expects($this->once())
+      ->method('get_row')
+      ->willReturn($expectedResult);
+
+    // Call the isVerified method and assert that it returns true
+    $isVerified = $review->isVerified(1, 7); // Assuming product_id = 1 and review_id = 1
+    $this->assertTrue($isVerified);
+  }
 }
