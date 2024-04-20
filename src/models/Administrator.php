@@ -77,9 +77,6 @@ class Administrator extends User
 
         $inserted_record = self::first($user_data, 'user');
 
-//        utility::show("inserted record: ");
-//        Utility::show($inserted_record);
-
         if (!$inserted_record) {
             return;
         }
@@ -93,6 +90,48 @@ class Administrator extends User
 
         // perform insertion to administrator table
         $this->insert($admin_data, $this->table);
+    }
+
+
+    /**
+     * Returns the Administrator object corresponding to the given email.
+     *
+     * @param string $email The email of the administrator.
+     * @return ?Administrator The Client object if found, otherwise null.
+     */
+    public static function getByEmail(string $email): ?Administrator
+    {
+        $query = <<<EOL
+        SELECT * FROM user
+        INNER JOIN administrator
+        ON user.user_id = administrator.user_id
+        WHERE user.email = :email;
+        EOL;
+
+        // Execute the query and retrieve the result
+        $result = self::get_row($query, ['email' => $email]);
+
+        // Check if the result is empty
+        if (!$result) {
+            return null;
+        }
+
+        // Create a new Administrator object
+        $administrator = new Administrator(
+            email: $email,
+            first_name: $result->first_name,
+            last_name: $result->last_name,
+            plain_password: "dummy",
+            phone_no: $result->phone_no,
+            job_title: $result->job_title,
+            is_super_admin: filter_var($result->is_super_admin, FILTER_SANITIZE_NUMBER_INT)
+        );
+
+        // Set the user ID and password hash
+        $administrator->user_id = $result->user_id;
+        $administrator->password = $result->password;
+
+        return $administrator;
     }
 
     public function getJobTitle(): string
