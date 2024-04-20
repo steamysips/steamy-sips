@@ -26,8 +26,9 @@ class Product
         // initialize some view data
         $this->view_data["default_review"] = "";
         $this->view_data["default_rating"] = "";
-        $this->view_data["signed_in_user"] = null;
+        $this->view_data["signed_in_user"] = false;
         $this->view_data["product"] = null;
+        $this->view_data["rating_distribution"] = "[]";
 
         // get product id from URL
         $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
@@ -39,7 +40,7 @@ class Product
         $user_account = Client::getByEmail($reviewer_email);
         if (!empty($user_account)) {
             $this->signed_user = $user_account;
-            $this->view_data["signed_in_user"] = $user_account;
+            $this->view_data["signed_in_user"] = true;
         }
 
         // if product id valid fetch product from db
@@ -55,13 +56,13 @@ class Product
 
     private function handleReviewSubmission(): void
     {
-        $new_comment = trim($_POST['review_text'] ?? "");
-        $rating = filter_var($_POST['review_rating'], FILTER_VALIDATE_INT);
-
         // ignore requests from users who are not logged in
         if (empty($this->signed_user)) {
             return;
         }
+
+        $new_comment = trim($_POST['review_text'] ?? "");
+        $rating = filter_var($_POST['review_rating'] ?? -1, FILTER_VALIDATE_INT);
 
         $review = new Review(
             $this->signed_user->getUserID(),
@@ -90,6 +91,25 @@ class Product
         }
     }
 
+    /**
+     * Converts the output of getRatingDistribution into a comma separated list
+     * of numbers
+     * @return string
+     */
+    private function formatRatingDistribution(): string
+    {
+        $percents = $this->product->getRatingDistribution();
+        $str = "";
+
+        for ($x = 5; $x > 0; $x--) {
+            $str .= $percents[$x] ?? 0;
+            if ($x != 1) {
+                $str .= ',';
+            }
+        }
+        return "[" . $str . "]";
+    }
+
     public function index(): void
     {
         // if product was not found, display error page
@@ -106,10 +126,14 @@ class Product
             $this->handleReviewSubmission();
         }
 
+        $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
+
         $this->view(
             'Product',
             $this->view_data,
-            $this->product->getName() . ' | Steamy Sips'
+            $this->product->getName() . ' | Steamy Sips',
+            template_tags: $this->getLibrariesTags(['chartjs']),
+            template_meta_description: $this->product->getName() . " - " . $this->product->getDescription()
         );
     }
 }

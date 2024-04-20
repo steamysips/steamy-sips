@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 /**
- * Variables below are defined in controllers/Controller.php.
- * @var string $template_tags Additional tags for template
- * @var string $template_title Title of web page
- * @var string $template_content HTML content of web page
+ * Template for all web pages. Variables below are defined in src/core/Controller.php.
+ * @var string $template_title Title of page
+ * @var string $template_content HTML of the main content of page
+ * @var string $template_meta_description Meta description of page
+ * @var string $template_tags Additional tags (script, link, ...) for page
  */
 
 ?>
@@ -17,90 +18,23 @@ declare(strict_types=1);
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description"
-          content="Welcome to Steamy Sips Café, where every sip is an experience. Step into our cozy world of aromatic delights, where the perfect brew meets community and conversation."/>
+    <meta name="description" content="<?= $template_meta_description ?>"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐞</text></svg>"/>
 
-    <!-- start of styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
-          integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= ROOT ?>/styles/global.css"/>
-    <!-- end of styles -->
 
-    <!-- start of scripts -->
-
-    <!-- theme switcher-->
+    <!-- picocss theme switcher-->
     <script src="<?= ROOT ?>/js/minimal-theme-switcher.js" defer></script>
 
-    <!-- shopping cart modal-->
-    <script src="<?= ROOT ?>/js/modal.js" defer></script>
-
-    <!--    scroll animations-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
-            integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- end of scripts -->
-
     <?= $template_tags ?>
+
     <title><?= $template_title ?></title>
 </head>
-
 <body>
-
-<!-- Modal -->
-<dialog id="cart-modal">
-    <article>
-        <a href="#"
-           aria-label="Close"
-           class="close"
-           data-target="cart-modal">
-        </a>
-        <h3>Your shopping cart (3 items)</h3>
-        <div id="cart-items">
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-            <article>
-                <hgroup><h4>Cappucino</h4>
-                    <h6>Total = Rs 434</h6></hgroup>
-                <div class="grid">
-                    <input type="number" value="0" placeholder="Quantity" min=0 max="5">
-                    <button>Remove</button>
-                </div>
-            </article>
-
-        </div>
-        <footer class="grid">
-            <h5>Total Price = Rs 434</h5>
-            <a href="#"
-               role="button"
-               class="contrast"
-               data-target="cart-modal"
-            >
-                Checkout
-            </a>
-        </footer>
-    </article>
-</dialog>
 
 <nav class="container-fluid">
     <ul>
@@ -131,16 +65,18 @@ declare(strict_types=1);
                 </svg>
             </a>
         </li>
-        <li data-target="cart-modal" data-tooltip="Shopping cart" data-placement="bottom">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                 stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                <path d="M17 17h-11v-14h-2"/>
-                <path d="M6 5l14 1l-1 7h-13"/>
-            </svg>
+        <li>
+            <a href="<?= ROOT ?>/cart" class="contrast" data-tooltip="Shopping cart" data-placement="bottom">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                    <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                    <path d="M17 17h-11v-14h-2"/>
+                    <path d="M6 5l14 1l-1 7h-13"/>
+                </svg>
+            </a>
         </li>
         <li>
             <a href="<?= ROOT ?>/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">

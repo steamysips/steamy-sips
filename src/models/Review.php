@@ -21,6 +21,9 @@ class Review
     private int $rating;
     private Datetime $date;
 
+    public const MAX_RATING = 5;
+    public const MIN_RATING = 1;
+
     public function __construct(
         int $user_id,
         int $product_id,
@@ -33,7 +36,7 @@ class Review
         $this->user_id = $user_id;
         $this->product_id = $product_id;
         $this->parent_review_id = $parent_review_id;
-        $this->text = htmlspecialchars_decode(strip_tags($text));
+        $this->text = $text;
         $this->rating = $rating;
         $this->date = $date;
     }
@@ -90,14 +93,18 @@ class Review
     /**
      * Retrieves a review by its ID.
      *
-     * @param int $id The ID of the review to retrieve.
+     * @param int $review_id The ID of the review to retrieve.
      * @return Review|null The review object if found, otherwise null.
      * @throws Exception If an error occurs during the database query.
      */
-    public static function getByID(int $id): ?Review
+    public static function getByID(int $review_id): ?Review
     {
+        if ($review_id < 0) {
+            return null;
+        }
+
         $query = "SELECT * FROM review WHERE review_id = :id";
-        $params = ['id' => $id];
+        $params = ['id' => $review_id];
 
         try {
             $result = Review::query($query, $params); // Execute the query
@@ -111,7 +118,7 @@ class Review
                     $result[0]->rating,
                     $result[0]->date
                 );
-                $review->setReviewID($id); // Set the review ID
+                $review->setReviewID($review_id); // Set the review ID
                 return $review;
             }
         } catch (Exception $e) {
@@ -212,15 +219,24 @@ class Review
     public function validate(): array
     {
         $errors = [];
+
         if (strlen($this->text) < 2) {
             $errors['text'] = "Review text must have at least 2 characters";
         }
-        if ($this->rating < 1 || $this->rating > 5) {
-            $errors['rating'] = "Rating must be between 1 and 5";
+
+        if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
+            "options" => [
+                "min_range" => Review::MIN_RATING,
+                "max_range" => Review::MAX_RATING
+            ]
+        ])) {
+            $errors['rating'] = sprintf("Review must be between %d and %d", Review::MIN_RATING, Review::MAX_RATING);
         }
+
         if ($this->date > new DateTime()) {
             $errors['date'] = "Review date cannot be in the future";
         }
+
         return $errors;
     }
 
