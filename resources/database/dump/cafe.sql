@@ -262,7 +262,7 @@ DROP TABLE IF EXISTS `review`;
 CREATE TABLE `review` (
   `review_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `rating` int(11) unsigned NOT NULL,
-  `date` date NOT NULL,
+  `date` datetime NOT NULL,
   `text` text NOT NULL,
   `user_id` int(11) unsigned DEFAULT NULL,
   `product_id` int(11) unsigned DEFAULT NULL,
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-18 13:18:52
+-- Dump completed on 2024-04-20 12:47:10
