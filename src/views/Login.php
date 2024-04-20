@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 /**
- * Variables below are defined in Login controller
- * @var string $defaultEmail
- * @var string $defaultPassword
+ * View variables defined in Login controller:
+ *
+ * @var string $defaultEmail Email set in form
  */
-
 ?>
 
 <main class="container">
@@ -15,23 +14,16 @@ declare(strict_types=1);
             <h1>Sign in</h1>
             <form method="post">
                 <input autofocus type="email" name="email" placeholder="Email" aria-label="Email"
-                       value="<?= $defaultEmail ?>" required/>
+                       aria-invalid="<?= isset($_POST['login_submit']) ? 'true' : '' ?>"
+                       value="<?= htmlspecialchars($defaultEmail) ?>" required/>
 
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
-                       value="<?= $defaultPassword ?>" required/>
-
-                       <fieldset>
-                           <label for="remember">
-                                 <input type="checkbox" role="switch" id="remember" name="remember"/>
-                                     Remember me <a href="<?= ROOT ?>/password" style="position: relative; left: 25%;">Forgot Password?</a>
-                                  </label>
-                        </fieldset>
+                       aria-invalid="<?= isset($_POST['login_submit']) ? 'true' : '' ?>"
+                       required/>
 
                 <button name="login_submit" type="submit" class="contrast">Login</button>
-                <?php if (!empty($errors['other'])) : ?>
-                    <small class="warning"><?php echo $errors['other'] ?></small>
-                <?php endif; ?>
                 <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
+                <a href="<?= ROOT ?>/password" style="position: relative; left: 25%;">Forgot Password?</a>
             </form>
         </div>
         <div></div>

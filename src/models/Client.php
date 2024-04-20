@@ -29,11 +29,10 @@ class Client extends User
 
     /**
      * Returns a Client object based on a specified condition (email or user ID).
-     * If the user is not found, returns false.
      *
      * @param string|null $email The email of the client. If null, the user ID will be used.
      * @param int|null $user_id The user ID of the client. If null, the email will be used.
-     * @return Client|false The Client object if found, otherwise false.
+     * @return ?Client The Client object if found, otherwise null.
      */
     private static function getClientByCondition(?string $email, ?int $user_id): ?Client
     {
@@ -46,7 +45,7 @@ class Client extends User
         SELECT * FROM user
         INNER JOIN client
         ON user.user_id = client.user_id
-        WHERE {$condition};
+        WHERE $condition;
         EOL;
 
         // Execute the query and retrieve the result
@@ -64,40 +63,49 @@ class Client extends User
             $result->last_name,
             "dummy-password", // A dummy password is used since the original password is unknown
             $result->phone_no,
-            $result->district_id->getID(),
+            District::getByID($result->district_id),
             $result->street,
             $result->city
         );
 
         // Set the user ID and password hash
-        $client->setUserID($result->user_id);
-        $client->setPassword($result->password);
+        $client->user_id = $result->user_id;
+        $client->password = $result->password;
 
         return $client;
     }
 
     /**
-     * Returns a Client object for a given email. If the email is not found, returns false.
+     * Returns a Client object for a given email.
      *
      * @param string $email The email of the client.
-     * @return Client|false The Client object if found, otherwise false.
+     * @return ?Client The Client object if found, otherwise null.
      */
     public static function getByEmail(string $email): ?Client
     {
+        if (strlen($email) < 3) {
+            // email must have at least 3 characters
+            // Ref: https://stackoverflow.com/a/1423203/17627866
+            return null;
+        }
         return self::getClientByCondition($email, null);
     }
 
     /**
-     * Returns a Client object for a given user ID. If the user ID is not found, returns false.
+     * Returns a Client object for a given user ID.
      *
      * @param int $user_id The ID of the user/client.
      * @return Client|false The Client object if found, otherwise false.
      */
     public static function getByID(int $user_id): ?Client
     {
+        if ($user_id < 0) {
+            // user id cannot be negative
+            return null;
+        }
         return self::getClientByCondition(null, $user_id);
     }
-    
+
     /**
      * Deletes user from database
      *
@@ -113,15 +121,20 @@ class Client extends User
     }
 
     /**
-     * Saves user to database if user attributes are valid
+     * Saves client to database
      *
-     * @return void
+     * @return bool Whether client was successfully saved to database
      */
-    public function save(): void
+    public function save(): bool
     {
-        // if attributes of object are invalid, exit
+        // if attributes are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
+        }
+
+        // check if email already exists in database
+        if (!empty(Client::getByEmail($this->email))) {
+            return false;
         }
 
         // get data to be inserted to user table
@@ -134,7 +147,7 @@ class Client extends User
         $inserted_record = self::first($user_data, 'user');
 
         if (!$inserted_record) {
-            return;
+            return false;
         }
 
         // get data to be inserted to client table
@@ -147,6 +160,8 @@ class Client extends User
 
         // perform insertion to client table
         $this->insert($client_data, $this->table);
+
+        return true; // insertion was successful
     }
 
     /**
@@ -167,17 +182,18 @@ class Client extends User
     {
         $errors = parent::validate(); // list of errors
 
-        // perform existence checks
-        if (empty($this->district->getName())) {
-            $errors['district'] = 'District name is required';
+        // verify existence of district
+        $valid_district = District::getByID($this->district->getID()); // fetch corresponding district in database
+        if (empty($valid_district) || $valid_district->getName() !== $this->district->getName()) {
+            $errors['district'] = 'District does not exist';
         }
 
-        if (empty($this->city)) {
-            $errors['city'] = 'City name is required';
+        if (strlen($this->city) < 3) {
+            $errors['city'] = 'City name must have at least 3 characters';
         }
 
-        if (empty($this->street)) {
-            $errors['street'] = 'Street name is required';
+        if (strlen($this->street) < 4) {
+            $errors['street'] = 'Street name must have at least 4 characters';
         }
 
         return $errors;

@@ -6,27 +6,71 @@ namespace Steamy\Core;
 
 trait Controller
 {
+
+    /**
+     * Returns the required HTML code to load JS libraries.
+     * @param string[] $required_libraries An array of strings representing the names of the libraries that must be
+     * @return string HTML tags to load the library.
+     */
+    private function getLibrariesTags(array $required_libraries): string
+    {
+        $library_tags = [];
+
+        $library_tags['aos'] = <<< EOL
+        <!-- AOS animation library-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+          integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
+            integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        EOL;
+
+        $library_tags['splide'] = <<< EOL
+        <!-- splide carousel library-->
+        <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+        <script defer src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+        EOL;
+
+        $library_tags['chartjs'] = <<< EOL
+        <!-- chartjs library-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+         integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        EOL;
+
+        // concatenate all tags for the required libraries
+        $script_str = "";
+        foreach (array_keys($library_tags) as $library) {
+            if (in_array($library, $required_libraries, true)) {
+                $script_str .= $library_tags[$library];
+            }
+        }
+        return $script_str;
+    }
+
     /**
      * Renders a view and links its respective CSS file if any.
      *
-     * @param mixed $view_name File name of view file in `views` folder WITHOUT the `.php` extension.
-     * @param mixed $data Additional data defined in the view.
-     * @param mixed $template_title Page title. Default value is `lamp`.
-     * @param mixed $template_tags Additional tags to be included in head. Examples can be
-     * script tags and links to other stylesheets.
-     *
-     * ! Any links used inside $template_tags should be absolute (include ROOT).
+     * @param string $view_name File name of view file in `views` folder WITHOUT the `.php` extension.
+     * @param array $view_data Values for the placeholder data defined in the view.
+     * @param string $template_title Page title. Default value is `Steamy Sips`.
+     * @param string $template_tags Additional tags to be included in head. Examples can be
+     * script tags and links to other stylesheets. Any links used inside $template_tags should be absolute (include ROOT).
+     * @param string $template_meta_description Meta description of page
      * @return void
      */
-    public function view(
+    public
+    function view(
         string $view_name,
-        array $data = [],
+        array $view_data = [],
         string $template_title = 'Steamy Sips',
-        string $template_tags = ''
+        string $template_tags = '',
+        string $template_meta_description = '',
     ): void {
-        // extract data to be placed in view file
-        if (!empty($data)) {
-            extract($data);
+        // import data to be placed in view file
+        if (!empty($view_data)) {
+            extract($view_data);
         }
 
         // convert view name to uppercase
@@ -34,12 +78,12 @@ trait Controller
 
         // ! All file paths defined below are relative to public/index.php
         $view_file_path = '../src/views/' . $view_name . '.php';
-        $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative URL of css file from index
-        $view_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
+        $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative path to css file
+        $view_absolute_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
 
         // add link tag for stylesheet if it exists
         if (file_exists($view_relative_css_path)) {
-            $template_tags .= "<link rel='stylesheet' href='$view_css_path'>";
+            $template_tags .= "<link rel='stylesheet' href='$view_absolute_css_path'>";
         }
 
         // get content from view file to be placed in global view template

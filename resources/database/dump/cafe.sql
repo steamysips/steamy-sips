@@ -1,8 +1,8 @@
--- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cafe
 -- ------------------------------------------------------
--- Server version	10.4.32-MariaDB
+-- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -55,10 +55,10 @@ CREATE TABLE `client` (
   `district_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `client_district_district_id_fk` (`district_id`),
-  CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
+  CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
   CONSTRAINT `client_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
-  CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
+  CONSTRAINT `client_city_length` CHECK (char_length(`city`) > 2),
+  CONSTRAINT `client_street_length` CHECK (char_length(`street`) > 3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -117,8 +117,8 @@ CREATE TABLE `order` (
   PRIMARY KEY (`order_id`),
   KEY `order_fk` (`user_id`),
   KEY `order_district_district_id_fk` (`district_id`),
-  CONSTRAINT `order_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `order_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
+  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`),
   CONSTRAINT `city_length` CHECK (char_length(`city`) > 2),
   CONSTRAINT `street_length` CHECK (char_length(`street`) > 3)
@@ -149,11 +149,11 @@ CREATE TABLE `order_product` (
   `quantity` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `order_product_2fk` (`product_id`),
-  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE,
-  CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `quantity_range` CHECK (`quantity` >= 0),
+  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON UPDATE CASCADE,
   CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
-  CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy'))
+  CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy')),
+  CONSTRAINT `quantity_range` CHECK (`quantity` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -178,23 +178,11 @@ DELIMITER ;;
 
 
 
-
-
-
-
 BEGIN
 
 
 
-
-
-
-
     DECLARE quantity_ordered INT;
-
-
-
-
 
 
 
@@ -206,19 +194,7 @@ BEGIN
 
 
 
-
-
-
-
-
-
-
-
     SET quantity_ordered = NEW.quantity;
-
-
-
-
 
 
 
@@ -230,19 +206,7 @@ BEGIN
 
 
 
-
-
-
-
-
-
-
-
     UPDATE `product` SET stock_level = stock_level - quantity_ordered WHERE product_id = product_id;
-
-
-
-
 
 
 
@@ -261,14 +225,14 @@ DROP TABLE IF EXISTS `password_change_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `password_change_request` (
-  `request_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `token_hash` varchar(255) NOT NULL,
-  `expiry_date` datetime NOT NULL,
-  `used` tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`request_id`),
-  KEY `request_fk` (`user_id`),
-  CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+                                           `request_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                           `user_id` int(11) unsigned NOT NULL,
+                                           `token_hash` varchar(255) NOT NULL,
+                                           `expiry_date` datetime NOT NULL,
+                                           `used` tinyint(1) NOT NULL DEFAULT 0,
+                                           PRIMARY KEY (`request_id`),
+                                           KEY `request_fk` (`user_id`),
+                                           CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -302,7 +266,7 @@ CREATE TABLE `product` (
   CONSTRAINT `name_length` CHECK (char_length(`name`) > 2),
   CONSTRAINT `img_alt_text_length` CHECK (char_length(`img_alt_text`) between 5 and 150),
   CONSTRAINT `category_length` CHECK (char_length(`category`) > 2),
-  CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif' or `img_url` like '%.jpg')
+  CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif' or `img_url` like '%.jpg' or `img_url` like '%.webp')
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -312,7 +276,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.jpg','Espresso in a white cup. Source: Coffee Hero','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.jpg','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Wikipedia','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.jpeg','A latte with a spoon. Source: Food Network.','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.jpeg','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Bean Box.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Olive Magazine','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
+INSERT INTO `product` VALUES (1,'Espresso',5,100,'espresso.webp','Espresso in a white cup. Source: Dolce Gusto','Espresso',2.99,'A strong and concentrated coffee drink.'),(2,'Cappuccino',120,75,'cappuccino.webp','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Discount Coffee','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.'),(3,'Latte',150,60,'latte.avif','A latte with a spoon. Source: Peet\'s Coffee.','Latte',3.99,'A coffee drink made with espresso and steamed milk.'),(4,'Americano',5,80,'americano.webp','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Peet\'s Coffee.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.'),(5,'Mocha',200,70,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -335,12 +299,12 @@ CREATE TABLE `review` (
   KEY `review_1fk` (`user_id`),
   KEY `review_2fk` (`product_id`),
   KEY `review_3fk` (`parent_review_id`),
-  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE,
-  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`) ON DELETE SET NULL,
+  CONSTRAINT `review_1fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `review_3fk` FOREIGN KEY (`parent_review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `check_rating` CHECK (`rating` between 1 and 5),
   CONSTRAINT `text_length` CHECK (char_length(`text`) >= 2)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,7 +337,7 @@ CREATE TABLE `user` (
   CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
   CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
   CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

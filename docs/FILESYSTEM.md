@@ -1,6 +1,6 @@
 # Filesystem
 
-The filesystem for this project was adapted from https://github.com/php-pds/skeleton.
+The filesystem for this project was adapted from the [`pds/skeleton package`](https://github.com/php-pds/skeleton).
 
 ## Summary
 
@@ -9,7 +9,6 @@ A package MUST use these names for these root-level directories:
 | If a package has a root-level directory for ... | ... then it MUST be named: |
 |-------------------------------------------------|----------------------------|
 | command-line executables                        | `bin/`                     |
-| configuration files                             | `config/`                  |
 | documentation files                             | `docs/`                    |
 | web server files                                | `public/`                  |
 | other resource files (eg. sql files)            | `resources/`               |
@@ -38,14 +37,6 @@ files, it MUST be named `bin/`.
 This publication does not otherwise define the structure and contents of the
 directory.
 
-### config/
-
-If the package provides a root-level directory for configuration files, it MUST
-be named `config/`.
-
-This publication does not otherwise define the structure and contents of the
-directory.
-
 ### docs/
 
 If the package provides a root-level directory for documentation files, it MUST
@@ -59,6 +50,12 @@ directory.
 If the package provides a root-level directory for web server files, it MUST be
 named `public/`. **This directory is intended as a web server document root.**
 
+| Subdirectory Name | Description                                                              |
+|-------------------|--------------------------------------------------------------------------|
+| assets/           | Contains static assets such as images, fonts, or other resources.        |
+| js/               | Stores JavaScript files responsible for client-side scripting behaviors. |
+| styles/           | Holds CSS files defining styles and layouts for the application's views. |
+
 ### resources/
 
 If the package provides a root-level directory for other resource files, it MUST
@@ -67,35 +64,17 @@ be named `resources/`.
 This publication does not otherwise define the structure and contents of the
 directory.
 
-#### resources/database
-All SQL files must be placed inside the `database` sub-folder:
-
-```
-|-- /database
-|   |-- /schema
-|   |   |-- schema.sql           # Database schema definition
-|   |
-|   |-- /stored_procedures
-|   |   |-- procedure1.sql       # Stored procedure scripts
-|   |   |-- procedure2.sql
-|   |
-|   |-- /views
-|   |   |-- view1.sql            # Database view scripts
-|   |   |-- view2.sql
-|   |
-|   |-- /triggers
-|   |   |-- trigger1.sql         # Database trigger scripts
-|   |   |-- trigger2.sql
-|   |
-|   |-- /sqldump
-|       |-- backup.sql           # SQL dump of the database
-|
-```
-
 ### src/
 
 If the package provides a root-level directory for **PHP source code files**, it
-MUST be named `src/`. The structure of this directory follows the MVC pattern.
+MUST be named `src/`. The structure of this directory follows the Model-View-Controller (MVC) pattern.
+
+| Subdirectory Name | Description                                                                                                                                                    |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| controllers/      | Houses PHP files responsible for handling incoming requests, processing data, and orchestrating the flow of the application.                                   |
+| core/             | Encapsulates essential classes, functions, and utilities forming the foundational elements of the application.                                                 |
+| models/           | Contains PHP files representing the application's data structures and business logic, facilitating interaction with the database and enforcing business rules. |
+| views/            | Contains PHP templates or files responsible for presenting data to the user, focusing on rendering user interfaces and facilitating user interaction.          |
 
 ### tests/
 

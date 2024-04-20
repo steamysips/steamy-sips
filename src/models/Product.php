@@ -46,6 +46,10 @@ class Product
 
     public static function getByID(int $product_id): ?Product
     {
+        if ($product_id < 0) {
+            return null;
+        }
+
         $query = "SELECT * FROM product where product_id = :product_id";
         $record = self::get_row($query, ['product_id' => $product_id]);
 
@@ -99,7 +103,7 @@ class Product
     }
 
     /**
-     * @return array An array of Product objects
+     * @return Product[] An array of Product objects
      */
     public static function getAll(): array
     {
@@ -436,13 +440,17 @@ class Product
             return []; // Return empty array on error
         }
 
+        if (empty($result)) {
+            return [];
+        }
+
         // Initialize the distribution array
         $distribution = [];
 
         // Populate the distribution array with rating and percentage
         foreach ($result as $row) {
             $rating = $row->rating;
-            $percentage = round($row->percentage, 1); // Round to 1 decimal place
+            $percentage = round((float)$row->percentage, 1); // Round to 1 decimal place
             $distribution[$rating] = $percentage;
         }
 

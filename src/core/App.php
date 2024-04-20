@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Core;
 
 use Steamy\Controller\_404;
+use Steamy\Controller\API;
 
 class App
 {
@@ -16,16 +17,20 @@ class App
     {
         $URL = Utility::splitURL();
 
-        $controllerClassName = 'Steamy\\Controller\\' . ucfirst($URL[0]);
+        switch ($URL[0]) {
+            case 'api':
+                (new API())->index();
+                break;
+            default:
+                $controllerClassName = 'Steamy\\Controller\\' . ucfirst($URL[0]);
 
-
-        if (class_exists($controllerClassName)) {
-            $controller = new $controllerClassName();
-        } else {
-            // Fallback to 404 controller
-            $controller = new _404();
+                if (class_exists($controllerClassName)) {
+                    // call appropriate controller
+                    (new $controllerClassName())->index();
+                } else {
+                    // Fallback to 404 controller
+                    (new _404())->index();
+                }
         }
-
-        $controller->index(); // display contents
     }
 }
