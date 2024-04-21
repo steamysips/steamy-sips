@@ -57,15 +57,13 @@ class Comment
             return null;
         }
 
-        $comment = new Comment(
+        return new Comment(
             user_id: $result[0]->user_id,
             review_id: $result[0]->review_id,
-            comment_id: $result [0]->product_id,
+            comment_id: $result [0]->comment_id,
             text: $result[0]->text,
             created_date: $result[0]->created_date
         );
-        $comment->comment_id = $result[0]->comment_id;
-        return $comment;
     }
 
 
@@ -85,6 +83,11 @@ class Comment
         return $errors;
     }
 
+    /**
+     * Saves comment to database if attributes are valid. comment_id and created_date attributes
+     * are automatically set by database and any set values are ignored.
+     * @return void
+     */
     public function save(): void
     {
         // if attributes are invalid, exit
