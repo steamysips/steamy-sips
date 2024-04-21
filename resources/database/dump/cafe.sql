@@ -144,12 +144,12 @@ CREATE TABLE `order` (
   `created_date` datetime DEFAULT current_timestamp(),
   `pickup_date` datetime DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL CHECK (`total_price` >= 0),
-  `user_id` int(11) unsigned DEFAULT NULL,
+  `client_id` int(11) unsigned DEFAULT NULL,
   `store_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`),
-  KEY `order_fk` (`user_id`),
+  KEY `order_fk` (`client_id`),
   KEY `order_store_store_id_fk` (`store_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`user_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `order_fk` FOREIGN KEY (`client_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `order_store_store_id_fk` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`),
   CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -365,4 +365,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-21 13:55:16
+-- Dump completed on 2024-04-21 16:50:20
