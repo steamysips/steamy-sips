@@ -36,7 +36,7 @@ class Review
         $this->user_id = $user_id;
         $this->product_id = $product_id;
         $this->parent_review_id = $parent_review_id;
-        $this->text = htmlspecialchars_decode(strip_tags($text));
+        $this->text = $text;
         $this->rating = $rating;
         $this->date = $date;
     }

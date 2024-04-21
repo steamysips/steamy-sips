@@ -46,9 +46,7 @@ class Login
 
     private function handleFormSubmission(): void
     {
-        // get un-sanitized version of email which may contain special characters
-        // Ref: https://blog.mutantmail.com/can-email-addresses-have-special-characters/
-        $entered_email = htmlspecialchars_decode(trim($_POST['email'] ?? ""));
+        $entered_email = trim($_POST['email'] ?? "");
 
         // leave password unchanged as leading/trailing spaces can be part of password
         // Ref: https://stackoverflow.com/a/7240898/17627866

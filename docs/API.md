@@ -20,17 +20,16 @@ There are two types of endpoints:
 1. **Public endpoints** : They return a public resource that can be accessed **without a token**.
 2. **Protected endpoints** : They return a protected resource that can only be accessed **with a valid JWT token**.
 
-### Authentication
+### Session
 
-| Endpoint            | Description                                 | Protected |
-|---------------------|---------------------------------------------|-----------|
-| `GET /api/v1/login` | Authenticates user and returns a JWT token. | No        |
+| Endpoint                | Description                                      | Protected |
+|-------------------------|--------------------------------------------------|-----------|
+| `POST /api/v1/sessions` | Authenticates admin and creates a session token. | No        |
 
 Note:
 
-- Only administrators can receive a JWT token.
+- Only administrators can receive a session token.
 - Only administrators can access protected endpoints.
-- The JWT token expires after 24 hours and a new one must be requested.
 
 ### User
 
