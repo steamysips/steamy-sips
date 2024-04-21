@@ -14,7 +14,12 @@ class Review
 
     private int $review_id;
     private int $product_id;
-    private int $client_id; // ID of client who wrote review
+
+    /**
+     * ID of client who wrote the review
+     * @var int
+     */
+    private int $client_id;
     private string $text;
     private int $rating;
     private Datetime $created_date;
@@ -54,7 +59,6 @@ class Review
      *
      * @param int $review_id The ID of the review to retrieve.
      * @return Review|null The review object if found, otherwise null.
-     * @throws Exception If an error occurs during the database query.
      */
     public static function getByID(int $review_id): ?Review
     {
@@ -65,24 +69,29 @@ class Review
         $query = "SELECT * FROM review WHERE review_id = :id";
         $params = ['id' => $review_id];
 
-        try {
-            $result = Review::query($query, $params);
+        $result = Review::query($query, $params);
 
-            if (!empty($result)) {
-                return new Review(
-                    review_id: $result[0]->review_id,
-                    product_id: $result[0]->product_id,
-                    client_id: $result[0]->client_id,
-                    text: $result[0]->text,
-                    rating: $result[0]->rating,
-                    created_date: new DateTime($result[0]->created_date)
-                );
-            }
-        } catch (Exception $e) {
-            throw new Exception("Error fetching review: " . $e->getMessage());
+        if (empty($result)) {
+            return null;
         }
 
-        return null; // Return null if review not found
+        $result = $result[0];
+
+        $date_obj = null;
+        try {
+            $date_obj = new DateTime($result->created_date);
+        } catch (Exception $e) {
+            error_log('Error converting date: ' . $e->getMessage());
+        }
+
+        return new Review(
+            review_id: $result->review_id,
+            product_id: $result->product_id,
+            client_id: $result->client_id,
+            text: $result->text,
+            rating: $result->rating,
+            created_date: $date_obj
+        );
     }
 
     public function getReviewID(): int
