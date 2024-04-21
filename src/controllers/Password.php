@@ -49,7 +49,7 @@ class Password
 
         if ($userId) {
             User::savePasswordChangeRequest($userId, $tokenHash, $expiryDate);
-            $resetLink = ROOT . "/Newpassword?id=$token";
+            $resetLink = ROOT . "/password?id=$token";
 
             try {
                 $this->sendResetEmail($submitted_email, $resetLink);
@@ -62,51 +62,66 @@ class Password
         }
     }
 
-    public function resetPassword(): void
+    public function handlePasswordSubmission(): void
     {
-    if (isset($_POST['pwd'], $_POST['pwd-repeat'], $_GET['id'])) {
-        $password = $_POST['pwd'];
-        $passwordRepeat = $_POST['pwd-repeat'];
-        $token = $_GET['id'];
+        if (isset($_POST['pwd'], $_POST['pwd-repeat'], $_GET['token'])) {
+            $password = $_POST['pwd'];
+            $passwordRepeat = $_POST['pwd-repeat'];
+            $token = $_GET['token'];
 
-        // Check if passwords match
-        if ($password === $passwordRepeat) {
-            // Hash the new password
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            // Check if passwords match
+            if ($password === $passwordRepeat) {
+                // Hash the new password
+                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-            // Get user ID based on token
-            $userId = User::getUserIdByToken($token);
+                // Get user ID based on token
+                $userId = User::getUserIdByToken($token);
 
-            if ($userId !== null) {
-                // Update user's password
-                User::updatePassword($userId, $hashedPassword);
+                if ($userId !== null) {
+                    // Update user's password
+                    User::updatePassword($userId, $hashedPassword);
 
-                // Redirect to login page or display success message
-                Utility::redirect('login');
+                    // Redirect to login page or display success message
+                    Utility::redirect('login');
+                } else {
+                    // Handle invalid token (redirect to an error page or display an error message)
+                    echo "Invalid token.";
+                }
             } else {
-                // Handle invalid token (redirect to an error page or display an error message)
-                echo "Invalid token.";
+                // Handle password mismatch error
+                echo "Passwords do not match.";
             }
         } else {
-            // Handle password mismatch error
-            echo "Passwords do not match.";
+            // Handle missing form data error
+            echo "Form data is missing.";
         }
-    } else {
-        // Handle missing form data error
-        echo "Form data is missing.";
-    }
     }
 
     public function index(): void
     {
-        $this->handleEmailSubmission();
+        if (empty($_GET['token'])) {
+            // user is accessing /password for the first time
 
-        // display form asking for user email
-        {
+            if (!empty($_POST['email'])) {
+                // user has submitted his email
+                $this->handleEmailSubmission();
+            } else {
+                // display form asking for user email
+                $this->view(
+                    view_name: 'ResetPassword',
+                    template_title: 'Reset Password'
+                );
+            }
+        } elseif (!empty($_POST['pwd'])) {
+            // user has submitted his new password
+            $this->handlePasswordSubmission();
+        } else {
+            // ask user for his new password
             $this->view(
-                view_name: 'ResetPassword',
+                view_name: 'Newpassword',
                 template_title: 'Reset Password'
             );
         }
     }
 }
+
