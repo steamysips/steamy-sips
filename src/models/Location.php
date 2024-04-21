@@ -4,32 +4,53 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+/**
+ * Stores location details
+ */
 class Location
 {
+
     private ?string $street;
     private ?string $city;
-    private ?District $district;
+    private ?int $district_id;
     private ?float $latitude;
     private ?float $longitude;
 
     public function __construct(
-        ?string $street,
-        ?string $city,
-        ?District $district,
-        ?float $latitude,
-        ?float $longitude
+        ?string $street = null,
+        ?string $city = null,
+        ?int $district_id = null,
+        ?float $latitude = null,
+        ?float $longitude = null
     ) {
         $this->street = $street;
         $this->city = $city;
-        $this->district = $district;
+        $this->district_id = $district_id;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
     }
 
-    public function toArray(): string
+    public function toArray(): array
     {
-        return "";
+        $arr = [];
+        if (!empty($this->street)) {
+            $arr['street'] = $this->street;
+        }
+        if (!empty($this->city)) {
+            $arr['city'] = $this->city;
+        }
+        if (!empty($this->district)) {
+            $arr['district_id'] = $this->district_id;
+        }
+        if (!is_null($this->latitude)) {
+            $arr['latitude'] = $this->latitude;
+        }
+        if (!is_null($this->longitude)) {
+            $arr['longitude'] = $this->longitude;
+        }
+        return $arr;
     }
+
 
     public function getStreet(): ?string
     {
@@ -51,14 +72,14 @@ class Location
         $this->city = $city;
     }
 
-    public function getDistrict(): ?District
+    public function getDistrictID(): ?int
     {
-        return $this->district;
+        return $this->district_id;
     }
 
-    public function setDistrict(District $district): void
+    public function setDistrictID(int $district_id): void
     {
-        $this->district = $district;
+        $this->district_id = $district_id;
     }
 
     public function getLatitude(): ?float
