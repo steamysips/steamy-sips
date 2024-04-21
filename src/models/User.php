@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Steamy\Model;
 
 use Steamy\Core\Model;
-use Steamy\Core\Database;
-use Steamy\Core\Mailer;
 
 abstract class User
 {
@@ -209,41 +207,36 @@ abstract class User
     {
         //Implement logic to fetch user ID by email from the database
         $query = "SELECT user_id FROM user WHERE email = :email";
-        $result = Database::query($query, ['email' => $email]);
+        $result = self::query($query, ['email' => $email]);
+
+        if (!$result || count($result) == 0) {
+            return null;
+        }
+        return $result[0]->user_id;
+    }
+
+    public static function savePasswordChangeRequest(int $userId, string $tokenHash, string $expiryDate): void
+    {
+        //Implement logic to save password change request in the database
+        $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date)
+                  VALUES (:userId, :tokenHash, :expiryDate)";
+        self::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
+    }
+
+
+    public static function getUserIdByToken(string $token): ?int
+    {
+        //Implement logic to fetch user ID by token from the database
+        $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = false";
+        $result = self::query($query, ['token' => $token]);
         return $result[0]['user_id'] ?? null;
     }
 
-    public static function savePasswordChangeRequest(int $userId, string $tokenHash, string $expiryDate)
+    public static function updatePassword(int $userId, string $hashedPassword): void
     {
-        //Implement logic to save password change request in the database
-        $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date) VALUES (:userId, :tokenHash, :expiryDate)";
-        Database::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
-        
+        // Implement logic to update user's password in the database
+        $query = "UPDATE user SET password = :password WHERE user_id = :userId";
+        self::query($query, ['password' => $hashedPassword, 'userId' => $userId]);
     }
-
-    public static function sendResetEmail(string $email, string $resetLink)
-    {
-        //Implement logic to send reset email using Mailer class
-         $mailer = new Mailer();
-         $subject = "Reset Your Password";
-        $htmlMessage = "Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
-        $plainMessage = "Click the link below to reset your password:\n$resetLink";
-        $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
-    }
-
-    public static function getUserIdByToken(string $token): ?int
-{
-    //Implement logic to fetch user ID by token from the database
-    $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = false";
-    $result = Database::query($query, ['token' => $token]);
-    return $result[0]['user_id'] ?? null;
-}
-
-public static function updatePassword(int $userId, string $hashedPassword): void
-{
-    // Implement logic to update user's password in the database
-    $query = "UPDATE user SET password = :password WHERE user_id = :userId";
-    Database::query($query, ['password' => $hashedPassword, 'userId' => $userId]);
-}
 
 }
