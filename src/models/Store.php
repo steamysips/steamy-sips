@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use PHPUnit\Exception;
+use Exception;
 use Steamy\Core\Model;
 
 class Store
@@ -15,17 +15,46 @@ class Store
     private string $phone_no;
     private Location $address;
 
-    public function __construct(int $store_id, string $phone_no, Location $address)
-    {
-        $this->store_id = $store_id;
-        $this->phone_no = $phone_no;
-        $this->address = $address;
+    public function __construct(
+        int $store_id = null,
+        string $phone_no = null,
+        Location $address = null
+    ) {
+        $this->store_id = $store_id ?? -1;
+        $this->phone_no = $phone_no ?? "";
+        $this->address = $address ?? new Location();
     }
 
-    public static function getByID(): ?Store
+    public static function getByID(int $store_id): ?Store
     {
-        // TODO
-        return null;
+        if (empty($store_id) || $store_id < 0) {
+            return null;
+        }
+
+        $query = <<< EOL
+             SELECT store_id, phone_no, street, ST_X(coordinate) as latitude,
+             ST_Y(coordinate) as longitude, district_id, city
+             FROM store WHERE store_id = :id
+        EOL;
+        $params = ['id' => $store_id];
+
+        $result = Store::query($query, $params);
+
+        if (empty($result)) {
+            return null;
+        }
+
+        $result = $result[0];
+
+        $address = new Location(
+            street: $result->street,
+            city: $result->city,
+            district_id: $result->district_id,
+            latitude: $result->latitude,
+            longitude: $result->longitude
+        );
+
+        return new Store(store_id: $result->store_id, phone_no: $result->phone_no, address: $address);
     }
 
     /**
@@ -38,27 +67,43 @@ class Store
             'phone_no' => $this->phone_no,
             'street' => $this->address->getStreet(),
             'city' => $this->address->getCity(),
-            'district' => $this->address->getDistrict()->getID(),
+            'district_id' => $this->address->getDistrictID(),
             'latitude' => $this->address->getLatitude(),
             'longitude' => $this->address->getLongitude()
         ];
     }
 
     /**
-     * Inserts current object to database
+     * Inserts current object to database. store_id is set automatically by database
      * @return bool Whether operation was successful
      */
     public function save(): bool
     {
+        if (!$this->validate()) {
+            return false;
+        }
+
+        // Get data to be inserted into the table
+        $data = $this->toArray();
+        unset($data['store_id']); // Remove store_id as it's auto-incremented
+
+        $query = <<< EOL
+        INSERT INTO store (phone_no, street, coordinate, district_id, city)
+        VALUES(:phone_no, :street, POINT(:latitude, :longitude), :district_id, :city)
+        EOL;
+
         try {
-            // Get data to be inserted into the table
-            $data = $this->toArray();
-            unset($data['store_id']); // Remove store_id as it's auto-incremented
-            $this->insert($data);
+            Store::query($query, $data);
             return true;
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    public function validate(): bool
+    {
+        // TODO
+        return true;
     }
 
     public function getProductStock(int $product_id): int
@@ -67,7 +112,7 @@ class Store
         return 0;
     }
 
-    public function getProducts():array
+    public function getProducts(): array
     {
         // TODO: Return an array of Product objects
         return [];
