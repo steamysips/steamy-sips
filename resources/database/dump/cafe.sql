@@ -1,6 +1,6 @@
 -- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: cafe_test
+-- Host: localhost    Database: cafe
 -- ------------------------------------------------------
 -- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
 
@@ -275,14 +275,14 @@ CREATE TABLE `store` (
   `store_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `phone_no` varchar(255) NOT NULL,
   `street` varchar(255) NOT NULL,
-  `latitude` int(11) NOT NULL,
+  `coordinate` point NOT NULL,
   `district_id` int(10) unsigned NOT NULL,
-  `longitude` int(11) NOT NULL,
   `city` varchar(255) NOT NULL,
   PRIMARY KEY (`store_id`),
   KEY `store_district_district_id_fk` (`district_id`),
+  SPATIAL KEY `store_coordinate_index` (`coordinate`),
   CONSTRAINT `store_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -291,6 +291,7 @@ CREATE TABLE `store` (
 
 LOCK TABLES `store` WRITE;
 /*!40000 ALTER TABLE `store` DISABLE KEYS */;
+INSERT INTO `store` VALUES (1,'+230 630 1329','Royal Road','\0\0\0\0\0\0\0��&74�J{�/L�L@',1,'Bagatelle'),(2,'+230 630 1234','Angus Road','\0\0\0\0\0\0\0��&74����&�U@',4,'Albion');
 /*!40000 ALTER TABLE `store` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -318,6 +319,7 @@ CREATE TABLE `store_product` (
 
 LOCK TABLES `store_product` WRITE;
 /*!40000 ALTER TABLE `store_product` DISABLE KEYS */;
+INSERT INTO `store_product` VALUES (1,1,5),(1,2,100),(1,3,56),(1,4,4),(1,5,2),(2,1,22),(2,3,13),(2,4,12);
 /*!40000 ALTER TABLE `store_product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -363,4 +365,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-21 13:13:51
+-- Dump completed on 2024-04-21 13:55:16
