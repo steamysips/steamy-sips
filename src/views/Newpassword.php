@@ -6,7 +6,7 @@ declare(strict_types=1);
 
     <h1 class="header">Enter New Password</h1>
 
-    <form method="post" action="">
+    <form method="post" action="/password/resetPassword?id=<?php echo $_GET['id']; ?>">
         <input type="hidden" name="type" value="reset" />
         
         <input type="password" name="pwd" placeholder="Enter a new password...">

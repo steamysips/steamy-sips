@@ -8,6 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 use Steamy\Core\Mailer;
 use Steamy\Model\User;
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 
 /**
  * Displays form asking for email and handles email submission for password reset.
@@ -48,16 +49,52 @@ class Password
 
         if ($userId) {
             User::savePasswordChangeRequest($userId, $tokenHash, $expiryDate);
-            $resetLink = ROOT . "/password/reset?id=$token";
+            $resetLink = ROOT . "/Newpassword?id=$token";
 
             try {
                 $this->sendResetEmail($submitted_email, $resetLink);
+                echo 'Please check your email. We have sent you an email with a link to change your password';
             } catch (Exception $e) {
                 echo 'Mailer credentials invalid';
             }
         } else {
             echo $submitted_email . " not in database";
         }
+    }
+
+    public function resetPassword(): void
+    {
+    if (isset($_POST['pwd'], $_POST['pwd-repeat'], $_GET['id'])) {
+        $password = $_POST['pwd'];
+        $passwordRepeat = $_POST['pwd-repeat'];
+        $token = $_GET['id'];
+
+        // Check if passwords match
+        if ($password === $passwordRepeat) {
+            // Hash the new password
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+            // Get user ID based on token
+            $userId = User::getUserIdByToken($token);
+
+            if ($userId !== null) {
+                // Update user's password
+                User::updatePassword($userId, $hashedPassword);
+
+                // Redirect to login page or display success message
+                Utility::redirect('login');
+            } else {
+                // Handle invalid token (redirect to an error page or display an error message)
+                echo "Invalid token.";
+            }
+        } else {
+            // Handle password mismatch error
+            echo "Passwords do not match.";
+        }
+    } else {
+        // Handle missing form data error
+        echo "Form data is missing.";
+    }
     }
 
     public function index(): void
