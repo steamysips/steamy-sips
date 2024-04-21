@@ -49,7 +49,7 @@ class Password
 
         if ($userId) {
             User::savePasswordChangeRequest($userId, $tokenHash, $expiryDate);
-            $resetLink = ROOT . "/password?id=$token";
+            $resetLink = ROOT . "/password?token=$tokenHash";
 
             try {
                 $this->sendResetEmail($submitted_email, $resetLink);
@@ -119,7 +119,7 @@ class Password
             // ask user for his new password
             $this->view(
                 view_name: 'Newpassword',
-                template_title: 'Reset Password'
+                template_title: 'New Password'
             );
         }
     }

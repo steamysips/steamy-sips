@@ -226,12 +226,17 @@ abstract class User
 
     public static function getUserIdByToken(string $token): ?int
     {
-        //Implement logic to fetch user ID by token from the database
-        $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = false";
+        // Implement logic to fetch user ID by token from the database
+        $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = 0";
         $result = self::query($query, ['token' => $token]);
-        return $result[0]['user_id'] ?? null;
+    
+        if ($result && !empty($result[0]->user_id)) {
+            return $result[0]->user_id;
+        }
+    
+        return null;
     }
-
+    
     public static function updatePassword(int $userId, string $hashedPassword): void
     {
         // Implement logic to update user's password in the database
