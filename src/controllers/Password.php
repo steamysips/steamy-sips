@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
-use Steamy\Core\Utility;
+use PHPMailer\PHPMailer\Exception;
+use Steamy\Core\Mailer;
 use Steamy\Model\User;
 use Steamy\Core\Controller;
 
@@ -15,6 +16,19 @@ class Password
 {
     use Controller;
 
+    /**
+     * @throws Exception
+     */
+    private function sendResetEmail(string $email, string $resetLink): void
+    {
+        //Implement logic to send reset email using Mailer class
+        $mailer = new Mailer();
+        $subject = "Reset Your Password";
+        $htmlMessage = "Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
+        $plainMessage = "Click the link below to reset your password:\n$resetLink";
+        $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
+    }
+
     private function handleEmailSubmission(): void
     {
         $submitted_email = filter_var($_POST['email'] ?? "", FILTER_VALIDATE_EMAIL);
@@ -22,7 +36,6 @@ class Password
         if (empty($submitted_email)) {
             return;
         }
-
         // email is valid
 
         // Generate random token
@@ -33,21 +46,24 @@ class Password
         $tokenHash = password_hash($token, PASSWORD_BCRYPT); // Hashing the token for security
         $userId = User::getUserIdByEmail($submitted_email); // Get user ID by email
 
-        if ($userId !== false) {
+        if ($userId) {
             User::savePasswordChangeRequest($userId, $tokenHash, $expiryDate);
-            // Send email with reset link
             $resetLink = ROOT . "/password/reset?id=$token";
-            User::sendResetEmail($submitted_email, $resetLink);
+
+            try {
+                $this->sendResetEmail($submitted_email, $resetLink);
+            } catch (Exception $e) {
+                echo 'Mailer credentials invalid';
+            }
         } else {
-            Utility::redirect('login');
+            echo $submitted_email . " not in database";
         }
     }
 
     public function index(): void
     {
-        if (isset($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->handleEmailSubmission();
-        }
+        $this->handleEmailSubmission();
+
         // display form asking for user email
         {
             $this->view(
