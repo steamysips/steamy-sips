@@ -24,7 +24,7 @@ class Mailer
     public function __construct()
     {
         //Create a new PHPMailer instance
-        $this->mail = new PHPMailer();
+        $this->mail = new PHPMailer(true); // class will throw exceptions on errors, which we need to catch
 
         //Tell PHPMailer to use SMTP
         $this->mail->isSMTP();
