@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use Exception;
+use DateTime;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
 
@@ -16,32 +16,32 @@ class Product
     private int $product_id;
     private string $name;
     private int $calories;
-    private int $stock_level;
     private string $img_url;
     private string $img_alt_text;
     private string $category;
     private float $price;
     private string $description;
+    private DateTime $created_date;
 
     public function __construct(
         string $name,
         int $calories,
-        int $stock_level,
         string $img_url,
         string $img_alt_text,
         string $category,
         float $price,
-        string $description
+        string $description,
+        ?DateTime $created_date = new DateTime()
     ) {
         $this->product_id = -1; // product_id of a new product is determined by database
         $this->name = $name;
         $this->calories = $calories;
-        $this->stock_level = $stock_level;
         $this->img_url = $img_url;
         $this->img_alt_text = $img_alt_text;
         $this->category = $category;
         $this->price = $price;
         $this->description = $description;
+        $this->created_date = $created_date;
     }
 
     public static function getByID(int $product_id): ?Product
@@ -58,20 +58,23 @@ class Product
         }
 
         $product_obj = new Product(
-            $record->name,
-            $record->calories,
-            $record->stock_level,
-            $record->img_url,
-            $record->img_alt_text,
-            $record->category,
-            (float)$record->price,
-            $record->description
+            name: $record->name,
+            calories: $record->calories,
+            img_url: $record->img_url,
+            img_alt_text: $record->img_alt_text,
+            category: $record->category,
+            price: (float)$record->price,
+            description: $record->description,
+            created_date: Utility::stringToDate($record->created_date)
         );
 
         $product_obj->setProductID($record->product_id);
         return $product_obj;
     }
 
+    /**
+     * @return string[] A list of product categories
+     */
     public static function getCategories(): array
     {
         $query = "SELECT category FROM product";
@@ -93,12 +96,12 @@ class Product
                 'product_id' => $this->product_id,
                 'name' => $this->name,
                 'calories' => $this->calories,
-                'stock_level' => $this->stock_level,
                 'img_url' => $this->img_url,
                 'img_alt_text' => $this->img_alt_text,
                 'category' => $this->category,
                 'price' => $this->price,
-                'description' => $this->description
+                'description' => $this->description,
+                'created_date' => $this->created_date
             ];
     }
 
@@ -114,14 +117,14 @@ class Product
         $products = [];
         foreach ($results as $result) {
             $obj = new Product(
-                $result->name,
-                $result->calories,
-                $result->stock_level,
-                $result->img_url,
-                $result->img_alt_text,
-                $result->category,
-                (float)$result->price,
-                $result->description
+                name: $result->name,
+                calories: $result->calories,
+                img_url: $result->img_url,
+                img_alt_text: $result->img_alt_text,
+                category: $result->category,
+                price: (float)$result->price,
+                description: $result->description,
+                created_date: $result->created_date
             );
             $obj->setProductID($result->product_id);
             $products[] = $obj;
@@ -159,16 +162,6 @@ class Product
         $this->calories = $calories;
     }
 
-    public function getStockLevel(): int
-    {
-        return $this->stock_level;
-    }
-
-    public function setStockLevel(int $stock_level): void
-    {
-        $this->stock_level = $stock_level;
-    }
-
     /**
      * @return string Absolute URL of image
      */
@@ -198,6 +191,16 @@ class Product
     public function setImgAltText(string $img_alt_text): void
     {
         $this->img_alt_text = $img_alt_text;
+    }
+
+    public function setCreatedDate(DateTime $new_date): void
+    {
+        $this->created_date = $new_date;
+    }
+
+    public function getCreatedDate(): DateTime
+    {
+        return $this->created_date;
     }
 
     public function getCategory(): string
@@ -234,13 +237,14 @@ class Product
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            Utility::show($this->validate());
             return;
         }
 
         // Get data to be inserted into the product table
         $productData = $this->toArray();
         unset($productData['product_id']); // Remove product_id as it's auto-incremented
+
+        unset($productData['created_date']); // let database add this field
 
         // Perform insertion to the product table
         $this->insert($productData, 'product');
@@ -254,17 +258,15 @@ class Product
         }
 
         // Query the database to calculate the average rating
-        $query = "SELECT AVG(rating) AS average_rating
-              FROM review
-              WHERE product_id = :product_id AND parent_review_id IS NULL"; // Exclude child reviews
+        // TODO: Exclude unverified reviews
+        $query = <<< EOL
+           SELECT AVG(rating) AS average_rating
+           FROM review
+           WHERE product_id = :product_id
+           EOL;
         $params = ['product_id' => $this->product_id];
 
-        try {
-            $result = $this->query($query, $params);
-        } catch (Exception $e) {
-            error_log('Error fetching average rating: ' . $e->getMessage());
-            return 0; // Return 0 if there's an error fetching the rating
-        }
+        $result = $this->query($query, $params);
 
         // Extract the average rating from the result array
         if (!empty($result)) {
@@ -287,11 +289,6 @@ class Product
         // Validate calories
         if ($this->calories < 0) {
             $errors['calories'] = "Calories must be non-negative";
-        }
-
-        // Validate stock level
-        if ($this->stock_level < 0) {
-            $errors['stock_level'] = "Stock level must be non-negative";
         }
 
         // Validate img_url
@@ -341,13 +338,7 @@ class Product
         }
 
         $params = ['product_id' => $this->product_id];
-
-        try {
-            $reviewRecords = $this->query($query, $params);
-        } catch (Exception $e) {
-            error_log('Error fetching reviews: ' . $e->getMessage());
-            return $reviews;
-        }
+        $reviewRecords = $this->query($query, $params);
 
         if (empty($reviewRecords)) {
             return [];
@@ -355,67 +346,20 @@ class Product
 
         // Iterate through the retrieved review records and create Review objects
         foreach ($reviewRecords as $result) {
-            // convert date to DateTime object
-            $date_obj = null;
-            try {
-                $date_obj = new \DateTime($result->date);
-            } catch (Exception $e) {
-                error_log('Error converting date: ' . $e->getMessage());
-            }
-
             // Create a new Review object and add it to the reviews array
             $review = new Review(
-                $result->user_id,
-                $result->product_id,
-                $result->parent_review_id,
-                $result->text,
-                $result->rating,
-                $date_obj,
+                review_id: $result->review_id,
+                product_id: $result->product_id,
+                client_id: $result->client_id,
+                text: $result->text,
+                rating: $result->rating,
+                created_date: Utility::stringToDate($result->created_date),
             );
             $reviews[] = $review;
         }
         return $reviews;
     }
 
-    /**
-     * Returns an array of reviews where each review has a
-     * `children` attribute but no `parent_review_id` attribute.
-     * The `children` attribute contains an arrays of reviews who are children
-     * of the current review.
-     *
-     * @return array An array of reviews in nested format
-     */
-    public function getNestedReviews(): array
-    {
-        // Fetch all reviews for the given product ID
-        $reviews = $this->query(
-            "SELECT * FROM review WHERE product_id = :product_id",
-            ['product_id' => $this->product_id]
-        );
-
-        // Create an associative array to store reviews by their review_id
-        $reviewMap = [];
-        foreach ($reviews as $review) {
-            $reviewMap[$review->review_id] = $review;
-            $reviewMap[$review->review_id]->children = [];
-        }
-
-        // Populate the children array for each review based on parent_review_id
-        foreach ($reviews as $review) {
-            if ($review->parent_review_id !== null) {
-                // Add the review as a child to its parent review
-                $reviewMap[$review->parent_review_id]->children[] = $reviewMap[$review->review_id];
-            }
-        }
-
-        // Filter out reviews that have a parent (i.e., retain only root-level reviews)
-        $nestedReviews = array_filter($reviewMap, function ($review) {
-            return $review->parent_review_id === null;
-        });
-
-        // Reset the keys of the array to maintain continuity
-        return array_values($nestedReviews);
-    }
 
     /**
      * Returns an associative array containing the distribution of ratings for the product.
@@ -426,19 +370,16 @@ class Product
     public function getRatingDistribution(): array
     {
         // Query the database to get the percentage distribution of ratings
-        $query = "SELECT rating, 
-                                    COUNT(*) * 100.0 / (SELECT COUNT(*) FROM review WHERE product_id = :product_id) AS percentage
-                         FROM review
-                         WHERE product_id = :product_id
-                         GROUP BY rating";
-        $params = ['product_id' => $this->product_id];
+        $query = <<< EOL
+            SELECT rating, 
+            COUNT(*) * 100.0 / (SELECT COUNT(*) FROM review WHERE product_id = :product_id) AS percentage
+            FROM review
+            WHERE product_id = :product_id
+            GROUP BY rating
+        EOL;
 
-        try {
-            $result = $this->query($query, $params);
-        } catch (Exception $e) {
-            error_log('Error fetching rating distribution: ' . $e->getMessage());
-            return []; // Return empty array on error
-        }
+        $params = ['product_id' => $this->product_id];
+        $result = $this->query($query, $params);
 
         if (empty($result)) {
             return [];
