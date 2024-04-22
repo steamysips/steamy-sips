@@ -2,11 +2,33 @@
 
 declare(strict_types=1);
 
+/**
+ * @var bool $email_submit_success Whether email was successfully sent
+ */
 ?>
 
-<h1>Reset Password</h1>
+<main class="container">
+    <h2>Reset Password</h2>
+    <p>Just need to confirm your email to send you instructions to reset your password.</p>
+    <form id="email-submission-form" method="post" action="">
+        <label>
+            <input type="email" required name="email" placeholder="Email">
+        </label>
+        <button style="width: 30%" type="submit">Reset password</button>
+    </form>
+</main>
 
-<form method="post" action="">
-    <input type="text" name="email" placeholder="Email...">
-    <button type="submit">Receive Email</button>
-</form>
+<dialog <?= $email_submit_success ? "open" : "" ?>>
+    <article>
+        <h3>Email submitted! 🎉</h3>
+        <p>Thanks - if you have a Steamy Sips account, we've sent you an email.</p>
+        <footer>
+            <a href="<?= ROOT ?>/login"
+               role="button"
+               data-target="my-modal"
+            >
+                Return to sign in
+            </a>
+        </footer>
+    </article>
+</dialog>
