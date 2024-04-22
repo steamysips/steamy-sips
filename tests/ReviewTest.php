@@ -71,16 +71,16 @@ final class ReviewTest extends TestCase
     $this->assertEquals('Rating must be between 1 and 5', $errors['rating']); // Assert specific message
     // Test validation with invalid date format
   }
-  public function testGetByID(): void
-  {
+public function testGetByID(): void
+{
     // Mock data for the test
-    $review_id = 1;
-    $user_id = 1;
-    $product_id = 1;
-    $parent_review_id = null; // Assuming the parent review ID is 0 for simplicity
-    $text = "Test review";
+    $review_id = 4;
+    $user_id = NULL;
+    $product_id = NULL;
+    $parent_review_id = NULL; // Assuming the parent review ID is 0 for simplicity
+    $text = "This product is amazing!";
     $rating = 5;
-    $date = new DateTime();
+    $date = new DateTime(); // Create a DateTime object with the current date
     // Call the getByID method directly on the Review class
     $review = Review::getByID($review_id);
     // Assert that the returned object is an instance of Review
@@ -91,12 +91,14 @@ final class ReviewTest extends TestCase
     $this->assertEquals($parent_review_id, $review->getParentReviewID());
     $this->assertEquals($text, $review->getText());
     $this->assertEquals($rating, $review->getRating());
-    $this->assertEquals($date->format('Y-m-d'), $review->getDate()->format('Y-m-d')); // Compare dates by formatting
+    $expectedDate = new DateTime('2024-04-23');
+    $this->assertEquals($expectedDate->format('Y-m-d'), $review->getDate()->format('Y-m-d')); // Compare dates by formatting
     // Test getByID with invalid ID (assuming it returns null on failure)
     $invalid_id = 999;
     $review = Review::getByID($invalid_id);
     $this->assertNull($review); // Assert null for invalid ID
-  }
+}
+
   public function testSave(): void
   {
     // Create a DateTime object for the review date

@@ -13,8 +13,8 @@ class Review
 {
     use Model;
 
-    private int $product_id;
-    private int $user_id;
+    private ?int $product_id;
+    private ?int $user_id;
     private ?int $parent_review_id; // a top-level review does not have a parent
     private int $review_id;
     private string $text;
@@ -25,8 +25,8 @@ class Review
     public const MIN_RATING = 1;
 
     public function __construct(
-        int $user_id,
-        int $product_id,
+        ?int $user_id,
+        ?int $product_id,
         ?int $parent_review_id,
         string $text,
         int $rating,
@@ -108,6 +108,7 @@ class Review
         try {
             $result = Review::query($query, $params); // Execute the query
             if (!empty($result)) {
+                $date = new DateTime($result[0]->date);
                 // Create a new Review object using the retrieved data
                 $review = new Review(
                     $result[0]->user_id,
@@ -115,7 +116,7 @@ class Review
                     $result[0]->parent_review_id,
                     $result[0]->text,
                     $result[0]->rating,
-                    $result[0]->date
+                    $date
                 );
                 $review->setReviewID($review_id); // Set the review ID
                 return $review;
@@ -137,7 +138,7 @@ class Review
         $this->review_id = $review_id;
     }
 
-    public function getUserID(): int
+    public function getUserID(): ?int
     {
         return $this->user_id;
     }
@@ -147,7 +148,7 @@ class Review
         $this->review_id = $user_id;
     }
 
-    public function getProductID(): int
+    public function getProductID(): ?int
     {
         return $this->product_id;
     }
