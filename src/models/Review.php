@@ -78,16 +78,15 @@ class Review
 
     public function toArray(): array
     {
-        return
-            [
-                'user_id' => $this->user_id,
-                'review_id' => $this->review_id,
-                'product_id' => $this->product_id,
-                'parent_review_id' => $this->parent_review_id,
-                'text' => $this->text,
-                'date' => $this->date->format('Y-m-d H:i:s'),
-                'rating' => $this->rating
-            ];
+        return [
+            'user_id' => $this->user_id,
+            'review_id' => $this->review_id,
+            'product_id' => $this->product_id,
+            'parent_review_id' => $this->parent_review_id,
+            'text' => $this->text,
+            'date' => $this->date,
+            'rating' => $this->rating
+        ];
     }
 
     /**
@@ -203,7 +202,6 @@ class Review
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            Utility::show($this->validate());
             return;
         }
         // Get data to be inserted into the review table
@@ -220,17 +218,12 @@ class Review
     {
         $errors = [];
 
-        if (strlen($this->text) < 2) {
-            $errors['text'] = "Review text must have at least 2 characters";
-        }
+        if (empty($this->text) || strlen($this->text) < 2) {
+            $errors['text'] = 'Review text must have at least 2 characters';
+          }
 
-        if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
-            "options" => [
-                "min_range" => Review::MIN_RATING,
-                "max_range" => Review::MAX_RATING
-            ]
-        ])) {
-            $errors['rating'] = sprintf("Review must be between %d and %d", Review::MIN_RATING, Review::MAX_RATING);
+        if ($this->rating < 1 || $this->rating > 5){
+            $errors['rating'] = "Rating must be between 1 and 5";
         }
 
         if ($this->date > new DateTime()) {
