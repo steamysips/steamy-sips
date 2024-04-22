@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use Random\RandomException;
 use Steamy\Core\Model;
 
 abstract class User
@@ -215,12 +216,29 @@ abstract class User
         return $result[0]->user_id;
     }
 
-    public static function savePasswordChangeRequest(int $userId, string $tokenHash, string $expiryDate): void
+    /**
+     * @param int $userId
+     * @return string|null The hashed token for a password reset
+     * @throws RandomException Unable to generate token
+     */
+    public static function savePasswordChangeRequest(int $userId): ?string
     {
-        //Implement logic to save password change request in the database
+        if ($userId < 0) {
+            return null;
+        }
+
+        // Generate random token and its associated information
+        $token = bin2hex(random_bytes(16)); // length 32 bytes (hexadecimal format)
+        $expiryDate = date('Y-m-d H:i:s', strtotime('+1 day')); // Expiry date set to 1 day from now
+        $tokenHash = password_hash($token, PASSWORD_BCRYPT); // Hashing the token for security
+
+        // Save password change info to database
         $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date)
                   VALUES (:userId, :tokenHash, :expiryDate)";
+
         self::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
+
+        return $tokenHash;
     }
 
 
@@ -229,14 +247,14 @@ abstract class User
         // Implement logic to fetch user ID by token from the database
         $query = "SELECT user_id FROM password_change_request WHERE token_hash = :token AND expiry_date > NOW() AND used = 0";
         $result = self::query($query, ['token' => $token]);
-    
+
         if ($result && !empty($result[0]->user_id)) {
             return $result[0]->user_id;
         }
-    
+
         return null;
     }
-    
+
     public static function updatePassword(int $userId, string $hashedPassword): void
     {
         // Implement logic to update user's password in the database

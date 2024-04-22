@@ -5,31 +5,48 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use PHPMailer\PHPMailer\Exception;
+use Random\RandomException;
 use Steamy\Core\Mailer;
 use Steamy\Model\User;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 
 /**
- * Displays form asking for email and handles email submission for password reset.
+ * Controller responsible for managing entire password reset user flow. It
+ * displays a form asking for user email, handles email submission, sends email,
+ * handles submission for new password.
  */
 class Password
 {
     use Controller;
 
+    private array $view_data = [];
+    private bool $server_error;
+
+    public function __construct()
+    {
+        $this->server_error = false;
+        $this->view_data['email_submit_success'] = false;
+    }
+
     /**
+     * Sends an email with a password reset link
      * @throws Exception
      */
     private function sendResetEmail(string $email, string $resetLink): void
     {
         //Implement logic to send reset email using Mailer class
         $mailer = new Mailer();
-        $subject = "Reset Your Password";
+        $subject = "Reset Your Password | Steamy Sips";
         $htmlMessage = "Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
         $plainMessage = "Click the link below to reset your password:\n$resetLink";
         $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
     }
 
+    /**
+     * @throws RandomException Token could not be generated
+     * @throws Exception Email could not be sent
+     */
     private function handleEmailSubmission(): void
     {
         $submitted_email = filter_var($_POST['email'] ?? "", FILTER_VALIDATE_EMAIL);
@@ -39,27 +56,22 @@ class Password
         }
         // email is valid
 
-        // Generate random token
-        $token = bin2hex(random_bytes(16)); // Generating a random token of length 32 bytes (hexadecimal format)
-
-        // Save information about request in the password_change_request table
-        $expiryDate = date('Y-m-d H:i:s', strtotime('+1 day')); // Expiry date set to 1 day from now
-        $tokenHash = password_hash($token, PASSWORD_BCRYPT); // Hashing the token for security
+        // get user ID corresponding to user email
         $userId = User::getUserIdByEmail($submitted_email); // Get user ID by email
 
-        if ($userId) {
-            User::savePasswordChangeRequest($userId, $tokenHash, $expiryDate);
-            $resetLink = ROOT . "/password?token=$tokenHash";
-
-            try {
-                $this->sendResetEmail($submitted_email, $resetLink);
-                echo 'Please check your email. We have sent you an email with a link to change your password';
-            } catch (Exception $e) {
-                echo 'Mailer credentials invalid';
-            }
-        } else {
-            echo $submitted_email . " not in database";
+        // if user is not present in database, simply return
+        // Note: For privacy reasons, we do not inform the client as the person requesting
+        // the password reset may not be the true owner of the email
+        if (empty($userId)) {
+            return;
         }
+
+        // Get a token corresponding a password change request
+        $tokenHash = User::savePasswordChangeRequest($userId);
+
+        // Send email to user with password reset link
+        $passwordResetLink = ROOT . "/password?token=$tokenHash";
+        $this->sendResetEmail($submitted_email, $passwordResetLink);
     }
 
     public function handlePasswordSubmission(): void
@@ -104,11 +116,23 @@ class Password
 
             if (!empty($_POST['email'])) {
                 // user has submitted his email
-                $this->handleEmailSubmission();
+                try {
+                    $this->handleEmailSubmission();
+                    $this->view_data['email_submit_success'] = true;
+                } catch (\Exception $e) {
+                    $this->server_error = true;
+                }
+            }
+
+            if ($this->server_error) {
+                // TODO: Call error handler
+                echo 'Mailing service is down. Please try again later.';
             } else {
                 // display form asking for user email
+                // this form should be displayed before and after email submission
                 $this->view(
                     view_name: 'ResetPassword',
+                    view_data: $this->view_data,
                     template_title: 'Reset Password'
                 );
             }
