@@ -48,8 +48,8 @@ jobs:
               BUSINESS_GMAIL=""
               BUSINESS_GMAIL_PASSWORD=""
         run: |
-          echo "$ENV" > src/core/.env
-          cat src/core/.env
+          echo "$ENV" > .env
+          cat .env
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict

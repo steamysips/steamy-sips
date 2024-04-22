@@ -38,9 +38,7 @@ Install composer dependencies:
 composer update
 ```
 
-## Environment setup
-
-In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
+In the root directory, create a `.env` file with the following contents:
 
 ```php
 PUBLIC_ROOT="http://localhost/steamy-sips/public"
@@ -56,28 +54,15 @@ BUSINESS_GMAIL=""
 BUSINESS_GMAIL_PASSWORD=""
 ```
 
-Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
+Some important notes:
 
-> [!IMPORTANT]  
-> If your Apache server is serving from a port other than port 80, include the port number in `PUBLIC_ROOT` (
-> e.g., `http://localhost:443/steamy-sips/public`) .
-
-## Mail setup
-
-1. Choose an email address (gmail account) from which you want emails to be sent.
-2. Go to https://myaccount.google.com/ and login using your desired email.
-3. Search for `2-Step Verification` in the `Security` section and enable it.
-4. Search for `App passwords` in the security section and create an app password with a name of your choice.
-5. In the `src/core/.env` file created earlier, fill `BUSINESS_GMAIL`
-   and `BUSINESS_GMAIL_PASSWORD`. `BUSINESS_GMAIL_PASSWORD` should be set to your app password.
-
-> [!IMPORTANT]  
-> Remove any spaces from your app password when entering it in the `.env` file.
-
-> [!IMPORTANT]  
-> Ensure that you have no firewall or antivirus software (e.g. Avast, McAfee) that block emails. If the mailing service
-> is not working
-> set `$this->mail->SMTPDebug = SMTP::SERVER;` in the `Mailer.php` file and inspect the error.
+- Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
+- If your Apache server is serving from a port other than the default one, include the port number to `PUBLIC_ROOT` (
+  e.g., `http://localhost:443/steamy-sips/public`) .
+- `BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
+  whenever a client places an order. It is recommended to use
+  a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
+  for `BUSINESS_GMAIL_PASSWORD` instead of your actual gmail account password.
 
 ## Database setup
 
