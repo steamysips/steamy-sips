@@ -150,6 +150,7 @@ class Password
                 // user has submitted his email
                 try {
                     $this->handleEmailSubmission();
+                    $this->view_data['email_submit_success'] = true;
                 } catch (Exception) {
                     $this->view_data['error'] = 'Mailing service is not operational. Please try again later.';
                 }
