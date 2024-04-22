@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
-use PHPMailer\PHPMailer\Exception;
-use Random\RandomException;
+use Exception;
 use Steamy\Core\Mailer;
 use Steamy\Model\User;
 use Steamy\Core\Controller;
-use Steamy\Core\Utility;
 
 /**
- * Controller responsible for managing entire password reset user flow. It
+ * Controller responsible for managing the entire password reset user flow. It is invoked
+ * for relative urls of the form /password. It
  * displays a form asking for user email, handles email submission, sends email,
  * handles submission for new password.
  */
@@ -21,12 +20,12 @@ class Password
     use Controller;
 
     private array $view_data = [];
-    private bool $server_error;
 
     public function __construct()
     {
-        $this->server_error = false;
         $this->view_data['email_submit_success'] = false;
+        $this->view_data['error'] = false;
+        $this->view_data['password_change_success'] = false;
     }
 
     /**
@@ -44,7 +43,7 @@ class Password
     }
 
     /**
-     * @throws RandomException Token could not be generated
+     * Invoked when  user submits an email on form.
      * @throws Exception Email could not be sent
      */
     private function handleEmailSubmission(): void
@@ -52,100 +51,136 @@ class Password
         $submitted_email = filter_var($_POST['email'] ?? "", FILTER_VALIDATE_EMAIL);
 
         if (empty($submitted_email)) {
+            $this->view_data['error'] = 'Invalid email';
             return;
         }
         // email is valid
 
         // get user ID corresponding to user email
-        $userId = User::getUserIdByEmail($submitted_email); // Get user ID by email
+        $userId = User::getUserIdByEmail($submitted_email);
 
-        // if user is not present in database, simply return
-        // Note: For privacy reasons, we do not inform the client as the person requesting
-        // the password reset may not be the true owner of the email
+        // check if account is not present in database
         if (empty($userId)) {
+            $this->view_data['error'] = 'Email does not exist';
             return;
         }
 
-        // Get a token corresponding a password change request
-        $tokenHash = User::savePasswordChangeRequest($userId);
+        // Generate a token for a password change request
+        try {
+            $token_info = User::generatePasswordResetToken($userId);
+        } catch (Exception) {
+            $this->view_data['error'] = 'Mailing service is not operational. Try again later';
+            return;
+        }
 
-        // Send email to user with password reset link
-        $passwordResetLink = ROOT . "/password?token=$tokenHash";
+        // Send email to user with password reset link and user id
+        $passwordResetLink = ROOT . "/password/reset?token=" . $token_info['token'] .
+            "&id=" . $token_info['request_id'];
         $this->sendResetEmail($submitted_email, $passwordResetLink);
     }
 
-    public function handlePasswordSubmission(): void
+    /**
+     * Checks if password reset link contains the necessary token and id query parameters.
+     * @return bool
+     */
+    private function validatePasswordResetLink(): bool
     {
-        if (isset($_POST['pwd'], $_POST['pwd-repeat'], $_GET['token'])) {
-            $password = $_POST['pwd'];
-            $passwordRepeat = $_POST['pwd-repeat'];
-            $token = $_GET['token'];
+        // check if query parameters are present
+        if (empty($_GET['token']) || empty($_GET['id'])) {
+            return false;
+        }
 
-            // Check if passwords match
-            if ($password === $passwordRepeat) {
-                // Hash the new password
-                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        // validate request id data type
+        if (!filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+            return false;
+        }
 
-                // Get user ID based on token
-                $userId = User::getUserIdByToken($token);
+        return true;
+    }
 
-                if ($userId !== null) {
-                    // Update user's password
-                    User::updatePassword($userId, $hashedPassword);
+    /**
+     * This function is invoked when user opens password reset link from email
+     * and submits form.
+     * @return void
+     */
+    private function handlePasswordSubmission(): void
+    {
+        if (!$this->validatePasswordResetLink()) {
+            $this->view_data['error'] = 'Invalid password reset link';
+        }
 
-                    // Redirect to login page or display success message
-                    Utility::redirect('login');
-                } else {
-                    // Handle invalid token (redirect to an error page or display an error message)
-                    echo "Invalid token.";
-                }
-            } else {
-                // Handle password mismatch error
-                echo "Passwords do not match.";
-            }
+        if (!isset($_POST['pwd'], $_POST['pwd-repeat'])) {
+            $this->view_data['error'] = 'You must enter new password twice';
+            return;
+        }
+
+        $password = $_POST['pwd'];
+        $passwordRepeat = $_POST['pwd-repeat'];
+        $token = $_GET['token'];
+        $requestID = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+
+        // Check if passwords match
+        if ($password !== $passwordRepeat) {
+            $this->view_data['error'] = 'Passwords do not match';
+            return;
+        }
+
+        // check if password valid
+        $password_errors = User::validatePlainPassword($password);
+        if (!empty($password_errors)) {
+            $this->view_data['error'] = $password_errors[0];
+            return;
+        }
+
+        $success = User::resetPassword($requestID, $token, $password);
+
+        if ($success) {
+            $this->view_data['password_change_success'] = true;
         } else {
-            // Handle missing form data error
-            echo "Form data is missing.";
+            $this->view_data['error'] = 'Failed to change password. Try generating a new token.';
         }
     }
 
     public function index(): void
     {
-        if (empty($_GET['token'])) {
-            // user is accessing /password for the first time
-
-            if (!empty($_POST['email'])) {
+        // check if url is of form /password
+        if ($_GET['url'] === 'password') {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // user has submitted his email
                 try {
                     $this->handleEmailSubmission();
-                    $this->view_data['email_submit_success'] = true;
-                } catch (\Exception $e) {
-                    $this->server_error = true;
+                } catch (Exception) {
+                    $this->view_data['error'] = 'Mailing service is not operational. Please try again later.';
                 }
             }
-
-            if ($this->server_error) {
-                // TODO: Call error handler
-                echo 'Mailing service is down. Please try again later.';
-            } else {
-                // display form asking for user email
-                // this form should be displayed before and after email submission
-                $this->view(
-                    view_name: 'ResetPassword',
-                    view_data: $this->view_data,
-                    template_title: 'Reset Password'
-                );
-            }
-        } elseif (!empty($_POST['pwd'])) {
-            // user has submitted his new password
-            $this->handlePasswordSubmission();
-        } else {
-            // ask user for his new password
+            // display form asking for user email
+            // this form should be displayed before and after email submission
             $this->view(
-                view_name: 'Newpassword',
+                view_name: 'ResetPassword',
+                view_data: $this->view_data,
+                template_title: 'Reset Password'
+            );
+            return;
+        }
+
+        // check if url is of form /password/reset
+        if ($_GET['url'] === 'password/reset') {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $this->handlePasswordSubmission();
+            }
+            // display form asking user for his new password
+            $this->view(
+                view_name: 'NewPassword',
+                view_data: $this->view_data,
                 template_title: 'New Password'
             );
+            return;
         }
+
+        // if url follows some other format display error page
+        $this->view(
+            view_name: '404'
+        );
     }
 }
 
