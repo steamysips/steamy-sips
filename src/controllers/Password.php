@@ -81,7 +81,7 @@ class Password
 
     /**
      * Checks if password reset link contains the necessary token and id query parameters.
-     * @return bool
+     * @return bool True if valid
      */
     private function validatePasswordResetLink(): bool
     {
@@ -107,6 +107,7 @@ class Password
     {
         if (!$this->validatePasswordResetLink()) {
             $this->view_data['error'] = 'Invalid password reset link';
+            return;
         }
 
         if (!isset($_POST['pwd'], $_POST['pwd-repeat'])) {
