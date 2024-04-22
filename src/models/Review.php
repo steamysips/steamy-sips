@@ -223,13 +223,8 @@ class Review
             $errors['text'] = 'Review text must have at least 2 characters';
           }
 
-        if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
-            "options" => [
-                "min_range" => Review::MIN_RATING,
-                "max_range" => Review::MAX_RATING
-            ]
-        ])) {
-            $errors['rating'] = sprintf("Review must be between %d and %d", Review::MIN_RATING, Review::MAX_RATING);
+        if ($this->rating < 1 || $this->rating > 5){
+            $errors['rating'] = "Rating must be between 1 and 5";
         }
 
         if ($this->date > new DateTime()) {

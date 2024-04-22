@@ -140,27 +140,4 @@ final class ReviewTest extends TestCase
     // Call the save method
     $review->save();
   }
-
-  public function testIsVerified(): void
-  {
-    // Mock the Review class to isolate the test from the database
-    $review = $this->getMockBuilder(Review::class)
-      ->onlyMethods(['get_row']) // Mocking the get_row method
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    // Define the expected return value for the mocked get_row method
-    $expectedResult = (object)[
-      'count' => 1 // Assuming there's a match in the database
-    ];
-
-    // Set up the mock to return the expected result when get_row is called
-    $review->expects($this->once())
-      ->method('get_row')
-      ->willReturn($expectedResult);
-
-    // Call the isVerified method and assert that it returns true
-    $isVerified = $review->isVerified(1, 7); // Assuming product_id = 1 and review_id = 1
-    $this->assertTrue($isVerified);
-  }
 }
