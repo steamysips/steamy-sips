@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use Exception;
 use Steamy\Core\Model;
 
 abstract class User
@@ -202,4 +203,111 @@ abstract class User
     {
         $this->user_id = $new_id;
     }
+
+    public static function getUserIdByEmail(string $email): ?int
+    {
+        //Implement logic to fetch user ID by email from the database
+        $query = "SELECT user_id FROM user WHERE email = :email";
+        $result = self::query($query, ['email' => $email]);
+
+        if (!$result || count($result) == 0) {
+            return null;
+        }
+        return $result[0]->user_id;
+    }
+
+    /**
+     * Generates a password reset token for a user. A hash of the token
+     * is stored in the database.
+     *
+     * @param int $userId ID of user to which password reset token belongs
+     * @return array|null An associative array with attributes `request_id` and `token`
+     * @throws Exception
+     */
+    public static function generatePasswordResetToken(int $userId): ?array
+    {
+        if ($userId < 0) {
+            return null;
+        }
+
+        $info = []; // array to store token and request ID
+
+        // Generate random token and its associated information
+        $info['token'] = "";
+        try {
+            $info['token'] = bin2hex(random_bytes(16)); // length 32 bytes (hexadecimal format)
+        } catch (Exception) {
+            throw new Exception('Token cannot be generated');
+        }
+
+        $expiryDate = date('Y-m-d H:i:s', strtotime('+1 day')); // Expiry date set to 1 day from now
+        $tokenHash = password_hash($info['token'], PASSWORD_BCRYPT); // Hashing the token for security
+
+        // Save token info to database
+        $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date)
+                  VALUES (:userId, :tokenHash, :expiryDate)";
+        self::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
+
+
+        // get ID of last inserted record
+        // Ref: https://stackoverflow.com/a/39141771/17627866
+        $query = <<< EOL
+            SELECT LAST_INSERT_ID(request_id)  as request_id
+            FROM password_change_request
+            ORDER BY LAST_INSERT_ID(request_id)
+            DESC LIMIT 1;
+        EOL;
+        $info['request_id'] = self::query($query)[0]->request_id;
+
+        return $info;
+    }
+
+
+    /**
+     * Uses a password reset token to change the password of a user.
+     * @param int $requestID request ID corresponding to password reset token
+     * @param string $token Password reset token
+     * @param string $new_password New password of user in plain text (not hashed)
+     * @return bool
+     */
+    public static function resetPassword(int $requestID, string $token, string $new_password): bool
+    {
+        // fetch matching request from database if valid (not expired and unused)
+        $query = <<< EOL
+        SELECT * FROM password_change_request
+        WHERE expiry_date > NOW() AND used = 0 AND request_id = :requestID
+        EOL;
+
+        $result = self::query($query, ['requestID' => $requestID]);
+
+        if (empty($result)) {
+            return false;
+        }
+
+        $request = $result[0];
+
+        // verify token
+        if (!password_verify($token, $request->token_hash)) {
+            return false;
+        }
+
+        // validate password
+        if (!empty(self::validatePlainPassword($new_password))) {
+            return false;
+        }
+
+        $hashedPassword = password_hash($new_password, PASSWORD_BCRYPT);
+
+        // Update user's password in the database
+        $query = "UPDATE user SET password = :password WHERE user_id = :userId";
+        self::query($query, ['password' => $hashedPassword, 'userId' => $request->user_id]);
+
+
+        // Invalidate password request token so that token cannot be used again
+        $query = "UPDATE password_change_request SET used = 1 WHERE request_id = :requestID";
+        self::query($query, ['requestID' => $request->request_id]);
+
+        return true;
+    }
+
 }

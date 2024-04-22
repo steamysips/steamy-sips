@@ -218,6 +218,34 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
+-- Table structure for table `password_change_request`
+--
+
+DROP TABLE IF EXISTS `password_change_request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_change_request` (
+                                           `request_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                           `user_id` int(11) unsigned NOT NULL,
+                                           `token_hash` varchar(255) NOT NULL,
+                                           `expiry_date` datetime NOT NULL,
+                                           `used` tinyint(1) NOT NULL DEFAULT 0,
+                                           PRIMARY KEY (`request_id`),
+                                           KEY `request_fk` (`user_id`),
+                                           CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_change_request`
+--
+
+LOCK TABLES `password_change_request` WRITE;
+/*!40000 ALTER TABLE `password_change_request` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_change_request` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `product`
 --
 
@@ -330,4 +358,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-18 13:18:52
+-- Dump completed on 2024-04-20 18:34:37
