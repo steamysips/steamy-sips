@@ -22,7 +22,10 @@ declare(strict_types=1);
                        required/>
 
                 <button name="login_submit" type="submit" class="contrast">Login</button>
-                <small>Don't have an account yet? <a href="<?= ROOT ?>/register">Register</a></small>
+                <small class="grid">
+                    <a href="<?= ROOT ?>/register">Register</a>
+                    <a style="display: flex; justify-content: flex-end" href="<?= ROOT ?>/password">Forgot Password?</a>
+                </small>
             </form>
         </div>
         <div></div>

@@ -24,7 +24,7 @@ class Mailer
     public function __construct()
     {
         //Create a new PHPMailer instance
-        $this->mail = new PHPMailer();
+        $this->mail = new PHPMailer(true); // class will throw exceptions on errors, which we need to catch
 
         //Tell PHPMailer to use SMTP
         $this->mail->isSMTP();
@@ -33,7 +33,7 @@ class Mailer
         //SMTP::DEBUG_OFF = off (for production use)
         //SMTP::DEBUG_CLIENT = client messages
         //SMTP::DEBUG_SERVER = client and server messages
-        $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
 
         //Set the hostname of the mail server
         $this->mail->Host = 'smtp.gmail.com';
