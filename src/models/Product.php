@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Model;
 
 use DateTime;
+use Exception;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
 
@@ -233,11 +234,11 @@ class Product
         $this->description = $description;
     }
 
-    public function save(): void
+    public function save(): bool
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
         }
 
         // Get data to be inserted into the product table
@@ -247,7 +248,12 @@ class Product
         unset($productData['created_date']); // let database add this field
 
         // Perform insertion to the product table
-        $this->insert($productData, 'product');
+        try {
+            $this->insert($productData, 'product');
+        } catch (Exception) {
+            return false;
+        }
+        return true;
     }
 
     public function getAverageRating(): float

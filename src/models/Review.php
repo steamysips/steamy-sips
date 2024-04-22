@@ -157,13 +157,13 @@ class Review
     /**
      * Saves review to database if attributes are valid. review_id and created_date attributes
      * are automatically set by database and any set values are ignored.
-     * @return void
+     * @return bool
      */
-    public function save(): void
+    public function save(): bool
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
         }
 
         // Get data to be inserted into the review table
@@ -175,7 +175,12 @@ class Review
         unset($reviewData['created_date']); // let database handle creation date
 
         // Perform insertion to the review table
-        $this->insert($reviewData, 'review');
+        try {
+            $this->insert($reviewData, 'review');
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
     public function validate(): array

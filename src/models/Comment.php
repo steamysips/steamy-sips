@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Model;
 
 use DateTime;
+use Exception;
 use Steamy\Core\Model;
 
 class Comment
@@ -86,13 +87,13 @@ class Comment
     /**
      * Saves comment to database if attributes are valid. comment_id and created_date attributes
      * are automatically set by database and any set values are ignored.
-     * @return void
+     * @return bool
      */
-    public function save(): void
+    public function save(): bool
     {
         // if attributes are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
         }
 
         // get data to be inserted into the review table
@@ -105,7 +106,12 @@ class Comment
         unset($data['created_date']);
 
         // perform insertion to the review table
-        $this->insert($data, $this->table);
+        try {
+            $this->insert($data, $this->table);
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
     public function toArray(): array
