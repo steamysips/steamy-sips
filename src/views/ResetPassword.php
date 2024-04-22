@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var bool $email_submit_success Whether email was successfully sent
+ * @var string $error
  */
 ?>
 
@@ -13,6 +14,7 @@ declare(strict_types=1);
     <form id="email-submission-form" method="post" action="">
         <label>
             <input type="email" required name="email" placeholder="Email">
+            <small style="color:red;"><?= $error ?? "" ?></small>
         </label>
         <button style="width: 30%" type="submit">Reset password</button>
     </form>
