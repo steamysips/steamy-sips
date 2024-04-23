@@ -7,6 +7,7 @@ namespace Steamy\Model;
 use DateTime;
 use Exception;
 use Steamy\Core\Model;
+use Steamy\Core\Utility;
 
 class Comment
 {
@@ -120,7 +121,7 @@ class Comment
             [
                 'comment_id' => $this->comment_id,
                 'user_id' => $this->user_id,
-                'review_id' => $this->comment_id,
+                'review_id' => $this->review_id,
                 'parent_comment_id' => $this->parent_comment_id,
                 'text' => $this->text,
                 'created_date' => $this->created_date->format('Y-m-d H:i:s'),
