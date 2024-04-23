@@ -68,7 +68,6 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (32,'fdsfdsf','sdfdsfdsfds',7);
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +80,7 @@ DROP TABLE IF EXISTS `comment`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `comment` (
   `comment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `text` varchar(255) NOT NULL,
+  `text` varchar(2000) NOT NULL,
   `created_date` datetime NOT NULL DEFAULT current_timestamp(),
   `parent_comment_id` int(10) unsigned DEFAULT NULL,
   `user_id` int(10) unsigned NOT NULL,
@@ -151,7 +150,7 @@ CREATE TABLE `order` (
   CONSTRAINT `order_fk` FOREIGN KEY (`client_id`) REFERENCES `client` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `order_store_store_id_fk` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`),
   CONSTRAINT `pickup_date_range` CHECK (`pickup_date` is null or `pickup_date` >= `created_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -242,7 +241,7 @@ CREATE TABLE `review` (
   `review_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `rating` int(11) unsigned NOT NULL,
   `created_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `text` text NOT NULL,
+  `text` varchar(2000) NOT NULL,
   `client_id` int(11) unsigned DEFAULT NULL,
   `product_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`review_id`),
@@ -252,7 +251,7 @@ CREATE TABLE `review` (
   CONSTRAINT `review_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `check_rating` CHECK (`rating` between 1 and 5),
   CONSTRAINT `text_length` CHECK (char_length(`text`) >= 2)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,7 +343,7 @@ CREATE TABLE `user` (
   CONSTRAINT `phone_number_length` CHECK (char_length(`phone_no`) > 6),
   CONSTRAINT `first_name_length` CHECK (char_length(`first_name`) > 2),
   CONSTRAINT `last_name_length` CHECK (char_length(`first_name`) > 2)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -365,4 +364,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-23 12:22:28
+-- Dump completed on 2024-04-23 19:06:08
