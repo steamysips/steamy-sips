@@ -28,10 +28,10 @@ function handleAddToCart(e) {
 }
 
 window.addEventListener("DOMContentLoaded", function () {
+  successAddToCartModal.init();
+  commentFormModal.init();
+
   document
     .getElementById("product-customization-form")
     .addEventListener("submit", handleAddToCart);
 });
-
-successAddToCartModal.init();
-commentFormModal.init();
