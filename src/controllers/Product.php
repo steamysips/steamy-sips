@@ -7,6 +7,7 @@ namespace Steamy\Controller;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Client;
+use Steamy\Model\Comment;
 use Steamy\Model\Review;
 use Steamy\Model\User;
 use \Steamy\Model\Product as ProductModel;
@@ -109,6 +110,67 @@ class Product
         return "[" . $str . "]";
     }
 
+    private function handleCommentSubmission()
+    {
+        // if comment valid redirect
+    }
+
+    private function showCommentForm(): void
+    {
+        if (!empty($_GET['reply_to_review'])) {
+            // replying to a review => save review id in form
+            $review_id = filter_var(
+                $_GET['reply_to_review'],
+                FILTER_VALIDATE_INT
+            );
+            if (!$review_id) {
+                unset($this->view_data['comment_form_info']);
+                return;
+            }
+
+            $this->view_data['comment_form_info'] ['review_id'] = $review_id;
+
+            $review = Review::getByID($review_id);
+            if (!$review) {
+                unset($this->view_data['comment_form_info']);
+                return;
+            }
+
+            $this->view_data['comment_form_info'] ['quote_text'] = $review->getText();
+            $this->view_data['comment_form_info'] ['quote_author'] = User::getFullName($review->getClientID());
+            $this->view_data['comment_form_info'] ['quote_date'] = $review->getCreatedDate()->format('Y');
+
+            return;
+        }
+
+
+        if (!empty($_GET['reply_to_comment'])) {
+            // replying to a comment => save only parent comment id in form
+            // (review_id can be determined later)
+            $comment_id = filter_var(
+                $_GET['reply_to_comment'],
+                FILTER_VALIDATE_INT
+            );
+
+            if (!$comment_id) {
+                unset($this->view_data['comment_form_info']);
+                return;
+            }
+
+            $this->view_data['comment_form_info'] ['parent_comment_id'] = $comment_id;
+
+            $comment = Comment::getByID($comment_id);
+            if (!$comment) {
+                unset($this->view_data['comment_form_info']);
+                return;
+            }
+
+            $this->view_data['comment_form_info'] ['quote_text'] = $comment->getText();
+            $this->view_data['comment_form_info'] ['quote_author'] = User::getFullName($comment->getUserID());
+            $this->view_data['comment_form_info'] ['quote_date'] = $comment->getCreatedDate()->format('Y');
+        }
+    }
+
     public function index(): void
     {
         // if product was not found, display error page
@@ -121,12 +183,21 @@ class Product
         }
 
         // handle review submission
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['review_text'])) {
             $this->handleReviewSubmission();
         }
 
-        $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
+        // determine if comment form must be displayed
+        if (!empty($_GET['reply_to_comment']) || !empty($_GET['reply_to_review'])) {
+            $this->showCommentForm();
+        }
 
+        // handle comment submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['comment'])) {
+            $this->handleCommentSubmission();
+        }
+
+        $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
         $this->view(
             'Product',
             $this->view_data,
