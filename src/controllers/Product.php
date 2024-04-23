@@ -110,9 +110,36 @@ class Product
         return "[" . $str . "]";
     }
 
-    private function handleCommentSubmission()
+    private function handleCommentSubmission(): void
     {
-        // if comment valid redirect
+        // if no user is signed in, redirect to login page
+        if (!$this->signed_user) {
+            Utility::redirect('login');
+        }
+
+        $new_comment = new Comment(
+            user_id: $this->signed_user->getUserID(),
+            review_id: filter_var($_POST['review_id'] ?? -1, FILTER_VALIDATE_INT),
+            parent_comment_id: filter_var($_POST['parent_comment_id'] ?? -1, FILTER_VALIDATE_INT),
+            text: trim($_POST['comment'] ?? "")
+        );
+
+        // set review_id
+        if (!empty($_GET['reply_to_comment'])) {
+            // replying to comment
+            $parent_comment = Comment::getByID($new_comment->getParentCommentID());
+            $new_comment->setReviewID($parent_comment->getReviewID());
+        } else {
+            // replying to review
+            $new_comment->setParentCommentID(null);
+        }
+
+        $success = $new_comment->save();
+
+        if ($success) {
+            // if comment valid reload page. This also removes the query parameters from the url
+            Utility::redirect('shop/products/' . $this->product->getProductID());
+        }
     }
 
     private function showCommentForm(): void
