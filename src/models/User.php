@@ -188,9 +188,16 @@ abstract class User
         return $this->phone_no;
     }
 
-    public function getFullName(): string
+    public static function getFullName(int $user_id): ?string
     {
-        return "$this->first_name $this->last_name";
+        $query = "select first_name, last_name from user where user_id = :user_id ";
+        $result = self::query($query, ['user_id' => $user_id]);
+        if (empty($result)) {
+            return null;
+        }
+        $result = $result[0];
+
+        return $result->first_name . " " . $result->last_name;
     }
 
     public function getUserID(): int
