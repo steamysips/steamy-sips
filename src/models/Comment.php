@@ -64,7 +64,7 @@ class Comment
             review_id: $result[0]->review_id,
             comment_id: $result [0]->comment_id,
             text: $result[0]->text,
-            created_date: $result[0]->created_date
+            created_date: Utility::stringToDate($result[0]->created_date)
         );
     }
 
