@@ -95,7 +95,7 @@ class Store
         try {
             Store::query($query, $data);
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

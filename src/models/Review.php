@@ -7,6 +7,7 @@ namespace Steamy\Model;
 use DateTime;
 use Exception;
 use Steamy\Core\Model;
+use Steamy\Core\Utility;
 
 class Review
 {
@@ -77,20 +78,13 @@ class Review
 
         $result = $result[0];
 
-        $date_obj = null;
-        try {
-            $date_obj = new DateTime($result->created_date);
-        } catch (Exception $e) {
-            error_log('Error converting date: ' . $e->getMessage());
-        }
-
         return new Review(
             review_id: $result->review_id,
             product_id: $result->product_id,
             client_id: $result->client_id,
             text: $result->text,
             rating: $result->rating,
-            created_date: $date_obj
+            created_date: Utility::stringToDate($result->created_date)
         );
     }
 

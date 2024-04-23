@@ -62,7 +62,7 @@ trait Database
      * @param array $data data for prepared statement
      * @return false|stdClass
      */
-    protected static function get_row(string $query, array $data = []): false|\stdClass
+    protected static function get_row(string $query, array $data = []): false|stdClass
     {
         $result = self::query($query, $data);
 
