@@ -140,10 +140,9 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
   `order_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `status` varchar(20) DEFAULT NULL,
+  `status` varchar(20) DEFAULT 'pending',
   `created_date` datetime DEFAULT current_timestamp(),
   `pickup_date` datetime DEFAULT NULL,
-  `total_price` decimal(10,2) NOT NULL CHECK (`total_price` >= 0),
   `client_id` int(11) unsigned DEFAULT NULL,
   `store_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`order_id`),
@@ -177,6 +176,7 @@ CREATE TABLE `order_product` (
   `cup_size` varchar(20) DEFAULT NULL,
   `milk_type` varchar(20) DEFAULT NULL,
   `quantity` int(11) unsigned DEFAULT NULL,
+  `unit_price` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `order_product_2fk` (`product_id`),
   CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -365,4 +365,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-21 16:50:20
+-- Dump completed on 2024-04-23 12:22:28
