@@ -103,14 +103,20 @@ function ModalManager(modalID) {
     });
 
     // Add event listeners to modal components
-    document
-      .querySelector(`#${modalID} article > a[data-target="${modalID}"]`)
-      .addEventListener("click", (e) => toggleModal(e)); // close button in top right corner
-    document
-      .querySelector(`#${modalID} article > footer a[data-target="${modalID}"]`)
-      .addEventListener("click", (e) => toggleModal(e)); // close button in footer
 
-    // console.log("Event listeners added for modal");
+    const topCloseButton = document.querySelector(
+      `#${modalID} article > a[data-target="${modalID}"]`,
+    ); // close button in top right corner
+
+    if (topCloseButton !== null)
+      topCloseButton.addEventListener("click", (e) => toggleModal(e));
+
+    const bottomCloseButtom = document.querySelector(
+      `#${modalID} article > footer a[data-target="${modalID}"]`,
+    ); // close button in footer
+
+    if (bottomCloseButtom !== null)
+      bottomCloseButtom.addEventListener("click", (e) => toggleModal(e));
   };
 
   return { openModal, closeModal, init };
