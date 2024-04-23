@@ -240,34 +240,37 @@ class Review
      */
     public function getNestedComments(): array
     {
-        // TODO: Update
-        // Fetch all reviews for the given product ID
-        $reviews = $this->query(
-            "SELECT * FROM review WHERE product_id = :product_id",
-            ['product_id' => $this->product_id]
+        $comments = $this->query(
+            "SELECT * FROM comment WHERE review_id = :review_id",
+            ['review_id' => $this->review_id]
         );
 
-        // Create an associative array to store reviews by their review_id
-        $reviewMap = [];
-        foreach ($reviews as $review) {
-            $reviewMap[$review->review_id] = $review;
-            $reviewMap[$review->review_id]->children = [];
+        if (empty($comments)) {
+            return [];
         }
 
-        // Populate the children array for each review based on parent_review_id
-        foreach ($reviews as $review) {
-            if ($review->parent_review_id !== null) {
-                // Add the review as a child to its parent review
-                $reviewMap[$review->parent_review_id]->children[] = $reviewMap[$review->review_id];
+        // Create an associative array to store comments by their comment_id
+        $commentMap = [];
+        foreach ($comments as $comment) {
+            $commentMap[$comment->comment_id] = $comment;
+            $commentMap[$comment->comment_id]->children = [];
+        }
+
+        // Populate the children array for each comment based on parent_comment_id
+        foreach ($comments as $comment) {
+            // If a comment has a parent
+            if ($comment->parent_comment_id !== null) {
+                // Add the comment as a child of its parent comment
+                $commentMap[$comment->parent_comment_id]->children[] = $commentMap[$comment->comment_id];
             }
         }
 
-        // Filter out reviews that have a parent (i.e., retain only root-level reviews)
-        $nestedReviews = array_filter($reviewMap, function ($review) {
-            return $review->parent_review_id === null;
+        // Filter out comments that have a parent (i.e., retain only root-level comments)
+        $nestedComments = array_filter($commentMap, function ($review) {
+            return $review->parent_comment_id === null;
         });
 
         // Reset the keys of the array to maintain continuity
-        return array_values($nestedReviews);
+        return array_values($nestedComments);
     }
 }
