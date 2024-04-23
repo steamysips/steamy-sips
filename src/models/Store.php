@@ -74,6 +74,24 @@ class Store
     }
 
     /**
+     * @return Store[] An array of all Store objects
+     */
+    public static function getAll(): array
+    {
+        $query = "SELECT store_id FROM store;";
+        $results = self::query($query);
+        if (empty($results)) {
+            return [];
+        }
+
+        $stores = [];
+        foreach ($results as $result) {
+            $stores[] = Store::getByID($result->store_id);
+        }
+        return $stores;
+    }
+
+    /**
      * Inserts current object to database. store_id is set automatically by database
      * @return bool Whether operation was successful
      */
@@ -118,12 +136,12 @@ class Store
         return [];
     }
 
-    public function getStoreId(): int
+    public function getStoreID(): int
     {
         return $this->store_id;
     }
 
-    public function setStoreId(
+    public function setStoreID(
         int $store_id
     ): void {
         $this->store_id = $store_id;
