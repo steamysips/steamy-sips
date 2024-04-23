@@ -94,9 +94,9 @@ function getStars(Review $review): string
 function recurse(Review $review): void
 {
     $reply_link = ROOT . "/reply/" . "id=?";
-    $date = htmlspecialchars($review->getDate()->format('d M Y'));
+    $date = htmlspecialchars($review->getCreatedDate()->format('d M Y'));
     $text = htmlspecialchars($review->getText());
-    $author = htmlspecialchars(Client::getByID($review->getUserID())->getFullName());
+    $author = htmlspecialchars(Client::getByID($review->getClientID())->getFullName());
     $verified_badge = getBadge($review);
     $rating_stars = getStars($review);
 

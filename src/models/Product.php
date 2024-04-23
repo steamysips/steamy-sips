@@ -125,7 +125,7 @@ class Product
                 category: $result->category,
                 price: (float)$result->price,
                 description: $result->description,
-                created_date: $result->created_date
+                created_date: Utility::stringToDate($result->created_date)
             );
             $obj->setProductID($result->product_id);
             $products[] = $obj;
@@ -340,7 +340,7 @@ class Product
         $query = "SELECT * FROM review WHERE product_id = :product_id";
 
         if ($orderByDate) {
-            $query .= ' ORDER BY date;';
+            $query .= ' ORDER BY created_date;';
         }
 
         $params = ['product_id' => $this->product_id];

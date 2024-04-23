@@ -9,6 +9,7 @@ use Steamy\Core\Utility;
 use Steamy\Model\Client;
 use Steamy\Model\Review;
 use Steamy\Model\User;
+use \Steamy\Model\Product as ProductModel;
 
 /**
  * Displays product page when URL follows format `/shop/products/<number>`.
@@ -17,7 +18,7 @@ class Product
 {
     use Controller;
 
-    private ?\Steamy\Model\Product $product = null; // product to be displayed
+    private ?ProductModel $product = null; // product to be displayed
     private array $view_data;
     private ?User $signed_user = null; // currently logged-in user
 
@@ -45,7 +46,7 @@ class Product
 
         // if product id valid fetch product from db
         if ($product_id) {
-            $fetched_product = \Steamy\Model\Product::getByID($product_id);
+            $fetched_product = ProductModel::getByID($product_id);
 
             if ($fetched_product) {
                 $this->product = $fetched_product;
@@ -65,12 +66,10 @@ class Product
         $rating = filter_var($_POST['review_rating'] ?? -1, FILTER_VALIDATE_INT);
 
         $review = new Review(
-            $this->signed_user->getUserID(),
-            $this->product->getProductID(),
-            null,
-            $new_comment,
-            $rating,
-            new \DateTime()
+            product_id: $this->product->getProductID(),
+            client_id: $this->signed_user->getUserID(),
+            text: $new_comment,
+            rating: $rating,
         );
 
         $this->view_data['errors'] = $review->validate();
@@ -80,7 +79,7 @@ class Product
             // save to database
             $review->save();
 
-            // redirect user to same page to prevent multiple submissions of the same form if user reloads
+            // redirect user to current page to prevent multiple submissions of the same form if user reloads
             Utility::redirect('shop/products/' . $this->product->getProductID());
         } else {
             // form values are invalid
@@ -122,7 +121,7 @@ class Product
         }
 
         // handle review submission
-        if (isset($_POST['review_text']) || isset($_POST['review_rating'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleReviewSubmission();
         }
 
