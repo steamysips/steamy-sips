@@ -31,6 +31,7 @@ class Product
         $this->view_data["signed_in_user"] = false;
         $this->view_data["product"] = null;
         $this->view_data["rating_distribution"] = "[]";
+        $this->view_data['comment_form_info'] = [];
 
         // get product id from URL
         $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
@@ -134,11 +135,19 @@ class Product
             $new_comment->setParentCommentID(null);
         }
 
+        $comment_errors = array_values($new_comment->validate());
+        if (count($comment_errors) > 0) {
+            $this->view_data['comment_form_info']['error'] = $comment_errors[0];
+            return;
+        }
+
         $success = $new_comment->save();
 
         if ($success) {
             // if comment valid reload page. This also removes the query parameters from the url
             Utility::redirect('shop/products/' . $this->product->getProductID());
+        } else {
+            $this->view_data['comment_form_info'] ['error'] = 'An unknown error occurred. Please try again later.';
         }
     }
 

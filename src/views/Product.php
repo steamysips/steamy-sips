@@ -253,6 +253,7 @@ if (!empty($comment_form_info)): ?>
                 endif ?>
 
                 <textarea name="comment" placeholder="Your comment" cols="20" rows="5"></textarea>
+                <small style="color:red"><?= $comment_form_info['error'] ?? "" ?></small>
                 <button class="secondary" type="submit">Submit</button>
             </form>
         </article>
