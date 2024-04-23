@@ -7,7 +7,6 @@ namespace Steamy\Core;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Steamy\Model\Client;
 
 /**
  * Class for sending mails to clients
