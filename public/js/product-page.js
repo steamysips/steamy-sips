@@ -1,7 +1,11 @@
+/**
+ * Script handling modals on product page (/shop/products).
+ */
 import { Cart, CartItem } from "./cart";
 import ModalManager from "./modal";
 
-const modal = ModalManager("my-modal");
+const successAddToCartModal = ModalManager("my-modal");
+const commentFormModal = ModalManager("comment-box");
 
 function handleAddToCart(e) {
   // capture form submission
@@ -20,7 +24,7 @@ function handleAddToCart(e) {
   Cart().addItem(item);
 
   // open modal to display success
-  modal.openModal();
+  successAddToCartModal.openModal();
 }
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -29,4 +33,5 @@ window.addEventListener("DOMContentLoaded", function () {
     .addEventListener("submit", handleAddToCart);
 });
 
-modal.init();
+successAddToCartModal.init();
+commentFormModal.init();
