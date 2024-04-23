@@ -101,4 +101,9 @@ class Location
     {
         $this->longitude = $longitude;
     }
+
+    public function getFormattedAddress(): string
+    {
+        return implode(", ", [$this->street, $this->city, District::getByID($this->district_id)->getName()]);
+    }
 }
