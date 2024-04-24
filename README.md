@@ -1,10 +1,10 @@
 # steamy-sips ☕
 
 [![Run tests](https://github.com/creme332/steamy-sips/actions/workflows/test.yml/badge.svg)](https://github.com/creme332/steamy-sips/actions/workflows/test.yml)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![Apache](https://img.shields.io/badge/apache-%23D42029.svg?style=for-the-badge&logo=apache&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?&logo=linux&logoColor=black)
+![Apache](https://img.shields.io/badge/apache-%23D42029.svg?&logo=apache&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?&logo=mysql&logoColor=white)
+![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)
 
 A fully-functional coffee shop website, inspired by Starbucks.
 It was built from scratch without any off-the-shelf PHP framework. A high-level summary of the functionalities
@@ -18,7 +18,7 @@ includes:
 - User account management
 - Administrative functions
 
- For more details, see the [software requirements specification](docs/SOFTWARE_SPECS.md).
+For more details, see the [software requirements specification](docs/SOFTWARE_SPECS.md).
 
 The code for the admin website is found in a separate repository.
 
@@ -52,6 +52,5 @@ Attribution-ShareAlike
 3. Resources used for MVC pattern:
     - https://youtu.be/q0JhJBYi4sw?si=cTdEzzGijlG41ix8
     - https://github.com/kevinisaac/php-mvc
-4. The following resources helped in defining the directory structure of the project:
-    - https://github.com/php-pds/sklseleton
+4. The filesystem was inspired by https://github.com/php-pds/sklseleton
 5. Additional references are included within the code itself.
