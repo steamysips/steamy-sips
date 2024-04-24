@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Steamy\Model;
 
 use DateTime;
-use Exception;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
 
@@ -71,17 +70,35 @@ class Comment
 
     public function validate(): array
     {
-        // TODO: Complete
         $errors = [];
 
         if (strlen($this->text) < 2) {
-            $errors['text'] = "Review text must have at least 2 characters";
+            $errors['text'] = "Comment text must have at least 2 characters";
         }
 
         if ($this->created_date > new DateTime()) {
-            $errors['date'] = "Review date cannot be in the future";
+            $errors['date'] = "Comment date cannot be in the future";
         }
 
+        if (empty(Review::getByID($this->review_id))) {
+            $errors['review_id'] = "Review ID does not exist";
+        }
+
+        if (empty(User::getFullName($this->user_id))) {
+            $errors['user_id'] = "User ID does not exist";
+        }
+
+        if (!empty($this->parent_comment_id)) {
+            // parent comment ID was set => check if parent comment ID is valid
+            $parent_comment = Comment::getByID($this->parent_comment_id);
+
+            if (empty($parent_comment)) {
+                $errors['parent_comment_id'] = 'Parent comment does not exist';
+            } elseif ($parent_comment->getReviewID() !== $this->review_id) {
+                // comment and parent must descend from the same review
+                $errors['parent_comment_id'] = "Comment and parent comment must have the same review";
+            }
+        }
         return $errors;
     }
 
@@ -107,12 +124,15 @@ class Comment
         unset($data['created_date']);
 
         // perform insertion to the review table
-        try {
-            $this->insert($data, $this->table);
-            return true;
-        } catch (Exception) {
+        $inserted_id = $this->insert($data, $this->table);
+
+        if ($inserted_id === null) {
             return false;
         }
+
+        $this->comment_id = $inserted_id;
+
+        return true;
     }
 
     public function toArray(): array
