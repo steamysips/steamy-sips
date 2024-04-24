@@ -144,8 +144,16 @@ class Product
         $success = $new_comment->save();
 
         if ($success) {
-            // if comment valid reload page. This also removes the query parameters from the url
-            Utility::redirect('shop/products/' . $this->product->getProductID());
+            // comment creation was successful
+
+            // create link to product page
+            $redirect_link = 'shop/products/' . $this->product->getProductID();
+
+            // scroll to comment on page
+            $redirect_link .= '#comment-' . $new_comment->getCommentID();
+
+            // reloading page to remove any query parameters from the url
+            Utility::redirect($redirect_link);
         } else {
             $this->view_data['comment_form_info'] ['error'] = 'An unknown error occurred. Please try again later.';
         }

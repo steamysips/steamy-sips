@@ -149,10 +149,10 @@ function printComments(StdClass $comment): void
     $date = htmlspecialchars($comment->created_date);
     $text = htmlspecialchars($comment->text);
     $author = htmlspecialchars(User::getFullName($comment->user_id));
-
+    $comment_id = 'comment-' . $comment->comment_id;
     echo <<<EOL
                 <li>
-                <article>
+                <article id = "$comment_id">
                    <hgroup> 
                         <h5>$author</h5>
                         <h6 class="review-date">$date</h6>
