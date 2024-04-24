@@ -6,12 +6,13 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Model\Product;
+use Steamy\Model\Store;
 
 class Cart
 {
     use Controller;
 
-    private array $view_data = ['cart_items' => []];
+    private array $view_data = ['cart_items' => [], 'stores' => []];
 
     private function displayCart(): void
     {
@@ -33,6 +34,8 @@ class Cart
 
             $this->view_data['cart_items'][] = $cart_item;
         }
+
+        $this->view_data['stores'] = Store::getAll();
 
         $this->view(
             'cart',

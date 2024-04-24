@@ -7,10 +7,9 @@ namespace Steamy\Core;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Steamy\Model\Client;
 
 /**
- * Class for sending mails to clients
+ * Class for sending mails
  *
  * Reference: https://github.com/PHPMailer/PHPMailer/blob/master/examples/gmail.phps
  */
@@ -66,9 +65,14 @@ class Mailer
     }
 
     /**
-     * @throws Exception
+     * @param string $email Gmail address of recipient
+     * @param string $subject Email subject line
+     * @param string $html_message Message body as an HTML string
+     * @param string $plain_message Message as plain text
+     * @return bool false on error - See the ErrorInfo property for details of the error
+     * @throws Exception Error when calling addAddress or msgHTML
      */
-    public function sendMail(string $email, string $subject, $html_message, $plain_message): void
+    public function sendMail(string $email, string $subject, string $html_message, string $plain_message): bool
     {
         //Set who the message is to be sent to
         $this->mail->addAddress($email);
@@ -76,15 +80,15 @@ class Mailer
         //Set the subject line
         $this->mail->Subject = $subject;
 
-        //Read an HTML message body from an external file, convert referenced images to embedded,
-        //convert HTML into a basic plain-text alternative body
+        // Read an HTML message body from an external file, convert referenced images to embedded,
+        // convert HTML into a basic plain-text alternative body
         $this->mail->msgHTML($html_message);
 
-        //Replace the plain text body with one created manually
+        // Replace the plain text body with one created manually
         $this->mail->AltBody = $plain_message;
 
-        //send the message
-        $this->mail->send();
+        // Send the message
+        return $this->mail->send();
     }
 }
 

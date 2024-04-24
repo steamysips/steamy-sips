@@ -38,7 +38,7 @@ Install composer dependencies:
 composer update
 ```
 
-In the [`src/core/`](../src/core/config.php) folder, create a `.env` file with the following contents:
+In the root directory, create a `.env` file with the following contents:
 
 ```php
 PUBLIC_ROOT="http://localhost/steamy-sips/public"
@@ -116,6 +116,7 @@ In the root directory of the project, run:
 ```bash
 npm install
 ```
+
 ## Autoload setup
 
 Whenever changes are made to the autoload settings in `composer.json`, you must run `composer dump-autoload`.

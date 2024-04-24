@@ -17,7 +17,7 @@ Optionally, you can display a live error log:
 sudo tail -f /var/log/apache2/error.log
 ```
 
-Enter the `PUBLIC_ROOT` value (e.g., http://localhost/steamy-sips/public/) from [`src/core/.env`](../src/core/.env) in
+Enter the `PUBLIC_ROOT` value (e.g., http://localhost/steamy-sips/public/) from [`.env`](../.env) in
 your browser
 to access the client website.
 

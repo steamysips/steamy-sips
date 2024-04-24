@@ -44,7 +44,7 @@ function displayProduct($product): void
         <input value="<?= htmlspecialchars($search_keyword) ?>" name="keyword" type="search" placeholder="Search"/>
     </label>
 
-    <div>
+    <div class="grid">
         <label>
             <select name="sort">
                 <option value="" selected>Sort By</option>
@@ -75,12 +75,13 @@ function displayProduct($product): void
                 ?>
             </ul>
         </details>
+
+        <button class="secondary" type="submit">Filter</button>
     </div>
 
-    <button type="submit">Submit</button>
 </form>
 
-<main class="container">
+<main class="container" style="padding-top:0">
     <div id="item-grid">
         <?php
         foreach ($products as $product) {

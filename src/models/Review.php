@@ -13,79 +13,45 @@ class Review
 {
     use Model;
 
-    private ?int $product_id;
-    private ?int $user_id;
-    private ?int $parent_review_id; // a top-level review does not have a parent
     private int $review_id;
+    private int $product_id;
+
+    /**
+     * ID of client who wrote the review
+     * @var int
+     */
+    private int $client_id;
     private string $text;
     private int $rating;
-    private Datetime $date;
-
+    private Datetime $created_date;
     public const MAX_RATING = 5;
     public const MIN_RATING = 1;
 
     public function __construct(
-        ?int $user_id,
-        ?int $product_id,
-        ?int $parent_review_id,
-        string $text,
-        int $rating,
-        DateTime $date
+        ?int $review_id = null,
+        ?int $product_id = null,
+        ?int $client_id = null,
+        ?string $text = '',
+        ?int $rating = null,
+        ?DateTime $created_date = null
     ) {
-        $this->review_id = -1;
-        $this->user_id = $user_id;
-        $this->product_id = $product_id;
-        $this->parent_review_id = $parent_review_id;
-        $this->text = $text;
-        $this->rating = $rating;
-        $this->date = $date;
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    public static function getAll(): array
-    {
-        $query = "SELECT * FROM review";
-        $results = self::query($query);
-
-        // convert results to an array of Review
-        $reviews = [];
-        foreach ($results as $result) {
-            // convert date to DateTime object
-            $date_obj = null;
-            try {
-                $date_obj = new DateTime($result->date);
-            } catch (Exception $e) {
-                error_log('Error converting date: ' . $e->getMessage());
-            }
-
-            $obj = new Review(
-                $result->user_id,
-                $result->product_id,
-                $result->parent_review_id,
-                $result->text,
-                $result->rating,
-                $date_obj,
-            );
-
-            $obj->setReviewID($result->review_id);
-            $reviews[] = $obj;
-        }
-        return $reviews;
+        $this->review_id = $review_id ?? -1;
+        $this->product_id = $product_id ?? -1;
+        $this->client_id = $client_id ?? -1;
+        $this->text = $text ?? '';
+        $this->rating = $rating ?? 0;
+        $this->created_date = $created_date ?? new DateTime();
     }
 
     public function toArray(): array
     {
         return [
-            'user_id' => $this->user_id,
             'review_id' => $this->review_id,
             'product_id' => $this->product_id,
-            'parent_review_id' => $this->parent_review_id,
+            'client_id' => $this->client_id,
             'text' => $this->text,
-            'date' => $this->date,
-            'rating' => $this->rating
+            'rating' => $this->rating,
+            'created_date' => $this->created_date->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -94,38 +60,32 @@ class Review
      *
      * @param int $review_id The ID of the review to retrieve.
      * @return Review|null The review object if found, otherwise null.
-     * @throws Exception If an error occurs during the database query.
      */
     public static function getByID(int $review_id): ?Review
     {
-        if ($review_id < 0) {
+        if (empty($review_id) || $review_id < 0) {
             return null;
         }
 
         $query = "SELECT * FROM review WHERE review_id = :id";
         $params = ['id' => $review_id];
 
-        try {
-            $result = Review::query($query, $params); // Execute the query
-            if (!empty($result)) {
-                $date = new DateTime($result[0]->date);
-                // Create a new Review object using the retrieved data
-                $review = new Review(
-                    $result[0]->user_id,
-                    $result[0]->product_id,
-                    $result[0]->parent_review_id,
-                    $result[0]->text,
-                    $result[0]->rating,
-                    $date
-                );
-                $review->setReviewID($review_id); // Set the review ID
-                return $review;
-            }
-        } catch (Exception $e) {
-            throw new Exception("Error fetching review: " . $e->getMessage());
+        $result = Review::query($query, $params);
+
+        if (empty($result)) {
+            return null;
         }
 
-        return null; // Return null if review not found
+        $result = $result[0];
+
+        return new Review(
+            review_id: $result->review_id,
+            product_id: $result->product_id,
+            client_id: $result->client_id,
+            text: $result->text,
+            rating: $result->rating,
+            created_date: Utility::stringToDate($result->created_date)
+        );
     }
 
     public function getReviewID(): int
@@ -138,14 +98,14 @@ class Review
         $this->review_id = $review_id;
     }
 
-    public function getUserID(): ?int
+    public function getClientID(): int
     {
-        return $this->user_id;
+        return $this->client_id;
     }
 
-    public function setUserID(int $user_id): void
+    public function setClientID(int $client_id): void
     {
-        $this->review_id = $user_id;
+        $this->review_id = $client_id;
     }
 
     public function getProductID(): ?int
@@ -156,17 +116,6 @@ class Review
     public function setProductID(int $productID): void
     {
         $this->product_id = $productID;
-    }
-
-    public function getParentReviewID(): ?int
-    {
-        return $this->parent_review_id;
-    }
-
-
-    public function setParentReviewID(int $parent_review_id): void
-    {
-        $this->review_id = $parent_review_id;
     }
 
     public function getText(): string
@@ -189,30 +138,43 @@ class Review
         $this->rating = $rating;
     }
 
-    public function getDate(): DateTime
+    public function getCreatedDate(): DateTime
     {
-        return $this->date;
+        return $this->created_date;
     }
 
-    public function setDate(DateTime $date): void
+    public function setCreatedDate(DateTime $created_date): void
     {
-        $this->date = $date;
+        $this->created_date = $created_date;
     }
 
-    public function save(): void
+    /**
+     * Saves review to database if attributes are valid. review_id and created_date attributes
+     * are automatically set by database and any set values are ignored.
+     * @return bool
+     */
+    public function save(): bool
     {
         // If attributes of the object are invalid, exit
         if (count($this->validate()) > 0) {
-            return;
+            return false;
         }
+
         // Get data to be inserted into the review table
         $reviewData = $this->toArray();
 
         // Remove review_id as it is auto-incremented in database
         unset($reviewData['review_id']);
 
+        unset($reviewData['created_date']); // let database handle creation date
+
         // Perform insertion to the review table
-        $this->insert($reviewData, 'review');
+        try {
+            $this->insert($reviewData, 'review');
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
     public function validate(): array
@@ -223,11 +185,20 @@ class Review
             $errors['text'] = 'Review text must have at least 2 characters';
           }
 
-        if ($this->rating < 1 || $this->rating > 5){
-            $errors['rating'] = "Rating must be between 1 and 5";
+        if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
+            "options" => [
+                "min_range" => Review::MIN_RATING,
+                "max_range" => Review::MAX_RATING
+            ]
+        ])) {
+            $errors['rating'] = sprintf(
+                "Review must be between %d and %d",
+                Review::MIN_RATING,
+                Review::MAX_RATING
+            );
         }
 
-        if ($this->date > new DateTime()) {
+        if ($this->created_date > new DateTime()) {
             $errors['date'] = "Review date cannot be in the future";
         }
 
@@ -248,7 +219,7 @@ class Review
         SELECT COUNT(*) 
         FROM order_product op
         JOIN `order` o ON op.order_id = o.order_id
-        JOIN review r ON r.user_id = o.user_id
+        JOIN review r ON r.client_id = o.client_id
         WHERE r.review_id = :review_id 
         AND op.product_id = :product_id
         EOL;
@@ -259,4 +230,47 @@ class Review
         return empty($result);
     }
 
+    /**
+     * Returns an array of comments where each comment has a
+     * `children` attribute but no `parent_comment_id` attribute.
+     * The `children` attribute stores an arrays of comments
+     * which are children of the current comment.
+     *
+     * @return array An array of comments in nested format
+     */
+    public function getNestedComments(): array
+    {
+        $comments = $this->query(
+            "SELECT * FROM comment WHERE review_id = :review_id",
+            ['review_id' => $this->review_id]
+        );
+
+        if (empty($comments)) {
+            return [];
+        }
+
+        // Create an associative array to store comments by their comment_id
+        $commentMap = [];
+        foreach ($comments as $comment) {
+            $commentMap[$comment->comment_id] = $comment;
+            $commentMap[$comment->comment_id]->children = [];
+        }
+
+        // Populate the children array for each comment based on parent_comment_id
+        foreach ($comments as $comment) {
+            // If a comment has a parent
+            if ($comment->parent_comment_id !== null) {
+                // Add the comment as a child of its parent comment
+                $commentMap[$comment->parent_comment_id]->children[] = $commentMap[$comment->comment_id];
+            }
+        }
+
+        // Filter out comments that have a parent (i.e., retain only root-level comments)
+        $nestedComments = array_filter($commentMap, function ($review) {
+            return $review->parent_comment_id === null;
+        });
+
+        // Reset the keys of the array to maintain continuity
+        return array_values($nestedComments);
+    }
 }

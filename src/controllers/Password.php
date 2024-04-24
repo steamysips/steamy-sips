@@ -50,11 +50,11 @@ class Password
     {
         $submitted_email = filter_var($_POST['email'] ?? "", FILTER_VALIDATE_EMAIL);
 
+        // check if email has a valid format
         if (empty($submitted_email)) {
             $this->view_data['error'] = 'Invalid email';
             return;
         }
-        // email is valid
 
         // get user ID corresponding to user email
         $userId = User::getUserIdByEmail($submitted_email);
@@ -76,7 +76,13 @@ class Password
         // Send email to user with password reset link and user id
         $passwordResetLink = ROOT . "/password/reset?token=" . $token_info['token'] .
             "&id=" . $token_info['request_id'];
-        $this->sendResetEmail($submitted_email, $passwordResetLink);
+
+        try {
+            $this->sendResetEmail($submitted_email, $passwordResetLink);
+            $this->view_data['email_submit_success'] = true;
+        } catch (Exception) {
+            return;
+        }
     }
 
     /**

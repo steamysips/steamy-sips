@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 // load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../..');
 $dotenv->load();
 
 // define absolute URL to public folder
