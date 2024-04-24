@@ -7,7 +7,8 @@ declare(strict_types=1);
  *
  * @var Product[] $products Array of all products as fetched from database
  * @var String[] $categories Array of all product category names
- * @var $search_keyword string keyword used to filter products
+ * @var string $search_keyword keyword used to filter products
+ * @var string $sort_option Sort By option selected by user
  */
 
 use Steamy\Model\Product;
@@ -47,10 +48,10 @@ function displayProduct($product): void
     <div class="grid">
         <label>
             <select name="sort">
-                <option value="" selected>Sort By</option>
-                <option value="newest">Newest</option>
-                <option value="priceDesc">Price: High-Low</option>
-                <option value="priceAsc">Price: Low-High</option>
+                <option value="" <?= empty($sort_option) ? "selected" : "" ?>>Sort By</option>
+                <option value="newest" <?= $sort_option === "newest" ? "selected" : "" ?>>Newest</option>
+                <option value="priceDesc" <?= $sort_option === "priceDesc" ? "selected" : "" ?>>Price: High-Low</option>
+                <option value="priceAsc" <?= $sort_option === "priceAsc" ? "selected" : "" ?>>Price: Low-High</option>
             </select>
         </label>
 
