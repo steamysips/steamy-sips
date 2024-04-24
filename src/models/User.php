@@ -217,7 +217,7 @@ abstract class User
         $query = "SELECT user_id FROM user WHERE email = :email";
         $result = self::query($query, ['email' => $email]);
 
-        if (!$result || count($result) == 0) {
+        if (empty($result)) {
             return null;
         }
         return $result[0]->user_id;
