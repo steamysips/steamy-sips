@@ -108,7 +108,7 @@ class Review
         $this->review_id = $client_id;
     }
 
-    public function getProductID(): ?int
+    public function getProductID(): int
     {
         return $this->product_id;
     }
@@ -181,9 +181,9 @@ class Review
     {
         $errors = [];
 
-        if (empty($this->text) || strlen($this->text) < 2) {
-            $errors['text'] = 'Review text must have at least 2 characters';
-          }
+        if (strlen($this->text) < 2) {
+            $errors['text'] = "Review text must have at least 2 characters";
+        }
 
         if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
             "options" => [
