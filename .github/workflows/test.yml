@@ -32,6 +32,7 @@ jobs:
 
       - name: Setup database
         run: |
+          mysql -V
           sudo /etc/init.d/mysql start
           mysql -e "CREATE DATABASE IF NOT EXISTS $TEST_DB_NAME;" -u$DB_USER -p$DB_PASSWORD
           mysql -D$TEST_DB_NAME -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/dump/cafe.sql"

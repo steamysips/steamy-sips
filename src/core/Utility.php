@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Steamy\Core;
 
+use DateTime;
+use Exception;
+
 /**
  * Utility class containing various helper functions.
  */
@@ -124,5 +127,14 @@ class Utility
 
         // Return the final result, which is the distance between the two strings
         return $dp[$m][$n];
+    }
+
+    public static function stringToDate(string $date): ?DateTime
+    {
+        try {
+            return new DateTime($date);
+        } catch (Exception) {
+            return null;
+        }
     }
 }

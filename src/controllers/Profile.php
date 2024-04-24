@@ -92,7 +92,7 @@ class Profile
         );
 
         // initialize user details for template
-        $this->data["name"] = $this->signed_client->getFullName();
+        $this->data["name"] = $this->signed_client->getFirstName() . " " . $this->signed_client->getLastName();
         $this->data["email"] = $this->signed_client->getEmail();
         $this->data["address"] = $this->signed_client->getAddress();
 

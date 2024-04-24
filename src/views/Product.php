@@ -8,11 +8,12 @@ declare(strict_types=1);
  * @var $default_review string default review text in form
  * @var $default_rating int default rating in form
  * @var $rating_distribution string An array containing the percentages of ratings
+ * @var $comment_form_info ?array Array with information to be displayed on comment form
  */
 
-use Steamy\Model\Client;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
+use Steamy\Model\User;
 
 
 /**
@@ -87,16 +88,16 @@ function getStars(Review $review): string
 }
 
 /**
- * Outputs sanitized HTML code to display a review and its children.
+ * Outputs sanitized HTML code to display a review and its comments.
  * @param Review $review
  * @return void
  */
-function recurse(Review $review): void
+function printReview(Review $review): void
 {
-    $reply_link = ROOT . "/reply/" . "id=?";
-    $date = htmlspecialchars($review->getDate()->format('d M Y'));
+    $reply_link = "?reply_to_review=" . $review->getReviewID();
+    $date = htmlspecialchars($review->getCreatedDate()->format('d M Y'));
     $text = htmlspecialchars($review->getText());
-    $author = htmlspecialchars(Client::getByID($review->getUserID())->getFullName());
+    $author = htmlspecialchars(User::getFullName($review->getClientID()));
     $verified_badge = getBadge($review);
     $rating_stars = getStars($review);
 
@@ -124,11 +125,58 @@ function recurse(Review $review): void
                 </article>
                 EOL;
 
-    // print child comments if any
-    if (isset($review->children)) {
-        foreach ($review->children as $child_comment) {
+    // print comments if any
+    $comments = $review->getNestedComments();
+    if (!empty($comments)) {
+        foreach ($comments as $child_comment) {
             echo "<ul>";
-            recurse($child_comment);
+            printComments($child_comment);
+            echo "</ul>";
+        }
+    }
+
+    echo "</li>";
+}
+
+/**
+ * Outputs sanitized HTML code to a comment and its children.
+ * @param StdClass $comment
+ * @return void
+ */
+function printComments(StdClass $comment): void
+{
+    $reply_link = "?reply_to_comment=" . $comment->comment_id;
+    $date = htmlspecialchars($comment->created_date);
+    $text = htmlspecialchars($comment->text);
+    $author = htmlspecialchars(User::getFullName($comment->user_id));
+
+    echo <<<EOL
+                <li>
+                <article>
+                   <hgroup> 
+                        <h5>$author</h5>
+                        <h6 class="review-date">$date</h6>
+                   </hgroup>
+                   
+                    <p>$text</p>
+                    <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
+                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                          stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
+                           fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
+                            -3v-8a3 3 0 0 1 3 -3h12z" />
+                           <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
+                         </svg>
+                    </a>
+
+                </article>
+                EOL;
+
+    // print child comments if any
+    if (!empty($comment->children)) {
+        foreach ($comment->children as $child_comment) {
+            echo "<ul>";
+            printComments($child_comment);
             echo "</ul>";
         }
     }
@@ -164,6 +212,54 @@ function recurse(Review $review): void
         </footer>
     </article>
 </dialog>
+
+<?php
+// display comment form if user previously clicked on reply to button
+if (!empty($comment_form_info)): ?>
+    <dialog open id="comment-box">
+        <article style="width: 45%;">
+            <a href="#"
+               aria-label="Close"
+               class="close"
+               data-target="comment-box"
+            >
+            </a>
+            <h3>Reply to:</h3>
+
+            <blockquote>
+                <p><?= htmlspecialchars($comment_form_info['quote_text']) ?></p>
+                <footer>
+                    - <?= htmlspecialchars($comment_form_info['quote_author']) ?>,
+                    <?= htmlspecialchars($comment_form_info['quote_date']) ?>
+                </footer>
+            </blockquote>
+
+            <form action="" method="post">
+                <?php
+                if (!empty($comment_form_info['review_id'])): ?>
+                    <input type="hidden" name="review_id"
+                           value="<?= filter_var($comment_form_info['review_id'], FILTER_SANITIZE_NUMBER_INT) ?>">
+                <?php
+                endif ?>
+
+                <?php
+                if (!empty($comment_form_info['parent_comment_id'])): ?>
+                    <input type="hidden" name="parent_comment_id"
+                           value="<?= filter_var(
+                               $comment_form_info['parent_comment_id'],
+                               FILTER_SANITIZE_NUMBER_INT
+                           ) ?>">
+                <?php
+                endif ?>
+
+                <textarea name="comment" placeholder="Your comment" cols="20" rows="5"></textarea>
+                <small style="color:red"><?= $comment_form_info['error'] ?? "" ?></small>
+                <button class="secondary" type="submit">Submit</button>
+            </form>
+        </article>
+    </dialog>
+<?php
+endif ?>
 
 <main class="container">
     <div id="product-info" class="grid">
@@ -259,18 +355,17 @@ function recurse(Review $review): void
     <div id="reviews">
         <ul>
             <?php
-            // print top-level comments
+            // print reviews with respective comments
             $reviews = $product->getReviews();
             foreach ($reviews as $review) {
-                recurse($review);
+                printReview($review);
             }
             ?>
         </ul>
-
     </div>
 </main>
 
-<script type="module" src="<?= ROOT ?>/js/add-to-cart.js"></script>
+<script type="module" src="<?= ROOT ?>/js/product-page.js"></script>
 
 <script defer>
   const labels = ["5 star", "4 star", "3 star", "2 star", "1 star"];

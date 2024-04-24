@@ -7,6 +7,7 @@ namespace Steamy\Controller;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Product;
+use Steamy\Controller\Product as ProductController;
 
 /**
  * Displays all products when URL is /shop
@@ -86,7 +87,7 @@ class Shop
         // check if URL follows format /shop/products/<number>
         if (preg_match("/^shop\/products\/[0-9]+$/", $_GET['url'])) {
             // let Product controller handle this
-            (new \Steamy\Controller\Product())->index();
+            (new ProductController())->index();
             return;
         }
 

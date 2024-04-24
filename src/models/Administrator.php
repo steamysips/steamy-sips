@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use Steamy\Core\Utility;
+use Exception;
 
 class Administrator extends User
 {
@@ -56,14 +56,13 @@ class Administrator extends User
 
     /***
      * Inserts current administrator object to database.
-     * @return void
+     * @return bool
      */
-    public function save(): void
+    public function save(): bool
     {
         // if attributes of object are invalid, exit
         if (count($this->validate()) > 0) {
-            Utility::show($this->validate());
-            return;
+            return false;
         }
 
         // get data to be inserted to user table
@@ -75,10 +74,14 @@ class Administrator extends User
         // perform insertion to user table
         $this->insert($user_data, 'user');
 
-        $inserted_record = self::first($user_data, 'user');
+        try {
+            $inserted_record = self::first($user_data, 'user');
+        } catch (Exception) {
+            return false;
+        }
 
         if (!$inserted_record) {
-            return;
+            return false;
         }
 
         // get data to be inserted to administrator table
@@ -89,7 +92,12 @@ class Administrator extends User
         ];
 
         // perform insertion to administrator table
-        $this->insert($admin_data, $this->table);
+        try {
+            $this->insert($admin_data, $this->table);
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
 

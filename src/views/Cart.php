@@ -1,23 +1,33 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * Variables below are defined in Cart controller.
  *
  * @var array $cart_items Represents an array of cart items, where each item is an object containing information
  * about a product, including its quantity, cupSize and milkType attributes.
+ * @var Store[] $stores All stores
  */
+
+use Steamy\Model\Store;
+
 ?>
 
 <main class="container">
     <h1>Shopping Cart</h1>
 
     <label for="store_location">Choose store:</label>
-    <select id="store_location" name="store_location">
-        <option value="location1">Location 1</option>
-        <option value="location2">Location 2</option>
-        <option value="location3">Location 3</option>
-        <!-- TODO: Add more options as needed -->
+    <select id="store_location" name="store_id">
+        <?php
+        foreach ($stores as $store) {
+            $store_id = filter_var($store->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+            $address = htmlspecialchars($store->getAddress()->getFormattedAddress());
+            echo <<< EOL
+                <option value="$store_id">$address</option>
+            EOL;
+        }
+        ?>
     </select>
 
     <?php
