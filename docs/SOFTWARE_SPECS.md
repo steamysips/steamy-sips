@@ -115,14 +115,14 @@ Clients should be able to:
 - Log in to their account.
 - Log out of their account.
 - View their profile and their personal details.
-- Edit their personal details on their profile page.
-- Permanently delete their account.
-- View their order history.
-- Cancel a pending order.
-- Reorder a previous order.
+- Edit their personal details from their profile page.
+- Permanently delete their account from their profile page.
+- View their order history on their profile page.
+- Cancel a pending order from their profile page.
+- Reorder a previous order from their profile page.
 - Confirm their purchase and checkout.
-- Write a review for any product.
-- Comment under any product review.
+- Review any product. A review has a rating (1-5) and a description. 
+- Comment on any product review. Unlike a review, a comment does not include a rating.
 - Receive an email notification after placing an order.
 
 ### Administrator
@@ -137,6 +137,7 @@ Administrators should be able to:
 - Search for orders by customer name.
 - Update the status of orders (e.g., confirmed, in-progress, delivered).
 - Send emails to clients about special promotions, discounts, or important updates.
+- Comment on a review. Unlike a review, a comment does not include a rating.
 - Respond to client reviews.
 - Delete client reviews.
 - Print a report with sales trends and other key performance indicators.
