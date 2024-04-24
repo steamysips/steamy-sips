@@ -17,7 +17,7 @@ trait Database
      */
     private static function connect(): PDO
     {
-        $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME;
+        $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
         try {
             return new PDO($string, DB_USERNAME, DB_PASSWORD);
         } catch (PDOException $e) {
