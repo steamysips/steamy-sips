@@ -114,6 +114,7 @@ class Shop
         // initialize view variables
         $this->data['search_keyword'] = $_GET['keyword'] ?? "";
         $this->data['categories'] = Product::getCategories();
+        $this->data['sort_option'] = $_GET['sort'] ?? "";
 
         $this->view(
             'Shop',
