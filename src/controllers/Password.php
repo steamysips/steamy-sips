@@ -11,9 +11,14 @@ use Steamy\Core\Controller;
 
 /**
  * Controller responsible for managing the entire password reset user flow. It is invoked
- * for relative urls of the form /password. It
- * displays a form asking for user email, handles email submission, sends email,
- * handles submission for new password.
+ * for root-relative urls of the form `/password`. The following actions are performed:
+ * 1. Display a form asking for user email.
+ * 2. Handle email submission.
+ * 3. Send email to user.
+ * 4. Display form asking for new password
+ * 4. Handle new password submission.
+ *
+ * The user flow for resetting passwords was adapted from https://stackoverflow.com/a/1102817/17627866
  */
 class Password
 {
