@@ -82,12 +82,12 @@ trait Model
     }
 
     /**
-     * Insert a record in the table
+     * Insert a record in a table
      * @param array $data An associative array representing the values to be inserted.
      * @param string $table_name Name of table without backticks. Defaults to $this->table.
-     * @return void
+     * @return int|null ID of inserted record.
      */
-    protected function insert(array $data, string $table_name = ""): void
+    protected function insert(array $data, string $table_name = ""): ?int
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
         $keys = array_keys($data);
@@ -106,7 +106,14 @@ trait Model
 
         $query .= ")";
 
-        self::query($query, $data);
+        $con = self::connect();
+        $stm = $con->prepare($query);
+        $stm->execute($data);
+
+        $lastInsertID = $con->lastInsertId();
+        $con = null;
+
+        return empty($lastInsertID) ? null : (int)$lastInsertID;
     }
 
     /**
