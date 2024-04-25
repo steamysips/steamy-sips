@@ -9,14 +9,13 @@ use Steamy\Model\District;
 final class ClientTest extends TestCase
 {
     private ?Client $dummy_client;
-    private District $district;
 
     public function setUp(): void
     {
-        $this->district = new District(1, 'Moka');
+        $district = District::getByID(1);
         $this->dummy_client = new Client(
             "john_u@gmail.com", "john", "johhny", "abcd",
-            "13213431", $this->district, "Royal Road", "Curepipe"
+            "13213431", $district, "Royal Road", "Curepipe"
         );
     }
 
