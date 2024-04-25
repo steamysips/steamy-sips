@@ -28,7 +28,7 @@ declare(strict_types=1);
     <link rel="stylesheet" href="<?= ROOT ?>/styles/global.css"/>
 
     <!-- picocss theme switcher-->
-    <script src="<?= ROOT ?>/js/minimal-theme-switcher.js" defer></script>
+    <script src="<?= ROOT ?>/js/minimal-theme-switcher.js"></script>
 
     <?= $template_tags ?>
 
