@@ -34,25 +34,29 @@ trait Database
     }
 
     /**
-     * Executes a prepared statement
+     * Queries database using a prepared statement
      * @param $query string prepared statement
      * @param $data array associative array
+     * @param int $mode Controls the contents of the returned array as documented in PDOStatement::fetch.
+     * Defaults to value of PDO::FETCH_OBJ.
      * @return false|array
      */
-    protected static function query(string $query, array $data = []): false|array
+    protected static function query(string $query, array $data = [], int $mode = PDO::FETCH_OBJ): false|array
     {
         $con = self::connect();
         $stm = $con->prepare($query);
+        $success = $stm->execute($data);
 
-        $check = $stm->execute($data);
-
-        if ($check) {
-            $result = $stm->fetchAll(PDO::FETCH_OBJ);
-
-            if ($result && count($result)) {
-                return $result;
-            }
+        if (!$success) {
+            return false;
         }
+
+        $result = $stm->fetchAll($mode);
+
+        if ($result && count($result)) {
+            return $result;
+        }
+
         return false;
     }
 
