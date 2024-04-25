@@ -192,7 +192,7 @@ class Review
             ]
         ])) {
             $errors['rating'] = sprintf(
-                "Review must be between %d and %d",
+                "Rating must be between %d and %d",
                 Review::MIN_RATING,
                 Review::MAX_RATING
             );
