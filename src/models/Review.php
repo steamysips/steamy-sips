@@ -170,7 +170,11 @@ class Review
 
         // Perform insertion to the review table
         try {
-            $this->insert($reviewData, 'review');
+            $inserted_id = $this->insert($reviewData, 'review');
+            if ($inserted_id === null) {
+                return false;
+            }
+            $this->review_id = $inserted_id;
             return true;
         } catch (Exception) {
             return false;
@@ -192,7 +196,7 @@ class Review
             ]
         ])) {
             $errors['rating'] = sprintf(
-                "Review must be between %d and %d",
+                "Rating must be between %d and %d",
                 Review::MIN_RATING,
                 Review::MAX_RATING
             );
