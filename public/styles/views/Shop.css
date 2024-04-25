@@ -10,13 +10,17 @@
   display: flex;
   flex-direction: column;
   align-content: center;
+  outline: 1px dotted gray;
 }
 
 #item-grid > a img {
   height: 170px;
   width: 170px;
   margin: auto;
+}
 
+#item-grid > a img:hover {
+  scale: 1.1;
 }
 
 #item-grid h5 {
