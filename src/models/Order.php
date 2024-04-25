@@ -68,7 +68,11 @@ class Order
         Utility::show($order_data);
         // Perform insertion into the order table
         try {
-            $this->insert($order_data);
+            $new_id = $this->insert($order_data);
+            if ($new_id === null) {
+                return false;
+            }
+            $this->order_id = $new_id;
             return true;
         } catch (Exception $e) {
             echo $e;

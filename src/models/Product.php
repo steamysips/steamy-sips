@@ -249,11 +249,15 @@ class Product
 
         // Perform insertion to the product table
         try {
-            $this->insert($productData, 'product');
+            $new_id = $this->insert($productData, 'product');
+            if ($new_id === null) {
+                return false;
+            }
+            $this->product_id = $new_id;
+            return true;
         } catch (Exception) {
             return false;
         }
-        return true;
     }
 
     public function getAverageRating(): float
