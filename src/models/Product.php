@@ -78,7 +78,7 @@ class Product
      */
     public static function getCategories(): array
     {
-        $query = "SELECT category FROM product";
+        $query = "SELECT DISTINCT category FROM product";
         $result = self::query($query);
 
         if (empty($result)) {
