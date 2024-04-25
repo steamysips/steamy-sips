@@ -203,14 +203,14 @@ DROP TABLE IF EXISTS `password_change_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `password_change_request` (
-                                           `request_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                                           `user_id` int(11) unsigned NOT NULL,
-                                           `token_hash` varchar(255) NOT NULL,
-                                           `expiry_date` datetime NOT NULL,
-                                           `used` tinyint(1) NOT NULL DEFAULT 0,
-                                           PRIMARY KEY (`request_id`),
-                                           KEY `request_fk` (`user_id`),
-                                           CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  `request_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `token_hash` varchar(255) NOT NULL,
+  `expiry_date` datetime NOT NULL,
+  `used` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`request_id`),
+  KEY `request_fk` (`user_id`),
+  CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -245,7 +245,7 @@ CREATE TABLE `product` (
   CONSTRAINT `img_alt_text_length` CHECK (char_length(`img_alt_text`) between 5 and 150),
   CONSTRAINT `category_length` CHECK (char_length(`category`) > 2),
   CONSTRAINT `img_url_format` CHECK (`img_url` like '%.png' or `img_url` like '%.jpeg' or `img_url` like '%.avif' or `img_url` like '%.jpg' or `img_url` like '%.webp')
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +254,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Espresso',5,'espresso.webp','Espresso in a white cup. Source: Dolce Gusto','Espresso',2.99,'A strong and concentrated coffee drink.','2024-04-21 12:37:10'),(2,'Cappuccino',120,'cappuccino.webp','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Discount Coffee','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.','2024-04-21 12:37:10'),(3,'Latte',150,'latte.avif','A latte with a spoon. Source: Peet\'s Coffee.','Latte',3.99,'A coffee drink made with espresso and steamed milk.','2024-04-21 12:37:10'),(4,'Americano',5,'americano.webp','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Peet\'s Coffee.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.','2024-04-21 12:37:10'),(5,'Mocha',200,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.','2024-04-21 12:37:10');
+INSERT INTO `product` VALUES (1,'Espresso',5,'espresso.webp','Espresso in a white cup. Source: Dolce Gusto','Espresso',2.99,'A strong and concentrated coffee drink.','2024-04-28 12:37:10'),(2,'Cappuccino',120,'cappuccino.webp','Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Discount Coffee','Cappuccino',4.99,'An Italian coffee drink made with espresso, hot milk, and steamed milk foam.','2024-05-21 12:37:10'),(3,'Caffè Latte',190,'latte.avif','A latte with a spoon. Source: Peet\'s Coffee.','Latte',3.99,'A coffee drink made with espresso and steamed milk.','2024-04-23 12:37:10'),(4,'Caffè Americano',15,'americano.webp','Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Peet\'s Coffee.','Americano',3.49,'A coffee drink prepared by diluting espresso with hot water.','2024-01-21 12:37:10'),(5,'Caffè Mocha',370,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks','Mocha',4.49,'A chocolate-flavored variant of a latte, often with whipped cream on top.','2024-04-21 12:37:10'),(6,'White Chocolate Mocha',390,'mocha.png','Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks','Mocha',5.69,'Our signature mocha meets white chocolate sauce and steamed milk, and then is finished off with sweetened whipped cream to create this supreme white chocolate delight.','2024-04-25 10:33:02'),(7,'Cinnamon Dolce Latte\n',340,'cinnamon-dolce-latte.webp','Steamed milk and cinnamon dolce-flavored syrup on Latte. Source: Starbucks ','Latte',7.88,'We add freshly steamed milk and cinnamon dolce-flavored syrup to our classic espresso, topped with sweetened whipped cream and a cinnamon dolce topping to bring you specialness in a treat.','2024-04-25 10:37:23'),(8,'Caramel Macchiato',250,'caramel-macchiato.png','Freshly steamed milk with vanilla-flavored syrup marked with espresso and topped with a caramel drizzle for an oh-so-sweet finish. Source: Starbucks','Macchiato',3.33,'Freshly steamed milk with vanilla-flavored syrup marked with espresso and topped with a caramel drizzle for an oh-so-sweet finish.','2024-04-25 10:45:50'),(9,'Espresso Macchiato',15,'espresso-macchiato.png','Our rich espresso marked with dollop of steamed milk and foam. A European-style classic. Source: Starbucks','Macchiato',8.85,'Our rich espresso marked with dollop of steamed milk and foam. A European-style classic.','2024-04-25 10:48:35'),(10,'Espresso Con Panna',35,'espresso-con-panna.webp','Espresso meets a dollop of whipped cream to enhance the rich and caramelly flavors of a straight-up shot. Source: Starbucks','Espresso',4.34,'Espresso meets a dollop of whipped cream to enhance the rich and caramelly flavors of a straight-up shot.','2024-04-25 10:52:07');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -392,4 +392,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-24  8:19:02
+-- Dump completed on 2024-04-25 11:20:55
