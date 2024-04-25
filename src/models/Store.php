@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use Exception;
 use Steamy\Core\Model;
 
 class Store
@@ -110,12 +109,19 @@ class Store
         VALUES(:phone_no, :street, POINT(:latitude, :longitude), :district_id, :city)
         EOL;
 
-        try {
-            Store::query($query, $data);
-            return true;
-        } catch (Exception) {
+        $conn = self::connect();
+        $stm = $conn->prepare($query);
+        $stm->execute($data);
+
+        if ($stm->rowCount() === 0) {
+            $conn = null;
             return false;
         }
+
+        $this->store_id = (int)$conn->lastInsertId();
+
+        $conn = null;
+        return true;
     }
 
     public function validate(): bool
