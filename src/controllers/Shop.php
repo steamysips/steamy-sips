@@ -57,29 +57,36 @@ class Shop
             ) <= $similarity_threshold;
     }
 
+    /**
+     * A callback function for sorting products.
+     * @param Product $a
+     * @param Product $b
+     * @return int An integer less than, equal to, or greater than zero if the first argument is considered to be
+     * respectively less than, equal to, or greater than the second.
+     */
     private function sort_product(Product $a, Product $b): int
     {
         // ignore sorting if no sort options specified
-        if (empty($_GET['sort'])) {
+        if (empty($_GET['sort'] ?? "")) {
             return 0;
+        }
+
+        // sort by date
+        if ($_GET['sort'] === 'newest') {
+            return ($a->getCreatedDate() > $b->getCreatedDate()) ? -1 : 1;
         }
 
         // sort by price
+        if (in_array($_GET['sort'], ['priceAsc', 'priceDesc'], true)) {
+            if ($_GET['sort'] === 'priceAsc') {
+                return ($a->getPrice() < $b->getPrice()) ? -1 : 1;
+            }
 
-
-        if ($a->getPrice() == $b->getPrice()) {
-            return 0;
-        }
-
-        if ($_GET['sort'] == 'priceAsc') {
-            return ($a->getPrice() < $b->getPrice()) ? -1 : 1;
-        }
-
-        if ($_GET['sort'] == 'priceDesc') {
+            // sort descending
             return ($a->getPrice() < $b->getPrice()) ? 1 : -1;
         }
 
-        return 0;
+        return 0; // no sorting if invalid sorting option
     }
 
     public function index(): void
@@ -115,6 +122,7 @@ class Shop
         $this->data['search_keyword'] = $_GET['keyword'] ?? "";
         $this->data['categories'] = Product::getCategories();
         $this->data['sort_option'] = $_GET['sort'] ?? "";
+        $this->data['selected_categories'] = $_GET['categories'] ?? [];
 
         $this->view(
             'Shop',
