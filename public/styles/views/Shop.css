@@ -5,19 +5,22 @@
   margin-top: 30px;
 }
 
-article {
+#item-grid > a {
   min-width: 200px;
-  position: relative;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
 }
 
-article img {
-  height: 150px;
-  width: 150px;
-  position: absolute;
-  top: -20px;
-  right: 0;
-  border-radius: 50%;
+#item-grid > a img {
+  height: 170px;
+  width: 170px;
+  margin: auto;
+
+}
+
+#item-grid h5 {
+  text-align: center;
 }
 
 article a[role='button'] {
@@ -26,10 +29,6 @@ article a[role='button'] {
 
 article header {
   padding: 0;
-}
-
-@media screen and (max-width: 900px) {
-
 }
 
 @media screen and (max-width: 990px) {

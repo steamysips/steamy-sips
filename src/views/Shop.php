@@ -26,17 +26,13 @@ function displayProduct($product): void
     ); // link to product page
     $product_img_src = htmlspecialchars($product->getImgAbsolutePath()); // url of image
     $img_alt_text = htmlspecialchars($product->getImgAltText());
-    $description = htmlspecialchars($product->getDescription());
     $name = htmlspecialchars($product->getName());
     echo <<<EOL
-                <article data-aos="zoom-in">
-                    <img src="$product_img_src" alt="$img_alt_text">
-                    <a href="$product_href">
-                        <h5>$name</h5>
-                    </a>
-                    <p>$description</p>
-                </article>
-                EOL;
+        <a data-aos="zoom-in" href="$product_href">
+            <img src="$product_img_src" alt="$img_alt_text">
+            <h5>$name</h5>
+        </a>
+    EOL;
 }
 
 ?>
@@ -83,7 +79,7 @@ function displayProduct($product): void
 
 </form>
 
-<main class="container" style="padding-top:0">
+<main class="container">
     <div id="item-grid">
         <?php
         foreach ($products as $product) {
