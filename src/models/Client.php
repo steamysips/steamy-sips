@@ -121,7 +121,7 @@ class Client extends User
     }
 
     /**
-     * Saves client to database
+     * Saves client to database and updates client_id.
      *
      * @return bool Whether client was successfully saved to database
      */
@@ -142,17 +142,17 @@ class Client extends User
         unset($user_data['user_id']);
 
         // perform insertion to user table
-        $this->insert($user_data, 'user');
+        $inserted_id = $this->insert($user_data, 'user');
 
-        $inserted_record = self::first($user_data, 'user');
-
-        if (!$inserted_record) {
+        if ($inserted_id === null) {
             return false;
         }
 
+        $this->user_id = $inserted_id;
+
         // get data to be inserted to client table
         $client_data = [
-            'user_id' => $inserted_record->user_id,
+            'user_id' => $this->user_id,
             'street' => $this->street,
             'city' => $this->city,
             'district_id' => $this->district->getID()
