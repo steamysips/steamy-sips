@@ -66,7 +66,8 @@ final class ClientTest extends TestCase
             "", "", "", "abcd",
             "", new District(1, 'Sample District'), "", ""
         );
-        // test if existence checks work
+    
+        // Test if existence checks work
         self::assertEquals([
             'email' => 'Invalid email format',
             'first_name' => 'First name must be at least 3 characters long',
@@ -75,12 +76,21 @@ final class ClientTest extends TestCase
             'city' => 'City name must have at least 3 characters',
             'street' => 'Street name must have at least 4 characters',
             'district' => 'District does not exist'
-        ],
-            $client->validate());
-
-        $this->markTestIncomplete(
-            'This test lacks range checks, ...',
+        ], $client->validate());
+    
+        // Test for range checks
+        $client = new Client(
+            "a@a.com", "Jo", "Doe", "1234567",
+            "123456", new District(1, 'Sample District'), "Ave", "Ci"
         );
+    
+        self::assertEquals([
+            'first_name' => 'First name must be at least 3 characters long',
+            'phone_no' => 'Phone number must be at least 7 characters long',
+            'city' => 'City name must have at least 3 characters',
+            'street' => 'Street name must have at least 4 characters',
+            'district' => 'District does not exist'
+        ], $client->validate());
     }
 
     public function testVerifyPassword()

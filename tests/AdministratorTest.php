@@ -4,24 +4,36 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Administrator;
+use Steamy\Core\Database;
 
 final class AdministratorTest extends TestCase
 {
+    use Database;
     private ?Administrator $dummy_admin;
 
     public function setUp(): void
     {
+        // Create an administrator object and save it to the database
         $this->dummy_admin = new Administrator(
             "john@gmail.com", "john", "prince", "abcd",
             "13213431", "Manager", false
         );
+    
+        $success = $this->dummy_admin->save();
+        if (!$success) {
+            throw new Exception('Unable to save administrator');
+        }
     }
-
+    
     public function tearDown(): void
     {
+        // Clear the administrator object
         $this->dummy_admin = null;
+    
+        // Clear all data from administrator and user tables
+        self::query('DELETE FROM administrator; DELETE FROM user;');
     }
-
+    
     public function testConstructor(): void
     {
         // check if fields were correctly set
@@ -57,7 +69,7 @@ final class AdministratorTest extends TestCase
         self::assertTrue($result['is_super_admin'] == 0);
     }
 
-    public function testValidate()
+    public function testValidate(): void
     {
         $administrator = new Administrator(
             "", "", "", "abcd",
@@ -68,18 +80,30 @@ final class AdministratorTest extends TestCase
             'email' => 'Invalid email format',
             'first_name' => 'First name must be at least 3 characters long',
             'phone_no' => 'Phone number must be at least 7 characters long',
-            'last_name' => 'Last name must be at least 3 characters long',
+            'last_name' => 'Last name must be at least 3 characters long', // Include last_name error message
             'job_title' => 'Job title is required',
             'job_title' => 'Job title must be longer than 3 characters'
-
-        ],
-            $administrator->validate());
-
-        $this->markTestIncomplete(
-            'This test lacks range checks, ...',
+        ], $administrator->validate());
+    
+        // Test range checks
+        $administrator = new Administrator(
+            "a@b.com", "Jo", "Doe", "abcd",
+            "123456", "Man", false
         );
+        self::assertEquals([
+            'first_name' => 'First name must be at least 3 characters long',
+            'phone_no' => 'Phone number must be at least 7 characters long',
+            'job_title' => 'Job title must be longer than 3 characters'
+        ], $administrator->validate());
+    
+        // Test valid inputs
+        $administrator = new Administrator(
+            "a@b.com", "John", "Doe", "abcd",
+            "1234567", "Manager", false
+        );
+        self::assertEmpty($administrator->validate());
     }
-
+    
     public function testVerifyPassword()
     {
         // verify true password
@@ -94,10 +118,19 @@ final class AdministratorTest extends TestCase
         $this->assertNotTrue($this->dummy_admin->verifyPassword(" abcd"));
     }
 
-    public function testGetByEmail()
+    public function testGetByEmail(): void
     {
-        $this->markTestIncomplete(
-            'TODO',
+        // Create an administrator object with correct parameters
+        $admin = new Administrator(
+            "admin@example.com", "Admin", "User", "AdminPass",
+            "123456789", "Administrator", true
         );
+    
+        // Get the administrator by email
+        $retrieved_admin = Administrator::getByEmail("john@gmail.com");
+    
+        // Assert that the retrieved administrator is not null
+        $this->assertNotNull($retrieved_admin);
     }
+    
 }

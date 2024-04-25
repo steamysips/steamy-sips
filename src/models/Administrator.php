@@ -34,7 +34,7 @@ class Administrator extends User
     {
         $base_array = parent::toArray();
         $base_array['job_title'] = $this->job_title;
-        $base_array['is_super_admin'] = $this->is_super_admin ? 1 : 0;
+        $base_array['is_super_admin'] = $this->is_super_admin ? TRUE : FALSE;
         return $base_array;
     }
 
@@ -88,7 +88,7 @@ class Administrator extends User
         $admin_data = [
             'user_id' => $inserted_record->user_id,
             'job_title' => $this->job_title,
-            'is_super_admin' => $this->is_super_admin ? 1 : 0
+            'is_super_admin' => $this->is_super_admin ? TRUE : FALSE
         ];
 
         // perform insertion to administrator table
@@ -132,7 +132,7 @@ class Administrator extends User
             plain_password: "dummy",
             phone_no: $result->phone_no,
             job_title: $result->job_title,
-            is_super_admin: filter_var($result->is_super_admin, FILTER_SANITIZE_NUMBER_INT)
+            is_super_admin: filter_var($result->is_super_admin, FILTER_VALIDATE_BOOLEAN)
         );
 
         // Set the user ID and password hash
