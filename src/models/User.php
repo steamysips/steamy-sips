@@ -253,18 +253,18 @@ abstract class User
         // Save token info to database
         $query = "INSERT INTO password_change_request (user_id, token_hash, expiry_date)
                   VALUES (:userId, :tokenHash, :expiryDate)";
-        self::query($query, ['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
+        $conn = self::connect();
+        $stm = $conn->prepare($query);
+        $stm->execute(['userId' => $userId, 'tokenHash' => $tokenHash, 'expiryDate' => $expiryDate]);
 
+        // Check if insertion was unsuccessful
+        if ($stm->rowCount() === 0) {
+            $conn = null;
+            return null;
+        }
 
         // get ID of last inserted record
-        // Ref: https://stackoverflow.com/a/39141771/17627866
-        $query = <<< EOL
-            SELECT LAST_INSERT_ID(request_id)  as request_id
-            FROM password_change_request
-            ORDER BY LAST_INSERT_ID(request_id)
-            DESC LIMIT 1;
-        EOL;
-        $info['request_id'] = self::query($query)[0]->request_id;
+        $info['request_id'] = (int)$conn->lastInsertId();
 
         return $info;
     }
