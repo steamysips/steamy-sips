@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use Exception;
-
 class Administrator extends User
 {
     protected string $table = 'administrator';
@@ -34,7 +32,7 @@ class Administrator extends User
     {
         $base_array = parent::toArray();
         $base_array['job_title'] = $this->job_title;
-        $base_array['is_super_admin'] = $this->is_super_admin ? TRUE : FALSE;
+        $base_array['is_super_admin'] = $this->is_super_admin;
         return $base_array;
     }
 
@@ -43,10 +41,6 @@ class Administrator extends User
         $errors = parent::validate(); // list of errors
 
         // perform existence checks
-        if (empty($this->job_title)) {
-            $errors['job_title'] = "Job title is required";
-        }
-
         if (strlen($this->job_title) <= 3) {
             $errors['job_title'] = "Job title must be longer than 3 characters";
         }
@@ -56,7 +50,7 @@ class Administrator extends User
 
     /***
      * Inserts current administrator object to database.
-     * @return bool
+     * @return bool Success or not
      */
     public function save(): bool
     {
@@ -71,33 +65,46 @@ class Administrator extends User
         unset($user_data['job_title']);
         unset($user_data['is_super_admin']);
 
+        // start transaction
+        $conn = self::connect();
+        $conn->beginTransaction();
+
         // perform insertion to user table
-        $this->insert($user_data, 'user');
+        $query = <<< EOL
+        INSERT INTO user(email, first_name, password, phone_no, last_name) 
+        VALUES(:email, :first_name, :password, :phone_no, :last_name);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute($user_data);
 
-        try {
-            $inserted_record = self::first($user_data, 'user');
-        } catch (Exception) {
+
+        if (!$success) {
+            $conn->rollBack();
             return false;
         }
 
-        if (!$inserted_record) {
-            return false;
-        }
-
-        // get data to be inserted to administrator table
-        $admin_data = [
-            'user_id' => $inserted_record->user_id,
-            'job_title' => $this->job_title,
-            'is_super_admin' => $this->is_super_admin ? TRUE : FALSE
-        ];
+        $this->user_id = (int)$conn->lastInsertId();
 
         // perform insertion to administrator table
-        try {
-            $this->insert($admin_data, $this->table);
-            return true;
-        } catch (Exception) {
+        $query = <<< EOL
+        INSERT INTO administrator(user_id, job_title, is_super_admin)
+        VALUES(:user_id, :job_title, :is_super_admin);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
+            'user_id' => $this->user_id,
+            'job_title' => $this->job_title,
+            'is_super_admin' => $this->is_super_admin ? 1 : 0
+        ]);
+
+        if (!$success) {
+            $conn->rollBack();
             return false;
         }
+
+        $conn->commit();
+        $conn = null;
+        return true;
     }
 
 
