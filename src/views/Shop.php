@@ -6,7 +6,8 @@ declare(strict_types=1);
  * View for shop page
  *
  * @var Product[] $products Array of all products as fetched from database
- * @var String[] $categories Array of all product category names
+ * @var string[] $categories Array of all product category names
+ * @var string[] $selected_categories Array of selected categories
  * @var string $search_keyword keyword used to filter products
  * @var string $sort_option Sort By option selected by user
  */
@@ -61,7 +62,7 @@ function displayProduct($product): void
                 <?php
                 foreach ($categories as $category) {
                     // determine whether $category should be checked
-                    $checked = in_array($category, $_GET['categories'] ?? []) ? "checked" : "";
+                    $checked = in_array($category, $selected_categories) ? "checked" : "";
                     $sanitized_category = htmlspecialchars($category);
 
                     echo <<< EOL
