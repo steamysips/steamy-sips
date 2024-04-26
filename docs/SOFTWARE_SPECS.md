@@ -112,8 +112,8 @@ Visitors should be able to:
 Clients should be able to:
 
 - Do everything that visitors can.
-- Log in to their account.
-- Log out of their account.
+- Log in to their account from a login page.
+- Log out of their account from a registration page.
 - View their profile and their personal details.
 - Edit their personal details from their profile page.
 - Permanently delete their account from their profile page.
@@ -124,6 +124,7 @@ Clients should be able to:
 - Review any product. A review has a rating (1-5) and a description. 
 - Comment on any product review. Unlike a review, a comment does not include a rating.
 - Receive an email notification after placing an order.
+- Reset their password.
 
 ### Administrator
 
@@ -139,7 +140,8 @@ Administrators should be able to:
 - Send emails to clients about special promotions, discounts, or important updates.
 - Comment on a review. Unlike a review, a comment does not include a rating.
 - Respond to client reviews.
-- Delete client reviews.
+- Delete a review.
+- Delete a comment.
 - Print a report with sales trends and other key performance indicators.
 
 ### Super Administrator
