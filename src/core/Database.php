@@ -15,11 +15,13 @@ trait Database
      * Connects to database and returns a PDO object
      * @return PDO
      */
-    private static function connect(): PDO
+    protected static function connect(): PDO
     {
         $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
         try {
-            return new PDO($string, DB_USERNAME, DB_PASSWORD);
+            $conn = new PDO($string, DB_USERNAME, DB_PASSWORD);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $conn;
         } catch (PDOException $e) {
             // if PHPUnit is not running, handle the exception
             if (!defined('PHPUNIT_STEAMY_TESTSUITE')) {
