@@ -16,7 +16,9 @@ const themeSwitcher = {
   // Init
   init() {
     this.scheme = this.schemeFromLocalStorage;
-    this.initSwitchers();
+    window.onload = () => {
+      this.initSwitchers();
+    };
   },
 
   // Get color scheme from local storage
@@ -87,5 +89,4 @@ const themeSwitcher = {
   },
 };
 
-// Init
 themeSwitcher.init();
