@@ -81,8 +81,11 @@ class Product
             // save to database
             $review->save();
 
+            $redirect_link = 'shop/products/' . $this->product->getProductID();
+            $redirect_link .= '#review-' . $review->getReviewID();
+
             // redirect user to current page to prevent multiple submissions of the same form if user reloads
-            Utility::redirect('shop/products/' . $this->product->getProductID());
+            Utility::redirect($redirect_link);
         } else {
             // form values are invalid
 

@@ -94,6 +94,7 @@ function getStars(Review $review): string
  */
 function printReview(Review $review): void
 {
+    $review_id = $review->getReviewID();
     $reply_link = "?reply_to_review=" . $review->getReviewID();
     $date = htmlspecialchars($review->getCreatedDate()->format('d M Y'));
     $text = htmlspecialchars($review->getText());
@@ -103,7 +104,7 @@ function printReview(Review $review): void
 
     echo <<<EOL
                 <li>
-                <article>
+                <article id="review-$review_id">
                     $verified_badge
                     $rating_stars
                    <hgroup> 
