@@ -88,7 +88,7 @@ function getStars(Review $review): string
 }
 
 /**
- * Outputs sanitized HTML code to display a review and its comments.
+ * Prints sanitized HTML code to display a review and its comment section.
  * @param Review $review
  * @return void
  */
@@ -102,87 +102,87 @@ function printReview(Review $review): void
     $verified_badge = getBadge($review);
     $rating_stars = getStars($review);
 
-    echo <<<EOL
-                <li>
-                <article id="review-$review_id">
-                    $verified_badge
-                    $rating_stars
-                   <hgroup> 
-                        <h5>$author</h5>
-                        <h6 class="review-date">$date</h6>
-                   </hgroup>
-                   
-                    <p>$text</p>
-                    <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
-                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                          stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
-                           fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
-                            -3v-8a3 3 0 0 1 3 -3h12z" />
-                           <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
-                         </svg>
-                    </a>
+    echo <<< EOL
+        <article id="review-$review_id">
+            $verified_badge
+            $rating_stars
+           <hgroup> 
+                <h5>$author</h5>
+                <h6 class="review-date">$date</h6>
+           </hgroup>
+           
+            <p>$text</p>
+            <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
+                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
+                   fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
+                    -3v-8a3 3 0 0 1 3 -3h12z" />
+                   <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
+                 </svg>
+            </a>
 
-                </article>
-                EOL;
+        </article>
+    EOL;
 
-    // print comments if any
-    $comments = $review->getNestedComments();
-    if (!empty($comments)) {
-        foreach ($comments as $child_comment) {
-            echo "<ul>";
-            printComments($child_comment);
-            echo "</ul>";
-        }
-    }
-
-    echo "</li>";
+    // print comment section
+    printCommentSection($review->getNestedComments());
 }
 
 /**
- * Outputs sanitized HTML code to a comment and its children.
+ * Prints sanitized HTML code for a comment section given the return value of review->getNestedComments().
+ * @param array $top_comments Array of top-level comments where each comment has a children attribute.
+ * @return void
+ */
+function printCommentSection(array $top_comments): void
+{
+    if (empty($top_comments)) {
+        return;
+    }
+
+    echo "<ul>";
+    foreach ($top_comments as $top_level_comment) {
+        echo "<li>";
+        printComment($top_level_comment);
+        printCommentSection($top_level_comment->children);
+        echo "</li>";
+    }
+    echo "</ul>";
+}
+
+/**
+ * Prints sanitized HTML code for a comment.
  * @param StdClass $comment
  * @return void
  */
-function printComments(StdClass $comment): void
+function printComment(StdClass $comment): void
 {
     $reply_link = "?reply_to_comment=" . $comment->comment_id;
     $date = htmlspecialchars($comment->created_date);
     $text = htmlspecialchars($comment->text);
     $author = htmlspecialchars(User::getFullName($comment->user_id));
     $comment_id = 'comment-' . $comment->comment_id;
+
     echo <<<EOL
-                <li>
-                <article id = "$comment_id">
-                   <hgroup> 
-                        <h5>$author</h5>
-                        <h6 class="review-date">$date</h6>
-                   </hgroup>
-                   
-                    <p>$text</p>
-                    <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
-                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                          stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
-                           fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
-                            -3v-8a3 3 0 0 1 3 -3h12z" />
-                           <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
-                         </svg>
-                    </a>
-
-                </article>
-                EOL;
-
-    // print child comments if any
-    if (!empty($comment->children)) {
-        foreach ($comment->children as $child_comment) {
-            echo "<ul>";
-            printComments($child_comment);
-            echo "</ul>";
-        }
-    }
-
-    echo "</li>";
+        <article id = "$comment_id">
+           <hgroup> 
+                <h5>$author</h5>
+                <h6 class="review-date">$date</h6>
+           </hgroup>
+           
+            <p>$text</p>
+            <a data-tooltip="Reply" data-placement="right" href= "$reply_link">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-reply"
+                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
+                   fill="none"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3
+                    -3v-8a3 3 0 0 1 3 -3h12z" />
+                   <path d="M11 8l-3 3l3 3" /><path d="M16 11h-8" />
+                 </svg>
+            </a>
+    
+        </article>
+    EOL;
 }
 
 ?>
@@ -359,7 +359,9 @@ endif ?>
             // print reviews with respective comments
             $reviews = $product->getReviews();
             foreach ($reviews as $review) {
+                echo "<li>";
                 printReview($review);
+                echo "</li>";
             }
             ?>
         </ul>
