@@ -44,17 +44,19 @@ Install dependencies for frontend:
 npm install
 ```
 
-Build frontend:
+Build the frontend:
 
 ```bash
 npm run build
 ```
 
-In the root directory, create a `.env` file with the following contents:
+> [!IMPORTANT]  
+> You must run all the `composer` and `npm` commands inside the root directory (`\var\www\html\steamy-sips`) of the
+project.
+
+In the root directory of the project, create a `.env` file with the following contents:
 
 ```php
-PUBLIC_ROOT="http://localhost/steamy-sips/public"
-
 DB_HOST="localhost"
 DB_USERNAME="root"
 DB_PASSWORD=""
@@ -69,8 +71,6 @@ BUSINESS_GMAIL_PASSWORD=""
 Some important notes:
 
 - Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
-- If your Apache server is serving from a port other than the default one, include the port number to `PUBLIC_ROOT` (
-  e.g., `http://localhost:443/steamy-sips/public`) .
 - `BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
   whenever a client places an order. It is recommended to use
   a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
@@ -96,11 +96,10 @@ source resources/database/dump/cafe.sql;
 exit;
 ```
 
-The path to the SQL dump might must be modified if you are not in the root directory of the project.
+The path to the SQL dump must be modified your present working directory is not the root directory of the project.
 
-If you want to run unit tests with composer, you must first set up a separate database for testing. To do so, repeat the
-same
-instructions as above except name the testing database `cafe_test`:
+If you want to run tests with composer, you must first set up a separate database for testing. To do so, repeat the
+same instructions as above except name the testing database `cafe_test`:
 
 ```sql
 create database cafe_test;
@@ -109,14 +108,56 @@ source resources/database/dump/cafe.sql;
 exit;
 ```
 
+## Virtual host setup
+
+Create a new file `steamy.conf` inside the `/etc/apache2/sites-available` directory:
+
+```
+<VirtualHost *:80>
+    ServerName steamy.localhost
+
+    DocumentRoot /var/www/html/steamy-sips/public
+
+    <Directory /var/www/html/steamy-sips/public>
+      Options Indexes MultiViews FollowSymLinks SymLinksIfOwnerMatch
+      AllowOverride All
+      Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+Add the following lines to your `/etc/hosts` file:
+
+```
+127.0.0.1 steamy.localhost
+::1 steamy.localhost
+```
+> [!TIP]  
+> If you are on Windows or WSL2, your host file is located at `C:\Windows\System32\drivers\etc` and must be edited with
+administrator privileges.
+
+Enable your site:
+
+```
+sudo a2ensite steamy
+```
+
+Restart your apache server:
+
+```
+sudo service apache2 restart
+```
+
 ## PHP setup
 
 Ensure that the [`variables_order`](https://www.php.net/manual/en/ini.core.php#ini.variables-) directive in
 your `php.ini`
-file is set to `"EGPCS"`. Without this, the application will
+file for apache is set to `"EGPCS"`. Without this, the application will
 not be able to load environment variables properly in `src/core/config.php` and you will get an array key error.
 You can use `php --ini` to find the location of your `php.ini` file.
-
 
 ## Autoload setup
 
