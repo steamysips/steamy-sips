@@ -10,5 +10,5 @@ mb_http_output("UTF-8");
 
 session_start(); // start a new session
 
-require '../vendor/autoload.php'; // autoload classes. path is relative to public/index.php
-require 'config.php'; // define configurations for database and root path
+require_once '../vendor/autoload.php'; // autoload classes. path is relative to public/index.php
+require_once 'config.php'; // define configurations for database and root path
