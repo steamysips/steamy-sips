@@ -10,7 +10,7 @@ some commands may differ. Please adapt accordingly.
 - MySQL (v15.1 preferred)
 - Composer with its executable on your $PATH
 - Git
-- NPM (optional)
+- NPM (v18 preferred)
 
 ## Project setup
 
@@ -36,6 +36,18 @@ Install composer dependencies:
 
 ```bash
 composer install
+```
+
+Install dependencies for frontend:
+
+```bash
+npm install
+```
+
+Build frontend:
+
+```bash
+npm run build
 ```
 
 In the root directory, create a `.env` file with the following contents:
@@ -105,17 +117,6 @@ file is set to `"EGPCS"`. Without this, the application will
 not be able to load environment variables properly in `src/core/config.php` and you will get an array key error.
 You can use `php --ini` to find the location of your `php.ini` file.
 
-## Linting and formatting setup
-
-This step is optional if you do not plan on editing the JS and CSS files. NPM is required to install the linter and
-formatter for JS and CSS files. For more details on the linters and formatters used, see
-our [coding standards](CODING_STANDARDS.md).
-
-In the root directory of the project, run:
-
-```bash
-npm install
-```
 
 ## Autoload setup
 
