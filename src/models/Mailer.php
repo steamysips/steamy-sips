@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Steamy\Core;
+namespace Steamy\Model;
 
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;

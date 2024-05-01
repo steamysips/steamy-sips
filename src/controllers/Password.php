@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Exception;
-use Steamy\Core\Mailer;
-use Steamy\Model\User;
 use Steamy\Core\Controller;
+use Steamy\Model\Mailer;
+use Steamy\Model\User;
 
 /**
  * Controller responsible for managing the entire password reset user flow. It is invoked
@@ -82,12 +82,8 @@ class Password
         $passwordResetLink = ROOT . "/password/reset?token=" . $token_info['token'] .
             "&id=" . $token_info['request_id'];
 
-        try {
-            $this->sendResetEmail($submitted_email, $passwordResetLink);
-            $this->view_data['email_submit_success'] = true;
-        } catch (Exception) {
-            return;
-        }
+        $this->sendResetEmail($submitted_email, $passwordResetLink);
+        $this->view_data['email_submit_success'] = true;
     }
 
     /**
