@@ -25,11 +25,7 @@ declare(strict_types=1);
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
           <text y=%22.9em%22 font-size=%2290%22>☕</text></svg>"/>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"/>
-    <link rel="stylesheet" href="<?= ROOT ?>/styles/global.css"/>
-
-    <!-- picocss theme switcher-->
-    <script src="<?= ROOT ?>/js/theme_switcher.bundle.js"></script>
+    <script src="<?= ROOT ?>/js/global_view.bundle.js"></script>
 
     <?= $template_tags ?>
 

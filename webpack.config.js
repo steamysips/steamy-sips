@@ -4,6 +4,7 @@ const entryPath = "./public/js_original/";
 module.exports = {
   mode: "production",
   entry: {
+    global_view: entryPath + "global-view.js",
     home_view: entryPath + "home-view.js",
     product_view: entryPath + "product-view.js",
     cart_view: entryPath + "cart-view.js",
