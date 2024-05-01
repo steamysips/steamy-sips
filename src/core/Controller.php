@@ -26,12 +26,6 @@ trait Controller
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         EOL;
 
-        $library_tags['splide'] = <<< EOL
-        <!-- splide carousel library-->
-        <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
-        <script defer src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-        EOL;
-
         $library_tags['chartjs'] = <<< EOL
         <!-- chartjs library-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
