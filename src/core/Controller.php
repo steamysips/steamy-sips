@@ -76,8 +76,7 @@ trait Controller
         // convert view name to uppercase
         $view_name = ucfirst($view_name);
 
-        // ! All file paths defined below are relative to public/index.php
-        $view_file_path = '../src/views/' . $view_name . '.php';
+        $view_file_path = __DIR__ .'/views/' . $view_name . '.php';
         $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative path to css file
         $view_absolute_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
 
@@ -92,12 +91,12 @@ trait Controller
         if (file_exists($view_file_path)) {
             include $view_file_path;
         } else {
-            include '../src/views/404.php';
+            include __DIR__ . '/../views/404.php';
         }
         $template_content = ob_get_contents();
         ob_end_clean();
 
         // display global view template
-        require "../src/views/Template.php";
+        require_once __DIR__ ."/../views/Template.php";
     }
 }
