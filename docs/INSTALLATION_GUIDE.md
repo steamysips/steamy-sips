@@ -10,7 +10,7 @@ some commands may differ. Please adapt accordingly.
 - MySQL (v15.1 preferred)
 - Composer with its executable on your $PATH
 - Git
-- NPM (v18 preferred)
+- NPM (v10 preferred)
 
 ## Project setup
 
