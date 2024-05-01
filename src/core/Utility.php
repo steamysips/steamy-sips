@@ -26,6 +26,17 @@ class Utility
     }
 
     /**
+     * @return string Root URL of site, with protocol, port number and hostname. Does not end with a trailing slash.
+     *
+     * Ref: https://stackoverflow.com/a/18220999/17627866
+     */
+    public static function getRoot(): string
+    {
+        return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':'
+            . $_SERVER['SERVER_PORT'];
+    }
+
+    /**
      * Splits the URL into an array of segments.
      *
      * This function retrieves the 'url' parameter from the $_GET array or defaults to 'home',
@@ -45,12 +56,12 @@ class Utility
      * - `redirect('home')` redirects to `ROOT`.
      * - `redirect('shop/products/1')` redirects to `ROOT/shop/products/1`.
      *
-     * @param $relative_url string root-relative URL of page. It must not start with /.
+     * @param $relative_url string root-relative URL of page.
      * @return void
      */
     public static function redirect(string $relative_url): void
     {
-        header("Location: " . ROOT . "/" . $relative_url);
+        header("Location: " . "/" . $relative_url);
         die();
     }
 
