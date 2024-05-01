@@ -1,7 +1,8 @@
 /**
  * Script handling modals on product page (/shop/products).
  */
-import { Cart, CartItem } from "./cart";
+import Cart from "./models/Cart";
+import CartItem from "./models/CartItem";
 import ModalManager from "./modal";
 
 const successAddToCartModal = ModalManager("my-modal");

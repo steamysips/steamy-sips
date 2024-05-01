@@ -2,7 +2,8 @@
  * This script is executed on /cart page. It allows users to modify their cart in real-time and view the updated totals.
  */
 
-import { Cart, CartItem } from "./cart";
+import Cart from "./models/Cart";
+import CartItem from "./models/CartItem";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
