@@ -35,7 +35,7 @@ cd steamy-sips
 Install composer dependencies:
 
 ```bash
-composer update
+composer install
 ```
 
 In the root directory, create a `.env` file with the following contents:
