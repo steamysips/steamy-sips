@@ -1,6 +1,7 @@
+import "aos/dist/aos.css";
+import "@splidejs/splide/dist/css/splide.min.css";
 import Splide from "@splidejs/splide";
 import Aos from "aos/src/js/aos";
-import "aos/dist/aos.css";
 
 document.addEventListener("DOMContentLoaded", function () {
   Aos.init();
