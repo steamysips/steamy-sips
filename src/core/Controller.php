@@ -76,7 +76,7 @@ trait Controller
         // convert view name to uppercase
         $view_name = ucfirst($view_name);
 
-        $view_file_path = __DIR__ .'/views/' . $view_name . '.php';
+        $view_file_path = __DIR__ .'/../views/' . $view_name . '.php';
         $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative path to css file
         $view_absolute_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
 
