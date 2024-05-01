@@ -89,4 +89,4 @@ use Steamy\Model\Store;
     <button type="submit">Checkout</button>
 </main>
 
-<script type="module" src="<?= ROOT ?>/js/cart-view.js"></script>
+<script src="<?= ROOT ?>/js/cart_view.bundle.js"></script>

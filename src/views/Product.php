@@ -368,9 +368,10 @@ endif ?>
     </div>
 </main>
 
-<script type="module" src="<?= ROOT ?>/js/product-page.js"></script>
+<script src="<?= ROOT ?>/js/product_view.bundle.js"></script>
 
-<script defer>
+<script>
+  // TODO: Use API to fetch rating distribution
   const labels = ["5 star", "4 star", "3 star", "2 star", "1 star"];
   const data = {
     labels: labels,
@@ -398,5 +399,4 @@ endif ?>
         document.getElementById("customer_rating_chart"), config,
     );
   });
-
 </script>

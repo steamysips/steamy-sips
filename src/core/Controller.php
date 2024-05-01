@@ -26,12 +26,6 @@ trait Controller
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         EOL;
 
-        $library_tags['splide'] = <<< EOL
-        <!-- splide carousel library-->
-        <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
-        <script defer src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-        EOL;
-
         $library_tags['chartjs'] = <<< EOL
         <!-- chartjs library-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
@@ -76,8 +70,7 @@ trait Controller
         // convert view name to uppercase
         $view_name = ucfirst($view_name);
 
-        // ! All file paths defined below are relative to public/index.php
-        $view_file_path = '../src/views/' . $view_name . '.php';
+        $view_file_path = __DIR__ .'/../views/' . $view_name . '.php';
         $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative path to css file
         $view_absolute_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
 
@@ -92,12 +85,12 @@ trait Controller
         if (file_exists($view_file_path)) {
             include $view_file_path;
         } else {
-            include '../src/views/404.php';
+            include __DIR__ . '/../views/404.php';
         }
         $template_content = ob_get_contents();
         ob_end_clean();
 
         // display global view template
-        require "../src/views/Template.php";
+        require_once __DIR__ ."/../views/Template.php";
     }
 }

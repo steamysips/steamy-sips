@@ -121,20 +121,4 @@
     </section>
 </main>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    AOS.init();
-
-    new Splide("#testimonials", {
-      perPage: 2,
-      breakpoints: {
-        1000: {
-          perPage: 1,
-        },
-      },
-      lazyLoad: "nearby",
-      preloadPages: 3,
-      focus: 0,
-    }).mount();
-  });
-</script>
+<script src="<?= ROOT ?>/js/home_view.bundle.js"></script>
