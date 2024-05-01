@@ -89,4 +89,4 @@ const themeSwitcher = {
   },
 };
 
-themeSwitcher.init();
+export default themeSwitcher;
