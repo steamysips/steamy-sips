@@ -25,7 +25,7 @@ declare(strict_types=1);
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
           <text y=%22.9em%22 font-size=%2290%22>☕</text></svg>"/>
 
-    <script src="<?= ROOT ?>/js/global_view.bundle.js"></script>
+    <script src="/js/global_view.bundle.js"></script>
 
     <?= $template_tags ?>
 
@@ -36,7 +36,7 @@ declare(strict_types=1);
 <nav class="container-fluid">
     <ul>
         <li>
-            <a href="<?= ROOT ?>/" class="contrast">
+            <a href="/" class="contrast">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
@@ -55,7 +55,7 @@ declare(strict_types=1);
     </ul>
     <ul>
         <li>
-            <a href="<?= ROOT ?>/shop" class="contrast" data-tooltip="Shop" data-placement="bottom">
+            <a href="/shop" class="contrast" data-tooltip="Shop" data-placement="bottom">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
@@ -66,7 +66,7 @@ declare(strict_types=1);
             </a>
         </li>
         <li>
-            <a href="<?= ROOT ?>/cart" class="contrast" data-tooltip="Shopping cart" data-placement="bottom">
+            <a href="/cart" class="contrast" data-tooltip="Shopping cart" data-placement="bottom">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
@@ -79,7 +79,7 @@ declare(strict_types=1);
             </a>
         </li>
         <li>
-            <a href="<?= ROOT ?>/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">
+            <a href="/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                      stroke-linejoin="round">

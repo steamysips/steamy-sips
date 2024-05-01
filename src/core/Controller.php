@@ -50,7 +50,7 @@ trait Controller
      * @param array $view_data Values for the placeholder data defined in the view.
      * @param string $template_title Page title. Default value is `Steamy Sips`.
      * @param string $template_tags Additional tags to be included in head. Examples can be
-     * script tags and links to other stylesheets. Any links used inside $template_tags should be absolute (include ROOT).
+     * script tags and links to other stylesheets.
      * @param string $template_meta_description Meta description of page
      * @return void
      */
@@ -70,9 +70,9 @@ trait Controller
         // convert view name to uppercase
         $view_name = ucfirst($view_name);
 
-        $view_file_path = __DIR__ .'/../views/' . $view_name . '.php';
+        $view_file_path = __DIR__ . '/../views/' . $view_name . '.php';
         $view_relative_css_path = "styles/views/" . $view_name . ".css"; // relative path to css file
-        $view_absolute_css_path = ROOT . "/" . $view_relative_css_path; // absolute URL to css stylesheet
+        $view_absolute_css_path = "/" . $view_relative_css_path; // root-relative URL to css stylesheet
 
         // add link tag for stylesheet if it exists
         if (file_exists($view_relative_css_path)) {
@@ -91,6 +91,6 @@ trait Controller
         ob_end_clean();
 
         // display global view template
-        require_once __DIR__ ."/../views/Template.php";
+        require_once __DIR__ . "/../views/Template.php";
     }
 }

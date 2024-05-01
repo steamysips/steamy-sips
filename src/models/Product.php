@@ -168,7 +168,7 @@ class Product
      */
     public function getImgAbsolutePath(): string
     {
-        return ROOT . "/assets/img/product/" . $this->img_url;
+        return "/assets/img/product/" . $this->img_url;
     }
 
     /**

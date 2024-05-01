@@ -24,7 +24,7 @@ declare(strict_types=1);
         <h3>Password changed! 🎉</h3>
         <p>Your password has been successfully changed</p>
         <footer>
-            <a href="<?= ROOT ?>/login"
+            <a href="/login"
                role="button"
                data-target="my-modal"
             >

@@ -25,7 +25,7 @@ declare(strict_types=1);
         <h3>Email submitted! 🎉</h3>
         <p>Thanks - if you have a Steamy Sips account, we've sent you an email.</p>
         <footer>
-            <a href="<?= ROOT ?>/login"
+            <a href="/login"
                role="button"
                data-target="my-modal"
             >

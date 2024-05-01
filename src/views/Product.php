@@ -204,7 +204,7 @@ function printComment(StdClass $comment): void
             >
                 Ok
             </a>
-            <a href="<?= ROOT ?>/cart"
+            <a href="/cart"
                role="button"
                data-target="my-modal"
             >
@@ -368,7 +368,7 @@ endif ?>
     </div>
 </main>
 
-<script src="<?= ROOT ?>/js/product_view.bundle.js"></script>
+<script src="/js/product_view.bundle.js"></script>
 
 <script>
   // TODO: Use API to fetch rating distribution

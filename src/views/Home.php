@@ -15,11 +15,11 @@
             <p>Welcome to Steamy Sips Café, where every sip is an experience. Step into our cozy world of aromatic
                 delights, where the perfect brew meets community and conversation. </p>
             <div>
-                <a href="<?= ROOT ?>/shop" role="button" class="contrast">Shop now</a>
+                <a href="/shop" role="button" class="contrast">Shop now</a>
             </div>
         </div>
         <div>
-            <img src="<?= ROOT ?>/assets/img/home-coffee.png"
+            <img src="/assets/img/home-coffee.png"
                  height="200px" width="500px"
                  alt="Coffee beans in a white bowl">
         </div>
@@ -61,7 +61,7 @@
                 <li class="splide__slide">
                     <article>
                         <header>
-                            <img class="avatar" src="<?= ROOT ?>/assets/img/testimonial-bill-gates.jpg"
+                            <img class="avatar" src="/assets/img/testimonial-bill-gates.jpg"
                                  alt="">
                             <hgroup>
                                 <h5>Bill Gates</h5>
@@ -78,7 +78,7 @@
 
                     <article>
                         <header>
-                            <img class="avatar" src="<?= ROOT ?>/assets/img/testimonial-john-brookes.jpg"
+                            <img class="avatar" src="/assets/img/testimonial-john-brookes.jpg"
                                  alt="White woman with black beanie">
                             <hgroup>
                                 <h5>John Brookes</h5>
@@ -94,7 +94,7 @@
                 <li class="splide__slide">
                     <article>
                         <header>
-                            <img class="avatar" src="<?= ROOT ?>/assets/img/testimonial-sarah-clay.jpg"
+                            <img class="avatar" src="/assets/img/testimonial-sarah-clay.jpg"
                                  alt="White woman with black beanie">
                             <hgroup>
                                 <h5>Sarah Clay</h5>
@@ -121,4 +121,4 @@
     </section>
 </main>
 
-<script src="<?= ROOT ?>/js/home_view.bundle.js"></script>
+<script src="/js/home_view.bundle.js"></script>
