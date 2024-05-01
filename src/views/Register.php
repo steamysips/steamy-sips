@@ -190,7 +190,7 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                     </label>
                 </fieldset>
                 <button type="submit" name="register_submit">Register</button>
-                <small>Already have an account? <a href="<?= ROOT ?>/login">Login</a></small>
+                <small>Already have an account? <a href="/login">Login</a></small>
             </form>
         </div>
     </article>

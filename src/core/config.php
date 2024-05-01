@@ -6,9 +6,6 @@ declare(strict_types=1);
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../..');
 $dotenv->load();
 
-// define absolute URL to public folder
-define('ROOT', $_ENV['PUBLIC_ROOT']);
-
 // define database credentials
 define('DB_HOST', $_ENV['DB_HOST']);
 define('DB_USERNAME', $_ENV['DB_USERNAME']);

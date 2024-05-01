@@ -22,7 +22,7 @@ use Steamy\Model\Product;
 function displayProduct($product): void
 {
     $product_href = htmlspecialchars(
-        ROOT . '/shop/products/' . $product->getProductID()
+        '/shop/products/' . $product->getProductID()
     ); // link to product page
     $product_img_src = htmlspecialchars($product->getImgAbsolutePath()); // url of image
     $img_alt_text = htmlspecialchars($product->getImgAltText());

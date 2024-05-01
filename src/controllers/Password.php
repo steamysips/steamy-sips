@@ -6,6 +6,7 @@ namespace Steamy\Controller;
 
 use Exception;
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\Mailer;
 use Steamy\Model\User;
 
@@ -79,7 +80,7 @@ class Password
         }
 
         // Send email to user with password reset link and user id
-        $passwordResetLink = ROOT . "/password/reset?token=" . $token_info['token'] .
+        $passwordResetLink = Utility::getRoot() . "/password/reset?token=" . $token_info['token'] .
             "&id=" . $token_info['request_id'];
 
         $this->sendResetEmail($submitted_email, $passwordResetLink);

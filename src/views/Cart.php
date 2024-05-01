@@ -38,7 +38,7 @@ use Steamy\Model\Store;
         $product = $item['product'];
         $product_id = filter_var($product->getProductID(), FILTER_SANITIZE_NUMBER_INT);
         $product_name = htmlspecialchars($product->getName());
-        $product_link = htmlspecialchars(ROOT . "/shop/products/" . $product_id);
+        $product_link = htmlspecialchars("/shop/products/" . $product_id);
         $image_url = htmlspecialchars($product->getImgAbsolutePath());
         $image_alt = htmlspecialchars($product->getImgAltText());
         $unit_price = filter_var(
@@ -89,4 +89,4 @@ use Steamy\Model\Store;
     <button type="submit">Checkout</button>
 </main>
 
-<script src="<?= ROOT ?>/js/cart_view.bundle.js"></script>
+<script src="/js/cart_view.bundle.js"></script>

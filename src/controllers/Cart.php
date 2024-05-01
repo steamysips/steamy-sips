@@ -72,10 +72,8 @@ class Cart
         }
 
         // send script to browser to fetch cart from localstorage
-        $script_src = ROOT . "/js/cart_uploader.bundle.js";
-
         $cart_script_tag = <<< EOL
-            <script src="$script_src"></script>
+            <script src="/js/cart_uploader.bundle.js"></script>
         EOL;
 
         $this->view(

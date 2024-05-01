@@ -1,6 +1,6 @@
 # Usage
 
-You must first install the project as per the [installation instructions](INSTALLATION_GUIDE.md) before
+You must have completed the [installation instructions](INSTALLATION_GUIDE.md) before
 proceeding.
 
 ## Run project
@@ -17,13 +17,11 @@ Optionally, you can display a live error log:
 sudo tail -f /var/log/apache2/error.log
 ```
 
-Enter the `PUBLIC_ROOT` value (e.g., http://localhost/steamy-sips/public/) from [`.env`](../.env) in
-your browser
-to access the client website.
+Visit `http://steamy.localhost/` in your browser to view the client website.
 
 ## Run tests
 
-Assuming that your MySQL database is running, to run tests:
+Assuming that your MySQL database is running, in the root directory of the project run tests:
 
 ```bash
 composer test

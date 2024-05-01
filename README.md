@@ -26,10 +26,11 @@ The code for the admin website is found in a separate repository.
 
 - MVC pattern
 - Dynamic routing
-- Password reset with email notification
+- Email-based password recovery
 - Email notification on order
-- Unit testing
+- Testing with phpUnit
 - Mobile-responsive website
+- Javascript code bundling with backwards compatibility
 - Product review system with nested comments
 - REST API
 
