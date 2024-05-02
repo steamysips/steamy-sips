@@ -26,14 +26,13 @@ class Utility
     }
 
     /**
-     * @return string Root URL of site, with protocol, port number and hostname. Does not end with a trailing slash.
+     * @return string Root URL of site, with protocol, port number and hostname. It does not end with a trailing slash.
      *
      * Ref: https://stackoverflow.com/a/18220999/17627866
      */
     public static function getRoot(): string
     {
-        return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':'
-            . $_SERVER['SERVER_PORT'];
+        return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
     }
 
     /**
