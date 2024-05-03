@@ -7,9 +7,7 @@ namespace Steamy\Model;
 class Client extends User
 {
     protected string $table = 'client';
-    private District $district; // name of district where client lives
-    private string $street; // name of street where client lives
-    private string $city; // name of city where client lives
+    private Location $address;
 
     public function __construct(
         string $email,
@@ -17,14 +15,10 @@ class Client extends User
         string $last_name,
         string $plain_password,
         string $phone_no,
-        District $district,
-        string $street,
-        string $city
+        Location $address,
     ) {
         parent::__construct($email, $first_name, $last_name, $plain_password, $phone_no);
-        $this->district = $district;
-        $this->street = $street;
-        $this->city = $city;
+        $this->address = $address;
     }
 
     /**
@@ -63,9 +57,7 @@ class Client extends User
             $result->last_name,
             "dummy-password", // A dummy password is used since the original password is unknown
             $result->phone_no,
-            District::getByID($result->district_id),
-            $result->street,
-            $result->city
+            new Location(street: $result->street, city: $result->city, district_id: $result->district_id)
         );
 
         // Set the user ID and password hash
@@ -153,9 +145,9 @@ class Client extends User
         // get data to be inserted to client table
         $client_data = [
             'user_id' => $this->user_id,
-            'street' => $this->street,
-            'city' => $this->city,
-            'district_id' => $this->district->getID()
+            'street' => $this->address->getStreet(),
+            'city' => $this->address->getCity(),
+            'district_id' => $this->address->getDistrictID()
         ];
 
         // perform insertion to client table
@@ -166,11 +158,11 @@ class Client extends User
 
     /**
      * Returns address of user
-     * @return string String containing street name, city name, and district name
+     * @return Location Object containing street name, city name, and district name
      */
-    public function getAddress(): string
+    public function getAddress(): Location
     {
-        return ucfirst($this->street) . ", " . ucfirst($this->city) . ", " . $this->district->getName();
+        return $this->address;
     }
 
     /**
@@ -183,16 +175,16 @@ class Client extends User
         $errors = parent::validate(); // list of errors
 
         // verify existence of district
-        $valid_district = District::getByID($this->district->getID()); // fetch corresponding district in database
-        if (empty($valid_district) || $valid_district->getName() !== $this->district->getName()) {
+        $valid_district = $this->address->getDistrict(); // fetch corresponding district in database
+        if (empty($valid_district)) {
             $errors['district'] = 'District does not exist';
         }
 
-        if (strlen($this->city) < 3) {
+        if (strlen($this->address->getCity()) < 3) {
             $errors['city'] = 'City name must have at least 3 characters';
         }
 
-        if (strlen($this->street) < 4) {
+        if (strlen($this->address->getStreet()) < 4) {
             $errors['street'] = 'Street name must have at least 4 characters';
         }
 
@@ -206,9 +198,9 @@ class Client extends User
     public function toArray(): array
     {
         $base_array = parent::toArray();
-        $base_array['district'] = $this->district->getName();
-        $base_array['street'] = $this->street;
-        $base_array['city'] = $this->city;
+        $base_array['district_id'] = $this->address->getDistrictID();
+        $base_array['street'] = $this->address->getStreet();
+        $base_array['city'] = $this->address->getCity();
 
         return $base_array;
     }
