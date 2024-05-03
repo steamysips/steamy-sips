@@ -49,6 +49,10 @@ function displayProduct($product): void
                 <option value="newest" <?= $sort_option === "newest" ? "selected" : "" ?>>Newest</option>
                 <option value="priceDesc" <?= $sort_option === "priceDesc" ? "selected" : "" ?>>Price: High-Low</option>
                 <option value="priceAsc" <?= $sort_option === "priceAsc" ? "selected" : "" ?>>Price: Low-High</option>
+                <option value="ratingDesc" <?= $sort_option === "ratingDesc" ? "selected" : "" ?>>Rating: High-Low
+                </option>
+                <option value="ratingAsc" <?= $sort_option === "ratingAsc" ? "selected" : "" ?>>Rating: Low-High
+                </option>
             </select>
         </label>
 
