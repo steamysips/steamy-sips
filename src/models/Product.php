@@ -281,7 +281,7 @@ class Product
         // Extract the average rating from the result array
         if (!empty($result)) {
             $averageRating = $result[0]->average_rating;
-            return $averageRating !== null ? round($averageRating, 2) : 0; // Round to two decimal places
+            return $averageRating !== null ? round((int)$averageRating, 2) : 0; // Round to two decimal places
         }
 
         return 0; // No reviews, return 0 as the average rating
