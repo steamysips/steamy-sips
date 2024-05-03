@@ -86,6 +86,16 @@ class Shop
             return ($a->getPrice() < $b->getPrice()) ? 1 : -1;
         }
 
+        // sort by rating
+        if (in_array($_GET['sort'], ['ratingAsc', 'ratingDesc'], true)) {
+            if ($_GET['sort'] === 'ratingAsc') {
+                return ($a->getAverageRating() < $b->getAverageRating()) ? -1 : 1;
+            }
+
+            // sort descending
+            return ($a->getAverageRating() < $b->getAverageRating()) ? 1 : -1;
+        }
+
         return 0; // no sorting if invalid sorting option
     }
 
