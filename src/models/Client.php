@@ -156,6 +156,72 @@ class Client extends User
         return true; // insertion was successful
     }
 
+    public function updateUser(bool $updatePassword = false): bool
+    {
+        $conn = self::connect();
+        $conn->beginTransaction();
+
+        $query = <<< EOL
+            UPDATE client
+            SET street = :street,
+                city = :city,
+                district_id = :district_id
+            WHERE user_id = :user_id
+        EOL;
+
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
+            'street' => $this->address->getStreet(),
+            'city' => $this->address->getCity(),
+            'district_id' => $this->address->getDistrictID(),
+            'user_id' => $this->user_id
+        ]);
+
+        // if error occurred
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        $user_data = [
+            'email' => $this->getEmail(),
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
+            'phone_no' => $this->getPhoneNo(),
+            'user_id' => $this->user_id
+        ];
+        $query = <<< EOL
+            UPDATE user
+            SET email = :email,
+                first_name = :first_name,
+                last_name = :last_name,
+                phone_no = :phone_no
+        EOL;
+
+        if ($updatePassword) {
+            $query .= ", password = :password ";
+            $user_data['password'] = $this->password;
+        }
+
+        $query .= " WHERE user_id = :user_id;";
+
+        $stm = $conn->prepare($query);
+        $success = $stm->execute($user_data);
+
+        // if error occurred
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        $conn->commit();
+        $conn = null;
+        return true;
+    }
+
+
     /**
      * Returns address of user
      * @return Location Object containing street name, city name, and district name
