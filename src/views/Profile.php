@@ -16,25 +16,27 @@ declare(strict_types=1);
 <main class="container">
     <h1>My account</h1>
     <h2>Personal details</h2>
-    <form action="">
-        <label class="grid">
-            Name:
-            <input value="<?= htmlspecialchars($name) ?>" type="text" disabled>
-        </label>
+    <label class="grid">
+        Name
+        <input value="<?= htmlspecialchars($name) ?>" type="text" disabled>
+    </label>
 
 
-        <label class="grid">
-            Email:
-            <input value="<?= htmlspecialchars($email) ?>" type="email" disabled>
-        </label>
+    <label class="grid">
+        Email
+        <input value="<?= htmlspecialchars($email) ?>" type="email" disabled>
+    </label>
 
 
-        <label class="grid">
-            Address:
-            <input value="<?= htmlspecialchars($address) ?>" type="text" disabled>
-        </label>
-        <button disabled>Edit</button>
-    </form>
+    <label class="grid">
+        Address
+        <input value="<?= htmlspecialchars($address) ?>" type="text" disabled>
+    </label>
+
+    <a href="/profile/edit">
+        <button>Edit</button>
+    </a>
+
     <h2>Orders summary</h2>
 
     <figure>
@@ -79,7 +81,7 @@ declare(strict_types=1);
                 <h6>Log out from website. You will lose access to your profile and will have to enter your login
                     details again.</h6>
             </hgroup>
-            <form method="post">
+            <form>
                 <button type="submit" name="logout_submit">Log out</button>
             </form>
         </article>
@@ -111,7 +113,7 @@ declare(strict_types=1);
                 <h6>Permanently delete your account with all its associated information. This action is
                     irreversible.</h6>
             </hgroup>
-            <form method="post">
+            <form>
                 <button type="submit" name="account_delete_submit">Delete</button>
             </form>
         </article>
