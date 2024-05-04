@@ -151,12 +151,12 @@ abstract class User
 
     /**
      * Changes the hash of the user password
-     * @param string $new_password_hash new password hash
+     * @param string $plain_password New password in plain format
      * @return void
      */
-    public function setPassword(string $new_password_hash): void
+    public function setPassword(string $plain_password): void
     {
-        $this->password = $new_password_hash;
+        $this->password = password_hash($plain_password, PASSWORD_BCRYPT);
     }
 
     /**
