@@ -43,7 +43,8 @@ class Cart
             template_title: "Review order",
             template_meta_description: "Your ultimate shopping cart at Steamy Sips.
             Review your chosen items, adjust quantities, and proceed to checkout seamlessly.
-             Savor the convenience of online shopping with us."
+             Savor the convenience of online shopping with us.",
+            enableIndexing: false
         );
     }
 
@@ -82,7 +83,8 @@ class Cart
             template_tags: $cart_script_tag,
             template_meta_description: "Experience anticipation as your journey begins at Steamy Sips.
              Our loading page sets the stage for your flavorful adventure. Sit back, relax,
-              and prepare for a tantalizing experience ahead."
+              and prepare for a tantalizing experience ahead.",
+            enableIndexing: false
         );
     }
 }

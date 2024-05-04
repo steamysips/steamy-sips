@@ -222,10 +222,7 @@ class Product
     {
         // if product was not found, display error page
         if (empty($this->product)) {
-            $this->view(
-                '404',
-                template_title: 'Product not found'
-            );
+            (new _404())->index();
             return;
         }
 

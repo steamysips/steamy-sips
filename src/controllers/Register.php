@@ -152,7 +152,8 @@ class Register
             'Register',
             template_meta_description: "Join the Steamy Sips community today. Register for exclusive offers,
              personalized recommendations, and a richer coffee experience. Start your journey towards
-              flavorful indulgence."
+              flavorful indulgence.",
+            enableIndexing: false
         );
     }
 }
