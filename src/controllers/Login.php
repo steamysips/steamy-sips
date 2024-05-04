@@ -84,7 +84,8 @@ class Login
             'Login',
             template_tags: $this->getLibrariesTags(['aos']),
             template_meta_description: "Sign in to Steamy Sips and unlock a world of aromatic delights.
-             Access your account, manage orders, and enjoy a seamless shopping experience tailored just for you."
+             Access your account, manage orders, and enjoy a seamless shopping experience tailored just for you.",
+            enableIndexing: false
         );
     }
 }

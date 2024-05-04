@@ -167,7 +167,8 @@ class Password
             $this->view(
                 view_name: 'ResetPassword',
                 view_data: $this->view_data,
-                template_title: 'Reset Password'
+                template_title: 'Reset Password',
+                enableIndexing: false
             );
             return;
         }
@@ -181,15 +182,14 @@ class Password
             $this->view(
                 view_name: 'NewPassword',
                 view_data: $this->view_data,
-                template_title: 'New Password'
+                template_title: 'New Password',
+                enableIndexing: false
             );
             return;
         }
 
         // if url follows some other format display error page
-        $this->view(
-            view_name: '404'
-        );
+        (new _404())->index();
     }
 }
 
