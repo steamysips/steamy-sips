@@ -124,9 +124,9 @@ trait Model
      * @param string $table_name Name of table without backticks. Defaults to $this->table.
      * @param string $id_column The name of the ID column. Default is 'id'.
      *
-     * @return void
+     * @return int Number of rows affected
      */
-    protected function update(int|string $id, array $data, string $table_name, string $id_column = 'id'): void
+    protected function update(int|string $id, array $data, string $table_name, string $id_column = 'id'): int
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
         $keys = array_keys($data);
@@ -143,7 +143,8 @@ trait Model
         // add where condition
         $query .= " WHERE $id_column = $id;";
 
-        self::query($query, $data);
+        $conn = self::connect();
+        return $conn->exec($query);
     }
 
     /**
