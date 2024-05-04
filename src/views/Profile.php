@@ -5,11 +5,11 @@ declare(strict_types=1);
 /**
  * The following attributes are defined in controllers/Profile.php
  *
- * @var $name string full name of client
- * @var $email string email of client
- * @var $address string full address of client
+ * @var $client Client signed in client
  * @var $orders array array of orders
  */
+
+use Steamy\Model\Client;
 
 ?>
 
@@ -18,19 +18,26 @@ declare(strict_types=1);
     <h2>Personal details</h2>
     <label class="grid">
         Name
-        <input value="<?= htmlspecialchars($name) ?>" type="text" disabled>
+        <input value="<?= htmlspecialchars($client->getFirstName() . " " . $client->getLastName()) ?>"
+               type="text"
+               disabled>
     </label>
 
 
     <label class="grid">
         Email
-        <input value="<?= htmlspecialchars($email) ?>" type="email" disabled>
+        <input value="<?= htmlspecialchars($client->getEmail()) ?>" type="email" disabled>
     </label>
 
 
     <label class="grid">
         Address
-        <input value="<?= htmlspecialchars($address) ?>" type="text" disabled>
+        <input value="<?= htmlspecialchars($client->getAddress()->getFormattedAddress()) ?>" type="text" disabled>
+    </label>
+
+    <label class="grid">
+        Phone
+        <input value="<?= htmlspecialchars($client->getPhoneNo()) ?>" type="text" disabled>
     </label>
 
     <a href="/profile/edit">
