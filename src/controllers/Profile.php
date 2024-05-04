@@ -21,6 +21,7 @@ class Profile
     {
         $this->signed_client = null;
         $this->view_data['errors'] = [];
+        $this->view_data['client'] = null;
 
         // filter out unsigned users
         $this->handleUnsignedUsers();
@@ -31,6 +32,7 @@ class Profile
         $client_record = Client::getByEmail($_SESSION['user']);
         if ($client_record) {
             $this->signed_client = $client_record;
+            $this->view_data['client'] = $this->signed_client;
         } else {
             // if user record is missing from database, redirect to login page
             Utility::redirect('login');
