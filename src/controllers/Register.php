@@ -8,7 +8,11 @@ use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Client;
 use Steamy\Model\District;
+use Steamy\Model\Location;
 
+/**
+ * Controller for handling client account registration
+ */
 class Register
 {
     use Controller;
@@ -28,6 +32,7 @@ class Register
         $this->view_data['defaultPassword'] = "";
         $this->view_data['defaultConfirmPassword'] = "";
         $this->view_data['errors'] = [];
+        $this->view_data['editMode'] = false;
 
         // get list of districts to be displayed on form
         $this->view_data['districts'] = District::getAll();
@@ -38,7 +43,7 @@ class Register
      * data types.
      * @return array An array indexed by attribute name. It contains all the required attributes.
      */
-    private function getFormData(): array
+    public function getFormData(): array
     {
         $form_data = [];
         // $form_data will store all attributes and missing attributes are set to empty string
@@ -69,15 +74,6 @@ class Register
     {
         $form_data = $this->getFormData();
 
-        // get the district object corresponding to the submitted district id
-        $submitted_district = District::getByID($form_data['district']);
-
-        // if district does not exist, create a temporary invalid district object to pass to Client constructor
-        // Note: A District object (invalid or not) must be passed to the Client constructor
-        if (empty($submitted_district)) {
-            $submitted_district = new District(-1, "");
-        }
-
         // create a new client object
         $client = new Client(
             email: $form_data['email'],
@@ -85,9 +81,11 @@ class Register
             last_name: $form_data['last_name'],
             plain_password: $form_data['password'],
             phone_no: $form_data['phone_no'],
-            district: $submitted_district,
-            street: $form_data['street'],
-            city: $form_data['city']
+            address: new Location(
+                street: $form_data['street'],
+                city: $form_data['city'],
+                district_id: $form_data['district']
+            )
         );
 
         // validate all attributes (except password) and store errors
@@ -144,7 +142,7 @@ class Register
 
     public function index(): void
     {
-        if (isset($_POST['register_submit'])) {
+        if (isset($_POST['form_submit'])) {
             $this->handleFormSubmission();
         }
 
