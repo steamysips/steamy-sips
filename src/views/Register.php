@@ -5,8 +5,8 @@ declare(strict_types=1);
 use Steamy\Model\District;
 
 /**
- * View for registration form.
- *
+ * Form for entering user details.
+ * @var bool $editMode Whether form is being used for editing
  * @var string $defaultFirstName
  * @var string $defaultLastName
  * @var string $defaultPhoneNumber
@@ -29,7 +29,7 @@ use Steamy\Model\District;
 $ariaInvalid = function (string $input_name) use ($errors) {
     // if form is loaded for the first time (form has not been submitted)
     // do not add aria-invalid attribute
-    if (!isset($_POST['register_submit'])) {
+    if (!isset($_POST['form_submit'])) {
         return '';
     }
 
@@ -46,8 +46,8 @@ $ariaInvalid = function (string $input_name) use ($errors) {
     <article class="grid">
         <div>
             <hgroup>
-                <h1>Sign up</h1>
-                <h2>Create a new account for free</h2>
+                <h1><?= $editMode ? "Edit profile" : "Sign up" ?></h1>
+                <h2> <?= $editMode ? "Change your personal details" : "Create a new account for free" ?> </h2>
             </hgroup>
             <form method="post">
                 <fieldset>
@@ -94,7 +94,7 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                     <div class="grid">
                         <div class="container">
                             <label for="street">Street</label>
-                            <input name="street" value="<?= htmlspecialchars($defaultStreet) ?>" id="street"
+                            <input required name="street" value="<?= htmlspecialchars($defaultStreet) ?>" id="street"
                                    type="text"<?= $ariaInvalid(
                                 'street'
                             ) ?> />
@@ -107,7 +107,9 @@ $ariaInvalid = function (string $input_name) use ($errors) {
 
                         <div class="container">
                             <label for="city">City</label>
-                            <input name="city" value="<?= htmlspecialchars($defaultCity) ?>" id="city"
+                            <input name="city"
+                                   required
+                                   value="<?= htmlspecialchars($defaultCity) ?>" id="city"
                                    type="text"<?= $ariaInvalid(
                                 'city'
                             ) ?> />
@@ -120,7 +122,7 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                     </div>
 
                     <label for="districts">District</label>
-                    <select name="district" id="districts"<?= $ariaInvalid('district') ?>>
+                    <select required name="district" id="districts"<?= $ariaInvalid('district') ?>>
                         <?php
                         foreach ($districts as $district) : ?>
                             <option value="<?= filter_var(
@@ -159,7 +161,7 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                             <input id="password" type="password" name="password"
                                    aria-label="Password"
                                    value="<?= htmlspecialchars($defaultPassword) ?>"
-                                   required<?= $ariaInvalid('password') ?> />
+                                <?= $ariaInvalid('password') ?> />
 
                             <?php
                             if (!empty($errors['password'])) : ?>
@@ -173,7 +175,8 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                             <input id="confirmPassword" type="password" name="confirmPassword"
                                    aria-label="Confirm password"
                                    value="<?= htmlspecialchars($defaultConfirmPassword) ?>"
-                                   required<?= $ariaInvalid('confirmPassword') ?> />
+                                <?= $editMode ? "" : "required" ?>
+                                <?= $ariaInvalid('confirmPassword') ?> />
                             <?php
                             if (!empty($errors['confirmPassword'])) : ?>
                                 <small class="warning"><?= $errors['confirmPassword'] ?></small>
@@ -189,8 +192,12 @@ $ariaInvalid = function (string $input_name) use ($errors) {
                         Show password
                     </label>
                 </fieldset>
-                <button type="submit" name="register_submit">Register</button>
-                <small>Already have an account? <a href="/login">Login</a></small>
+                <button type="submit" name="form_submit"><?= $editMode ? "Save" : "Register" ?></button>
+                <?php
+                if (!$editMode): ?>
+                    <small>Already have an account? <a href="/login">Login</a></small>
+                <?php
+                endif ?>
             </form>
         </div>
     </article>
