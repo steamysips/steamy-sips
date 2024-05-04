@@ -49,19 +49,27 @@ trait Controller
      * @param string $view_name File name of view file in `views` folder WITHOUT the `.php` extension.
      * @param array $view_data Values for the placeholder data defined in the view.
      * @param string $template_title Page title. Default value is `Steamy Sips`.
-     * @param string $template_tags Additional tags to be included in head. Examples can be
+     * @param string $template_tags Additional tags to be included in `<head>`. Examples can be
      * script tags and links to other stylesheets.
-     * @param string $template_meta_description Meta description of page
+     * @param string $template_meta_description Meta description of page. Default value is empty.
+     * @param bool $enableIndexing Whether page should be indexed by search engines
      * @return void
      */
-    public
-    function view(
+    public function view(
         string $view_name,
         array $view_data = [],
         string $template_title = 'Steamy Sips',
         string $template_tags = '',
         string $template_meta_description = '',
+        bool $enableIndexing = true,
     ): void {
+        // check if search engine indexing must be disabled
+        if (!$enableIndexing) {
+            $template_tags .= <<< EOL
+                <meta name="robots" content="noindex, follow, noarchive">
+            EOL;
+        }
+
         // import data to be placed in view file
         if (!empty($view_data)) {
             extract($view_data);

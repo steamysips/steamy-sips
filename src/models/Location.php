@@ -77,6 +77,14 @@ class Location
         return $this->district_id;
     }
 
+    public function getDistrict(): ?District
+    {
+        if (empty($this->district_id)) {
+            return null;
+        }
+        return District::getByID($this->district_id);
+    }
+
     public function setDistrictID(int $district_id): void
     {
         $this->district_id = $district_id;

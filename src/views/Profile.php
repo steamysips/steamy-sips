@@ -5,36 +5,45 @@ declare(strict_types=1);
 /**
  * The following attributes are defined in controllers/Profile.php
  *
- * @var $name string full name of client
- * @var $email string email of client
- * @var $address string full address of client
+ * @var $client Client signed in client
  * @var $orders array array of orders
  */
+
+use Steamy\Model\Client;
 
 ?>
 
 <main class="container">
     <h1>My account</h1>
     <h2>Personal details</h2>
-    <form action="">
-        <label class="grid">
-            Name:
-            <input value="<?= htmlspecialchars($name) ?>" type="text" disabled>
-        </label>
+    <label class="grid">
+        Name
+        <input value="<?= htmlspecialchars($client->getFirstName() . " " . $client->getLastName()) ?>"
+               type="text"
+               disabled>
+    </label>
 
 
-        <label class="grid">
-            Email:
-            <input value="<?= htmlspecialchars($email) ?>" type="email" disabled>
-        </label>
+    <label class="grid">
+        Email
+        <input value="<?= htmlspecialchars($client->getEmail()) ?>" type="email" disabled>
+    </label>
 
 
-        <label class="grid">
-            Address:
-            <input value="<?= htmlspecialchars($address) ?>" type="text" disabled>
-        </label>
-        <button disabled>Edit</button>
-    </form>
+    <label class="grid">
+        Address
+        <input value="<?= htmlspecialchars($client->getAddress()->getFormattedAddress()) ?>" type="text" disabled>
+    </label>
+
+    <label class="grid">
+        Phone
+        <input value="<?= htmlspecialchars($client->getPhoneNo()) ?>" type="text" disabled>
+    </label>
+
+    <a href="/profile/edit">
+        <button>Edit</button>
+    </a>
+
     <h2>Orders summary</h2>
 
     <figure>
@@ -79,7 +88,7 @@ declare(strict_types=1);
                 <h6>Log out from website. You will lose access to your profile and will have to enter your login
                     details again.</h6>
             </hgroup>
-            <form method="post">
+            <form>
                 <button type="submit" name="logout_submit">Log out</button>
             </form>
         </article>
@@ -111,7 +120,7 @@ declare(strict_types=1);
                 <h6>Permanently delete your account with all its associated information. This action is
                     irreversible.</h6>
             </hgroup>
-            <form method="post">
+            <form>
                 <button type="submit" name="account_delete_submit">Delete</button>
             </form>
         </article>
