@@ -45,8 +45,18 @@ class Utility
      */
     public static function splitURL(): array
     {
-        $URL = $_GET['url'] ?? 'home';
+        $URL = Utility::getURL();
         return explode("/", trim($URL, '/'));
+    }
+
+    /**
+     * @return string Trimmed root-relative URL. Defaults to `home`.
+     */
+    public static function getURL(): string
+    {
+        $URL = $_GET['url'] ?? 'home';
+        $URL = trim($URL);
+        return trim($URL, '/');
     }
 
     /** @noinspection PhpNoReturnAttributeCanBeAddedInspection */

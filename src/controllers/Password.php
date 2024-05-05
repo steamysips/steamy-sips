@@ -153,7 +153,7 @@ class Password
     public function index(): void
     {
         // check if url is of form /password
-        if ($_GET['url'] === 'password') {
+        if (Utility::getURL() === 'password') {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // user has submitted his email
                 try {
@@ -174,7 +174,7 @@ class Password
         }
 
         // check if url is of form /password/reset
-        if ($_GET['url'] === 'password/reset') {
+        if (Utility::getURL() === 'password/reset') {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $this->handlePasswordSubmission();
             }

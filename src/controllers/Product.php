@@ -218,8 +218,23 @@ class Product
         }
     }
 
+    private function validateURL(): bool
+    {
+        return preg_match("/^shop\/products\/[0-9]+$/", Utility::getURL()) === 1;
+    }
+
+    private function handleInvalidURL(): void
+    {
+        if (!$this->validateURL()) {
+            (new _404())->index();
+            die();
+        }
+    }
+
     public function index(): void
     {
+        $this->handleInvalidURL();
+
         // if product was not found, display error page
         if (empty($this->product)) {
             (new _404())->index();

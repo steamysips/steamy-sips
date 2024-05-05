@@ -140,8 +140,23 @@ class Register
         $this->view_data['defaultConfirmPassword'] = $form_data['confirm_password'];
     }
 
+    private function validateURL(): bool
+    {
+        return Utility::getURL() === 'register';
+    }
+
+    private function handleInvalidURL(): void
+    {
+        if (!$this->validateURL()) {
+            (new _404())->index();
+            die();
+        }
+    }
+
     public function index(): void
     {
+        $this->handleInvalidURL();
+
         if (isset($_POST['form_submit'])) {
             $this->handleFormSubmission();
         }
