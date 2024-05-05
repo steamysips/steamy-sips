@@ -22,21 +22,6 @@ class Profile
         $this->signed_client = null;
         $this->view_data['errors'] = [];
         $this->view_data['client'] = null;
-
-        // filter out unsigned users
-        $this->handleUnsignedUsers();
-
-        // at this point, we know that current user was previously signed in
-
-        // fetch his user details from database
-        $client_record = Client::getByEmail($_SESSION['user']);
-        if ($client_record) {
-            $this->signed_client = $client_record;
-            $this->view_data['client'] = $this->signed_client;
-        } else {
-            // if user record is missing from database, redirect to login page
-            Utility::redirect('login');
-        }
     }
 
     private function handleLogOut(): void
@@ -159,7 +144,7 @@ class Profile
 
     private function validateURL(): bool
     {
-        return in_array($_GET['url'], ['profile', 'profile/edit'], true);
+        return in_array(Utility::getURL(), ['profile', 'profile/edit'], true);
     }
 
     private function handleInvalidURL(): void
@@ -174,6 +159,22 @@ class Profile
     {
         $this->handleInvalidURL();
 
+        // filter out unsigned users
+        $this->handleUnsignedUsers();
+
+        // at this point, we know that the current user was previously signed in
+
+        // fetch his user details from database
+        $client_record = Client::getByEmail($_SESSION['user']);
+        if ($client_record) {
+            $this->signed_client = $client_record;
+            $this->view_data['client'] = $this->signed_client;
+        } else {
+            // if user record is missing from database, redirect to login page
+            Utility::redirect('login');
+        }
+
+
         // log out user if logout button clicked
         if (isset($_GET['logout_submit'])) {
             $this->handleLogOut();
@@ -187,7 +188,7 @@ class Profile
         }
 
         // handle profile edit on /profile/edit page
-        if ($_GET['url'] === 'profile/edit') {
+        if (Utility::getURL() === 'profile/edit') {
             $this->view_data['editMode'] = true;
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $this->handleProfileEditSubmission();
