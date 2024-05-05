@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
 
@@ -48,8 +49,22 @@ class Cart
         );
     }
 
+    private function validateURL(): bool
+    {
+        return Utility::getURL() === 'cart';
+    }
+
+    private function handleInvalidURL(): void
+    {
+        if (!$this->validateURL()) {
+            (new _404())->index();
+            die();
+        }
+    }
+
     public function index(): void
     {
+        $this->handleInvalidURL();
         // check if the latest cart data is available
         if (isset($_SESSION['cart'])) {
             $this->displayCart();

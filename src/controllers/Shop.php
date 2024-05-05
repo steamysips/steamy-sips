@@ -102,14 +102,14 @@ class Shop
     public function index(): void
     {
         // check if URL follows format /shop/products/<number>
-        if (preg_match("/^shop\/products\/[0-9]+$/", $_GET['url'])) {
+        if (preg_match("/^shop\/products\/[0-9]+$/", Utility::getURL())) {
             // let Product controller handle this
             (new ProductController())->index();
             return;
         }
 
         // check if URL is not /shop
-        if ($_GET['url'] !== "shop") {
+        if (Utility::getURL() !== "shop") {
             // let 404 controller handle this
             (new _404())->index();
             return;

@@ -72,8 +72,24 @@ class Login
         }
     }
 
+
+    private function validateURL(): bool
+    {
+        return Utility::getURL() === 'login';
+    }
+
+    private function handleInvalidURL(): void
+    {
+        if (!$this->validateURL()) {
+            (new _404())->index();
+            die();
+        }
+    }
+
     public function index(): void
     {
+        $this->handleInvalidURL();
+
         if (isset($_POST['login_submit'])) {
             $this->handleFormSubmission();
         }

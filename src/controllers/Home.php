@@ -5,13 +5,28 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
+use Steamy\Core\Utility;
 
 class Home
 {
     use Controller;
 
+    private function validateURL(): bool
+    {
+        return Utility::getURL() === 'home';
+    }
+
+    private function handleInvalidURL(): void
+    {
+        if (!$this->validateURL()) {
+            (new _404())->index();
+            die();
+        }
+    }
+
     public function index(): void
     {
+        $this->handleInvalidURL();
         $this->view(
             'Home',
             template_title: 'Home',
