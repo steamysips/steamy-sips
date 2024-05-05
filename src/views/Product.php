@@ -345,13 +345,13 @@ endif ?>
     </form>
 
     <div style="width: 500px;">
-        <canvas id="customer_rating_chart"></canvas>
+        <canvas id="customer_rating_chart" data-chart-data="<?= $rating_distribution ?>"></canvas>
     </div>
 
     <label for="filter-by">Filter by</label>
     <select id="filter-by" required>
-        <option selected>All reviewers</option>
-        <option>Verified purchase only</option>
+        <option selected>All reviews</option>
+        <option>Verified reviews only</option>
     </select>
     <div id="reviews">
         <ul>
@@ -369,34 +369,3 @@ endif ?>
 </main>
 
 <script src="/js/product_view.bundle.js"></script>
-
-<script>
-  // TODO: Use API to fetch rating distribution
-  const labels = ["5 star", "4 star", "3 star", "2 star", "1 star"];
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        axis: "y",
-        label: "Percentage",
-        data: <?= $rating_distribution ?>,
-        fill: true,
-        backgroundColor: "rgb(255, 159, 64)",
-        borderWidth: 1,
-      }],
-  };
-
-  const config = {
-    type: "bar",
-    data,
-    options: {
-      indexAxis: "y",
-    },
-  };
-
-  document.addEventListener("DOMContentLoaded", () => {
-    new Chart(
-        document.getElementById("customer_rating_chart"), config,
-    );
-  });
-</script>
