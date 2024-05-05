@@ -261,7 +261,6 @@ class Product
             'Product',
             $this->view_data,
             $this->product->getName() . ' | Steamy Sips',
-            template_tags: $this->getLibrariesTags(['chartjs']),
             template_meta_description: $this->product->getName() . " - " . $this->product->getDescription()
         );
     }
