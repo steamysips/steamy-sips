@@ -32,6 +32,8 @@ class Product
         $this->view_data["product"] = null;
         $this->view_data["rating_distribution"] = "[]";
         $this->view_data['comment_form_info'] = [];
+        $this->view_data['product_reviews'] = [];
+        $this->view_data['current_review_filter'] = $_GET['filter-review'] ?? 'all-reviews';
 
         // get product id from URL
         $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
@@ -53,6 +55,7 @@ class Product
             if ($fetched_product) {
                 $this->product = $fetched_product;
                 $this->view_data["product"] = $this->product;
+                $this->view_data['product_reviews'] = $this->product->getReviews();
             }
         }
     }
@@ -112,6 +115,20 @@ class Product
             }
         }
         return "[" . $str . "]";
+    }
+
+    private function filterReviews(Review $review): bool
+    {
+        // if there are no filters
+        if (empty($_GET['filter-review'])) {
+            return true;
+        }
+
+        if ($_GET['filter-review'] === 'verified-reviews') {
+            return $review->isVerified();
+        }
+
+        return true;
     }
 
     private function handleCommentSubmission(): void
@@ -256,12 +273,17 @@ class Product
             $this->handleCommentSubmission();
         }
 
+        $this->view_data['product_reviews'] = array_filter(
+            $this->view_data['product_reviews'],
+            array($this, "filterReviews")
+        );
+
         $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
+
         $this->view(
             'Product',
             $this->view_data,
             $this->product->getName() . ' | Steamy Sips',
-            template_tags: $this->getLibrariesTags(['chartjs']),
             template_meta_description: $this->product->getName() . " - " . $this->product->getDescription()
         );
     }

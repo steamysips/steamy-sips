@@ -26,13 +26,6 @@ trait Controller
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         EOL;
 
-        $library_tags['chartjs'] = <<< EOL
-        <!-- chartjs library-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-         integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        EOL;
-
         // concatenate all tags for the required libraries
         $script_str = "";
         foreach (array_keys($library_tags) as $library) {

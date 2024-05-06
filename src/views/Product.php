@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 /**
  * @var $product Product product information
+ * @var $product_reviews Review[] List of product reviews to be displayed with any filters applied
+ * @var $current_review_filter string
  * @var $signed_in_user bool is current user signed in?
  * @var $default_review string default review text in form
  * @var $default_rating int default rating in form
@@ -23,7 +25,7 @@ use Steamy\Model\User;
  */
 function getBadge(Review $review): string
 {
-    if (Review::isVerified($review->getProductID(), $review->getReviewID())) {
+    if ($review->isVerified()) {
         return <<< BADGE
                     <div data-tooltip="Verified Purchase" data-placement="left" >
                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -345,20 +347,27 @@ endif ?>
     </form>
 
     <div style="width: 500px;">
-        <canvas id="customer_rating_chart"></canvas>
+        <canvas id="customer_rating_chart" data-chart-data="<?= $rating_distribution ?>"></canvas>
     </div>
 
-    <label for="filter-by">Filter by</label>
-    <select id="filter-by" required>
-        <option selected>All reviewers</option>
-        <option>Verified purchase only</option>
-    </select>
+    <form id="review-form" action="" method="get">
+        <label for="filter-by">Filter by</label>
+        <select id="filter-by" required>
+            <option value="all-reviews"
+                <?= $current_review_filter === 'all-reviews' ? 'selected' : '' ?>>
+                All reviews
+            </option>
+            <option value="verified-reviews"
+                <?= $current_review_filter === 'verified-reviews' ? 'selected' : '' ?>
+            >Verified reviews only</option>
+        </select>
+    </form>
+
     <div id="reviews">
         <ul>
             <?php
             // print reviews with respective comments
-            $reviews = $product->getReviews();
-            foreach ($reviews as $review) {
+            foreach ($product_reviews as $review) {
                 echo "<li>";
                 printReview($review);
                 echo "</li>";
@@ -369,34 +378,3 @@ endif ?>
 </main>
 
 <script src="/js/product_view.bundle.js"></script>
-
-<script>
-  // TODO: Use API to fetch rating distribution
-  const labels = ["5 star", "4 star", "3 star", "2 star", "1 star"];
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        axis: "y",
-        label: "Percentage",
-        data: <?= $rating_distribution ?>,
-        fill: true,
-        backgroundColor: "rgb(255, 159, 64)",
-        borderWidth: 1,
-      }],
-  };
-
-  const config = {
-    type: "bar",
-    data,
-    options: {
-      indexAxis: "y",
-    },
-  };
-
-  document.addEventListener("DOMContentLoaded", () => {
-    new Chart(
-        document.getElementById("customer_rating_chart"), config,
-    );
-  });
-</script>
