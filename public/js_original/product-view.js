@@ -64,6 +64,33 @@ function createRatingChart() {
   new Chart(document.getElementById("customer_rating_chart"), config);
 }
 
+// Function to update query string parameter in URL
+function updateQueryStringParameter(uri, key, value) {
+  const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+  const separator = uri.indexOf("?") !== -1 ? "&" : "?";
+  if (uri.match(re)) {
+    return uri.replace(re, "$1" + key + "=" + value + "$2");
+  } else {
+    return uri + separator + key + "=" + value;
+  }
+}
+
+function handleReviewFilterSubmission(e) {
+  const selectElement = e.target;
+  const selectedOption =
+    selectElement.options[selectElement.selectedIndex].value;
+
+  console.log(selectedOption);
+
+  // Reload the page with the modified URL
+  window.location.href =
+    updateQueryStringParameter(
+      window.location.href,
+      "filter-review",
+      selectedOption,
+    ) + "#reviews";
+}
+
 window.addEventListener("DOMContentLoaded", function () {
   successAddToCartModal.init();
   commentFormModal.init();
@@ -73,4 +100,8 @@ window.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("product-customization-form")
     .addEventListener("submit", handleAddToCart);
+
+  document
+    .querySelector("#review-form > select")
+    .addEventListener("change", handleReviewFilterSubmission);
 });
