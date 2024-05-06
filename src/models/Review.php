@@ -212,11 +212,9 @@ class Review
     /**
      * Check if the writer of the review has purchased the product.
      *
-     * @param int $product_id The ID of the product to check.
-     * @param int $review_id The ID of the review.
      * @return bool True if the writer has purchased the product, false otherwise.
      */
-    public static function isVerified(int $product_id, int $review_id): bool
+    public function isVerified(): bool
     {
         // Query the database to check if the review with the given review_id belongs to the user who wrote it
         $query = <<<EOL
@@ -228,7 +226,7 @@ class Review
         AND op.product_id = :product_id
         EOL;
 
-        $result = self::get_row($query, ['product_id' => $product_id, 'review_id' => $review_id]);
+        $result = self::get_row($query, ['product_id' => $this->product_id, 'review_id' => $this->review_id]);
 
         // If result is empty, the user has written the review for the product
         return empty($result);
