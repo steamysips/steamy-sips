@@ -130,30 +130,53 @@ class Client extends User
         }
 
         // get data to be inserted to user table
-        $user_data = parent::toArray();
+        $user_data = $this->toArray();
         unset($user_data['user_id']);
+        unset($user_data['street']);
+        unset($user_data['city']);
+        unset($user_data['district_id']);
+
+        // start transaction
+        $conn = self::connect();
+        $conn->beginTransaction();
 
         // perform insertion to user table
-        $inserted_id = $this->insert($user_data, 'user');
+        $query = <<< EOL
+        INSERT INTO user(email, first_name, password, phone_no, last_name) 
+        VALUES(:email, :first_name, :password, :phone_no, :last_name);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute($user_data);
 
-        if ($inserted_id === null) {
+
+        if (!$success) {
+            $conn->rollBack();
             return false;
         }
 
-        $this->user_id = $inserted_id;
+        $this->user_id = (int)$conn->lastInsertId();
 
-        // get data to be inserted to client table
-        $client_data = [
+        // perform insertion to client table
+        $query = <<< EOL
+        INSERT INTO client(user_id, street, city, district_id)
+        VALUES(:user_id, :street, :city, :district_id);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
             'user_id' => $this->user_id,
             'street' => $this->address->getStreet(),
             'city' => $this->address->getCity(),
             'district_id' => $this->address->getDistrictID()
-        ];
+        ]);
 
-        // perform insertion to client table
-        $this->insert($client_data, $this->table);
+        if (!$success) {
+            $conn->rollBack();
+            return false;
+        }
 
-        return true; // insertion was successful
+        $conn->commit();
+        $conn = null;
+        return true;
     }
 
     public function updateUser(bool $updatePassword = false): bool
