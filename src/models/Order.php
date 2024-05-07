@@ -17,7 +17,7 @@ class Order
 
     private int $store_id;
     private int $order_id;
-    private string $status;
+    private OrderStatus $status;
     private DateTime $created_date;
     private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private int $client_id;
@@ -27,7 +27,7 @@ class Order
         int $client_id,
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
-        string $status = "pending",
+        OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
         DateTime $created_date = new DateTime(),
     ) {
         $this->store_id = $store_id;
@@ -148,12 +148,12 @@ class Order
         return $this->order_id;
     }
 
-    public function getStatus(): string
+    public function getStatus(): OrderStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): void
+    public function setStatus(OrderStatus $status): void
     {
         $this->status = $status;
     }
@@ -182,7 +182,7 @@ class Order
     {
         $errors = [];
 
-        $validStatus = ['pending', 'cancelled', 'completed'];
+        $validStatus = [OrderStatus::PENDING, OrderStatus::CANCELLED, OrderStatus::COMPLETED];
         if (!in_array($this->status, $validStatus)) {
             $errors['status'] = "Status must be one of: " . implode(', ', $validStatus);
         }
