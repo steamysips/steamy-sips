@@ -10,15 +10,15 @@ namespace Steamy\Model;
 class Location
 {
 
-    private ?string $street;
-    private ?string $city;
+    private string $street;
+    private string $city;
     private ?int $district_id;
     private ?float $latitude;
     private ?float $longitude;
 
     public function __construct(
-        ?string $street = null,
-        ?string $city = null,
+        string $street = '',
+        string $city = '',
         ?int $district_id = null,
         ?float $latitude = null,
         ?float $longitude = null
