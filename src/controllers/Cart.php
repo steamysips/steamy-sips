@@ -17,6 +17,7 @@ class Cart
 
     private function displayCart(): void
     {
+        $this->view_data['cart_total'] = 0;
         // loop through each cart item
         foreach ($_SESSION['cart'] as $item) {
             // fetch corresponding product based on product ID
@@ -32,6 +33,7 @@ class Cart
             $cart_item['milkType'] = strtolower($item['milkType']);
             $cart_item['cupSize'] = strtolower($item['cupSize']);
             $cart_item['subtotal'] = $cart_item['quantity'] * $cart_item['product']->getPrice();
+            $this->view_data['cart_total'] += $cart_item['subtotal'];
 
             $this->view_data['cart_items'][] = $cart_item;
         }

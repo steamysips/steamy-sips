@@ -23,6 +23,13 @@ function updateCart(e) {
   const unitPrice = parseFloat(sectionNode.getAttribute("data-unitprice"));
   const newSubTotal = Math.round(newQuantity * unitPrice * 100) / 100;
 
+  // update cart total
+  let cartTotal = parseFloat(document.querySelector("#cart-total").textContent);
+  cartTotal = cartTotal + unitPrice * (newQuantity - currentCartItem.quantity);
+  document.querySelector("#cart-total").textContent = cartTotal
+    .toFixed(2)
+    .toString();
+
   // display new subtotal
   const priceNode = sectionNode.querySelector(".container > strong");
   priceNode.textContent = "Rs " + newSubTotal;

@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @var array $cart_items Represents an array of cart items, where each item is an object containing information
  * about a product, including its quantity, cupSize and milkType attributes.
+ * @var float $cart_total
  * @var Store[] $stores All stores
  */
 
@@ -85,8 +86,13 @@ use Steamy\Model\Store;
     }
     ?>
 
-
-    <button type="submit">Checkout</button>
+    <strong style="font-size: 40px">Total = Rs <span id="cart-total"><?= filter_var(
+                $cart_total,
+                FILTER_SANITIZE_NUMBER_FLOAT,
+                FILTER_FLAG_ALLOW_FRACTION
+            ) ?></span>
+    </strong>
+    <button style="margin-top: 50px" class="contrast" type="submit">Checkout</button>
 </main>
 
 <script src="/js/cart_view.bundle.js"></script>
