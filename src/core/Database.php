@@ -7,6 +7,7 @@ namespace Steamy\Core;
 use PDO;
 use PDOException;
 use stdClass;
+use Steamy\Controller\Error;
 
 trait Database
 {
@@ -25,8 +26,7 @@ trait Database
         } catch (PDOException $e) {
             // if PHPUnit is not running, handle the exception
             if (!defined('PHPUNIT_STEAMY_TESTSUITE')) {
-                // TODO: Display a user-friendly error message
-                Utility::show("Sorry, we're unable to process your request at the moment. Please try again later.");
+                (new Error())->index("Sorry, we're unable to process your request at the moment. Please try again later.");
                 die();
             } else {
                 // if PHPUnit is running, re-throw the exception to allow it to propagate

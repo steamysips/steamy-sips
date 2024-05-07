@@ -115,8 +115,8 @@ class Register
                 Utility::redirect('login');
             }
 
-            // TODO: redirect to some error page
-            Utility::redirect('home');
+            (new Error())->index("An error occurred while processing your registration. Please try again later.");
+            die();
         } else {
             $this->loadDataToForm($form_data);
         }
@@ -148,7 +148,7 @@ class Register
     private function handleInvalidURL(): void
     {
         if (!$this->validateURL()) {
-            (new _404())->index();
+            (new Error())->index("Page not found");
             die();
         }
     }
