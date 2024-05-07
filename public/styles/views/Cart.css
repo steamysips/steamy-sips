@@ -1,16 +1,13 @@
-section {
-  margin-bottom: 0;
-}
-
 .cart-item {
-  padding-top: 10px;
   display: flex;
   gap: 1em;
-  border-bottom: 1px solid gray;
+  min-height: 270px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 10px 20px;
 }
 
-section:nth-child(2) {
-  border-top: 1px solid gray;
+.cart-item:hover {
+  box-shadow: rgba(99, 99, 99, 0.2) 1px 3px 8px 1px;
 }
 
 .cart-item > img {
