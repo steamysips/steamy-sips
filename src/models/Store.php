@@ -126,20 +126,50 @@ class Store
 
     public function validate(): bool
     {
-        // TODO
-        return true;
+        $errors = true;
+        $errors = $this->address->validate();
+
+        // Perform phone number length check
+        if (strlen($this->phone_no) < 7) {
+            $errors = false;
+        }
+
+        return $errors;
     }
 
     public function getProductStock(int $product_id): int
     {
-        // TODO
-        return 0;
+        $query = "SELECT stock_level FROM store_product WHERE store_id = :store_id AND product_id = :product_id;";
+        $params = ['store_id' => $this->store_id, 'product_id' => $product_id];
+        $result = self::query($query, $params);
+
+        if (!empty($result)) {
+            return (int)$result[0]->stock_level;
+        } else {
+            return 0; // Product not found in the store or stock level is 0
+        }
     }
 
     public function getProducts(): array
     {
-        // TODO: Return an array of Product objects
-        return [];
+        $query = "SELECT p.* FROM product p JOIN store_product sp ON p.product_id = sp.product_id WHERE sp.store_id = :store_id;";
+        $params = ['store_id' => $this->store_id];
+        $results = self::query($query, $params);
+
+        $products = [];
+       foreach ($results as $result) {
+           $products[] = new Product(
+               $result->product_id,
+               $result->name,
+               $result->calories,
+               $result->img_url,
+               $result->img_alt_text,
+               $result->category,
+               $result->price,
+               $result->description
+           );
+        }
+        return $products;
     }
 
     public function getStoreID(): int

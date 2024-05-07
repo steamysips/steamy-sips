@@ -39,7 +39,7 @@ class Location
         if (!empty($this->city)) {
             $arr['city'] = $this->city;
         }
-        if (!empty($this->district)) {
+        if (!empty($this->district_id)) {
             $arr['district_id'] = $this->district_id;
         }
         if (!is_null($this->latitude)) {
@@ -50,6 +50,35 @@ class Location
         }
         return $arr;
     }
+
+
+    public function validate(): bool
+    {
+    // Validate street
+    if (empty($this->street)) {
+        return false; // Street is empty
+    }
+
+    // Validate city
+    if (empty($this->city)) {
+        return false; // City is empty
+    }
+
+    // Validate district_id
+    if ($this->district_id === null || $this->district_id <= 0) {
+        return false; // District ID is invalid
+    }
+
+    // Validate latitude and longitude
+    if ($this->latitude === null || $this->longitude === null ||
+        $this->latitude < -90 || $this->latitude > 90 ||
+        $this->longitude < -180 || $this->longitude > 180) {
+        return false; // Latitude or longitude is invalid
+    }
+    
+    return true; 
+    }
+
 
 
     public function getStreet(): ?string
