@@ -208,13 +208,22 @@ class Order
 
     public function calculateTotalPrice(): float
     {
-        // TODO: Use a single query to calculate total price
-        return 0;
+    $totalPrice = 0;
+
+    // Fetch all products associated with this order
+    $orderProducts = self::getOrderProducts($this->order_id);
+
+    // Calculate total price based on unit prices and quantities
+    foreach ($orderProducts as $orderProduct) {
+        $totalPrice += $orderProduct->unit_price * $orderProduct->quantity;
+    }
+    return $totalPrice;
     }
 
     public function toHTML(): string
     {
-        // TODO: get order products and names of each product using a single query
+        // Fetch all products associated with this order
+        $orderProducts = self::getOrderProducts($this->order_id);
 
         $html = <<<HTML
         <table>
@@ -229,31 +238,40 @@ class Order
             <tbody>
         HTML;
 
-        // Iterate through each product in the order
-        foreach ($this->products as $product) {
-            // Get the product details
-            $productName = $product['product']->getName();
-            $quantity = $product['quantity'];
-            $pricePerUnit = $product['product']->getPrice();
-            $totalPrice = $quantity * $pricePerUnit;
+    // Iterate through each product in the order
+    foreach ($orderProducts as $orderProduct) {
 
-            // Add a row for the product in the HTML table
-            $html .= <<<HTML
-                <tr>
-                    <td>$productName</td>
-                    <td>Qty $quantity</td>
-                    <td>\$$pricePerUnit</td>
-                    <td>\$$totalPrice</td>
-                </tr>
-            HTML;
-        }
+            $productid=$orderProduct->product_id;
 
-        // Close the HTML table
+                $query = "SELECT name
+                  FROM product
+                  WHERE product_id = :product_id";
+                  
+            $data = self::query($query, ['product_id' => $productid]);
+
+        // Get the product details
+        $productName = !empty($data) ? $data[0]->name : "N/A";
+        $quantity = $orderProduct->quantity;
+        $pricePerUnit = $orderProduct->unit_price;
+        $totalPrice = self::calculateTotalPrice();
+
+        // Add a row for the product in the HTML table
         $html .= <<<HTML
+            <tr>
+                <td>$productName</td>
+                <td>Qty $quantity</td>
+                <td>\$$pricePerUnit</td>
+                <td>\$$totalPrice</td>
+            </tr>
+        HTML;
+    }
+
+    // Close the HTML table
+    $html .= <<<HTML
             </tbody>
         </table>
-        HTML;
+    HTML;
 
-        return $html;
+    return $html;
     }
 }
