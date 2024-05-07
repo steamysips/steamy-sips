@@ -267,13 +267,28 @@ class Product
             return 0; // Return 0 if $product_id is not set
         }
 
-        // Query the database to calculate the average rating
-        // TODO: Exclude unverified reviews
+        // Query the database to calculate the average rating excluding unverified reviews
         $query = <<< EOL
-           SELECT AVG(rating) AS average_rating
-           FROM review
-           WHERE product_id = :product_id
-           EOL;
+            SELECT AVG(r.rating) AS average_rating
+            FROM review r
+            WHERE r.product_id = :product_id
+            AND EXISTS (
+                SELECT 1
+                FROM client c
+                WHERE c.user_id = r.client_id
+                AND EXISTS (
+                    SELECT 1
+                    FROM order o
+                    WHERE o.client_id = c.user_id
+                    AND EXISTS (
+                        SELECT 1
+                        FROM order_product op
+                        WHERE op.order_id = o.order_id
+                        AND op.product_id = r.product_id
+                    )
+                )
+            )
+        EOL;
         $params = ['product_id' => $this->product_id];
 
         $result = $this->query($query, $params);
