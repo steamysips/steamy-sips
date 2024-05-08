@@ -84,13 +84,18 @@ function displayProduct($product): void
 </form>
 
 <main class="container">
-    <div id="item-grid">
+    <div id="item-grid" style="margin-bottom: 2cm;">
         <?php
         foreach ($products as $product) {
             displayProduct($product);
         }
         ?>
     </div>
+
+    <form method="get" class="container">
+    <button type="submit" name="page" value="<?= $page + 1 ?>">Load More</button>
+    </form>
+
 </main>
 
 <script>
