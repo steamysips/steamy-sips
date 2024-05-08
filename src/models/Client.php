@@ -120,7 +120,7 @@ class Client extends User
     public function save(): bool
     {
         // if attributes are invalid, exit
-        if (count($this->validate()) > 0) {
+        if (!empty($this->validate())) {
             return false;
         }
 
@@ -129,31 +129,54 @@ class Client extends User
             return false;
         }
 
-        // get data to be inserted to user table
-        $user_data = parent::toArray();
-        unset($user_data['user_id']);
+        // start transaction
+        $conn = self::connect();
+        $conn->beginTransaction();
 
         // perform insertion to user table
-        $inserted_id = $this->insert($user_data, 'user');
+        $query = <<< EOL
+            INSERT INTO user(email, first_name, password, phone_no, last_name) 
+            VALUES(:email, :first_name, :password, :phone_no, :last_name);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
+            'email' => $this->email,
+            'first_name' => $this->first_name,
+            'password' => $this->password,
+            'phone_no' => $this->phone_no,
+            'last_name' => $this->last_name
+        ]);
 
-        if ($inserted_id === null) {
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
             return false;
         }
 
-        $this->user_id = $inserted_id;
+        $this->user_id = (int)$conn->lastInsertId();
 
-        // get data to be inserted to client table
-        $client_data = [
+        // perform insertion to client table
+        $query = <<< EOL
+            INSERT INTO client(user_id, street, city, district_id)
+            VALUES(:user_id, :street, :city, :district_id);
+        EOL;
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
             'user_id' => $this->user_id,
             'street' => $this->address->getStreet(),
             'city' => $this->address->getCity(),
             'district_id' => $this->address->getDistrictID()
-        ];
+        ]);
 
-        // perform insertion to client table
-        $this->insert($client_data, $this->table);
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
 
-        return true; // insertion was successful
+        $conn->commit();
+        $conn = null;
+        return true;
     }
 
     public function updateUser(bool $updatePassword = false): bool
