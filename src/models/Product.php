@@ -272,23 +272,14 @@ class Product
             SELECT AVG(r.rating) AS average_rating
             FROM review r
             WHERE r.product_id = :product_id
-            AND EXISTS (
-                SELECT 1
-                FROM client c
-                WHERE c.user_id = r.client_id
-                AND EXISTS (
-                    SELECT 1
-                    FROM order o
-                    WHERE o.client_id = c.user_id
-                    AND EXISTS (
-                        SELECT 1
-                        FROM order_product op
-                        WHERE op.order_id = o.order_id
-                        AND op.product_id = r.product_id
-                    )
-                )
+            AND r.client_id IN (
+                SELECT DISTINCT o.client_id
+                FROM `order` o
+                JOIN order_product op ON o.order_id = op.order_id
+                WHERE op.product_id = :product_id
             )
         EOL;
+        
         $params = ['product_id' => $this->product_id];
 
         $result = $this->query($query, $params);
