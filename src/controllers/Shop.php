@@ -111,7 +111,7 @@ class Shop
         // check if URL is not /shop
         if (Utility::getURL() !== "shop") {
             // let 404 controller handle this
-            (new _404())->index();
+            (new Error())->handlePageNotFoundError();
             return;
         }
 
