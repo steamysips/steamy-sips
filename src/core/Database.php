@@ -26,7 +26,7 @@ trait Database
         } catch (PDOException $e) {
             // if PHPUnit is not running, handle the exception
             if (!defined('PHPUNIT_STEAMY_TESTSUITE')) {
-                (new Error())->index("Sorry, we're unable to process your request at the moment. Please try again later.");
+                (new Error())->handleDatabaseError();
                 die();
             } else {
                 // if PHPUnit is running, re-throw the exception to allow it to propagate
