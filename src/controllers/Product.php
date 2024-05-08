@@ -243,7 +243,7 @@ class Product
     private function handleInvalidURL(): void
     {
         if (!$this->validateURL()) {
-            (new _404())->index();
+            (new Error())->handlePageNotFoundError('Product does not exist');
             die();
         }
     }
@@ -254,7 +254,7 @@ class Product
 
         // if product was not found, display error page
         if (empty($this->product)) {
-            (new _404())->index();
+            (new Error())->handlePageNotFoundError('Product does not exist.');
             return;
         }
 
