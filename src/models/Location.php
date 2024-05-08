@@ -10,15 +10,15 @@ namespace Steamy\Model;
 class Location
 {
 
-    private string $street;
-    private string $city;
+    private ?string $street;
+    private ?string $city;
     private ?int $district_id;
     private ?float $latitude;
     private ?float $longitude;
 
     public function __construct(
-        string $street = '',
-        string $city = '',
+        ?string $street = null,
+        ?string $city = null,
         ?int $district_id = null,
         ?float $latitude = null,
         ?float $longitude = null
@@ -39,7 +39,7 @@ class Location
         if (!empty($this->city)) {
             $arr['city'] = $this->city;
         }
-        if (!empty($this->district)) {
+        if (!empty($this->district_id)) {
             $arr['district_id'] = $this->district_id;
         }
         if (!is_null($this->latitude)) {

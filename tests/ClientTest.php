@@ -13,10 +13,10 @@ final class ClientTest extends TestCase
 
     public function setUp(): void
     {
-        $district = new Location("Royal Road", "Curepipe", 1);
+        $address = new Location("Royal Road", "Curepipe", 1);
         $this->dummy_client = new Client(
             "john_u@gmail.com", "john", "johhny", "abcd",
-            "13213431", $district);
+            "13213431", $address);
     }
 
 public function tearDown(): void
@@ -73,8 +73,6 @@ public function testValidate(): void
         'first_name' => 'First name must be at least 3 characters long',
         'last_name' => 'Last name must be at least 3 characters long',
         'phone_no' => 'Phone number must be at least 7 characters long',
-        'city' => 'City name must have at least 3 characters',
-        'street' => 'Street name must have at least 4 characters',
         'district' => 'District does not exist'
     ], $client->validate());
 
@@ -87,8 +85,6 @@ public function testValidate(): void
     self::assertEquals([
         'first_name' => 'First name must be at least 3 characters long',
         'phone_no' => 'Phone number must be at least 7 characters long',
-        'city' => 'City name must have at least 3 characters',
-        'street' => 'Street name must have at least 4 characters',
         'district' => 'District does not exist'
     ], $client->validate());
 }

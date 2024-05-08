@@ -19,7 +19,7 @@ Class CommentTest extends TestCase
     public function setUp(): void
     {
 
-                // create a client object and save to database
+        // create a client object and save to database
         $this->reviewer = new Client(
             "divyesh@gmail.com", "divyesh", "jokokho", "Us4sdcsdjkcksdsdv",
             "748737292", new Location("Royal", "Curepipe", 1)
@@ -41,7 +41,7 @@ Class CommentTest extends TestCase
         $success = $this->dummy_review->save();
 
         if (!$success) {
-            throw new Exception('Unable to save client');
+            throw new Exception('Unable to save review');
         }
 
         $this->dummy_comment = new Comment(
@@ -54,7 +54,7 @@ Class CommentTest extends TestCase
         $success = $this->dummy_comment->save();
 
         if (!$success) {
-            throw new Exception('Unable to save client');
+            throw new Exception('Unable to save comment');
         }
     }
 
@@ -71,6 +71,10 @@ Class CommentTest extends TestCase
     public function testConstructor(): void
     {
         self::assertEquals('This is a test comment.', $this->dummy_comment->getText());
+         self::assertNotNull($this->dummy_comment->getUserID());
+         self::assertNotNull($this->dummy_comment->getReviewID());
+         self::assertNull($this->dummy_comment->getParentCommentID());
+         self::assertInstanceOf(DateTime::class, $this->dummy_comment->getCreatedDate());
     }
 
     public function testValidate(): void
