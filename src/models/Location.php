@@ -52,33 +52,34 @@ class Location
     }
 
 
-    public function validate(): bool
+    public function validate(): array
     {
-    // Validate street
-    if (empty($this->street)) {
-        return false; // Street is empty
-    }
+        $errors = [];
 
-    // Validate city
-    if (empty($this->city)) {
-        return false; // City is empty
-    }
+        // Validate street
+        if (!is_null($this->street) && empty($this->street)) {
+            $errors['street'] = "Street is required.";
+        }
 
-    // Validate district_id
-    if ($this->district_id === null || $this->district_id <= 0) {
-        return false; // District ID is invalid
-    }
+        // Validate city
+        if (!is_null($this->city) && empty($this->city)) {
+            $errors['city'] = "City is required.";
+        }
 
-    // Validate latitude and longitude
-    if ($this->latitude === null || $this->longitude === null ||
-        $this->latitude < -90 || $this->latitude > 90 ||
-        $this->longitude < -180 || $this->longitude > 180) {
-        return false; // Latitude or longitude is invalid
-    }
-    
-    return true; 
-    }
+        // Validate district_id
+        if (!is_null($this->district_id) && ($this->district_id === null || $this->district_id <= 0)) {
+            $errors['district_id'] = "Invalid district ID.";
+        }
 
+        // Validate latitude and longitude
+        if (!is_null($this->latitude) && !is_null($this->longitude) &&
+            ($this->latitude < -90 || $this->latitude > 90 ||
+            $this->longitude < -180 || $this->longitude > 180)) {
+            $errors['coordinates'] = "Invalid coordinates.";
+        }
+
+        return $errors; 
+    }
 
 
     public function getStreet(): ?string

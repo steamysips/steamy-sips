@@ -124,14 +124,14 @@ class Store
         return true;
     }
 
-    public function validate(): bool
+    public function validate(): array
     {
-        $errors = true;
+        $errors = [];
         $errors = $this->address->validate();
 
         // Perform phone number length check
         if (strlen($this->phone_no) < 7) {
-            $errors = false;
+            $errors ['phone_no'] = "Phone number must be at least 7 characters long";
         }
 
         return $errors;
