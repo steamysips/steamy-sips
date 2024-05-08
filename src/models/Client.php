@@ -120,7 +120,7 @@ class Client extends User
     public function save(): bool
     {
         // if attributes are invalid, exit
-        if (count($this->validate()) > 0) {
+        if (!empty($this->validate())) {
             return false;
         }
 
@@ -129,28 +129,27 @@ class Client extends User
             return false;
         }
 
-        // get data to be inserted to user table
-        $user_data = $this->toArray();
-        unset($user_data['user_id']);
-        unset($user_data['street']);
-        unset($user_data['city']);
-        unset($user_data['district_id']);
-
         // start transaction
         $conn = self::connect();
         $conn->beginTransaction();
 
         // perform insertion to user table
         $query = <<< EOL
-        INSERT INTO user(email, first_name, password, phone_no, last_name) 
-        VALUES(:email, :first_name, :password, :phone_no, :last_name);
+            INSERT INTO user(email, first_name, password, phone_no, last_name) 
+            VALUES(:email, :first_name, :password, :phone_no, :last_name);
         EOL;
         $stm = $conn->prepare($query);
-        $success = $stm->execute($user_data);
-
+        $success = $stm->execute([
+            'email' => $this->email,
+            'first_name' => $this->first_name,
+            'password' => $this->password,
+            'phone_no' => $this->phone_no,
+            'last_name' => $this->last_name
+        ]);
 
         if (!$success) {
             $conn->rollBack();
+            $conn = null;
             return false;
         }
 
@@ -158,8 +157,8 @@ class Client extends User
 
         // perform insertion to client table
         $query = <<< EOL
-        INSERT INTO client(user_id, street, city, district_id)
-        VALUES(:user_id, :street, :city, :district_id);
+            INSERT INTO client(user_id, street, city, district_id)
+            VALUES(:user_id, :street, :city, :district_id);
         EOL;
         $stm = $conn->prepare($query);
         $success = $stm->execute([
@@ -171,6 +170,7 @@ class Client extends User
 
         if (!$success) {
             $conn->rollBack();
+            $conn = null;
             return false;
         }
 
