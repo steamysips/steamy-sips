@@ -189,7 +189,7 @@ class Password
         }
 
         // if url follows some other format display error page
-        (new _404())->index();
+        (new Error())->handlePageNotFoundError();
     }
 }
 
