@@ -227,13 +227,15 @@ class Order
         <thead>
             <tr>
                 <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per Unit</th>
                 <th>Total Price</th>
             </tr>
         </thead>
         <tbody>
     HTML;
 
-    $query = "SELECT op.product_id, p.name 
+    $query = "SELECT op.product_id, op.quantity, op.unit_price, p.name 
               FROM order_product op
               JOIN product p ON op.product_id = p.product_id
               WHERE op.order_id = :order_id";
@@ -242,11 +244,15 @@ class Order
 
     foreach ($orderProducts as $orderProduct) {
         $productName = $orderProduct->name;
-        $totalPrice = self::calculateTotalPrice();
+        $quantity = $orderProduct->quantity;
+        $pricePerUnit = $orderProduct->unit_price;
+        $totalPrice = $pricePerUnit * $quantity;
 
         $html .= <<<HTML
         <tr>
             <td>$productName</td>
+            <td>Qty $quantity</td>
+            <td>\$$pricePerUnit</td>
             <td>\$$totalPrice</td>
         </tr>
         HTML;
