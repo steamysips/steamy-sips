@@ -22,11 +22,16 @@ class Order
     private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private int $client_id;
 
+    /** @var OrderProduct[] Array of line items */
+    private array $line_items; // array of order products
+
     public function __construct(
         int $store_id,
         int $client_id,
+        array $line_items = [],
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
+
         string $status = "pending",
         DateTime $created_date = new DateTime(),
     ) {
@@ -36,6 +41,7 @@ class Order
         $this->created_date = $created_date;
         $this->pickup_date = $pickup_date;
         $this->client_id = $client_id;
+        $this->line_items = $line_items;
     }
 
     public function toArray(): array
@@ -58,26 +64,63 @@ class Order
             return false;
         }
 
-        // Get data to be inserted into the order table
-        $order_data = $this->toArray();
-        unset($order_data['order_id']); // Remove order_id as it's auto-incremented
-        unset($order_data['status']); // Remove status as it's set to 'pending' by default
-        unset($order_data['pickup_date']); // Remove pickup_date as it's set to NULL by default
-        unset($order_data['created_date']); // Remove created_date as it's set by database
-
-        Utility::show($order_data);
-        // Perform insertion into the order table
-        try {
-            $new_id = $this->insert($order_data);
-            if ($new_id === null) {
-                return false;
-            }
-            $this->order_id = $new_id;
-            return true;
-        } catch (Exception $e) {
-            echo $e;
+        // check if order has at least 1 line item
+        if (empty($this->line_items)) {
             return false;
         }
+
+        $conn = self::connect();
+        $conn->beginTransaction();
+
+        // Get data to be inserted into the order table.
+        // The remaining attributes are set to their default values by mysql
+        $query = "insert into `order` (client_id, store_id) values(?, ?)";
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([$this->client_id, $this->store_id]);
+
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+        $new_order_id = (int)$conn->lastInsertId();
+
+        $query = <<< EOL
+        insert into `order_product` (order_id, product_id, cup_size, milk_type, quantity, unit_price)
+        values(:order_id, :product_id, :cup_size, :milk_type, :quantity, :unit_price)
+        EOL;
+        $stm = $conn->prepare($query);
+
+        foreach ($this->line_items as $line_item) {
+            $success = $stm->execute(['order_id' => $new_order_id, ... $line_item->toArray()]);
+
+            if (!$success) {
+                $conn->rollBack();
+                $conn = null;
+                return false;
+            }
+        }
+        $this->order_id = $new_order_id;
+
+        $conn->commit();
+        $conn = null;
+        return true;
+    }
+
+    /**
+     * Adds a line item to the order.
+     *
+     * @param OrderProduct $orderProduct
+     * @return void
+     */
+    public function addLineItem(OrderProduct $orderProduct): void
+    {
+        $this->line_items[] = $orderProduct;
+    }
+
+    public function getLineItems(): array
+    {
+        return $this->line_items;
     }
 
     /**
@@ -190,21 +233,6 @@ class Order
         return $errors;
     }
 
-    /**
-     * Adds a product to the order.
-     *
-     * @param OrderProduct $newOrderProduct
-     * @return bool
-     */
-    public function addOrderProduct(OrderProduct $newOrderProduct): bool
-    {
-        $newOrderProduct->setOrderID($this->order_id);
-        try {
-            return $newOrderProduct->save();
-        } catch (Exception) {
-            return false;
-        }
-    }
 
     public function calculateTotalPrice(): float
     {
