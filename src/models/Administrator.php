@@ -168,25 +168,4 @@ class Administrator extends User
     {
         $this->is_super_admin = $is_super_admin;
     }
-
-    public static function getSuperAdminEmails(): array
-{
-    $query = <<<EOL
-    SELECT email FROM user
-    INNER JOIN administrator
-    ON user.user_id = administrator.user_id
-    WHERE administrator.is_super_admin = 1;
-    EOL;
-
-    // Execute the query and retrieve the result
-    $results = self::get_row($query);
-
-    // Extract emails from the results
-    $emails = [];
-    foreach ($results as $result) {
-        $emails[] = $result->email;
-    }
-
-    return $emails;
-}
 }
