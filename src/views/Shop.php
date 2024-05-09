@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @var string[] $selected_categories Array of selected categories
  * @var string $search_keyword keyword used to filter products
  * @var string $sort_option Sort By option selected by user
+ * @var int $page Current page number
  */
 
 use Steamy\Model\Product;
@@ -84,7 +85,7 @@ function displayProduct($product): void
 </form>
 
 <main class="container">
-    <div id="item-grid" style="margin-bottom: 2cm;">
+    <div id="item-grid">
         <?php
         foreach ($products as $product) {
             displayProduct($product);
@@ -92,8 +93,20 @@ function displayProduct($product): void
         ?>
     </div>
 
-    <form method="get" class="container">
-    <button type="submit" name="page" value="<?= $page + 1 ?>">Load More</button>
+    <form style="margin-top: 10rem;">
+        <?php
+        // any previously selected categories should be preserved
+        foreach ($selected_categories as $category) {
+            echo <<< EOL
+            <input value="$category" name="categories[]" type="hidden">
+            EOL;
+        }
+        ?>
+        <!--any previously selected filter should be preserved-->
+        <input value="<?= htmlspecialchars($sort_option) ?>" name="sort" type="hidden"/>
+        <input value="<?= htmlspecialchars($search_keyword) ?>" name="keyword" type="hidden"/>
+
+        <button type="submit" name="page" value="<?= $page + 1 ?>">Load More</button>
     </form>
 
 </main>
