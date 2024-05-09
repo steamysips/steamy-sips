@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Steamy\Core;
 
+use Steamy\Model\Client;
+
 trait Controller
 {
 
@@ -34,6 +36,15 @@ trait Controller
             }
         }
         return $script_str;
+    }
+
+    private function getSignedInClient(): ?Client
+    {
+        if (empty($_SESSION['user'])) {
+            return null;
+        }
+
+        return Client::getByEmail($_SESSION['user']);
     }
 
     /**
