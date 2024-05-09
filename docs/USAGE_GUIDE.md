@@ -17,7 +17,14 @@ Optionally, you can display a live error log:
 sudo tail -f /var/log/apache2/error.log
 ```
 
-Visit `http://steamy.localhost/` in your browser to view the client website.
+Visit [`http://steamy.localhost/`](http://steamy.localhost/) in your browser to view the client website.
+
+> [!CAUTION]
+> The website should not be accessed from `localhost/steamy-sips/public` because the project uses root-relative URLs.
+>
+> Root-relative URLs are URLs that start with a forward slash (/) and are relative to the root directory of the website.
+> When a website is accessed from different base URLs, such as localhost/steamy-sips/public, the root-relative URLs may
+> not resolve correctly, leading to broken links, missing resources, or other issues.
 
 ## Run tests
 
