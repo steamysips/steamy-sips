@@ -259,6 +259,7 @@ class Product
             return false;
         }
     }
+    
 
     public function getAverageRating(): float
     {
@@ -285,6 +286,16 @@ class Product
         }
 
         return 0; // No reviews, return 0 as the average rating
+    }
+
+    public function delete(): bool
+    {
+
+    $query = "DELETE FROM product WHERE product_id = :product_id";
+    $data = ['product_id' => $this->product_id];
+    $result = self::query($query, $data);
+    
+    return $result;
     }
 
     public function validate(): array
