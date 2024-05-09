@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
+use PHPMailer\PHPMailer\Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
-use Steamy\Model\Administrator;
 use Steamy\Model\Mailer;
 
 /**
  * Controller for handling contact us form submission
  */
-class ContactUs
+class Contact
 {
     use Controller;
 
@@ -44,7 +44,7 @@ class ContactUs
         return $form_data;
     }
 
-        private function validateContactForm(): array
+    private function validateContactForm(): array
     {
         $errors = [];
         $form_data = $this->getFormData();
@@ -78,33 +78,28 @@ class ContactUs
         $form_data = $this->getFormData();
 
         // validate all attributes
-        $this->view_data['errors'] = self::validateContactForm();
+        $this->view_data['errors'] = $this->validateContactForm();
 
-        // if no errors, save record and display success message
+        // if no errors and display success message
         if (empty($this->view_data['errors'])) {
-            $success = true;
-
+            $success = $this->mailBusinessInbox($form_data);
             if ($success) {
-                $listofadmin=Administrator::getSuperAdminEmails();
-
-                foreach($listofadmin as $admin){
-                $this->sendAdminEmail($admin);
-                }
-
                 Utility::redirect('home');
+            } else {
+                (new Error())->handleMailingError();
             }
-
-            (new Error())->index("An error occurred while processing your message. Please try again later.");
-            die();
         } else {
             $this->loadDataToForm($form_data);
         }
     }
 
-    private function sendAdminEmail(string $email): void
+    /**
+     * Sends an email to the business inbox.
+     * @param $form_data
+     * @return bool Success or not
+     */
+    private function mailBusinessInbox($form_data): bool
     {
-        $form_data = $this->getFormData();
-
         // Concatenate form data into the email message
         $htmlMessage = "You have received a new message from: <br>";
         $htmlMessage .= "Name: " . $form_data['first_name'] . " " . $form_data['last_name'] . "<br>";
@@ -119,7 +114,13 @@ class ContactUs
         //Implement logic to send email to admin using Mailer class
         $mailer = new Mailer();
         $subject = "New Contact Message from " . $form_data['first_name'] . " " . $form_data['last_name'];
-        $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
+
+        try {
+            $mailer->sendMail($_ENV['BUSINESS_GMAIL'], $subject, $htmlMessage, $plainMessage);
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
     /**
@@ -137,13 +138,13 @@ class ContactUs
 
     private function validateURL(): bool
     {
-        return Utility::getURL() === 'contact-us';
+        return Utility::getURL() === 'contact';
     }
 
     private function handleInvalidURL(): void
     {
         if (!$this->validateURL()) {
-            (new Error())->index("Page not found");
+            (new Error())->handlePageNotFoundError();
             die();
         }
     }
@@ -152,17 +153,17 @@ class ContactUs
     {
         $this->handleInvalidURL();
 
-        if (isset($_POST['form_submit'])) {
+        if ($_SERVER['REQUEST_METHOD'] === "POST") {
+            // form has been submitted
             $this->handleFormSubmission();
         }
 
         $this->view(
-            'ContactUs',
+            'Contact',
             $this->view_data,
             'Contact Us',
             template_meta_description: "Get in touch with us! Use this form to send us your queries, feedback,
              or any other message. We'll get back to you as soon as possible.",
-            enableIndexing: false
         );
     }
 }
