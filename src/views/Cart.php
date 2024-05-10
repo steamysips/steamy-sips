@@ -92,7 +92,6 @@ use Steamy\Model\Store;
                 FILTER_FLAG_ALLOW_FRACTION
             ) ?></span>
     </strong>
-    <button style="margin-top: 50px" class="contrast" type="submit">Checkout</button>
-</main>
 
-<script src="/js/cart_view.bundle.js"></script>
+    <button id="checkout-btn" style="margin-top: 50px" class="contrast">Checkout</button>
+</main>
