@@ -57,28 +57,28 @@ class Location
         $errors = [];
 
         // Validate street
-        if (!is_null($this->street) && empty($this->street)) {
+        if (empty($this->street)) {
             $errors['street'] = "Street is required.";
         }
 
         // Validate city
-        if (!is_null($this->city) && empty($this->city)) {
+        if (empty($this->city)) {
             $errors['city'] = "City is required.";
         }
 
         // Validate district_id
-        if (!is_null($this->district_id) && ($this->district_id === null || $this->district_id <= 0)) {
+        if (empty($this->district_id) || empty(District::getByID($this->district_id))) {
             $errors['district_id'] = "Invalid district ID.";
         }
 
         // Validate latitude and longitude
-        if (!is_null($this->latitude) && !is_null($this->longitude) &&
+        if ($this->latitude !== null && $this->longitude != null &&
             ($this->latitude < -90 || $this->latitude > 90 ||
-            $this->longitude < -180 || $this->longitude > 180)) {
+                $this->longitude < -180 || $this->longitude > 180)) {
             $errors['coordinates'] = "Invalid coordinates.";
         }
 
-        return $errors; 
+        return $errors;
     }
 
 
