@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Controller\API;
 
+use Steamy\Core\Utility;
 use Steamy\Model\Product;
 
 class Products
@@ -11,7 +12,7 @@ class Products
     /**
      * Get the list of all products available in the store.
      */
-    private function getProducts(): void
+    private function getAllProducts(): void
     {
         // Retrieve all products from the database
         $allProducts = Product::getAll();
@@ -29,8 +30,10 @@ class Products
     /**
      * Get the details of a specific product by its ID.
      */
-    private function getProductById(int $productId): void
+    private function getProductById(): void
     {
+        $productId = (int)Utility::splitURL()[3];
+
         // Retrieve product details from the database
         $product = Product::getByID($productId);
 
@@ -58,19 +61,38 @@ class Products
         echo json_encode($categories);
     }
 
-
     /**
-    * Create a new product entry in the database.
-    */
+     * Create a new product entry in the database.
+     */
     private function createProduct(): void
     {
         // Retrieve POST data
         $postData = json_decode(file_get_contents("php://input"), true);
+        echo file_get_contents("php://input"); // ! always empty for some reason
 
+
+        // TODO : Use json schema validation here
         // Check if required fields are present
-        $requiredFields = ['name', 'calories', 'img_url', 'img_alt_text', 'category', 'price', 'description', 'created_date'];
+        $requiredFields = [
+            'name',
+            'calories',
+            'img_url',
+            'img_alt_text',
+            'category',
+            'price',
+            'description'
+        ];
+
+        if (empty($postData)) {
+            http_response_code(400);
+            echo json_encode(['error' => "Missing fields: " . implode(', ', $requiredFields)]);
+            return;
+        }
+
+        echo json_encode($postData);
+
         foreach ($requiredFields as $field) {
-            if (!isset($postData[$field])) {
+            if (empty($postData[$field])) {
                 // Required field is missing, return 400 Bad Request
                 http_response_code(400);
                 echo json_encode(['error' => "Missing required field: $field"]);
@@ -86,15 +108,15 @@ class Products
             $postData['img_alt_text'],
             $postData['category'],
             (float)$postData['price'],
-            $postData['description'],
-            $postData['created_date']
+            $postData['description']
         );
 
         // Save the new product to the database
         if ($newProduct->save()) {
             // Product created successfully, return 201 Created
             http_response_code(201);
-            echo json_encode(['message' => 'Product created successfully', 'product_id' => $newProduct->getProductID()]);
+            echo json_encode(['message' => 'Product created successfully', 'product_id' => $newProduct->getProductID()]
+            );
         } else {
             // Failed to create product, return 500 Internal Server Error
             http_response_code(500);
@@ -103,10 +125,12 @@ class Products
     }
 
     /**
-    * Delete a product with the specified ID.
-    */
-    private function deleteProduct(int $productId): void
+     * Delete a product with the specified ID.
+     */
+    private function deleteProduct(): void
     {
+        $productId = (int)Utility::splitURL()[3];
+
         // Retrieve the product by ID
         $product = Product::getByID($productId);
 
@@ -129,12 +153,13 @@ class Products
         }
     }
 
-
     /**
-    * Update the details of a product with the specified ID.
-    */
-    private function updateProduct(int $productId): void
+     * Update the details of a product with the specified ID.
+     */
+    private function updateProduct(): void
     {
+        $productId = (int)Utility::splitURL()[3];
+
         // Retrieve PUT request data
         $putData = json_decode(file_get_contents("php://input"), true);
 
@@ -201,50 +226,64 @@ class Products
         }
     }
 
+    private function getHandler($routes): ?string
+    {
+        foreach ($routes[$_SERVER['REQUEST_METHOD']] as $route => $handler) {
+            $pattern = str_replace('/', '\/', $route); // Convert to regex pattern
+            $pattern = preg_replace(
+                '/\{([a-zA-Z0-9_]+)\}/',
+                '(?P<$1>[^\/]+)',
+                $pattern
+            ); // Replace placeholders with regex capture groups
+            $pattern = '/^' . $pattern . '$/';
+
+            if (preg_match($pattern, '/' . Utility::getURL(), $matches)) {
+                return $handler;
+            }
+        }
+        return null;
+    }
 
     /**
      * Main entry point for the Products API.
      */
     public function index(): void
     {
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        $routes = [
+            'GET' => [
+                '/api/v1/products' => 'getAllProducts',
+                '/api/v1/products/categories' => 'getProductCategories',
+                '/api/v1/products/{id}' => 'getProductById',
+            ],
+            'POST' => [
+                '/api/v1/products' => 'createProduct',
+            ],
+            'PUT' => [
+                '/api/v1/products/{id}' => 'updateProduct',
+            ],
+            'DELETE' => [
+                '/api/v1/products/{id}' => 'deleteProduct',
+            ]
+        ];
 
-        switch ($requestMethod) {
-            case 'GET':
-                if (isset($_GET['id'])) {
-                    $productId = intval($_GET['id']);
-                    $this->getProductById($productId);
-                } elseif (isset($_GET['categories'])) {
-                    $this->getProductCategories();
-                } else {
-                    $this->getProducts();
-                }
-                break;
-            case 'POST':
-                $this->createProduct();
-                break;
-            case 'DELETE':
-                if (isset($_GET['id'])) {
-                    $productId = intval($_GET['id']);
-                    $this->deleteProduct($productId);
-                } else {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Product ID is required for deletion']);
-                }
-                break;
-            case 'PUT':
-                if (isset($_GET['id'])) {
-                    $productId = intval($_GET['id']);
-                    $this->updateProduct($productId);
-                } else {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Product ID is required for update']);
-                }
-                break;
-            default:
-                http_response_code(400); // Bad Request
-                echo json_encode(['error' => 'Invalid request method']);
-                break;
+        // Handle the request
+        $handler = $this->getHandler($routes);
+
+        if ($handler !== null) {
+            $functionName = $handler;
+            if (method_exists($this, $functionName)) {
+                call_user_func(array($this, $functionName));
+            } else {
+                // Handle function not found
+                http_response_code(404);
+                echo "Function Not Found";
+                die();
+            }
+        } else {
+            // Handle route not found
+            http_response_code(404);
+            echo "Route Not Found";
+            die();
         }
     }
 }
