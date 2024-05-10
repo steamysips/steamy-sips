@@ -276,7 +276,7 @@ class Product
                 SELECT DISTINCT o.client_id
                 FROM `order` o
                 JOIN order_product op ON o.order_id = op.order_id
-                WHERE op.product_id = :product_id
+                WHERE op.product_id = r.product_id
             )
         EOL;
         
