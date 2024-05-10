@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Client;
-use Steamy\Model\location;
+use Steamy\Model\Location;
 
 
 final class ClientTest extends TestCase
