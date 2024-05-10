@@ -17,7 +17,7 @@ class Order
 
     private int $store_id;
     private int $order_id;
-    private string $status;
+    private OrderStatus $status;
     private DateTime $created_date;
     private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private int $client_id;
@@ -27,7 +27,7 @@ class Order
         int $client_id,
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
-        string $status = "pending",
+        OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
         DateTime $created_date = new DateTime(),
     ) {
         $this->store_id = $store_id;
@@ -42,7 +42,7 @@ class Order
     {
         return [
             'order_id' => $this->order_id,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'created_date' => $this->created_date->format('Y-m-d H:i:s'),
             'pickup_date' => $this->pickup_date?->format('Y-m-d H:i:s'),
             'client_id' => $this->client_id,
@@ -108,7 +108,7 @@ class Order
             client_id: $orderData->client_id,
             order_id: $orderData->order_id,
             pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
-            status: $orderData->status,
+            status: OrderStatus::from($orderData->status),
             created_date: Utility::stringToDate($orderData->created_date),
         );
     }
@@ -148,12 +148,12 @@ class Order
         return $this->order_id;
     }
 
-    public function getStatus(): string
+    public function getStatus(): OrderStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): void
+    public function setStatus(OrderStatus $status): void
     {
         $this->status = $status;
     }
@@ -182,7 +182,7 @@ class Order
     {
         $errors = [];
 
-        $validStatus = ['pending', 'cancelled', 'completed'];
+        $validStatus = [OrderStatus::PENDING, OrderStatus::CANCELLED, OrderStatus::COMPLETED];
         if (!in_array($this->status, $validStatus)) {
             $errors['status'] = "Status must be one of: " . implode(', ', $validStatus);
         }
@@ -208,52 +208,61 @@ class Order
 
     public function calculateTotalPrice(): float
     {
-        // TODO: Use a single query to calculate total price
-        return 0;
+        $query = "SELECT SUM(unit_price * quantity) AS total_price 
+        FROM order_product WHERE order_id = :order_id";
+        
+        $result = self::get_row($query, ['order_id' => $this->order_id]);
+        
+        if ($result) {
+            return (float) $result->total_price;
+            }
+            
+            return 0.0;
     }
 
     public function toHTML(): string
     {
-        // TODO: get order products and names of each product using a single query
+    $html = <<<HTML
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per Unit</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+    HTML;
 
-        $html = <<<HTML
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price per Unit</th>
-                    <th>Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-        HTML;
+    $query = "SELECT op.product_id, op.quantity, op.unit_price, p.name 
+              FROM order_product op
+              JOIN product p ON op.product_id = p.product_id
+              WHERE op.order_id = :order_id";
 
-        // Iterate through each product in the order
-        foreach ($this->products as $product) {
-            // Get the product details
-            $productName = $product['product']->getName();
-            $quantity = $product['quantity'];
-            $pricePerUnit = $product['product']->getPrice();
-            $totalPrice = $quantity * $pricePerUnit;
+    $orderProducts = self::query($query, ['order_id' => $this->order_id]);
 
-            // Add a row for the product in the HTML table
-            $html .= <<<HTML
-                <tr>
-                    <td>$productName</td>
-                    <td>Qty $quantity</td>
-                    <td>\$$pricePerUnit</td>
-                    <td>\$$totalPrice</td>
-                </tr>
-            HTML;
-        }
+    foreach ($orderProducts as $orderProduct) {
+        $productName = $orderProduct->name;
+        $quantity = $orderProduct->quantity;
+        $pricePerUnit = $orderProduct->unit_price;
+        $totalPrice = $pricePerUnit * $quantity;
 
-        // Close the HTML table
         $html .= <<<HTML
-            </tbody>
-        </table>
+        <tr>
+            <td>$productName</td>
+            <td>Qty $quantity</td>
+            <td>\$$pricePerUnit</td>
+            <td>\$$totalPrice</td>
+        </tr>
         HTML;
+    }
 
-        return $html;
+    $html .= <<<HTML
+        </tbody>
+    </table>
+    HTML;
+
+    return $html;
     }
 }
