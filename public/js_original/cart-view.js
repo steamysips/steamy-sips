@@ -48,12 +48,62 @@ function updateCart(e) {
   }
 }
 
-window.addEventListener("DOMContentLoaded", function () {
+async function checkout() {
+  const myCart = Cart();
+  const items = myCart.getItems();
+
+  const data = {
+    items,
+    store_id: 1,
+  };
+
+  console.log(data);
+  const response = await fetch(window.location.href + "/checkout", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  const a = await response.json();
+  console.log(a);
+
+  if (response.ok) {
+    // Clear cart items from localStorage if checkout is successful
+    myCart.clear();
+    window.alert("checkout successful");
+
+    return;
+  }
+
+  window.alert("checkout failed");
+}
+
+function initCartPage() {
   const quantityInputs = [
     ...document.querySelectorAll("section input[type='number']"),
   ];
 
+  document.querySelector("#checkout-btn").addEventListener("click", checkout);
+
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateCart);
   });
-});
+}
+
+async function uploadCart() {
+  const items = Cart().getItems();
+
+  const response = await fetch(window.location.href + "/upload", {
+    method: "POST",
+    body: JSON.stringify(items),
+  });
+
+  // add loading delay of 1s
+  await new Promise((r) => setTimeout(r, 1000));
+
+  if (response.ok) {
+    document.body.innerHTML = await response.text();
+    initCartPage();
+  }
+}
+
+window.addEventListener("DOMContentLoaded", uploadCart);
