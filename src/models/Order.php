@@ -17,7 +17,7 @@ class Order
 
     private int $store_id;
     private int $order_id;
-    private string $status;
+    private OrderStatus $status;
     private DateTime $created_date;
     private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private int $client_id;
@@ -27,7 +27,7 @@ class Order
         int $client_id,
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
-        string $status = "pending",
+        OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
         DateTime $created_date = new DateTime(),
     ) {
         $this->store_id = $store_id;
@@ -42,7 +42,7 @@ class Order
     {
         return [
             'order_id' => $this->order_id,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'created_date' => $this->created_date->format('Y-m-d H:i:s'),
             'pickup_date' => $this->pickup_date?->format('Y-m-d H:i:s'),
             'client_id' => $this->client_id,
@@ -108,7 +108,7 @@ class Order
             client_id: $orderData->client_id,
             order_id: $orderData->order_id,
             pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
-            status: $orderData->status,
+            status: OrderStatus::from($orderData->status),
             created_date: Utility::stringToDate($orderData->created_date),
         );
     }
@@ -148,12 +148,12 @@ class Order
         return $this->order_id;
     }
 
-    public function getStatus(): string
+    public function getStatus(): OrderStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): void
+    public function setStatus(OrderStatus $status): void
     {
         $this->status = $status;
     }
@@ -182,7 +182,7 @@ class Order
     {
         $errors = [];
 
-        $validStatus = ['pending', 'cancelled', 'completed'];
+        $validStatus = [OrderStatus::PENDING, OrderStatus::CANCELLED, OrderStatus::COMPLETED];
         if (!in_array($this->status, $validStatus)) {
             $errors['status'] = "Status must be one of: " . implode(', ', $validStatus);
         }
