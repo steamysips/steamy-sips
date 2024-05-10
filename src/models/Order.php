@@ -42,7 +42,7 @@ class Order
     {
         return [
             'order_id' => $this->order_id,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'created_date' => $this->created_date->format('Y-m-d H:i:s'),
             'pickup_date' => $this->pickup_date?->format('Y-m-d H:i:s'),
             'client_id' => $this->client_id,
@@ -108,7 +108,7 @@ class Order
             client_id: $orderData->client_id,
             order_id: $orderData->order_id,
             pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
-            status: $orderData->status,
+            status: OrderStatus::from($orderData->status),
             created_date: Utility::stringToDate($orderData->created_date),
         );
     }
