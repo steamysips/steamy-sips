@@ -6,7 +6,9 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name of the product"
+      "description": "The name of the product",
+      "minLength": 3,
+      "maxLength": 255
     },
     "calories": {
       "type": "integer",
@@ -20,11 +22,15 @@
     },
     "img_alt_text": {
       "type": "string",
-      "description": "The alternate text for the product image"
+      "description": "The alternate text for the product image",
+      "minLength": 5,
+      "maxLength": 150
     },
     "category": {
       "type": "string",
-      "description": "The category of the product"
+      "description": "The category of the product",
+      "minLength": 3,
+      "maxLength": 50
     },
     "price": {
       "type": "number",
@@ -33,7 +39,8 @@
     },
     "description": {
       "type": "string",
-      "description": "Description of the product"
+      "description": "Description of the product",
+      "minLength": 1
     },
     "created_date": {
       "type": "string",
@@ -42,5 +49,11 @@
     }
   },
   "required": ["name", "calories", "img_url", "img_alt_text", "category", "price", "description", "created_date"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "patternProperties": {
+    "img_url": {
+      "pattern": "^.+\\.(png|jpeg|avif|jpg|webp)$",
+      "description": "The URL should end with one of the supported image formats: png, jpeg, avif, jpg, webp"
+    }
+  }
 }
