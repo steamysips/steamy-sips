@@ -1,0 +1,22 @@
+{
+  "administrator": {
+    "allOf": [
+      {
+        "$ref": "#/definitions/user"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "job_title": {
+            "type": "string",
+            "minLength": 4
+          },
+          "is_super_admin": {
+            "type": "boolean"
+          }
+        },
+        "required": ["job_title"]
+      }
+    ]
+  }
+}
