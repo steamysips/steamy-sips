@@ -269,11 +269,11 @@ class Client extends User
             $errors['district'] = 'District does not exist';
         }
 
-        if (strlen($this->address->getCity()) < 3) {
+        if ($this->address->getCity() !== null && strlen($this->address->getCity()) < 3) {
             $errors['city'] = 'City name must have at least 3 characters';
         }
 
-        if (strlen($this->address->getStreet()) < 4) {
+        if ($this->address->getStreet() !== null && strlen($this->address->getStreet()) < 4) {
             $errors['street'] = 'Street name must have at least 4 characters';
         }
 

@@ -39,7 +39,7 @@ class Location
         if (!empty($this->city)) {
             $arr['city'] = $this->city;
         }
-        if (!empty($this->district)) {
+        if (!empty($this->district_id)) {
             $arr['district_id'] = $this->district_id;
         }
         if (!is_null($this->latitude)) {
