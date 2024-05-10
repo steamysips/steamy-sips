@@ -267,6 +267,13 @@ class Review
             }
         }
 
+        // Order the children array of each comment by created_date
+        foreach ($commentMap as $comment) {
+            usort($comment->children, function($a, $b) {
+                return strtotime($a->created_date) - strtotime($b->created_date);
+            });
+        }
+
         // Filter out comments that have a parent (i.e., retain only root-level comments)
         $nestedComments = array_filter($commentMap, function ($review) {
             return $review->parent_comment_id === null;
