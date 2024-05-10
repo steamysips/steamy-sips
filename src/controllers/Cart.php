@@ -6,6 +6,8 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
+use Steamy\Model\Order;
+use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
 
@@ -17,9 +19,10 @@ class Cart
 
     private function displayCart(): void
     {
+        $cart = json_decode(file_get_contents('php://input'), true);
         $this->view_data['cart_total'] = 0;
         // loop through each cart item
-        foreach ($_SESSION['cart'] as $item) {
+        foreach ($cart as $item) {
             // fetch corresponding product based on product ID
             $product_id = filter_var($item['productID'], FILTER_VALIDATE_INT);
             $cart_item['product'] = Product::getByID($product_id);
@@ -53,7 +56,7 @@ class Cart
 
     private function validateURL(): bool
     {
-        return Utility::getURL() === 'cart';
+        return in_array(Utility::getURL(), ['cart', 'cart/upload', 'cart/checkout']);
     }
 
     private function handleInvalidURL(): void
@@ -64,44 +67,89 @@ class Cart
         }
     }
 
+    private function handleCheckout(): void
+    {
+        // if user is not logged in, redirect to login page
+        $signed_client = $this->getSignedInClient();
+        if (!$signed_client) {
+            Utility::redirect('login');
+        }
+
+        $form_data = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($form_data)) {
+            echo 'cart cannot be empty';
+            http_response_code(400);
+            return;
+        }
+
+        $store_id = filter_var($form_data['store_id'], FILTER_VALIDATE_INT);
+
+        if (!$store_id) {
+            http_response_code(400);
+            return;
+        }
+
+        // create and populate new Order object
+        $new_order = new Order(store_id: 1, client_id: $signed_client->getUserID());
+        foreach ($form_data['items'] as $item) {
+            $line_item = new OrderProduct(
+                product_id: filter_var($item['productID'], FILTER_VALIDATE_INT),
+                cup_size: strtolower($item['cupSize']),
+                milk_type: strtolower($item['milkType']),
+                quantity: filter_var($item['quantity'], FILTER_VALIDATE_INT)
+            );
+            $new_order->addLineItem($line_item);
+        }
+
+        // save order
+        $success = $new_order->save();
+
+        if ($success) {
+            http_response_code(201);
+            return;
+        }
+
+        http_response_code(400);
+    }
+
     public function index(): void
     {
         $this->handleInvalidURL();
-        // check if the latest cart data is available
-        if (isset($_SESSION['cart'])) {
-            $this->displayCart();
 
-            // unset variable for next request to ensure that the latest cart is always fetched from client
-            unset($_SESSION['cart']);
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // client is requesting /cart for the first time
 
-            return;
-        }
+            // display loading page first and inject a script that does 3 things:
+            // 1. send a POST request with cart data to server
+            // 2. re-render page when server sends cart page
+            // 3. initialize new cart page
 
-        // check if client has sent his latest cart data
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // client sent his cart data from localstorage
-            // load cart to session
-
-            // Parse json data and save it to session
-            // Reference: https://stackoverflow.com/a/39508364/17627866
-            $_SESSION['cart'] = json_decode(file_get_contents('php://input'), true);
-
-            return;
-        }
-
-        // send script to browser to fetch cart from localstorage
-        $cart_script_tag = <<< EOL
-            <script src="/js/cart_uploader.bundle.js"></script>
-        EOL;
-
-        $this->view(
-            'loading',
-            template_title: "Review order",
-            template_tags: $cart_script_tag,
-            template_meta_description: "Experience anticipation as your journey begins at Steamy Sips.
+            $this->view(
+                'loading',
+                template_title: "Review order",
+                template_tags: "<script src='/js/cart_view.bundle.js'></script>",
+                template_meta_description: "Experience anticipation as your journey begins at Steamy Sips.
              Our loading page sets the stage for your flavorful adventure. Sit back, relax,
               and prepare for a tantalizing experience ahead.",
-            enableIndexing: false
-        );
+                enableIndexing: false
+            );
+
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Utility::getURL() === 'cart/upload') {
+            // client has sent his cart data and is requesting cart page
+            $this->displayCart();
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Utility::getURL() === 'cart/checkout') {
+            // client has sent his cart data and wants to check out
+            $this->handleCheckout();
+            return;
+        }
+
+        (new _404())->index();
     }
 }
