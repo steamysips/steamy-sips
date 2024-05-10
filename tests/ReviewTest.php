@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Steamy\Core\Database;
 use Steamy\Model\Client;
-use Steamy\Model\District;
+use Steamy\Model\Location;
 use Steamy\Model\Review;
 
 final class ReviewTest extends TestCase
@@ -26,7 +26,7 @@ final class ReviewTest extends TestCase
         // create a client object and save to database
         $this->reviewer = new Client(
             "john_u@gmail.com", "john", "johhny", "User0",
-            "13213431", District::getByID(1), "Royal Road", "Curepipe"
+            "13213431", new Location("Royal Road", "Curepipe", 1)
         );
 
         $success = $this->reviewer->save();
@@ -59,7 +59,7 @@ final class ReviewTest extends TestCase
         $this->reviewer = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM review; DELETE FROM client; DELETE FROM user;');
+        self::query('DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user;');
     }
 
     public function testConstructor(): void

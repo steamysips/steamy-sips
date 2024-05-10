@@ -1,18 +1,20 @@
 # Database Design
 
 - [Database Design](#database-design)
-  - [Schema diagram](#schema-diagram)
-  - [Tables](#tables)
-    - [user](#user)
-    - [administrator](#administrator)
-    - [client](#client)
-    - [order](#order)
-    - [order\_product](#order_product)
-    - [review](#review)
-    - [product](#product)
-    - [district](#district)
-  - [Triggers](#triggers)
-    - [Update stock level](#update-stock-level)
+    - [Schema diagram](#schema-diagram)
+    - [Tables](#tables)
+        - [user](#user)
+        - [administrator](#administrator)
+        - [client](#client)
+        - [order](#order)
+        - [order\_product](#order_product)
+        - [review](#review)
+        - [product](#product)
+        - [district](#district)
+        - [comment](#comment)
+        - [password\_change_\request](#password_change_request)
+        - [store](#store)
+        - [store\_product](#store_product)
 
 ## Schema diagram
 
@@ -22,97 +24,125 @@
 
 ### user
 
-| Attribute | Description         | Data Type    | Constraints                                    |
-| --------- | ------------------- | ------------ | ---------------------------------------------- |
-| user_id   | ID of User          | INT(11)      | PRIMARY KEY, auto-increment                    |
-| email     | Email address       | VARCHAR(320) | UNIQUE, NOT NULL, Must match the pattern %@%.% |
-| name      | User's name         | VARCHAR(255) | NOT NULL                                       |
-| password  | Hashed password     | VARCHAR(255) | NOT NULL, Must be greater than 8 characters    |
-| phone_no  | User's phone number | VARCHAR(20)  | NOT NULL, Must be greater than 6 characters    |
+| Attribute  | Description         | Data Type        | Constraints                             |
+|------------|---------------------|------------------|-----------------------------------------|
+| user_id    | ID of User          | INT(11) UNSIGNED | PRIMARY KEY, auto-increment             |
+| email      | Email address       | VARCHAR(320)     | Not Null, Unique, Check (email format)  |
+| first_name | User's first name   | VARCHAR(255)     | Nullable, Check (first_name length > 2) |
+| last_name  | User's last name    | VARCHAR(255)     | Nullable, Check (last_name length > 2)  |
+| password   | Hashed password     | VARCHAR(255)     | Nullable, Check (password length > 8)   |
+| phone_no   | User's phone number | VARCHAR(255)     | Not Null, Check (phone_no length > 6)   |
 
 ### administrator
 
-| Attribute      | Description                                       | Data Type    | Constraints                                       |
-|----------------| ------------------------------------------------- | ------------ | ------------------------------------------------- |
-| user_id        | ID of administrator                               | INT(11)      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id) |
-| job_title      | Job title of administrator                        | VARCHAR(255) | NOT NULL, Must have length > 0                    |
-| is_super_admin | Whether the administrator is a super admin or not | TINYINT(1)   | DEFAULT false                                     |
+| Attribute      | Description                                       | Data Type        | Constraints                                |
+|----------------|---------------------------------------------------|------------------|--------------------------------------------|
+| user_id        | Unique identifier for the administrator           | INT(11) UNSIGNED | Primary Key, Foreign Key (user_id -> user) |
+| job_title      | Job title of administrator                        | VARCHAR(255)     | Not Null, Check (job_title length > 3)     |
+| is_super_admin | Whether the administrator is a super admin or not | TINYINT(1)       | DEFAULT 0                                  |
 
 ### client
 
-| Attribute   | Description             | Data Type    | Constraints                                       |
-| ----------- | ----------------------- | ------------ | ------------------------------------------------- |
-| user_id     | ID of client            | INT(11)      | PRIMARY KEY, FOREIGN KEY REFERENCES user(user_id) |
-| street      | Client's street address | VARCHAR(255) | NOT NULL, Must have length > 0                    |
-| city        | Client's city           | VARCHAR(255) | NOT NULL, Must have length > 0                    |
-| district_id | Client's district       | INT(11)      | FOREIGN KEY REFERENCES district(district_id)      |
+| Attribute   | Description                      | Data Type        | Constraints                                |
+|-------------|----------------------------------|------------------|--------------------------------------------|
+| user_id     | Unique identifier for the client | INT(11) UNSIGNED | Primary Key, Foreign Key (user_id -> user) |
+| street      | Client's street address          | VARCHAR(255)     | Not Null, Check (street length > 3)        |
+| city        | Client's city                    | VARCHAR(255)     | Not Null, Check (city length > 2)          |
+| district_id | Client's district                | INT(11) UNSIGNED | Foreign Key (district_id -> district)      |
 
 ### order
 
-| Attribute    | Description                 | Data Type     | Constraints                                   |
-| ------------ | --------------------------- | ------------- | --------------------------------------------- |
-| order_id     | ID of order                 | INT(11)       | PRIMARY KEY, auto-increment                   |
-| status       | Order status                | VARCHAR(20)   | Must be one of: pending, cancelled, completed |
-| created_date | Date the order was created  | DATETIME      |                                               |
-| pickup_date  | Date of the order pickup    | DATETIME      | Set to NULL when the client place the order   |
-| street       | Delivery street address     | VARCHAR(255)  | NOT NULL, Must have length > 0                |
-| city         | Delivery city               | VARCHAR(255)  | NOT NULL, Must have length > 0                |
-| district_id  | Delivery district           | INT(11)       | FOREIGN KEY REFERENCES district(district_id)  |
-| total_price  | Total price of the order    | DECIMAL(10,2) | NOT NULL, total_price is >= 0                 |
-| user_id      | ID of user who placed order | INT(11)       | FOREIGN KEY REFERENCES client(user_id)        |
+| Attribute    | Description                                    | Data Type        | Constraints                                   |
+|--------------|------------------------------------------------|------------------|-----------------------------------------------|
+| order_id     | ID of order                                    | INT(11) UNSIGNED | PRIMARY KEY, auto-increment                   |
+| status       | Status of the order (e.g., pending, completed) | VARCHAR(20)      | Default 'pending'                             |
+| created_date | Date the order was created                     | DATETIME         | Default (current_timestamp())                 |
+| pickup_date  | Date when client picks up the order            | DATETIME         | Nullable, Check (pickup_date >= created_date) |
+| client_id    | ID of client placing the order                 | INT(11) UNSIGNED | Foreign Key (client_id -> client)             |
+| store_id     | ID of the store fulfilling the order           | INT(10) UNSIGNED | Foreign Key (store_id -> store)               |
 
 ### order_product
 
-| Attribute  | Description             | Data Type   | Constraints                                             |
-| ---------- | ----------------------- | ----------- | ------------------------------------------------------- |
-| order_id   | ID of order             | INT(11)     | PRIMARY KEY, FOREIGN KEY REFERENCES order(order_id)     |
-| product_id | ID of product           | INT(11)     | PRIMARY KEY, FOREIGN KEY REFERENCES product(product_id) |
-| quantity   | Quantity of the product | INT(11)     | NOT NULL, quantity > 0 (cannot be 0)                    |
-| cup_size   | Cup size of the product | VARCHAR(20) | Must be one of: `small`, `medium`, `large`              |
-| milk_type  | Type of milk            | VARCHAR(20) | Must be one of: `almond`, `coconut`, `oat`, `soy`       |
+| Attribute  | Description               | Data Type     | Constraints                                                 |
+|------------|---------------------------|---------------|-------------------------------------------------------------|
+| order_id   | ID of order               | INT(11)       | Foreign Key (order_id -> order)                             |
+| product_id | ID of product in order    | INT(11)       | Foreign Key (product_id -> product)                         |
+| quantity   | Quantity of the product   | INT(11)       | Nullable, Check (quantity > 0)                              |
+| cup_size   | Cup size of the product   | VARCHAR(20)   | Nullable, Must be one of: `small`, `medium`, `large`        |
+| milk_type  | Type of milk for product  | VARCHAR(20)   | Nullable, Must be one of: `almond`, `coconut`, `oat`, `soy` |
+| unit_price | Unit price of the product | DECIMAL(10,2) | Nullable                                                    |
 
 ### review
 
-| Attribute        | Description           | Data Type | Constraints                                                  |
-| ---------------- | --------------------- | --------- | ------------------------------------------------------------ |
-| review_id        | ID of review          | INT(11)   | PRIMARY KEY, auto-increment                                  |
-| rating           | Rating of the product | INT(11)   | Must be between 1 and 5 inclusive                            |
-| date             | Date of the review    | DATE      | NOT NULL                                                     |
-| text             | Review text           | TEXT      | NOT NULL                                                     |
-| user_id          | ID of user            | INT(11)   | FOREIGN KEY REFERENCES client(user_id)                       |
-| product_id       | ID of product         | INT(11)   | FOREIGN KEY REFERENCES product(product_id)                   |
-| parent_review_id | Parent review ID      | INT(11)   | NULL only when a review is a top-level comment , FOREIGN KEY |
-|                  |                       |           | REFERENCES review(review_id)                                 |
+| Attribute    | Description                               | Data Type        | Constraints                                 |
+|--------------|-------------------------------------------|------------------|---------------------------------------------|
+| review_id    | ID of review                              | INT(11) UNSIGNED | PRIMARY KEY, auto-increment                 |
+| rating       | Rating given by a client to the product   | INT(11) UNSIGNED | Not Null, Must be between 1 and 5 inclusive |
+| created_date | Date and time when the review was created | DATETIME         | Not Null, Default (current_timestamp())     |
+| text         | Review text as written by client          | VARCHAR(2000)    | Not Null, Check (text length >= 2)          |
+| client_id    | ID of client who wrote the review         | INT(11) UNSIGNED | Foreign Key (client_id -> client)           |
+| product_id   | ID of product to which review belongs     | INT(11) UNSIGNED | Foreign Key (product_id -> product)         |
 
 ### product
 
-| Attribute    | Description                | Data Type     | Constraints                               |
-| ------------ | -------------------------- | ------------- | ----------------------------------------- |
-| product_id   | ID of product              | INT(11)       | PRIMARY KEY, auto-increment               |
-| name         | Name of the product        | VARCHAR(255)  | NOT NULL                                  |
-| calories     | Calories per serving       | INT(11)       | Must be non-negative                      |
-| stock_level  | Current stock level        | INT(11)       | NOT NULL, Must be non-negative            |
-| img_url      | URL of the product         | VARCHAR(255)  | Must end with `.png`, `.jpeg`, or `.avif` |
-| img_alt_text | Alternative text for image | VARCHAR(150)  | Must be between 5 and 150 characters      |
-| category     | Category of the product    | VARCHAR(50)   | NOT NULL, Must have length > 0            |
-| price        | Price of the product       | DECIMAL(10,2) | NOT NULL                                  |
-| description  | Description of the product | TEXT          | NOT NULL, Must have length > 0            |
+| Attribute    | Description                                 | Data Type        | Constraints                                         |
+|--------------|---------------------------------------------|------------------|-----------------------------------------------------|
+| product_id   | ID of product                               | INT(11) UNSIGNED | PRIMARY KEY, auto-increment                         |
+| name         | Name of the product                         | VARCHAR(255)     | Not Null, Check (name length > 2)                   |
+| calories     | Calories per serving                        | INT(11) UNSIGNED | Nullable, Check (calories >= 0)                     |
+| img_url      | File name of image corresponding to product | VARCHAR(255)     | Not Null, Must end with `.png`, `.jpeg`, or `.avif` |
+| img_alt_text | Alternative text for image                  | VARCHAR(150)     | Not Null, Check (length between 5 and 150)          |
+| category     | Category of the product                     | VARCHAR(50)      | Not Null, Check (category length > 2)               |
+| price        | Price of the product                        | DECIMAL(10,2)    | Not Null                                            |
+| description  | Description of the product                  | TEXT             | Nullable, Check (description length > 0)            |
+| created_date | Date and time when product was created      | DATETIME         | Not Null, Default (current_timestamp())             |
 
 ### district
 
-| Attribute   | Description   | Data Type   | Constraints                                          |
-| ----------- | ------------- | ----------- | ---------------------------------------------------- |
-| district_id | District ID   | INT(11)     | PRIMARY KEY, auto-increment                          |
-| name        | District name | VARCHAR(30) | Must be one of: `Moka`, `Port Louis`,                |
-|             |               |             | `Flacq`, `Curepipe`, `Black River`, `Savanne`,       |
-|             |               |             | `Grand Port`, `Riviere du Rempart`, `Pamplemousses`, |
-|             |               |             | `Mahebourg`, `Plaines Wilhems`                       |
+| Attribute   | Description   | Data Type        | Constraints                                             |
+|-------------|---------------|------------------|---------------------------------------------------------|
+| district_id | District ID   | INT(11) UNSIGNED | PRIMARY KEY, auto-increment                             |
+| name        | District name | VARCHAR(30)      | Not Null, Unique, Must be one of: `Moka`, `Port Louis`, |
+|             |               |                  | `Flacq`, `Curepipe`, `Black River`, `Savanne`,          |
+|             |               |                  | `Grand Port`, `Riviere du Rempart`, `Pamplemousses`,    |
+|             |               |                  | `Mahebourg`, `Plaines Wilhems`                          |
 
-## Triggers
+### comment
 
-### Update stock level
+| Attribute         | Description                                      | Data Type        | Constraints                                 |
+|-------------------|--------------------------------------------------|------------------|---------------------------------------------|
+| comment_id        | ID of comment                                    | INT(10) UNSIGNED | PRIMARY KEY, auto-increment                 |
+| text              | Text content of the comment as written by client | VARCHAR(2000)    | Not Null, Must be between 1 and 5 inclusive |
+| created_date      | Date and time when the comment was created       | DATETIME         | Not Null, Default (current_timestamp())     |
+| parent_comment_id | ID of the parent comment                         | INT(10) UNSIGNED | Not Null, Check (text length >= 2)          |
+| user_id           | ID of user who posted the comment                | INT(10) UNSIGNED | Foreign Key (client_id -> client)           |
+| review_id         | ID of review associated with the comment         | INT(10) UNSIGNED | Foreign Key (product_id -> product)         |
 
-The trigger `UpdateStockLevel` is set to execute after each insertion operation on the `order_product` table. It
-functions to automatically adjust the stock level of products following an order placement. Specifically, it decreases
-the stock level of the products included in the order based on the quantity ordered. There are no additional constraints
-or conditions applied to this trigger.
+### password_change_request
+
+| Attribute   | Description                                        | Data Type        | Constraints                   |
+|-------------|----------------------------------------------------|------------------|-------------------------------|
+| request_id  | ID of request                                      | INT(11) UNSIGNED | PRIMARY KEY, auto-increment   |
+| user_id     | ID of user requesting the password change          | INT(11) UNSIGNED | Foreign Key (user_id -> user) |
+| token_hash  | Hashed token for the password change request       | VARCHAR(255)     | Not Null                      |
+| expiry_date | Date and time when the request token expires       | DATETIME         | Not Null                      |
+| used        | Flag indicating if the request token has been used | TINYINT(1)       | Not Null, Default 0           | 
+
+### store
+
+| Attribute   | Description                                  | Data Type        | Constraints                           |
+|-------------|----------------------------------------------|------------------|---------------------------------------|
+| store_id    | ID of store                                  | INT(10) UNSIGNED | PRIMARY KEY, auto-increment           |
+| phone_no    | Phone number of the store                    | VARCHAR(255)     | Not Null                              |
+| street      | Street address of the store                  | VARCHAR(255)     | Not Null                              |
+| coordinate  | Geographic coordinates of the store location | POINT            | Not Null                              |
+| district_id | ID of district where the store is located    | INT(10) UNSIGNED | Foreign Key (district_id -> district) |
+| city        | City where the store is located              | VARCHAR(255)     | Not Null                              |
+
+### store_product
+
+| Attribute   | Description                                     | Data Type        | Constraints                         |
+|-------------|-------------------------------------------------|------------------|-------------------------------------|
+| store_id    | ID of store                                     | INT(11) UNSIGNED | Foreign Key (store_id -> store)     |
+| product_id  | ID of product present at store                  | INT(11) UNSIGNED | Foreign Key (product_id -> product) |
+| stock_level | Current stock level of the product in the store | INT(10) UNSIGNED | Not Null, Default 0                 |
