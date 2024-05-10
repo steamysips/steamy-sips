@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Review",
+  "type": "object",
+  "properties": {
+    "review_id": { "type": "integer" },
+    "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "created_date": { "type": "string", "format": "date-time" },
+    "text": { "type": "string", "minLength": 2, "maxLength": 2000 },
+    "client_id": { "type": "integer" },
+    "product_id": { "type": "integer" }
+  },
+  "required": ["review_id", "rating", "created_date", "text", "client_id", "product_id"]
+}
