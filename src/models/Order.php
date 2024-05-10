@@ -208,52 +208,61 @@ class Order
 
     public function calculateTotalPrice(): float
     {
-        // TODO: Use a single query to calculate total price
-        return 0;
+        $query = "SELECT SUM(unit_price * quantity) AS total_price 
+        FROM order_product WHERE order_id = :order_id";
+        
+        $result = self::get_row($query, ['order_id' => $this->order_id]);
+        
+        if ($result) {
+            return (float) $result->total_price;
+            }
+            
+            return 0.0;
     }
 
     public function toHTML(): string
     {
-        // TODO: get order products and names of each product using a single query
+    $html = <<<HTML
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per Unit</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+    HTML;
 
-        $html = <<<HTML
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price per Unit</th>
-                    <th>Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-        HTML;
+    $query = "SELECT op.product_id, op.quantity, op.unit_price, p.name 
+              FROM order_product op
+              JOIN product p ON op.product_id = p.product_id
+              WHERE op.order_id = :order_id";
 
-        // Iterate through each product in the order
-        foreach ($this->products as $product) {
-            // Get the product details
-            $productName = $product['product']->getName();
-            $quantity = $product['quantity'];
-            $pricePerUnit = $product['product']->getPrice();
-            $totalPrice = $quantity * $pricePerUnit;
+    $orderProducts = self::query($query, ['order_id' => $this->order_id]);
 
-            // Add a row for the product in the HTML table
-            $html .= <<<HTML
-                <tr>
-                    <td>$productName</td>
-                    <td>Qty $quantity</td>
-                    <td>\$$pricePerUnit</td>
-                    <td>\$$totalPrice</td>
-                </tr>
-            HTML;
-        }
+    foreach ($orderProducts as $orderProduct) {
+        $productName = $orderProduct->name;
+        $quantity = $orderProduct->quantity;
+        $pricePerUnit = $orderProduct->unit_price;
+        $totalPrice = $pricePerUnit * $quantity;
 
-        // Close the HTML table
         $html .= <<<HTML
-            </tbody>
-        </table>
+        <tr>
+            <td>$productName</td>
+            <td>Qty $quantity</td>
+            <td>\$$pricePerUnit</td>
+            <td>\$$totalPrice</td>
+        </tr>
         HTML;
+    }
 
-        return $html;
+    $html .= <<<HTML
+        </tbody>
+    </table>
+    HTML;
+
+    return $html;
     }
 }
