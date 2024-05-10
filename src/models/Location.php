@@ -52,6 +52,36 @@ class Location
     }
 
 
+    public function validate(): array
+    {
+        $errors = [];
+
+        // Validate street
+        if (empty($this->street)) {
+            $errors['street'] = "Street is required.";
+        }
+
+        // Validate city
+        if (empty($this->city)) {
+            $errors['city'] = "City is required.";
+        }
+
+        // Validate district_id
+        if (empty($this->district_id) || empty(District::getByID($this->district_id))) {
+            $errors['district_id'] = "Invalid district ID.";
+        }
+
+        // Validate latitude and longitude
+        if ($this->latitude !== null && $this->longitude != null &&
+            ($this->latitude < -90 || $this->latitude > 90 ||
+                $this->longitude < -180 || $this->longitude > 180)) {
+            $errors['coordinates'] = "Invalid coordinates.";
+        }
+
+        return $errors;
+    }
+
+
     public function getStreet(): ?string
     {
         return $this->street;
