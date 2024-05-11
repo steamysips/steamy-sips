@@ -259,7 +259,7 @@ class Product
             return false;
         }
     }
-    
+
 
     public function getAverageRating(): float
     {
@@ -280,7 +280,7 @@ class Product
                 WHERE op.product_id = r.product_id
             )
         EOL;
-        
+
         $params = ['product_id' => $this->product_id];
 
         $result = $this->query($query, $params);
@@ -294,14 +294,9 @@ class Product
         return 0; // No reviews, return 0 as the average rating
     }
 
-    public function delete(): bool
+    public function deleteProduct(): bool
     {
-
-    $query = "DELETE FROM product WHERE product_id = :product_id";
-    $data = ['product_id' => $this->product_id];
-    $result = self::query($query, $data);
-    
-    return $result;
+        return $this->delete($this->product_id, $this->table, 'product_id');
     }
 
     public function validate(): array
