@@ -4,6 +4,7 @@
 
 import Cart from "./models/Cart";
 import CartItem from "./models/CartItem";
+import ModalManager from "./modal";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
@@ -54,33 +55,32 @@ async function checkout() {
 
   const data = {
     items,
-    store_id: 1,
+    store_id: document.querySelector("#store_location").value,
   };
 
-  console.log(data);
   const response = await fetch(window.location.href + "/checkout", {
     method: "POST",
     body: JSON.stringify(data),
   });
 
-  const a = await response.json();
-  console.log(a);
-
   if (response.ok) {
     // Clear cart items from localStorage if checkout is successful
     myCart.clear();
-    window.alert("checkout successful");
-
+    ModalManager("my-modal").openModal();
     return;
   }
-
-  window.alert("checkout failed");
+  window.alert("Checkout failed");
 }
 
+/**
+ * This function must be called after DOM has loaded.
+ */
 function initCartPage() {
   const quantityInputs = [
     ...document.querySelectorAll("section input[type='number']"),
   ];
+
+  ModalManager("my-modal").init();
 
   document.querySelector("#checkout-btn").addEventListener("click", checkout);
 

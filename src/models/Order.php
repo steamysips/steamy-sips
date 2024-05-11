@@ -59,8 +59,8 @@ class Order
 
     public function save(): bool
     {
-        // If attributes of the object are invalid, exit
-        if (count($this->validate()) > 0) {
+        // if attributes of the object are invalid, exit
+        if (!empty($this->validate())) {
             return false;
         }
 
@@ -72,8 +72,8 @@ class Order
         $conn = self::connect();
         $conn->beginTransaction();
 
-        // Get data to be inserted into the order table.
-        // The remaining attributes are set to their default values by mysql
+        // get data to be inserted into the order table.
+        // the remaining attributes are set to their default values by mysql
         $query = "insert into `order` (client_id, store_id) values(?, ?)";
         $stm = $conn->prepare($query);
         $success = $stm->execute([$this->client_id, $this->store_id]);
@@ -83,22 +83,55 @@ class Order
             $conn = null;
             return false;
         }
-        $new_order_id = (int)$conn->lastInsertId();
 
+        // get id of last inserted order
+        $new_order_id = $conn->lastInsertId();
+
+        if ($new_order_id === false) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        $new_order_id = (int)$new_order_id;
+
+        // prepare a query for inserting a line item
         $query = <<< EOL
-        insert into `order_product` (order_id, product_id, cup_size, milk_type, quantity, unit_price)
+        insert into `order_product` (order_id, product_id, cup_size,
+                                     milk_type, quantity, unit_price)
         values(:order_id, :product_id, :cup_size, :milk_type, :quantity, :unit_price)
         EOL;
         $stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
-            $success = $stm->execute(['order_id' => $new_order_id, ... $line_item->toArray()]);
+            // fetch product corresponding to line item
+            $product = Product::getByID($line_item->getProductID());
 
+            if (empty($product)) {
+                // product does not exist
+                $conn->rollBack();
+                $conn = null;
+                return false;
+            }
+
+            if (!$line_item->validate()) {
+                // line item contains invalid attributes
+                $conn->rollBack();
+                $conn = null;
+                return false;
+            }
+
+            $line_item->setOrderID($new_order_id);
+            $line_item->setUnitPrice($product->getPrice());
+
+            $success = $stm->execute($line_item->toArray());
             if (!$success) {
                 $conn->rollBack();
                 $conn = null;
                 return false;
             }
+
+            // TODO: Update stock level in store table
         }
         $this->order_id = $new_order_id;
 
@@ -150,7 +183,8 @@ class Order
             store_id: $orderData->store_id,
             client_id: $orderData->client_id,
             order_id: $orderData->order_id,
-            pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
+            pickup_date: $orderData->pickup_date ?
+                Utility::stringToDate($orderData->pickup_date) : null,
             status: $orderData->status,
             created_date: Utility::stringToDate($orderData->created_date),
         );

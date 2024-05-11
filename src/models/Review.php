@@ -210,15 +210,15 @@ class Review
     }
 
     /**
-     * Check if the writer of the review has purchased the product.
+     * Check if the review author has purchased the product.
      *
      * @return bool True if the writer has purchased the product, false otherwise.
      */
     public function isVerified(): bool
     {
-        // Query the database to check if the review with the given review_id belongs to the user who wrote it
+        // Count the number of times the review author has purchased the product
         $query = <<<EOL
-        SELECT COUNT(*) 
+        SELECT COUNT(*) as purchase_count
         FROM order_product op
         JOIN `order` o ON op.order_id = o.order_id
         JOIN review r ON r.client_id = o.client_id
@@ -228,8 +228,11 @@ class Review
 
         $result = self::get_row($query, ['product_id' => $this->product_id, 'review_id' => $this->review_id]);
 
-        // If result is empty, the user has written the review for the product
-        return empty($result);
+        if ($result === false) {
+            return false;
+        }
+
+        return $result->purchase_count > 0;
     }
 
     /**

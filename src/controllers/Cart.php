@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
+use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Order;
@@ -69,6 +70,8 @@ class Cart
 
     private function handleCheckout(): void
     {
+        // TODO: write appropriate errors to Cart view instead of sending response code
+
         // if user is not logged in, redirect to login page
         $signed_client = $this->getSignedInClient();
         if (!$signed_client) {
@@ -83,6 +86,7 @@ class Cart
             return;
         }
 
+        // TODO : Validate store id
         $store_id = filter_var($form_data['store_id'], FILTER_VALIDATE_INT);
 
         if (!$store_id) {
@@ -91,7 +95,7 @@ class Cart
         }
 
         // create and populate new Order object
-        $new_order = new Order(store_id: 1, client_id: $signed_client->getUserID());
+        $new_order = new Order(store_id: $store_id, client_id: $signed_client->getUserID());
         foreach ($form_data['items'] as $item) {
             $line_item = new OrderProduct(
                 product_id: filter_var($item['productID'], FILTER_VALIDATE_INT),
@@ -103,14 +107,13 @@ class Cart
         }
 
         // save order
-        $success = $new_order->save();
-
-        if ($success) {
-            http_response_code(201);
-            return;
+        try {
+            $success = $new_order->save();
+            http_response_code($success ? 201 : 400);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            http_response_code(500);
         }
-
-        http_response_code(400);
     }
 
     public function index(): void
