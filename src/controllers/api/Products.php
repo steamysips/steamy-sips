@@ -6,9 +6,11 @@ namespace Steamy\Controller\API;
 
 use Steamy\Core\Utility;
 use Steamy\Model\Product;
+use Steamy\Core\Model;
 
 class Products
 {
+    use Model;
     /**
      * Get the list of all products available in the store.
      */
@@ -179,26 +181,8 @@ class Products
         }
 
         // Update product attributes
-        if (isset($putData['name'])) {
-            $product->setName($putData['name']);
-        }
-        if (isset($putData['calories'])) {
-            $product->setCalories(intval($putData['calories']));
-        }
-        if (isset($putData['img_url'])) {
-            $product->setImgUrl($putData['img_url']);
-        }
-        if (isset($putData['img_alt_text'])) {
-            $product->setImgAltText($putData['img_alt_text']);
-        }
-        if (isset($putData['category'])) {
-            $product->setCategory($putData['category']);
-        }
-        if (isset($putData['price'])) {
-            $product->setPrice(floatval($putData['price']));
-        }
-        if (isset($putData['description'])) {
-            $product->setDescription($putData['description']);
+        foreach ($putData as $key => $value) {
+           $product->{$key} = $value;
         }
 
         // Validate updated product attributes
@@ -210,8 +194,11 @@ class Products
             return;
         }
 
-        // Save updated product to the database
-        if ($product->save()) {
+        // Update product in the database
+        $rowsAffected = $product->update($productId, $putData, 'product');
+
+        // Check if update was successful
+       if ($rowsAffected > 0) {
             // Product updated successfully
             http_response_code(200); // OK
             echo json_encode(['message' => 'Product updated successfully']);
