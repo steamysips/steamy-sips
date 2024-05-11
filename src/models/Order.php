@@ -66,11 +66,20 @@ class Order
         $conn = self::connect();
         $conn->beginTransaction();
 
-        // get data to be inserted into the order table.
-        // the remaining attributes are set to their default values by mysql
+        // validate store
+        $store = Store::getByID($this->store_id);
+
+        if (!$store) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        // create a new order
+        // Attributes missing in query are set to their default values by mysql
         $query = "insert into `order` (client_id, store_id) values(?, ?)";
-        $stm = $conn->prepare($query);
-        $success = $stm->execute([$this->client_id, $this->store_id]);
+        $insert_line_item_stm = $conn->prepare($query);
+        $success = $insert_line_item_stm->execute([$this->client_id, $this->store_id]);
 
         if (!$success) {
             $conn->rollBack();
@@ -89,15 +98,29 @@ class Order
 
         $new_order_id = (int)$new_order_id;
 
-        // prepare a query for inserting a line item
+        // prepare a query for inserting a line item in order_product table
         $query = <<< EOL
         insert into `order_product` (order_id, product_id, cup_size,
                                      milk_type, quantity, unit_price)
         values(:order_id, :product_id, :cup_size, :milk_type, :quantity, :unit_price)
         EOL;
-        $stm = $conn->prepare($query);
+        $insert_line_item_stm = $conn->prepare($query);
+
+        // prepare a query for updating stock level
+        $query = "update store_product
+        set stock_level = :new_stock_level
+        where store_id = :store_id
+        and product_id = :product_id";
+        $update_stock_stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
+            if (!$line_item->validate()) {
+                // line item contains invalid attributes
+                $conn->rollBack();
+                $conn = null;
+                return false;
+            }
+
             // fetch product corresponding to line item
             $product = Product::getByID($line_item->getProductID());
 
@@ -108,23 +131,41 @@ class Order
                 return false;
             }
 
-            if (!$line_item->validate()) {
-                // line item contains invalid attributes
+            // get stock level for current product
+            $stock_level = $store->getProductStock($product->getProductID());
+
+            if ($line_item->getQuantity() > $stock_level) {
+                // store does not have enough stock
                 $conn->rollBack();
                 $conn = null;
                 return false;
             }
 
+            // insert into order_product table
             $line_item->setOrderID($new_order_id);
             $line_item->setUnitPrice($product->getPrice());
 
-            $success = $stm->execute($line_item->toArray());
+            $success = $insert_line_item_stm->execute($line_item->toArray());
             if (!$success) {
                 $conn->rollBack();
                 $conn = null;
                 return false;
             }
-            // TODO: Update stock level in store table
+
+            // update stock level in store table
+            $new_stock_level = $stock_level - $line_item->getQuantity();
+            $success = $update_stock_stm->execute(
+                [
+                    'product_id' => $product->getProductID(),
+                    'store_id' => $this->store_id,
+                    'new_stock_level' => $new_stock_level
+                ]
+            );
+            if (!$success) {
+                $conn->rollBack();
+                $conn = null;
+                return false;
+            }
         }
         $this->order_id = $new_order_id;
 
