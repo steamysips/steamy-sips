@@ -152,12 +152,18 @@ trait Model
      * @param mixed $id value of column name in WHERE clause.
      * @param string $table_name Name of table without backticks. Defaults to $this->table.
      * @param string $id_column_name primary key of table or name of column in WHERE clause.
-     * @return void
+     * @return bool Success or not
      */
-    protected function delete(mixed $id, string $table_name, string $id_column_name = 'id'): void
+    protected function delete(mixed $id, string $table_name, string $id_column_name = 'id'): bool
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
         $query = "DELETE FROM `$table_name` WHERE $id_column_name = :id";
-        self::query($query, array('id' => $id));
+
+        $con = self::connect();
+        $stm = $con->prepare($query);
+        $success = $stm->execute(['id' => $id]);
+        $con = null;
+
+        return $success;
     }
 }
