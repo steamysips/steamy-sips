@@ -52,7 +52,7 @@ npm run build
 
 > [!IMPORTANT]  
 > You must run all the `composer` and `npm` commands inside the root directory (`\var\www\html\steamy-sips`) of the
-project.
+> project.
 
 In the root directory of the project, create a `.env` file with the following contents:
 
@@ -68,13 +68,15 @@ BUSINESS_GMAIL=""
 BUSINESS_GMAIL_PASSWORD=""
 ```
 
-Some important notes:
+Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
 
-- Update the values assigned to `DB_USERNAME` and `DB_PASSWORD` with your MySQL login details.
-- `BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
-  whenever a client places an order. It is recommended to use
-  a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
-  for `BUSINESS_GMAIL_PASSWORD` instead of your actual gmail account password.
+`BUSINESS_GMAIL` and `BUSINESS_GMAIL_PASSWORD` are the credentials of the Gmail account from which emails will be sent
+whenever a client places an order.
+
+> [!NOTE]  
+> It is recommended to use
+> a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
+> for `BUSINESS_GMAIL_PASSWORD` instead of your actual gmail account password.
 
 ## Database setup
 
@@ -85,7 +87,9 @@ sudo service mysql start
 mysql -u <username> -p
 ```
 
-> **Note**: `<username>` is a placeholder for your MySQL username.
+> [!NOTE]  
+> `<username>` is a placeholder for your MySQL username. If your username is `root`, the command to run
+> becomes `mysql -u root -p`
 
 Create a database `cafe`:
 
@@ -135,9 +139,10 @@ Add the following lines to your `/etc/hosts` file:
 127.0.0.1 steamy.localhost
 ::1 steamy.localhost
 ```
+
 > [!TIP]  
 > If you are on Windows or WSL2, your host file is located at `C:\Windows\System32\drivers\etc` and must be edited with
-administrator privileges.
+> administrator privileges.
 
 Enable your site:
 

@@ -63,7 +63,7 @@ class Cart
     private function handleInvalidURL(): void
     {
         if (!$this->validateURL()) {
-            (new _404())->index();
+            (new Error())->handlePageNotFoundError();
             die();
         }
     }

@@ -97,7 +97,7 @@ trait Controller
         if (file_exists($view_file_path)) {
             include $view_file_path;
         } else {
-            include __DIR__ . '/../views/404.php';
+            include __DIR__ . '/../views/Error.php';
         }
         $template_content = ob_get_contents();
         ob_end_clean();

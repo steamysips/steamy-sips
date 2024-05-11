@@ -39,7 +39,7 @@ class Location
         if (!empty($this->city)) {
             $arr['city'] = $this->city;
         }
-        if (!empty($this->district)) {
+        if (!empty($this->district_id)) {
             $arr['district_id'] = $this->district_id;
         }
         if (!is_null($this->latitude)) {
@@ -49,6 +49,36 @@ class Location
             $arr['longitude'] = $this->longitude;
         }
         return $arr;
+    }
+
+
+    public function validate(): array
+    {
+        $errors = [];
+
+        // Validate street
+        if (empty($this->street)) {
+            $errors['street'] = "Street is required.";
+        }
+
+        // Validate city
+        if (empty($this->city)) {
+            $errors['city'] = "City is required.";
+        }
+
+        // Validate district_id
+        if (empty($this->district_id) || empty(District::getByID($this->district_id))) {
+            $errors['district_id'] = "Invalid district ID.";
+        }
+
+        // Validate latitude and longitude
+        if ($this->latitude !== null && $this->longitude != null &&
+            ($this->latitude < -90 || $this->latitude > 90 ||
+                $this->longitude < -180 || $this->longitude > 180)) {
+            $errors['coordinates'] = "Invalid coordinates.";
+        }
+
+        return $errors;
     }
 
 

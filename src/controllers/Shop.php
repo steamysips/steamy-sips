@@ -111,29 +111,36 @@ class Shop
         // check if URL is not /shop
         if (Utility::getURL() !== "shop") {
             // let 404 controller handle this
-            (new _404())->index();
+            (new Error())->handlePageNotFoundError();
             return;
         }
 
-        // fetch all products from database
+        // Retrieve the page number from the URL query parameters
+        $page = $_GET['page'] ?? 1;
+        $perPage = (int) $page * 4; // Number of products per page
+
+        // Fetch all products from the database
         $all_products = Product::getAll();
 
-        // filter out products which do not match keyword
-        $this->data['products'] = array_filter($all_products, array($this, "match_keyword"));
+        // Apply filtering based on search keyword and category (existing functionality)
+        $filtered_products = array_filter($all_products, array($this, "match_keyword"));
+        $filtered_products = array_filter($filtered_products, array($this, "match_category"));
 
-        // filter out products which do not match category
-        $this->data['products'] = array_filter($this->data['products'], array($this, "match_category"));
+        // Sort the filtered products (existing functionality)
+        usort($filtered_products, array($this, "sort_product"));
 
+        // Slice the products based on pagination
+        $paginated_products = array_slice($filtered_products, 0, $perPage);
 
-        // sort results
-        usort($this->data['products'], array($this, "sort_product"));
-
-        // initialize view variables
+        // Initialize view variables (existing functionality)
+        $this->data['products'] = $paginated_products;
         $this->data['search_keyword'] = $_GET['keyword'] ?? "";
         $this->data['categories'] = Product::getCategories();
         $this->data['sort_option'] = $_GET['sort'] ?? "";
         $this->data['selected_categories'] = $_GET['categories'] ?? [];
+        $this->data['page'] = $page;
 
+        // Render the view with pagination information
         $this->view(
             'Shop',
             $this->data,
