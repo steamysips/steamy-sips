@@ -153,6 +153,6 @@ class Cart
             return;
         }
 
-        (new _404())->index();
+        http_response_code(400);
     }
 }
