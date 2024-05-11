@@ -1,14 +1,8 @@
-.warning {
-  /*noinspection CssUnresolvedCustomProperty*/
-  color: var(--form-element-invalid-border-color); /* defined in picocss */
-}
-
 body > nav {
   position: sticky;
   top: 0;
   z-index: 3;
-  /*noinspection CssUnresolvedCustomProperty*/
-  background-color: var(--background-color); /* defined in picocss */
+  background-color: var(--background-color);
 }
 
 body > nav .icon {
@@ -22,7 +16,7 @@ body > nav > ul li:nth-child(1) > a {
   gap: 1rem;
 }
 
-body > nav [data-tooltip]:not(a,button,input){
+body > nav [data-tooltip]:not(a,button,input) {
   border-bottom: 0;
 }
 
@@ -32,38 +26,6 @@ body > nav [data-tooltip]:not(a,button,input){
   justify-content: center;
 }
 
-#cart-modal article {
-  padding: 40px 30px;
-}
-
-#cart-modal article footer {
-  margin: 0;
-}
-
-#cart-modal article footer h5 {
-  display: grid;
-  place-items: center;
-  margin: 0;
-}
-
-
-#cart-modal #cart-items {
-  height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 5px;
-}
-
-#cart-items article {
-  min-width: 40vw;
-  max-width: 100%;
-  margin: 0;
-  padding-bottom: 0;
-  padding-top: 20px;
-}
-
-#cart-items article button {
-  /*noinspection CssUnresolvedCustomProperty*/
-  background-color: var(--del-color); /* defined in picocss */
-  border: 0;
+.warning {
+  color: var(--form-element-invalid-border-color);
 }
