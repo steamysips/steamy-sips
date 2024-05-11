@@ -1,0 +1,41 @@
+{
+  "name": "creme332/steamy-sips",
+  "type": "project",
+  "description": "A coffee shop website built using LAMP stack.",
+  "authors": [
+    {
+      "name": "creme332",
+      "email": "c34560814@gmail.com",
+      "role": "Lead Developer"
+    },
+    {
+      "name": "Divyesh Jokhoo",
+      "email": "divjok28@outlook.com",
+      "role": "Lead Developer"
+    }
+  ],
+  "homepage": "https://github.com/creme332/steamy-sips",
+  "license": "CC-BY-SA-4.0",
+  "require": {
+    "ext-pdo": "*",
+    "ext-mbstring": "*",
+    "vlucas/phpdotenv": "^5.6",
+    "phpmailer/phpmailer": "^6.9",
+    "opis/json-schema": "^2.3"
+  },
+  "scripts": {
+    "test": "phpunit tests"
+  },
+  "autoload": {
+    "psr-4": {
+      "Steamy\\": "src/",
+      "Steamy\\Core\\": "src/core/",
+      "Steamy\\Controller\\": "src/controllers/",
+      "Steamy\\Controller\\API\\": "src/controllers/api/",
+      "Steamy\\Model\\": "src/models/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  }
+}

@@ -1,0 +1,71 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_DB_NAME: cafe_test
+      DB_USER: root # do not change
+      DB_PASSWORD: root # do not change
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180, variables_order="EGPCS"
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
+
+      - name: Setup database
+        run: |
+          mysql -V
+          sudo /etc/init.d/mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS $TEST_DB_NAME;" -u$DB_USER -p$DB_PASSWORD
+          mysql -D$TEST_DB_NAME -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/dump/cafe.sql"
+          mysql -e "USE cafe_test; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
+
+      - name: Create .env file
+        env:
+            ENV: |
+              PUBLIC_ROOT="http://localhost/steamy-sips/public"
+              DB_HOST="localhost"
+              DB_USERNAME="root"
+              DB_PASSWORD="root"
+              TEST_DB_NAME="cafe_test"
+              BUSINESS_GMAIL=""
+              BUSINESS_GMAIL_PASSWORD=""
+        run: |
+          echo "$ENV" > .env
+          cat .env
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run test suite
+        run: composer test

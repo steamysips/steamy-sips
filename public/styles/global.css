@@ -1,0 +1,69 @@
+.warning {
+  /*noinspection CssUnresolvedCustomProperty*/
+  color: var(--form-element-invalid-border-color); /* defined in picocss */
+}
+
+body > nav {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  /*noinspection CssUnresolvedCustomProperty*/
+  background-color: var(--background-color); /* defined in picocss */
+}
+
+body > nav .icon {
+  height: 40px;
+  width: 40px;
+}
+
+/*style logo on left hand side of navbar*/
+body > nav > ul li:nth-child(1) > a {
+  display: flex;
+  gap: 1rem;
+}
+
+body > nav [data-tooltip]:not(a,button,input){
+  border-bottom: 0;
+}
+
+#page-footer {
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+#cart-modal article {
+  padding: 40px 30px;
+}
+
+#cart-modal article footer {
+  margin: 0;
+}
+
+#cart-modal article footer h5 {
+  display: grid;
+  place-items: center;
+  margin: 0;
+}
+
+
+#cart-modal #cart-items {
+  height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
+}
+
+#cart-items article {
+  min-width: 40vw;
+  max-width: 100%;
+  margin: 0;
+  padding-bottom: 0;
+  padding-top: 20px;
+}
+
+#cart-items article button {
+  /*noinspection CssUnresolvedCustomProperty*/
+  background-color: var(--del-color); /* defined in picocss */
+  border: 0;
+}
