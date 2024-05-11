@@ -67,9 +67,7 @@ class Products
     private function createProduct(): void
     {
         // Retrieve POST data
-        $postData = json_decode(file_get_contents("php://input"), true);
-        echo file_get_contents("php://input"); // ! always empty for some reason
-
+        $postData = $_POST;
 
         // TODO : Use json schema validation here
         // Check if required fields are present
@@ -88,8 +86,6 @@ class Products
             echo json_encode(['error' => "Missing fields: " . implode(', ', $requiredFields)]);
             return;
         }
-
-        echo json_encode($postData);
 
         foreach ($requiredFields as $field) {
             if (empty($postData[$field])) {
@@ -143,7 +139,7 @@ class Products
         }
 
         // Attempt to delete the product
-        if ($product->delete()) {
+        if ($product->deleteProduct()) {
             // Product successfully deleted
             http_response_code(204); // No Content
         } else {
