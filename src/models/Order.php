@@ -6,6 +6,7 @@ namespace Steamy\Model;
 
 use DateTime;
 use Exception;
+use PDOException;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
 
@@ -56,11 +57,16 @@ class Order
     }
 
 
+    /**
+     * Saves order to database
+     * @throws Exception
+     * @throws PDOException
+     */
     public function save(): bool
     {
         // check if order has at least 1 line item
         if (empty($this->line_items)) {
-            return false;
+            throw new Exception('Cart cannot be empty');
         }
 
         $conn = self::connect();
@@ -72,7 +78,7 @@ class Order
         if (!$store) {
             $conn->rollBack();
             $conn = null;
-            return false;
+            throw new Exception('Store does not exist');
         }
 
         // create a new order
@@ -84,7 +90,7 @@ class Order
         if (!$success) {
             $conn->rollBack();
             $conn = null;
-            return false;
+            throw new Exception('Order could not be created');
         }
 
         // get id of last inserted order
@@ -93,9 +99,10 @@ class Order
         if ($new_order_id === false) {
             $conn->rollBack();
             $conn = null;
-            return false;
+            throw new Exception("Failed to retrieve last inserted order ID");
         }
 
+        // cast string ID to integer
         $new_order_id = (int)$new_order_id;
 
         // prepare a query for inserting a line item in order_product table
@@ -118,7 +125,7 @@ class Order
                 // line item contains invalid attributes
                 $conn->rollBack();
                 $conn = null;
-                return false;
+                throw new Exception("Invalid line item:" . json_encode($line_item));
             }
 
             // fetch product corresponding to line item
@@ -128,7 +135,7 @@ class Order
                 // product does not exist
                 $conn->rollBack();
                 $conn = null;
-                return false;
+                throw new Exception("Product with ID " . $line_item->getProductID() . " does not exist");
             }
 
             // get stock level for current product
@@ -138,7 +145,10 @@ class Order
                 // store does not have enough stock
                 $conn->rollBack();
                 $conn = null;
-                return false;
+                throw new Exception(
+                    "Store with ID " . $line_item->getProductID(
+                    ) . " has insufficient stock for product " . $line_item->getProductID()
+                );
             }
 
             // insert into order_product table
@@ -164,7 +174,9 @@ class Order
             if (!$success) {
                 $conn->rollBack();
                 $conn = null;
-                return false;
+                throw new Exception(
+                    "Unable to update stock level for store with ID " . $this->store_id
+                );
             }
         }
         $this->order_id = $new_order_id;
