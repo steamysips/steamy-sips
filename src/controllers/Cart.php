@@ -7,6 +7,7 @@ namespace Steamy\Controller;
 use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
+use Steamy\Model\Mailer;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
@@ -110,13 +111,23 @@ class Cart
         }
 
         // save order
+        $success_order = false;
         try {
-            $success = $new_order->save();
-            http_response_code($success ? 201 : 400);
+            $success_order = $new_order->save();
+            http_response_code($success_order ? 201 : 400);
         } catch (Exception $e) {
             error_log($e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
+        }
+
+        // send confirmation email if order was successfully saved
+        if ($success_order) {
+            try {
+                (new Mailer())->sendOrderConfirmationEmail($new_order);
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
         }
     }
 
