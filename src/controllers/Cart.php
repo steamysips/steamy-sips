@@ -72,25 +72,28 @@ class Cart
     {
         // TODO: write appropriate errors to Cart view instead of sending response code
 
-        // if user is not logged in, redirect to login page
+        // check if user is logged in
         $signed_client = $this->getSignedInClient();
         if (!$signed_client) {
-            Utility::redirect('login');
+            http_response_code(401);
+            echo json_encode(['error' => 'You must login first']);
+            return;
         }
 
         $form_data = json_decode(file_get_contents('php://input'), true);
 
         if (empty($form_data)) {
-            echo 'cart cannot be empty';
             http_response_code(400);
+            echo json_encode(['error' => 'Cart cannot be empty']);
             return;
         }
 
-        // TODO : Validate store id
-        $store_id = filter_var($form_data['store_id'], FILTER_VALIDATE_INT);
+        // Validate store id
+        $store_id = filter_var($form_data['store_id'] ?? "", FILTER_VALIDATE_INT);
 
-        if (!$store_id) {
+        if (!$store_id || empty(Store::getByID($store_id))) {
             http_response_code(400);
+            echo json_encode(['error' => 'Invalid store']);
             return;
         }
 
@@ -113,6 +116,7 @@ class Cart
         } catch (Exception $e) {
             error_log($e->getMessage());
             http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
         }
     }
 
