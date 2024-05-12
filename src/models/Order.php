@@ -146,8 +146,8 @@ class Order
                 $conn->rollBack();
                 $conn = null;
                 throw new Exception(
-                    "Store with ID " . $line_item->getProductID(
-                    ) . " has insufficient stock for product " . $line_item->getProductID()
+                    "Store with ID " . $this->store_id
+                    . " has insufficient stock for product " . $line_item->getProductID()
                 );
             }
 
