@@ -275,6 +275,17 @@ class Order
         return $this->status;
     }
 
+    public function getStoreID(): int
+    {
+        return $this->store_id;
+    }
+
+    public function getStore(): ?Store
+    {
+        return Store::getByID($this->store_id);
+    }
+
+
     public function setStatus(OrderStatus $status): void
     {
         $this->status = $status;
