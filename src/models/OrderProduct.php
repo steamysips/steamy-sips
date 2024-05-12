@@ -111,6 +111,11 @@ class OrderProduct
         return $this->product_id;
     }
 
+    public function getProductName(): string
+    {
+        return Product::getByID($this->product_id)->getName();
+    }
+
     public function getCupSize(): string
     {
         return $this->cup_size;
