@@ -90,5 +90,26 @@ class Mailer
         // Send the message
         return $this->mail->send();
     }
+
+    /**
+     * @throws Exception
+     */
+    public function sendOrderConfirmationEmail(Order $order): bool
+    {
+        $subject = "Order Confirmation | Steamy Sips";
+        $client = Client::getByID($order->getClientID());
+
+        if (!$client) {
+            return false;
+        }
+
+        // fill email template and save to a variable
+        ob_start();
+        require_once __DIR__ . '/../views/mails/OrderConfirmation.php';
+        $html_message = ob_get_contents();
+        ob_end_clean();
+
+        return $this->sendMail($client->getEmail(), $subject, $html_message, 'Success');
+    }
 }
 
