@@ -69,7 +69,8 @@ async function checkout() {
     ModalManager("my-modal").openModal();
     return;
   }
-  window.alert("Checkout failed");
+  const x = await response.json();
+  window.alert(x.error);
 }
 
 /**
