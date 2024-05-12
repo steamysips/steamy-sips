@@ -5,10 +5,12 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
+use Steamy\Core\Database;
 
 
 final class ClientTest extends TestCase
 {
+    use Database;
     private ?Client $dummy_client;
 
     public function setUp(): void
@@ -17,17 +19,24 @@ final class ClientTest extends TestCase
         $this->dummy_client = new Client(
             "john_u@gmail.com", "john", "johhny", "abcd",
             "13213431", $address);
+
+        $success = $this->dummy_client->save();
+        if (!$success) {
+            throw new Exception('Unable to save client');
+        }
     }
 
 public function tearDown(): void
 {
     $this->dummy_client = null;
+
+        // Clear all data from client and user tables
+        self::query('DELETE FROM client; DELETE FROM user;');
 }
 
 public function testConstructor(): void
 {
     // check if fields were correctly set
-    self::assertEquals(-1, $this->dummy_client->getUserID());
     self::assertEquals("john_u@gmail.com", $this->dummy_client->getEmail());
     self::assertEquals("john", $this->dummy_client->getFirstName());
     self::assertEquals("johhny", $this->dummy_client->getLastName());
