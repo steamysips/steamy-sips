@@ -17,10 +17,10 @@ use Steamy\Model\Product;
 
 /**
  * Outputs sanitized HTML to display a product
- * @param $product
+ * @param Product $product
  * @return void
  */
-function displayProduct($product): void
+function displayProduct(Product $product): void
 {
     $product_href = htmlspecialchars(
         '/shop/products/' . $product->getProductID()
@@ -28,10 +28,14 @@ function displayProduct($product): void
     $product_img_src = htmlspecialchars($product->getImgAbsolutePath()); // url of image
     $img_alt_text = htmlspecialchars($product->getImgAltText());
     $name = htmlspecialchars($product->getName());
+    $price = filter_var($product->getPrice(), FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     echo <<<EOL
         <a data-aos="zoom-in" href="$product_href">
             <img src="$product_img_src" alt="$img_alt_text">
-            <h5>$name</h5>
+        <hgroup>     
+             <h5>$name</h5>
+             <h5>Rs $price</h5>
+        </hgroup>
         </a>
     EOL;
 }
@@ -84,7 +88,7 @@ function displayProduct($product): void
 
 </form>
 
-<main class="container">
+<main class="container" style="padding-top: 0">
     <div id="item-grid">
         <?php
         foreach ($products as $product) {

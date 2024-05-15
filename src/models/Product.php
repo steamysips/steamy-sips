@@ -262,17 +262,13 @@ class Product
 
     public function getAverageRating(): float
     {
-        // Ensure that $product_id is initialized
-        if (!isset($this->product_id)) {
-            return 0; // Return 0 if $product_id is not set
-        }
-
         // Query the database to calculate the average rating excluding unverified reviews
         $query = <<< EOL
             SELECT AVG(r.rating) AS average_rating
             FROM review r
             WHERE r.product_id = :product_id
             AND r.client_id IN (
+                -- get IDs of all clients who purchased current product
                 SELECT DISTINCT o.client_id
                 FROM `order` o
                 JOIN order_product op ON o.order_id = op.order_id

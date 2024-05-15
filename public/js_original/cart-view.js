@@ -4,6 +4,7 @@
 
 import Cart from "./models/Cart";
 import CartItem from "./models/CartItem";
+import ModalManager from "./modal";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
@@ -23,6 +24,13 @@ function updateCart(e) {
   const unitPrice = parseFloat(sectionNode.getAttribute("data-unitprice"));
   const newSubTotal = Math.round(newQuantity * unitPrice * 100) / 100;
 
+  // update cart total
+  let cartTotal = parseFloat(document.querySelector("#cart-total").textContent);
+  cartTotal = cartTotal + unitPrice * (newQuantity - currentCartItem.quantity);
+  document.querySelector("#cart-total").textContent = cartTotal
+    .toFixed(2)
+    .toString();
+
   // display new subtotal
   const priceNode = sectionNode.querySelector(".container > strong");
   priceNode.textContent = "Rs " + newSubTotal;
@@ -41,12 +49,67 @@ function updateCart(e) {
   }
 }
 
-window.addEventListener("DOMContentLoaded", function () {
+async function checkout() {
+  const myCart = Cart();
+  const items = myCart.getItems();
+
+  const data = {
+    items,
+    store_id: document.querySelector("#store_location").value,
+  };
+
+  const response = await fetch(window.location.href + "/checkout", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  if (response.ok) {
+    // Clear cart items from localStorage if checkout is successful
+    myCart.clear();
+    ModalManager("my-modal").openModal();
+    return;
+  }
+  const x = await response.json();
+  window.alert(x.error);
+}
+
+function preventKeyboardInput(event) {
+  event.preventDefault();
+}
+
+/**
+ * This function must be called after DOM has loaded.
+ */
+function initCartPage() {
   const quantityInputs = [
     ...document.querySelectorAll("section input[type='number']"),
   ];
 
+  ModalManager("my-modal").init();
+
+  document.querySelector("#checkout-btn").addEventListener("click", checkout);
+
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateCart);
+    input.addEventListener("keydown", preventKeyboardInput);
   });
-});
+}
+
+async function uploadCart() {
+  const items = Cart().getItems();
+
+  const response = await fetch(window.location.href + "/upload", {
+    method: "POST",
+    body: JSON.stringify(items),
+  });
+
+  // add loading delay of 1s
+  await new Promise((r) => setTimeout(r, 1000));
+
+  if (response.ok) {
+    document.body.innerHTML = await response.text();
+    initCartPage();
+  }
+}
+
+window.addEventListener("DOMContentLoaded", uploadCart);

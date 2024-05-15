@@ -6,6 +6,7 @@ namespace Steamy\Model;
 
 use DateTime;
 use Exception;
+use PDOException;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
 
@@ -22,9 +23,13 @@ class Order
     private ?DateTime $pickup_date; // ?DateTime type allows $pickup_date to be null
     private int $client_id;
 
+    /** @var OrderProduct[] Array of line items */
+    private array $line_items; // array of order products
+
     public function __construct(
         int $store_id,
         int $client_id,
+        array $line_items = [],
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
         OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
@@ -36,6 +41,7 @@ class Order
         $this->created_date = $created_date;
         $this->pickup_date = $pickup_date;
         $this->client_id = $client_id;
+        $this->line_items = $line_items;
     }
 
     public function toArray(): array
@@ -51,33 +57,149 @@ class Order
     }
 
 
+    /**
+     * Saves order to database
+     * @throws Exception
+     * @throws PDOException
+     */
     public function save(): bool
     {
-        // If attributes of the object are invalid, exit
-        if (count($this->validate()) > 0) {
-            return false;
+        // check if order has at least 1 line item
+        if (empty($this->line_items)) {
+            throw new Exception('Cart cannot be empty');
         }
 
-        // Get data to be inserted into the order table
-        $order_data = $this->toArray();
-        unset($order_data['order_id']); // Remove order_id as it's auto-incremented
-        unset($order_data['status']); // Remove status as it's set to 'pending' by default
-        unset($order_data['pickup_date']); // Remove pickup_date as it's set to NULL by default
-        unset($order_data['created_date']); // Remove created_date as it's set by database
+        $conn = self::connect();
+        $conn->beginTransaction();
 
-        Utility::show($order_data);
-        // Perform insertion into the order table
-        try {
-            $new_id = $this->insert($order_data);
-            if ($new_id === null) {
+        // validate store
+        $store = Store::getByID($this->store_id);
+
+        if (!$store) {
+            $conn->rollBack();
+            $conn = null;
+            throw new Exception('Store does not exist');
+        }
+
+        // create a new order
+        // Attributes missing in query are set to their default values by mysql
+        $query = "insert into `order` (client_id, store_id) values(?, ?)";
+        $insert_line_item_stm = $conn->prepare($query);
+        $success = $insert_line_item_stm->execute([$this->client_id, $this->store_id]);
+
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            throw new Exception('Order could not be created');
+        }
+
+        // get id of last inserted order
+        $new_order_id = $conn->lastInsertId();
+
+        if ($new_order_id === false) {
+            $conn->rollBack();
+            $conn = null;
+            throw new Exception("Failed to retrieve last inserted order ID");
+        }
+
+        // cast string ID to integer
+        $new_order_id = (int)$new_order_id;
+
+        // prepare a query for inserting a line item in order_product table
+        $query = <<< EOL
+        insert into `order_product` (order_id, product_id, cup_size,
+                                     milk_type, quantity, unit_price)
+        values(:order_id, :product_id, :cup_size, :milk_type, :quantity, :unit_price)
+        EOL;
+        $insert_line_item_stm = $conn->prepare($query);
+
+        // prepare a query for updating stock level
+        $query = "update store_product
+        set stock_level = :new_stock_level
+        where store_id = :store_id
+        and product_id = :product_id";
+        $update_stock_stm = $conn->prepare($query);
+
+        foreach ($this->line_items as $line_item) {
+            if (!$line_item->validate()) {
+                // line item contains invalid attributes
+                $conn->rollBack();
+                $conn = null;
+                throw new Exception("Invalid line item:" . json_encode($line_item));
+            }
+
+            // fetch product corresponding to line item
+            $product = Product::getByID($line_item->getProductID());
+
+            if (empty($product)) {
+                // product does not exist
+                $conn->rollBack();
+                $conn = null;
+                throw new Exception("Product with ID " . $line_item->getProductID() . " does not exist");
+            }
+
+            // get stock level for current product
+            $stock_level = $store->getProductStock($product->getProductID());
+
+            if ($line_item->getQuantity() > $stock_level) {
+                // store does not have enough stock
+                $conn->rollBack();
+                $conn = null;
+                throw new Exception(
+                    "Store with ID " . $this->store_id
+                    . " has insufficient stock for product " . $line_item->getProductID()
+                );
+            }
+
+            // insert into order_product table
+            $line_item->setOrderID($new_order_id);
+            $line_item->setUnitPrice($product->getPrice());
+
+            $success = $insert_line_item_stm->execute($line_item->toArray());
+            if (!$success) {
+                $conn->rollBack();
+                $conn = null;
                 return false;
             }
-            $this->order_id = $new_id;
-            return true;
-        } catch (Exception $e) {
-            echo $e;
-            return false;
+
+            // update stock level in store table
+            $new_stock_level = $stock_level - $line_item->getQuantity();
+            $success = $update_stock_stm->execute(
+                [
+                    'product_id' => $product->getProductID(),
+                    'store_id' => $this->store_id,
+                    'new_stock_level' => $new_stock_level
+                ]
+            );
+            if (!$success) {
+                $conn->rollBack();
+                $conn = null;
+                throw new Exception(
+                    "Unable to update stock level for store with ID " . $this->store_id
+                );
+            }
         }
+        $this->order_id = $new_order_id;
+
+        $conn->commit();
+        $conn = null;
+        return true;
+    }
+
+    /**
+     * Adds a line item to the order.
+     *
+     * @param OrderProduct $orderProduct
+     * @return void
+     */
+    public function addLineItem(OrderProduct $orderProduct): void
+    {
+        $this->line_items[] = $orderProduct;
+    }
+
+    public function getLineItems(): array
+    {
+        return $this->line_items;
     }
 
     /**
@@ -153,6 +275,17 @@ class Order
         return $this->status;
     }
 
+    public function getStoreID(): int
+    {
+        return $this->store_id;
+    }
+
+    public function getStore(): ?Store
+    {
+        return Store::getByID($this->store_id);
+    }
+
+
     public function setStatus(OrderStatus $status): void
     {
         $this->status = $status;
@@ -190,79 +323,18 @@ class Order
         return $errors;
     }
 
-    /**
-     * Adds a product to the order.
-     *
-     * @param OrderProduct $newOrderProduct
-     * @return bool
-     */
-    public function addOrderProduct(OrderProduct $newOrderProduct): bool
-    {
-        $newOrderProduct->setOrderID($this->order_id);
-        try {
-            return $newOrderProduct->save();
-        } catch (Exception) {
-            return false;
-        }
-    }
 
     public function calculateTotalPrice(): float
     {
         $query = "SELECT SUM(unit_price * quantity) AS total_price 
         FROM order_product WHERE order_id = :order_id";
-        
+
         $result = self::get_row($query, ['order_id' => $this->order_id]);
-        
+
         if ($result) {
-            return (float) $result->total_price;
-            }
-            
-            return 0.0;
-    }
+            return (float)$result->total_price;
+        }
 
-    public function toHTML(): string
-    {
-    $html = <<<HTML
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price per Unit</th>
-                <th>Total Price</th>
-            </tr>
-        </thead>
-        <tbody>
-    HTML;
-
-    $query = "SELECT op.product_id, op.quantity, op.unit_price, p.name 
-              FROM order_product op
-              JOIN product p ON op.product_id = p.product_id
-              WHERE op.order_id = :order_id";
-
-    $orderProducts = self::query($query, ['order_id' => $this->order_id]);
-
-    foreach ($orderProducts as $orderProduct) {
-        $productName = $orderProduct->name;
-        $quantity = $orderProduct->quantity;
-        $pricePerUnit = $orderProduct->unit_price;
-        $totalPrice = $pricePerUnit * $quantity;
-
-        $html .= <<<HTML
-        <tr>
-            <td>$productName</td>
-            <td>Qty $quantity</td>
-            <td>\$$pricePerUnit</td>
-            <td>\$$totalPrice</td>
-        </tr>
-        HTML;
-    }
-
-    $html .= <<<HTML
-        </tbody>
-    </table>
-    HTML;
-
-    return $html;
+        return 0.0;
     }
 }
