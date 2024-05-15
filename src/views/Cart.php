@@ -7,33 +7,72 @@ declare(strict_types=1);
  *
  * @var array $cart_items Represents an array of cart items, where each item is an object containing information
  * about a product, including its quantity, cupSize and milkType attributes.
+ * @var float $cart_total
  * @var Store[] $stores All stores
  */
 
 use Steamy\Model\Store;
 
 ?>
+<dialog id="my-modal">
+    <article>
+        <a href="#"
+           aria-label="Close"
+           class="close"
+           data-target="my-modal"
+        >
+        </a>
+        <h3>Checkout successful! ✨</h3>
+        <footer>
+            <a href="#"
+               role="button"
+               class="secondary"
+               data-target="my-modal"
+            >
+                Ok
+            </a>
+            <a href="/profile"
+               role="button"
+               data-target="my-modal"
+            >
+                View order
+            </a>
+        </footer>
+    </article>
+</dialog>
 
-<main class="container">
-    <h1>Shopping Cart</h1>
-
-    <label for="store_location">Choose store:</label>
-    <select id="store_location" name="store_id">
-        <?php
-        foreach ($stores as $store) {
-            $store_id = filter_var($store->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
-            $address = htmlspecialchars($store->getAddress()->getFormattedAddress());
-            echo <<< EOL
-                <option value="$store_id">$address</option>
-            EOL;
-        }
-        ?>
-    </select>
+<main class="container" style="padding-top: 0">
+    <h1>Shopping Cart 🛒</h1>
 
     <?php
-    if (count($cart_items) == 0) {
-        echo "<p>Your cart is empty 😥</p>";
-    }
+    // display dropdown menu for store location
+    if (!empty($cart_items)): ?>
+        <label for="store_location">Choose store:</label>
+        <select id="store_location" name="store_id">
+            <?php
+            foreach ($stores as $store) {
+                $store_id = filter_var($store->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+                $address = htmlspecialchars($store->getAddress()->getFormattedAddress());
+                echo <<< EOL
+                <option value="$store_id">$address</option>
+            EOL;
+            }
+            ?>
+        </select>
+    <?php
+    endif ?>
+
+    <?php
+    // if cart is empty, show empty cart logo
+    if (empty($cart_items)): ?>
+        <div style='width:100%; display: grid; justify-content: center;'>
+            <img width='400' src='/assets/img/empty-cart.png'
+                 alt='Empty cart logo. Source: kerismaker from Flaticon'>
+        </div>
+    <?php
+    endif ?>
+
+    <?php
     foreach ($cart_items as $item) {
         $product = $item['product'];
         $product_id = filter_var($product->getProductID(), FILTER_SANITIZE_NUMBER_INT);
@@ -85,8 +124,17 @@ use Steamy\Model\Store;
     }
     ?>
 
+    <?php
+    // display cart total and checkout button if cart is not empty
+    if (!empty($cart_items)): ?>
+        <strong style="font-size: 40px">Total = Rs <span id="cart-total"><?= filter_var(
+                    $cart_total,
+                    FILTER_SANITIZE_NUMBER_FLOAT,
+                    FILTER_FLAG_ALLOW_FRACTION
+                ) ?></span>
+        </strong>
+        <button id="checkout-btn" style="margin-top: 50px" class="contrast">Checkout</button>
+    <?php
+    endif ?>
 
-    <button type="submit">Checkout</button>
 </main>
-
-<script src="/js/cart_view.bundle.js"></script>

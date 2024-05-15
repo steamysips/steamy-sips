@@ -8,7 +8,6 @@ module.exports = {
     home_view: entryPath + "home-view.js",
     product_view: entryPath + "product-view.js",
     cart_view: entryPath + "cart-view.js",
-    cart_uploader: entryPath + "cart-uploader.js",
     theme_switcher: entryPath + "theme-switcher.js",
   },
   output: {
