@@ -10,7 +10,17 @@
   display: flex;
   flex-direction: column;
   align-content: center;
-  outline: 1px dotted gray;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+#item-grid > a:focus{
+  background-color: transparent;
+}
+
+/*item name*/
+#item-grid > a > hgroup > h5:nth-child(1) {
+  margin-bottom: 0;
 }
 
 #item-grid > a img {

@@ -55,7 +55,7 @@ class OrderProduct
         }
     }
 
-    private function validate(): array
+    public function validate(): array
     {
         $errors = [];
 
@@ -69,6 +69,10 @@ class OrderProduct
 
         if (!in_array($this->cup_size, ['small', 'medium', 'large'])) {
             $errors['cup_size'] = 'Cup size type invalid';
+        }
+
+        if ($this->unit_price <= 0) {
+            $errors['unit_price'] = 'Unit price cannot be negative';
         }
 
         return $errors;
@@ -105,6 +109,11 @@ class OrderProduct
     public function getProductID(): int
     {
         return $this->product_id;
+    }
+
+    public function getProductName(): string
+    {
+        return Product::getByID($this->product_id)->getName();
     }
 
     public function getCupSize(): string
