@@ -13,17 +13,38 @@ use Steamy\Model\Client;
 
 ?>
 
-<main class="container">
+<style>
+  /* Style tab links */
+  .tablink {
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 17px;
+    background-color: var(--secondary);
+  }
 
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'MyAccount')" id="defaultOpen">My account</button>
-        <button class="tablinks" onclick="openTab(event, 'Orders')">Orders summary</button>
-        <button class="tablinks" onclick="openTab(event, 'Settings')">Settings</button>
+  .active {
+    background-color: var(--contrast);
+  }
+
+  /* Style the tab content (and add height:100% for full page content) */
+  .tabcontent {
+    display: none;
+    padding: 20px 0;
+  }
+</style>
+
+<main class="container">
+    <h1>My profile</h1>
+
+    <div class="grid">
+        <button class="tablink active">Account</button>
+        <button class="tablink">Orders</button>
+        <button class="tablink">Settings</button>
     </div>
 
-    <div id="MyAccount" class="tabcontent" style="display: block;">
-        <h1>My account</h1>
-        <h2>Personal details</h2>
+    <div id="Account" class="tabcontent" style="display: block;">
         <label class="grid">
             Name
             <input value="<?= htmlspecialchars($client->getFirstName() . " " . $client->getLastName()) ?>"
@@ -144,24 +165,41 @@ use Steamy\Model\Client;
             </article>
         </div>
     </div>
-
-    <script>
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        // Get the element with id="defaultOpen" and click on it
-        document.getElementById("defaultOpen").click();
-    </script>
-
 </main>
+
+<script>
+  function openTab(evt, tabName) {
+    console.log("New tab = " + tabName);
+
+    // hide all tab contents
+    const tabcontents = [...document.getElementsByClassName("tabcontent")];
+    for (let i = 0; i < tabcontents.length; i++) {
+      tabcontents[i].style.display = "none";
+    }
+
+    // remove active class from the currently active tab link
+    const tablinks = document.getElementsByClassName("tablink");
+    for (let i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // display content for clicked tab
+    document.getElementById(tabName).style.display = "block";
+
+    // set active class only to the clicked tab link
+    evt.currentTarget.className += " active";
+  }
+
+  const tabs = ["Account", "Orders", "Settings"];
+
+  window.addEventListener("DOMContentLoaded", () => {
+    [...document.getElementsByClassName("tablink")].forEach((tablink, i) => {
+          console.log(i, tablink);
+          tablink.addEventListener("click", (e) => openTab(e, tabs[i]));
+        },
+    );
+  });
+
+
+</script>
+
