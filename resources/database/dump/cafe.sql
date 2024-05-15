@@ -182,7 +182,8 @@ CREATE TABLE `order_product` (
   CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON UPDATE CASCADE,
   CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
   CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy')),
-  CONSTRAINT `quantity_range` CHECK (`quantity` > 0)
+  CONSTRAINT `quantity_range` CHECK (`quantity` > 0),
+  CONSTRAINT `unit_price_range` CHECK (`unit_price` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -392,4 +393,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 14:25:08
+-- Dump completed on 2024-05-15 16:01:14

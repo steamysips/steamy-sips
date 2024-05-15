@@ -65,14 +65,14 @@ class Mailer
     }
 
     /**
-     * @param string $email Gmail address of recipient
+     * @param string $email Email address of recipient
      * @param string $subject Email subject line
      * @param string $html_message Message body as an HTML string
      * @param string $plain_message Message as plain text
      * @return bool false on error - See the ErrorInfo property for details of the error
      * @throws Exception Error when calling addAddress or msgHTML
      */
-    public function sendMail(string $email, string $subject, string $html_message, string $plain_message): bool
+    public function sendMail(string $email, string $subject, string $html_message, string $plain_message = ""): bool
     {
         //Set who the message is to be sent to
         $this->mail->addAddress($email);
@@ -85,10 +85,41 @@ class Mailer
         $this->mail->msgHTML($html_message);
 
         // Replace the plain text body with one created manually
-        $this->mail->AltBody = $plain_message;
+        if (strlen($plain_message) > 0) {
+            $this->mail->AltBody = $plain_message;
+        }
 
         // Send the message
         return $this->mail->send();
     }
+
+    /**
+     * @throws Exception
+     */
+    public function sendOrderConfirmationEmail(Order $order): bool
+    {
+        $client = Client::getByID($order->getClientID());
+        if (empty($client)) {
+            return false;
+        }
+
+        $store = $order->getStore();
+        if (empty($store)) {
+            return false;
+        }
+
+        // fill email template and save to a variable
+        ob_start();
+        require_once __DIR__ . '/../views/mails/OrderConfirmation.php';
+        $html_message = ob_get_contents();
+        ob_end_clean();
+
+        return $this->sendMail(
+            $client->getEmail(),
+            "Order Confirmation | Steamy Sips",
+            $html_message
+        );
+    }
+
 }
 
