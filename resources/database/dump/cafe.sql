@@ -172,14 +172,14 @@ DROP TABLE IF EXISTS `order_product`;
 CREATE TABLE `order_product` (
   `order_id` int(11) unsigned NOT NULL,
   `product_id` int(11) unsigned NOT NULL,
-  `cup_size` varchar(20) DEFAULT NULL,
-  `milk_type` varchar(20) DEFAULT NULL,
+  `cup_size` varchar(20) NOT NULL,
+  `milk_type` varchar(20) NOT NULL,
   `quantity` int(11) unsigned DEFAULT NULL,
   `unit_price` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`order_id`,`product_id`),
-  KEY `order_product_2fk` (`product_id`),
-  CONSTRAINT `order_product_1fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `order_product_2fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON UPDATE CASCADE,
+  PRIMARY KEY (`order_id`,`product_id`,`cup_size`,`milk_type`),
+  KEY `order_product_product_product_id_fk` (`product_id`),
+  CONSTRAINT `order_product_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
+  CONSTRAINT `order_product_product_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
   CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
   CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy')),
   CONSTRAINT `quantity_range` CHECK (`quantity` > 0),
@@ -393,4 +393,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15 16:01:14
+-- Dump completed on 2024-05-15 19:34:31
