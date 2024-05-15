@@ -2,7 +2,7 @@
   "administrator": {
     "allOf": [
       {
-        "$ref": "#/definitions/user"
+        "$ref": "User.json#/definitions/user"
       },
       {
         "type": "object",
