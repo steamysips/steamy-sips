@@ -34,10 +34,16 @@ Assuming that your MySQL database is running, in the root directory of the proje
 composer test
 ```
 
-## Backup database
+## Export database
 
-To export database with `mysqldump`:
+To export only the schema of the `cafe` database:
 
 ```bash
-mysqldump -u root -p cafe > resources/database/dump/cafe.sql
+mysqldump -u root -p --no-data --databases cafe > resources/database/cafe_schema.sql
+```
+
+To export only the data in the `cafe` database:
+
+```bash
+mysqldump -u root -p --no-create-info cafe > resources/database/data.sql
 ```
