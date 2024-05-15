@@ -165,9 +165,8 @@ class Profile
         // at this point, we know that the current user was previously signed in
 
         // fetch his user details from database
-        $client_record = Client::getByEmail($_SESSION['user']);
-        if ($client_record) {
-            $this->signed_client = $client_record;
+        $this->signed_client = $this->getSignedInClient();
+        if ($this->signed_client) {
             $this->view_data['client'] = $this->signed_client;
         } else {
             // if user record is missing from database, redirect to login page

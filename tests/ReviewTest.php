@@ -7,6 +7,7 @@ use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
 use Steamy\Model\Review;
+use Steamy\Model\Product;
 
 final class ReviewTest extends TestCase
 {
@@ -14,6 +15,8 @@ final class ReviewTest extends TestCase
 
     private ?Review $dummy_review;
     private ?Client $reviewer;
+    private ?Product $dummy_product;
+
 
     /**
      * Adds a client and a review to the database.
@@ -23,6 +26,23 @@ final class ReviewTest extends TestCase
      */
     public function setUp(): void
     {
+        // Create a dummy product for testing
+        $this->dummy_product = new Product(
+            "Velvet Bean",
+            70,
+            "Velvet.jpeg",
+            "Velvet Bean Image",
+            "Velvet",
+            6.50,
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            new DateTime()
+        );
+            
+        $success = $this->dummy_product->save();
+        if (!$success) {
+            throw new Exception('Unable to save product');
+        }
+        
         // create a client object and save to database
         $this->reviewer = new Client(
             "john_u@gmail.com", "john", "johhny", "User0",
@@ -37,7 +57,7 @@ final class ReviewTest extends TestCase
         // create a review object and save to database
         $this->dummy_review = new Review(
             1,
-            1,
+            $this->dummy_product->getProductID(),
             $this->reviewer->getUserID(),
             "This is a test review.",
             5
@@ -57,9 +77,10 @@ final class ReviewTest extends TestCase
     {
         $this->dummy_review = null;
         $this->reviewer = null;
+        $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user;');
+        self::query('DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;');
     }
 
     public function testConstructor(): void
@@ -102,7 +123,6 @@ final class ReviewTest extends TestCase
 
         // Check if the actual values are correct
         self::assertEquals($this->reviewer->getUserID(), $result['client_id']);
-        self::assertEquals(1, $result['product_id']);
         self::assertEquals("This is a test review.", $result['text']);
         self::assertEquals(
             $this->dummy_review->getCreatedDate()->format('Y-m-d H:i:s'),

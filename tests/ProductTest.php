@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Product;
-use Steamy\Model\Review; // Import Review class if not already imported
+use Steamy\Model\Review;
+use Steamy\Core\Database;
+
 
 final class ProductTest extends TestCase
 {
+    use Database;
     private ?Product $dummy_product;
 
     public function setUp(): void
@@ -23,11 +26,19 @@ final class ProductTest extends TestCase
             "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
             new DateTime()
         );
+            
+        $success = $this->dummy_product->save();
+        if (!$success) {
+            throw new Exception('Unable to save product');
+        }
     }
 
     public function tearDown(): void
     {
         $this->dummy_product = null;
+
+        // Clear all data from product tables
+        self::query('DELETE FROM store_product; DELETE FROM product;');
     }
 
     public function testConstructor(): void

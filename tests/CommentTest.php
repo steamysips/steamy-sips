@@ -8,6 +8,7 @@ use Steamy\Model\Review;
 use Steamy\Model\Location;
 use Steamy\Model\Client;
 use Steamy\Core\Database;
+use Steamy\Model\Product;
 
 Class CommentTest extends TestCase
 {
@@ -15,9 +16,26 @@ Class CommentTest extends TestCase
     private ?Comment $dummy_comment;
     private ?Review $dummy_review;
     private ?Client $reviewer;
+    private ?Product $dummy_product;
 
     public function setUp(): void
     {
+        // Create a dummy product for testing
+        $this->dummy_product = new Product(
+            "Velvet Bean",
+            70,
+            "Velvet.jpeg",
+            "Velvet Bean Image",
+            "Velvet",
+            6.50,
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            new DateTime()
+        );
+            
+        $success = $this->dummy_product->save();
+        if (!$success) {
+            throw new Exception('Unable to save product');
+        }
 
         // create a client object and save to database
         $this->reviewer = new Client(
@@ -33,7 +51,7 @@ Class CommentTest extends TestCase
         // create a review object and save to database
         $this->dummy_review = new Review(
             3,
-            3,
+            $this->dummy_product->getProductID(),
             $this->reviewer->getUserID(),
             "This is a test test review.",
             5
@@ -63,9 +81,10 @@ Class CommentTest extends TestCase
         $this->dummy_review = null;
         $this->reviewer = null;
         $this->dummy_comment = null;
+        $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM  comment; DELETE FROM review; DELETE FROM client; DELETE FROM user;');
+        self::query('DELETE FROM  comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;');
     }
 
     public function testConstructor(): void
