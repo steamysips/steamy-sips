@@ -73,6 +73,10 @@ async function checkout() {
   window.alert(x.error);
 }
 
+function preventKeyboardInput(event) {
+  event.preventDefault();
+}
+
 /**
  * This function must be called after DOM has loaded.
  */
@@ -87,6 +91,7 @@ function initCartPage() {
 
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateCart);
+    input.addEventListener("keydown", preventKeyboardInput);
   });
 }
 
