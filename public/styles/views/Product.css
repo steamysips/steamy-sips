@@ -23,7 +23,7 @@ ul > li {
   font-size: 15px;
 }
 
-.fill-star{
+.fill-star {
   fill: orange;
 }
 
@@ -33,4 +33,17 @@ article > button {
 
 li > ul {
   padding-left: 5%; /* nesting indentation */
+}
+
+.review__rating input {
+  display: none;
+}
+
+.review__rating input:checked ~ label {
+  color: #aaa;
+}
+
+.review__rating label {
+  color: orange;
+  font-size: 2rem;
 }

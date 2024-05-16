@@ -190,7 +190,6 @@ function printComment(StdClass $comment): void
 }
 
 ?>
-
 <dialog id="my-modal">
     <article>
         <a href="#"
@@ -278,7 +277,7 @@ endif ?>
                         FILTER_SANITIZE_NUMBER_FLOAT,
                         FILTER_FLAG_ALLOW_FRACTION
                     ) ?></h4>
-                <p>360 calories</p>
+                <p><?= $product->getCalories() ?> calories</p>
             </hgroup>
             <p>
                 <?= htmlspecialchars($product->getDescription()) ?>
@@ -321,32 +320,47 @@ endif ?>
         </div>
     </div>
 
-    <h2>Customer Reviews (<?= count($product->getReviews()) ?>)</h2>
-    <form class="grid" method="post">
+    <hgroup>
+        <h3>Rate this product</h3>
+        <p>Tell others what you think</p>
+    </hgroup>
+    <form method="post">
+        <div class="review__rating">
+            <!-- Reference: Alice Campkin: https://codepen.io/alcampk/pen/rNezxXE-->
+            <input type=radio value='0' id='star-0' name='review_rating'/>
+
+            <label for='star-1'>★</label>
+            <input type=radio checked value='1' id='star-1' name='review_rating'/>
+
+            <label for='star-2'>★</label>
+            <input type=radio value='2' id='star-2' name='review_rating'/>
+
+            <label for='star-3'>★</label>
+            <input type=radio value='3' id='star-3' name='review_rating'/>
+
+            <label for='star-4'>★</label>
+            <input type=radio value='4' id='star-4' name='review_rating'/>
+
+            <label for='star-5'>★</label>
+            <input type=radio value='5' id='star-5' name='review_rating'/>
+        </div>
         <label>
-            <input value="<?= htmlspecialchars($default_review) ?>"
-                   required placeholder="Write a new review"
-                   name="review_text" type="text"
+            <textarea id="review-input" name="review_text" id="" cols="30" rows="3"
+                      required
+                      placeholder="Describe your experience"
                 <?php
-                if (isset($_POST['review_text'])) {
+                if (!empty($default_review)) {
                     echo empty($errors['text']) ? 'aria-invalid=false' : 'aria-invalid=true';
-                } ?>
-            >
+                } ?>><?= htmlspecialchars(trim($default_review)) ?></textarea>
+
+
+            <small><?= $errors['text'] ?? "" ?></small>
         </label>
-        <label>
-            <input value="<?= filter_var($default_rating, FILTER_SANITIZE_NUMBER_INT) ?>"
-                   name=" review_rating" required
-                   type="number" min="1" max="5"
-                   placeholder="Rating"
-                <?php
-                if (isset($_POST['review_rating'])) {
-                    echo empty($errors['rating']) ? 'aria-invalid=false' : 'aria-invalid=true';
-                } ?>
-            >
-        </label>
-        <button type="submit" <?= $signed_in_user ? "" : "disabled" ?>>Submit
+        <button style="width: 20%" class="secondary" type="submit" <?= $signed_in_user ? "" : "disabled" ?>>Post
         </button>
     </form>
+
+    <h2>Customer Reviews (<?= count($product->getReviews()) ?>)</h2>
 
     <div style="display: flex; align-items: center; gap:3em;">
         <hgroup>
