@@ -29,7 +29,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (1,'Royal Road','Rochester',2),(10,'Main Road','Curepipe',9);
+INSERT INTO `client` VALUES (1,'Royal Road','Rochester',2),(2,'Main Road','Curepipe',9),(10,'Main Road','Curepipe',9);
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -39,7 +39,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `comment` WRITE;
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-INSERT INTO `comment` VALUES (1,'i can comment on my own review','2024-05-16 11:12:19',NULL,1,3);
+INSERT INTO `comment` VALUES (1,'i can comment on my own review','2024-05-16 11:12:19',NULL,1,3),(2,'i am commenting something here','2024-05-16 11:21:36',NULL,2,1),(3,'comments can be nested','2024-05-16 11:21:46',2,2,1),(4,'test','2024-05-16 11:22:02',NULL,2,5),(5,'ok','2024-05-16 11:22:10',NULL,2,2);
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `review` WRITE;
 /*!40000 ALTER TABLE `review` DISABLE KEYS */;
-INSERT INTO `review` VALUES (1,5,'2024-05-16 11:11:02','i really like this product. I have a verified badge since I have actually bought this product.',1,1),(2,3,'2024-05-16 11:11:24','the coffee is decent but nothing special',1,2),(3,2,'2024-05-16 11:11:53','i would love to buy this again but the price is not worth it',1,3),(4,1,'2024-05-16 11:14:04','Note the calculation for average rating does not consider unverified reviews',1,3);
+INSERT INTO `review` VALUES (1,5,'2024-05-16 11:11:02','i really like this product. I have a verified badge since I have actually bought this product.',1,1),(2,3,'2024-05-16 11:11:24','the coffee is decent but nothing special',1,2),(3,2,'2024-05-16 11:11:53','i would love to buy this again but the price is not worth it',1,3),(4,1,'2024-05-16 11:14:04','Note the calculation for average rating does not consider unverified reviews',1,3),(5,1,'2024-05-16 11:21:56','this is a negative review',2,1),(6,3,'2024-05-16 11:22:44','this is a wonderful product that changed my life',2,3);
 /*!40000 ALTER TABLE `review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +128,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'c34560814@gmail.com','john','$2y$10$Gz37vrrGkoaOSoGKvJWgRegKWExfRAKs8UjxUdyyyrRwD6Q43sfZW','+230-5-123-4567','💋💋💋'),(2,'divjok28@outlook.com','Divyesh','$2y$10$T3MJs2am7g1QKeGDrHZ4VuEKRmTk.vYTPZBC6nKULl3lAzf/KpM1G','+230-5-123-4567','Jokhoo');
+INSERT INTO `user` VALUES (1,'c34560814@gmail.com','john','$2y$10$Gz37vrrGkoaOSoGKvJWgRegKWExfRAKs8UjxUdyyyrRwD6Q43sfZW','+230-5-123-4567','💋💋💋'),(2,'divjok28@outlook.com','Divyesh','$2y$10$6Bj0y0J2r9OoGjjYpTThQenCsR6RHQ14fNm4E.CPBmHDqJbKsuPju','+230-5-123-4567','Jokhoo');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -140,4 +140,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-16 11:16:58
+-- Dump completed on 2024-05-16 11:23:20
