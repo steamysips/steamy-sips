@@ -98,11 +98,11 @@ Import data to production database:
 mysql -u root -p cafe < resources/database/cafe_data.sql
 ```
 
-If you want to run tests with composer, you must first set up a separate database `cafe_test` for testing. 
-To create the testing database `cafe_test`:
+If you want to run tests with composer, you must first set up a separate database `cafe_test` for testing:
 
 ```bash
 mysql -u root -p < resources/database/cafe_test_schema.sql
+mysql -u root -p cafe_test < resources/database/cafe_test_data.sql
 ```
 
 ## Virtual host setup
