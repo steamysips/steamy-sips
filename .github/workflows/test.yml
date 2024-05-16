@@ -34,7 +34,7 @@ jobs:
           mysql -V
           sudo /etc/init.d/mysql start
           mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/cafe_test_schema.sql"
-          mysql -u root -p cafe_test < "resources/database/cafe_test_data.sql"
+          mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 -Dcafe_test < "resources/database/cafe_test_data.sql"
           mysql -e "USE cafe_test; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
 
       - name: Create .env file
