@@ -95,7 +95,7 @@ mysql -u root -p < resources/database/cafe_schema.sql
 Import data to production database:
 
 ```bash
-mysql -u root -p cafe < resources/database/data.sql
+mysql -u root -p cafe < resources/database/cafe_data.sql
 ```
 
 If you want to run tests with composer, you must first set up a separate database `cafe_test` for testing. 

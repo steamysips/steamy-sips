@@ -45,5 +45,5 @@ mysqldump -u root -p --no-data --databases cafe > resources/database/cafe_schema
 To export only the data in the `cafe` database:
 
 ```bash
-mysqldump -u root -p --no-create-info cafe > resources/database/data.sql
+mysqldump -u root -p --no-create-info cafe > resources/database/cafe_data.sql
 ```
