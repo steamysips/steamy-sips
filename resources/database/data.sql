@@ -39,7 +39,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `comment` WRITE;
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-INSERT INTO `comment` VALUES (33,'this is a comment','2024-05-16 10:41:34',NULL,10,20),(34,'this is another comment','2024-05-16 10:41:43',33,10,20),(35,'ok','2024-05-16 10:42:11',NULL,10,23),(36,'i am replying to your comment\r\n\r\ni can write multiple paragraphs.\r\n\r\nthis is so cool.','2024-05-16 10:46:54',33,1,20),(37,'i can comment on my own review','2024-05-16 10:47:27',NULL,1,23);
+INSERT INTO `comment` VALUES (1,'i can comment on my own review','2024-05-16 11:12:19',NULL,1,3);
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `review` WRITE;
 /*!40000 ALTER TABLE `review` DISABLE KEYS */;
-INSERT INTO `review` VALUES (20,5,'2024-05-16 10:32:22','i really like the taste. I have previously bought this product so I have a verified badge.',1,1),(21,3,'2024-05-16 10:35:20','I have never bought this product before.',1,8),(22,1,'2024-05-16 10:35:57','this is another fake review',1,8),(23,3,'2024-05-16 10:37:16','reviews can contain emojis 💯💯',1,1),(24,1,'2024-05-16 10:43:26','this is a negative review',10,1),(25,4,'2024-05-16 10:44:01','i like coffee',10,2),(26,1,'2024-05-16 10:44:18','the latte was bad',10,3),(27,3,'2024-05-16 10:44:57','the cup was too hot',10,4),(28,3,'2024-05-16 10:48:51','Ratings from people who have not bought the product are not taken into account when calculating the average rating of a product',1,3);
+INSERT INTO `review` VALUES (1,5,'2024-05-16 11:11:02','i really like this product. I have a verified badge since I have actually bought this product.',1,1),(2,3,'2024-05-16 11:11:24','the coffee is decent but nothing special',1,2),(3,2,'2024-05-16 11:11:53','i would love to buy this again but the price is not worth it',1,3),(4,1,'2024-05-16 11:14:04','Note the calculation for average rating does not consider unverified reviews',1,3);
 /*!40000 ALTER TABLE `review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,4 +140,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-16 10:53:12
+-- Dump completed on 2024-05-16 11:16:58
