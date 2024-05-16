@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_DB_NAME: cafe_test
       DB_USER: root # do not change
       DB_PASSWORD: root # do not change
 
@@ -34,8 +33,8 @@ jobs:
         run: |
           mysql -V
           sudo /etc/init.d/mysql start
-          mysql -e "CREATE DATABASE IF NOT EXISTS $TEST_DB_NAME;" -u$DB_USER -p$DB_PASSWORD
-          mysql -D$TEST_DB_NAME -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/dump/cafe.sql"
+          mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/cafe_test_schema.sql"
+          mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 -Dcafe_test < "resources/database/cafe_test_data.sql"
           mysql -e "USE cafe_test; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
 
       - name: Create .env file

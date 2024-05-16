@@ -80,36 +80,29 @@ whenever a client places an order.
 
 ## Database setup
 
-Start your MySQL server and connect to its monitor:
+Start your MySQL server:
 
 ```bash
 sudo service mysql start
-mysql -u <username> -p
 ```
 
-> [!NOTE]  
-> `<username>` is a placeholder for your MySQL username. If your username is `root`, the command to run
-> becomes `mysql -u root -p`
+Create production database `cafe`:
 
-Create a database `cafe`:
-
-```sql
-create database cafe;
-use cafe;
-source resources/database/dump/cafe.sql;
-exit;
+```bash
+mysql -u root -p < resources/database/cafe_schema.sql
 ```
 
-The path to the SQL dump must be modified your present working directory is not the root directory of the project.
+Import data to production database:
 
-If you want to run tests with composer, you must first set up a separate database for testing. To do so, repeat the
-same instructions as above except name the testing database `cafe_test`:
+```bash
+mysql -u root -p cafe < resources/database/cafe_data.sql
+```
 
-```sql
-create database cafe_test;
-use cafe_test;
-source resources/database/dump/cafe.sql;
-exit;
+If you want to run tests with composer, you must first set up a separate database `cafe_test` for testing:
+
+```bash
+mysql -u root -p < resources/database/cafe_test_schema.sql
+mysql -u root -p cafe_test < resources/database/cafe_test_data.sql
 ```
 
 ## Virtual host setup
