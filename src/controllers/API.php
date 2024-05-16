@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
+use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 
@@ -26,7 +27,7 @@ class API
     }
 
     /**
-     * Checks if root relative url starts with /api/v1
+     * Checks if root relative url starts with api/v1
      * @return bool
      */
     private function validateURLFormat(): bool
@@ -37,17 +38,25 @@ class API
     public function index(): void
     {
         if (!$this->validateURLFormat()) {
-            echo "Invalid API URL: " . $_GET["url"];
+            http_response_code(400);
             die();
         }
 
         // call appropriate controller to handle resource
         $controllerClassName = 'Steamy\\Controller\\API\\' . ucfirst($this->resource);
+        try {
+            if (class_exists($controllerClassName)) {
+                (new $controllerClassName())->index();
+            } else {
+                http_response_code(404);
+                die();
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
 
-        if (class_exists($controllerClassName)) {
-            (new $controllerClassName())->index();
-        } else {
-            echo "Invalid API resource: " . $this->resource;
+            // Uncomment line below only when testing API
+            echo $e->getMessage();
+
             die();
         }
     }
