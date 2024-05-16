@@ -416,4 +416,17 @@ class Product
         return $distribution;
     }
 
+    /**
+     * Updates product record in database but does not update the object itself.
+     * @param array $newProductData Associative array indexed by attribute name.
+     * The values are the new product data.
+     * @return bool Success or not
+     */
+    public function updateProduct(array $newProductData): bool
+    {
+        // remove product_id (if present) from user data
+        unset($newProductData['product_id']);
+
+        return $this->update($newProductData, ['product_id' => $this->product_id], $this->table);
+    }
 }
