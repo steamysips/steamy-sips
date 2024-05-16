@@ -13,9 +13,11 @@ declare(strict_types=1);
  * @var $comment_form_info ?array Array with information to be displayed on comment form
  */
 
+use Steamy\Core\Utility;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
 use Steamy\Model\User;
+use Carbon\Carbon;
 
 
 /**
@@ -98,7 +100,7 @@ function printReview(Review $review): void
 {
     $review_id = $review->getReviewID();
     $reply_link = "?reply_to_review=" . $review->getReviewID();
-    $date = htmlspecialchars($review->getCreatedDate()->format('d M Y'));
+    $date = htmlspecialchars(Carbon::instance($review->getCreatedDate())->diffForHumans());
     $text = htmlspecialchars($review->getText());
     $author = htmlspecialchars(User::getFullName($review->getClientID()));
     $verified_badge = getBadge($review);
@@ -160,7 +162,7 @@ function printCommentSection(array $top_comments): void
 function printComment(StdClass $comment): void
 {
     $reply_link = "?reply_to_comment=" . $comment->comment_id;
-    $date = htmlspecialchars($comment->created_date);
+    $date = htmlspecialchars(Carbon::instance(Utility::stringToDate($comment->created_date))->diffForHumans());;
     $text = htmlspecialchars($comment->text);
     $author = htmlspecialchars(User::getFullName($comment->user_id));
     $comment_id = 'comment-' . $comment->comment_id;
