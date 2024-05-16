@@ -116,35 +116,35 @@ trait Model
         return empty($lastInsertID) ? null : (int)$lastInsertID;
     }
 
+
     /**
-     * Update a record in the table based on the provided ID.
-     *
-     * @param int|string $id The value of the primary key (ID) identifying the record to be updated.
-     * @param array $data An associative array representing the columns and their new values to be updated.
-     * @param string $table_name Name of table without backticks. Defaults to $this->table.
-     * @param string $id_column The name of the ID column. Default is 'id'.
-     *
-     * @return int Number of rows affected
+     * @param array $new_data Associative array for SET part of query.
+     * @param array $condition Associative array representing WHERE condition of query.
+     * @param string $table_name Defaults to $this->table.
+     * @return bool True on success.
      */
-    protected function update(int|string $id, array $data, string $table_name, string $id_column = 'id'): int
+    protected function update(array $new_data, array $condition, string $table_name = ""): bool
     {
         $table_name = empty($table_name) ? $this->table : $table_name;
-        $keys = array_keys($data);
         $query = "UPDATE `$table_name` SET ";
 
         // add placeholders to query
-        foreach ($keys as $key) {
+        foreach (array_keys($new_data) as $key) {
             $query .= $key . " = :" . $key . ",";
         }
+        $query = trim($query, ", "); // remove extra comma at the end of query
 
-        // remove extra comma at the end of query
-        $query = trim($query, ", ");
-
-        // add where condition
-        $query .= " WHERE $id_column = $id;";
+        // add conditions
+        $query .= " WHERE ";
+        foreach (array_keys($condition) as $key) {
+            $query .= $key . " = :" . $key . ",";
+        }
+        $query = trim($query, ", "); // remove extra comma at the end of query
 
         $conn = self::connect();
-        return $conn->exec($query);
+        $stm = $conn->prepare($query);
+
+        return $stm->execute([...$new_data, ...$condition]);
     }
 
     /**
