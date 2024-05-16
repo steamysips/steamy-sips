@@ -11,6 +11,7 @@ use Steamy\Core\Model;
 class Products
 {
     use Model;
+
     /**
      * Get the list of all products available in the store.
      */
@@ -162,7 +163,7 @@ class Products
         $putData = json_decode(file_get_contents("php://input"), true);
 
         // Check if PUT data is valid
-        if ($putData === null) {
+        if (empty($putData)) {
             // Invalid JSON data
             http_response_code(400); // Bad Request
             echo json_encode(['error' => 'Invalid JSON data']);
@@ -180,25 +181,10 @@ class Products
             return;
         }
 
-        // Update product attributes
-        foreach ($putData as $key => $value) {
-           $product->{$key} = $value;
-        }
-
-        // Validate updated product attributes
-        $errors = $product->validate();
-        if (!empty($errors)) {
-            // Validation errors
-            http_response_code(400); // Bad Request
-            echo json_encode(['error' => 'Validation failed', 'errors' => $errors]);
-            return;
-        }
-
         // Update product in the database
-        $rowsAffected = $product->update($productId, $putData, 'product');
+        $success = $product->updateProduct($putData);
 
-        // Check if update was successful
-       if ($rowsAffected > 0) {
+        if ($success) {
             // Product updated successfully
             http_response_code(200); // OK
             echo json_encode(['message' => 'Product updated successfully']);
