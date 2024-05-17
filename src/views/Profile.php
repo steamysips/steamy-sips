@@ -162,6 +162,7 @@ use Steamy\Model\Client;
                 <form>
                     <button type="submit" name="account_delete_submit">Delete</button>
                 </form>
+
             </article>
         </div>
     </div>
@@ -203,3 +204,13 @@ use Steamy\Model\Client;
 
 </script>
 
+<dialog <?= $confirmation_message ? "open" : "" ?>>
+    <article>
+        <h3>Deleting your account!! </h3>
+        <p><?= $confirmation_message ?></p><br>
+            <form method="post">
+                <button type="submit" name="confirm_delete">Confirm</button>
+                <button type="submit" name="cancel_delete">Cancel</button>
+            </form>
+    </article>
+</dialog>

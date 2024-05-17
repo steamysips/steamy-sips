@@ -22,6 +22,7 @@ class Profile
         $this->signed_client = null;
         $this->view_data['errors'] = [];
         $this->view_data['client'] = null;
+        $this->view_data['confirmation_message'] = false;
     }
 
     private function handleLogOut(): void
@@ -39,9 +40,31 @@ class Profile
 
     private function handleAccountDeletion(): void
     {
-        // delete user account if delete button clicked
-        $this->signed_client->deleteUser();
-        $this->handleLogOut();
+        // Display confirmation message
+        $confirmation_message = "Are you sure you want to delete your account? This action is irreversible.";
+        $this->view_data['confirmation_message'] = $confirmation_message;
+
+        // Check if the deletion confirmation has been submitted
+        if (isset($_POST['confirm_delete'])) {
+            // Perform account deletion
+            $this->signed_client->deleteUser();
+            $this->handleLogOut();
+            return;
+        }
+
+        // Check if cancel button is clicked
+        if (isset($_POST['cancel_delete'])) {
+            Utility::redirect('profile');
+            return;
+        }
+
+        // Render the view with the confirmation message
+        $this->view(
+            'Profile',
+            $this->view_data,
+            'Profile',
+            enableIndexing: false
+        );
     }
 
     /**
@@ -182,6 +205,7 @@ class Profile
 
         // delete user account if delete button clicked
         if (isset($_GET['account_delete_submit'])) {
+            $this->view_data['confirmation_message'] = true;
             $this->handleAccountDeletion();
             return;
         }
