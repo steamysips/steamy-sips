@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
+use DateTime;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Client;
 use Steamy\Model\District;
 use Steamy\Model\Location;
+use Steamy\Model\Order;
+use Steamy\Model\OrderStatus;
 
 class Profile
 {
@@ -77,6 +80,62 @@ class Profile
             enableIndexing: false
         );
     }
+
+    public function reorderOrder(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['order_id'])) {
+            // Handle invalid request
+            Utility::redirect('profile');
+        }
+
+        $order_id = (int)$_POST['order_id'];
+        $order = Order::getByID($order_id);
+
+        if (!$order || $order->getStatus() !== OrderStatus::COMPLETED) {
+            // Order doesn't exist or not completed
+            Utility::redirect('profile');
+        }
+
+        // Create a new order with the same details as the previous order
+        $new_order = new Order(
+            store_id: $order->getStoreID(),
+            client_id: $order->getClientID(),
+            line_items: $order->getLineItems(),
+            pickup_date: null, // or set pickup date as needed
+            status: OrderStatus::PENDING,
+            created_date: new DateTime()
+        );
+
+        // Save the new order
+        $new_order->save();
+
+        // Redirect back to the profile page
+        Utility::redirect('profile');
+        }
+
+
+    public function cancelOrder(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['order_id'])) {
+            // Handle invalid request
+            Utility::redirect('profile');
+        }
+
+        $order_id = (int)$_POST['order_id'];
+        $order = Order::getByID($order_id);
+
+        if (!$order || $order->getStatus() === OrderStatus::COMPLETED) {
+            // Order doesn't exist or already completed
+            Utility::redirect('profile');
+        }
+
+        // Cancel the order
+        $order->deleteOrder();
+
+        // Redirect back to the profile page
+        Utility::redirect('profile');
+    }
+
 
     private function handleProfileEditSubmission(): void
     {

@@ -92,11 +92,22 @@ use Steamy\Model\Client;
                 </tr>
 
                 <?php
+
+                // Sort the orders array by date in descending order
+                usort($orders, function($a, $b) {
+                    return strtotime($b->date) - strtotime($a->date);
+                });
+
                 foreach ($orders as $order) {
                     $date = htmlspecialchars($order->date);
                     $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
                     $cost = filter_var($order->cost, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     $status = htmlspecialchars($order->status);
+
+                    // Determine button states
+                    $cancelDisabled = $status === 'Completed' ? 'disabled' : '';
+                    $reorderDisabled = $status !== 'Completed' ? 'disabled' : '';
+
                     echo <<< EOL
                     <tr>
                         <td>$date</td>
@@ -104,11 +115,19 @@ use Steamy\Model\Client;
                         <td>$cost</td>
                         <td>$status</td>
                         <td class="grid">
-                            <button>cancel</button>
-                        </td>
+                            <form method="post" action="/profile/cancelOrder">
+                                <input type="hidden" name="order_id" value="$id">
+                                <button type="submit" $cancelDisabled>Cancel</button>
+                            </form>
+                            <form method="post" action="/profile/reorderOrder">
+                                <input type="hidden" name="order_id" value="$id">
+                                <button type="submit" $reorderDisabled>Reorder</button>
+                            </form>
+                    </td>
                     </tr>
-                EOL;
+                    EOL;
                 }
+
 
                 ?>
 
