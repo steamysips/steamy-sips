@@ -9,6 +9,7 @@ use Exception;
 use PDOException;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
+use Steamy\Core\Database;
 
 class Order
 {
@@ -262,6 +263,23 @@ class Order
         }
 
         return $order_products_arr;
+    }
+
+    public static function getOrdersByClientId(int $client_id, int $limit = 5): array {
+        // Perform database query to fetch orders by client ID
+        $query = "SELECT * FROM `order` WHERE `client_id` = :client_id ORDER BY `created_date` DESC LIMIT :limit";
+        $params = [':client_id' => $client_id, ':limit' => $limit];
+        // Execute the query
+        $orders = self::query($query, $params);
+
+        // Check if orders were found
+        if ($orders === false) {
+            // No orders found, return an empty array
+            return [];
+        }
+
+        // Orders found, return them
+        return $orders;
     }
 
 
