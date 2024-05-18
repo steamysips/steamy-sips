@@ -10,7 +10,8 @@ declare(strict_types=1);
  * @var string[] $selected_categories Array of selected categories
  * @var string $search_keyword keyword used to filter products
  * @var string $sort_option Sort By option selected by user
- * @var int $page Current page number
+ * @var int $current_page_number Current page number.
+ * @var int $total_pages Total number of pages
  */
 
 use Steamy\Model\Product;
@@ -32,11 +33,73 @@ function displayProduct(Product $product): void
     echo <<<EOL
         <a data-aos="zoom-in" href="$product_href">
             <img src="$product_img_src" alt="$img_alt_text">
-        <hgroup>     
-             <h5>$name</h5>
-             <h5>Rs $price</h5>
-        </hgroup>
+            <hgroup> 
+                <h5>$name</h5>
+                <h5>Rs $price</h5>
+            </hgroup>
         </a>
+    EOL;
+}
+
+/**
+ * Returns a query string that maintains all current query string parameters and page number.
+ * @param int $page_number
+ * @return string Query string link for page item
+ */
+function getPageItemLink(int $page_number): string
+{
+    // create a string with all past query parameters except page and url
+    unset($_GET['page']);
+    unset($_GET['url']);
+
+    $link = '?' . http_build_query($_GET);
+
+    // add page number as query parameter
+    $link .= '&page=' . $page_number;
+
+    return $link;
+}
+
+/**
+ * Prints page item in HTML format.
+ *
+ * @param int $current_page_number
+ * @param int $page_number Page number of page item
+ * @return void
+ */
+function displayPageItem(int $current_page_number, int $page_number): void
+{
+    $page_link = getPageItemLink($page_number);
+    $className = "page-item" . ($page_number === $current_page_number ? " active" : "");
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$page_number</a>
+    </li>
+    EOL;
+}
+
+/**
+ * Prints navigation button in HTML format
+ * @param int $current_page_number
+ * @param int $total_pages Total number of pages
+ * @param bool $is_left True indicates left navigation button.
+ * @return void
+ */
+function displayNavigationButton(int $current_page_number, int $total_pages, bool $is_left): void
+{
+    $page_link = getPageItemLink($current_page_number + ($is_left ? -1 : 1));
+    $link_content = htmlspecialchars($is_left ? "<" : ">");
+    $className = "page-item";
+
+    if (($current_page_number === 1 && $is_left) || ($current_page_number === $total_pages && !$is_left)) {
+        $className .= " disabled";
+    }
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$link_content</a>
+    </li>
     EOL;
 }
 
@@ -71,12 +134,12 @@ function displayProduct(Product $product): void
                     $sanitized_category = htmlspecialchars($category);
 
                     echo <<< EOL
-                    <li>
-                        <label>
-                            <input $checked value="$category" name="categories[]" type="checkbox">
-                            $sanitized_category
-                        </label>
-                    </li>
+                        <li>
+                            <label>
+                                <input $checked value="$category" name="categories[]" type="checkbox">
+                                $sanitized_category
+                            </label>
+                        </li>
                     EOL;
                 }
                 ?>
@@ -96,24 +159,32 @@ function displayProduct(Product $product): void
         }
         ?>
     </div>
-
-    <form style="margin-top: 10rem;">
-        <?php
-        // any previously selected categories should be preserved
-        foreach ($selected_categories as $category) {
-            echo <<< EOL
-            <input value="$category" name="categories[]" type="hidden">
-            EOL;
-        }
-        ?>
-        <!--any previously selected filter should be preserved-->
-        <input value="<?= htmlspecialchars($sort_option) ?>" name="sort" type="hidden"/>
-        <input value="<?= htmlspecialchars($search_keyword) ?>" name="keyword" type="hidden"/>
-
-        <button type="submit" name="page" value="<?= $page + 1 ?>">Load More</button>
-    </form>
-
 </main>
+
+<nav class="container" style="display: flex; justify-content: center">
+    <ul class="pagination">
+        <?php
+        // Display previous page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            true
+        );
+
+        // Display each page item
+        for ($page_num = 1; $page_num <= $total_pages; $page_num++) {
+            displayPageItem($current_page_number, $page_num);
+        }
+
+        // Display next page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            false
+        );
+        ?>
+    </ul>
+</nav>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
