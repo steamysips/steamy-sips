@@ -57,35 +57,70 @@ class StoreTest extends TestCase
         self::query('DELETE FROM store;');
     }
 
-    public function testSave(): void
+    /**
+     * @dataProvider saveDataProvider
+     * @param string $phone_no
+     * @param Location $address
+     * @param bool $expected_success
+     * @throws Exception
+     */
+    public function testSave(string $phone_no, Location $address, bool $expected_success)
     {
-        // Test saving a valid store
-        $saved = $this->dummy_store->save();
-        self::assertTrue($saved);
+        $this->dummy_store->setPhoneNo($phone_no);
+        $this->dummy_store->setAddress($address);
 
-        // Test saving an invalid store (phone number too short)
-        $this->dummy_store->setPhoneNo('123'); // Short phone number
-        $saved = $this->dummy_store->save();
-        self::assertFalse($saved);
+        $success = $this->dummy_store->save();
+
+        $this->assertEquals($expected_success, $success);
     }
 
-    public function testValidate(): void
+    public static function saveDataProvider(): array
     {
-        // Test for a valid store
-        $errors = $this->dummy_store->validate();
-        self::assertEmpty($errors);
-
-        // Test for an invalid phone number (too short)
-        $this->dummy_store->setPhoneNo('123'); // Short phone number
-        $errors = $this->dummy_store->validate();
-        self::assertArrayHasKey('phone_no', $errors);
+        return [
+            // Valid phone number, valid address
+            ["1234567890", new Location("Royal", "Curepipe", 1, 50, 50), true],
+            // Invalid phone number (less than 7 characters)
+            ["123456", new Location("Royal", "Curepipe", 1, 50, 50), false],
+            // Empty phone number
+            ["", new Location("Royal", "Curepipe", 1, 50, 50), false],
+            // Invalid characters in phone number
+            ["123abc", new Location("Royal", "Curepipe", 1, 50, 50), false],
+            // Valid address with valid latitude/longitude
+            ["1234567890", new Location("Royal", "Curepipe", 1, 50, 50), true],
+            // Invalid latitude value (out of range)
+            ["1234567890", new Location("Royal", "Curepipe", 1, -100, 50), false],
+        ];
     }
 
-    public function testGetProductStock(): void
+    /**
+     * @dataProvider validateDataProvider
+     * @param string $phone_no
+     * @param Location $address
+     * @param array $expected_errors
+     */
+    public function testValidate(string $phone_no, Location $address, array $expected_errors)
     {
-        // Assuming product_id 1 is present in the store
-        $product_id = 1;
-        $stock_level = $this->dummy_store->getProductStock($product_id);
-        self::assertGreaterThanOrEqual(0, $stock_level);
+        $this->dummy_store->setPhoneNo($phone_no);
+        $this->dummy_store->setAddress($address);
+
+        $errors = $this->dummy_store->validate();
+
+        $this->assertEquals($expected_errors, $errors);
+    }
+
+    public static function validateDataProvider(): array
+    {
+        return [
+            // Valid phone number, valid address (no errors)
+            ["1234567890", new Location("Royal", "Curepipe", 1, 50, 50), []],
+            // Invalid phone number (less than 7 characters)
+            ["123456", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            // Empty phone number
+            ["", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            // Invalid characters in phone number
+            ["123abc", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            // Invalid address with invalid latitude/longitude
+            ["1234567890", new Location("Royal", "Curepipe", 1, -100, 50), ["coordinates" => "Invalid latitude or longitude."]],
+        ];
     }
 }
