@@ -10,8 +10,8 @@ declare(strict_types=1);
  * @var string[] $selected_categories Array of selected categories
  * @var string $search_keyword keyword used to filter products
  * @var string $sort_option Sort By option selected by user
- * @var int $page Current page number
- * @var int $totalPages Total number of pages
+ * @var int $current_page_number Current page number.
+ * @var int $total_pages Total number of pages
  */
 
 use Steamy\Model\Product;
@@ -38,6 +38,68 @@ function displayProduct(Product $product): void
                 <h5>Rs $price</h5>
             </hgroup>
         </a>
+    EOL;
+}
+
+/**
+ * Returns a query string that maintains all current query string parameters and page number.
+ * @param int $page_number
+ * @return string Query string link for page item
+ */
+function getPageItemLink(int $page_number): string
+{
+    // create a string with all past query parameters except page and url
+    unset($_GET['page']);
+    unset($_GET['url']);
+
+    $link = '?' . http_build_query($_GET);
+
+    // add page number as query parameter
+    $link .= '&page=' . $page_number;
+
+    return $link;
+}
+
+/**
+ * Prints page item in HTML format.
+ *
+ * @param int $current_page_number
+ * @param int $page_number Page number of page item
+ * @return void
+ */
+function displayPageItem(int $current_page_number, int $page_number): void
+{
+    $page_link = getPageItemLink($page_number);
+    $className = "page-item" . ($page_number === $current_page_number ? " active" : "");
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$page_number</a>
+    </li>
+    EOL;
+}
+
+/**
+ * Prints navigation button in HTML format
+ * @param int $current_page_number
+ * @param int $total_pages Total number of pages
+ * @param bool $is_left True indicates left navigation button.
+ * @return void
+ */
+function displayNavigationButton(int $current_page_number, int $total_pages, bool $is_left): void
+{
+    $page_link = getPageItemLink($current_page_number + ($is_left ? -1 : 1));
+    $link_content = htmlspecialchars($is_left ? "<" : ">");
+    $className = "page-item";
+
+    if (($current_page_number === 1 && $is_left) || ($current_page_number === $total_pages && !$is_left)) {
+        $className .= " disabled";
+    }
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$link_content</a>
+    </li>
     EOL;
 }
 
@@ -102,26 +164,24 @@ function displayProduct(Product $product): void
 <nav class="container" style="display: flex; justify-content: center">
     <ul class="pagination">
         <?php
-        $isFirstPage = ($page === 1);
-        $prevPageUrl = ($page > 1) ? '?page=' . ($page - 1) . '&' . http_build_query(
-                array_merge($_GET, ['page' => ($page - 1)])
-            ) : '#';
-        $disabledClass = $isFirstPage ? ' disabled' : '';
+        // Display previous page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            true
+        );
 
-        echo '<li class="page-item' . $disabledClass . '"><a class="page-link" href="' . $prevPageUrl . '"> < </a></li>';
-
-        // Loop through page numbers
-        for ($i = 1; $i <= $totalPages; $i++) {
-            $active = $page === $i ? ' active' : '';
-            echo '<li class="page-item' . $active . '"><a class="page-link" href="' . ($i !== $page ? '?page=' . $i . '&' . http_build_query(
-                        array_merge($_GET, ['page' => $i])
-                    ) : '#') . '">' . $i . '</a></li>';
+        // Display each page item
+        for ($page_num = 1; $page_num <= $total_pages; $page_num++) {
+            displayPageItem($current_page_number, $page_num);
         }
 
-        // Next button
-        echo '<li class="page-item' . ($page === $totalPages ? ' disabled' : '') . '"><a class="page-link" href="' . ($page < $totalPages ? '?page=' . ($page + 1) . '&' . http_build_query(
-                    array_merge($_GET, ['page' => ($page + 1)])
-                ) : '#') . '"> > </a></li>';
+        // Display next page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            false
+        );
         ?>
     </ul>
 </nav>
