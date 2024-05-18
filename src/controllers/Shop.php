@@ -39,23 +39,51 @@ class Shop
     }
 
     /**
-     * Checks if a product name matches the search keyword (if any)
+     * Checks if a product name matches the search keyword (if any). Matching algorithm is based on fuzzy searching.
      * @param Product $product
-     * @return bool
+     * @return bool True if match found, false otherwise.
      */
     private function match_keyword(Product $product): bool
     {
-        // if there are no search key, accept product
+        // if there are no search keyword specified by user, accept product
         if (empty($_GET['keyword'])) {
             return true;
         }
-        // else accept only products within a levenshtein distance of 3
+
         $search_keyword = strtolower(trim($_GET['keyword']));
         $similarity_threshold = 3;
-        return Utility::levenshteinDistance(
+
+        // calculate edit distance from search keyword to product name
+        $edit_distance = Utility::levenshteinDistance(
+            $search_keyword,
+            strtolower($product->getName())
+        );
+
+        if ($edit_distance <= $similarity_threshold) {
+            return true;
+        }
+
+        // get all words in product name
+        $words = explode(" ", strtolower($product->getName()));
+
+        // for each word calculate edit distance from search keyword
+        foreach ($words as $word) {
+            // ignore words shorter than 4
+            if (strlen($word) < 4) {
+                continue;
+            }
+
+            $edit_distance = Utility::levenshteinDistance(
                 $search_keyword,
-                strtolower($product->getName())
-            ) <= $similarity_threshold;
+                $word
+            );
+
+            if ($edit_distance <= $similarity_threshold) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
