@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use PDO;
 use DateTime;
 use Exception;
 use PDOException;
@@ -265,21 +266,21 @@ class Order
         return $order_products_arr;
     }
 
-    public static function getOrdersByClientId(int $client_id, int $limit = 5): array {
-        // Perform database query to fetch orders by client ID
-        $query = "SELECT * FROM `order` WHERE `client_id` = :client_id ORDER BY `created_date` DESC LIMIT :limit";
-        $params = [':client_id' => $client_id, ':limit' => $limit];
-        // Execute the query
-        $orders = self::query($query, $params);
+   public static function getOrdersByClientId(int $client_id, int $limit = 5): array
+   {
+       $db = self::connect();
+       $stmt = $db->prepare('
+           SELECT order_id, created_date, status
+           FROM `order`
+           WHERE client_id = :client_id
+           ORDER BY created_date DESC
+           LIMIT :limit
+        ');
+        $stmt->bindParam(':client_id', $client_id, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
 
-        // Check if orders were found
-        if ($orders === false) {
-            // No orders found, return an empty array
-            return [];
-        }
-
-        // Orders found, return them
-        return $orders;
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
 

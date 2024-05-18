@@ -86,7 +86,6 @@ use Steamy\Model\Client;
                 <tr>
                     <th>Date</th>
                     <th>Order ID</th>
-                    <th>Total cost</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -95,13 +94,11 @@ use Steamy\Model\Client;
                 foreach ($orders as $order) {
                     $date = htmlspecialchars($order->date);
                     $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
-                    $cost = filter_var($order->cost, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     $status = htmlspecialchars($order->status);
                     echo <<< EOL
                     <tr>
                         <td>$date</td>
                         <td>$id</td>
-                        <td>$cost</td>
                         <td>$status</td>
                         <td class="grid">
                             <button>cancel</button>
@@ -202,4 +199,3 @@ use Steamy\Model\Client;
 
 
 </script>
-
