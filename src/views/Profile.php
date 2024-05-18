@@ -92,8 +92,8 @@ use Steamy\Model\Client;
 
                 <?php
                 foreach ($orders as $order) {
-                    $date = htmlspecialchars($order->date);
-                    $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
+                    $date = htmlspecialchars($order->created_date);
+                    $id = filter_var($order->order_id, FILTER_SANITIZE_NUMBER_INT);
                     $status = htmlspecialchars($order->status);
                     echo <<< EOL
                     <tr>
