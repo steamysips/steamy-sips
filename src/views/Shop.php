@@ -32,15 +32,68 @@ function displayProduct(Product $product): void
     echo <<<EOL
         <a data-aos="zoom-in" href="$product_href">
             <img src="$product_img_src" alt="$img_alt_text">
-        <hgroup>     
-             <h5>$name</h5>
-             <h5>Rs $price</h5>
-        </hgroup>
+            <hgroup> 
+                <h5>$name</h5>
+                <h5>Rs $price</h5>
+            </hgroup>
         </a>
     EOL;
 }
 
 ?>
+<head>
+    <style>
+            .pagination {
+            display: flex;
+            list-style: none;
+            border-radius: 0.25rem;
+            margin-top: 2cm; 
+        }
+
+
+            .page-item {
+            --bs-padding-x: 0.5rem;
+            --bs-padding-y: 0.25rem;
+        }
+
+            .page-link {
+            position: relative;
+            display: block;
+            padding: var(--bs-padding-y) var(--bs-padding-x);
+            color: #007bff;
+            text-decoration: none;
+            transition: color .25s ease-in-out, background-color .25s ease-in-out;
+            border: 1px solid #dee2e6;
+        }
+
+            .page-link:hover {
+            z-index: 2;
+            color: #0056b3;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        
+            .page-link:focus {
+            z-index: 3;
+            outline: 0;
+            box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
+        }
+
+            .page-item.active .page-link {
+            z-index: 3;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+            .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+    </style>
+</head>
 
 <form method="get" class="container">
     <label>
@@ -71,12 +124,12 @@ function displayProduct(Product $product): void
                     $sanitized_category = htmlspecialchars($category);
 
                     echo <<< EOL
-                    <li>
-                        <label>
-                            <input $checked value="$category" name="categories[]" type="checkbox">
-                            $sanitized_category
-                        </label>
-                    </li>
+                        <li>
+                            <label>
+                                <input $checked value="$category" name="categories[]" type="checkbox">
+                                $sanitized_category
+                            </label>
+                        </li>
                     EOL;
                 }
                 ?>
@@ -97,26 +150,50 @@ function displayProduct(Product $product): void
         ?>
     </div>
 
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <?php
+            // Calculate total number of pages
+            $totalPages = 1;
+            if (isset($all_products)) {
+                $totalPages = ceil(count($all_products) / 4); // Assuming 4 products per page
+            }
+
+            $isFirstPage = ($page === 1);
+            $prevPageUrl = ($page > 1) ? '?page=' . ($page - 1) . '&' . http_build_query(array_merge($_GET, ['page' => ($page - 1)])) : '#';
+            $disabledClass = $isFirstPage ? ' disabled' : '';
+
+            echo '<li class="page-item' . $disabledClass . '"><a class="page-link" href="' . $prevPageUrl . '"> < </a></li>';
+
+            // Loop through page numbers
+            for ($i = 1; $i <= $totalPages; $i++) {
+                $active = $page === $i ? ' active' : '';
+                echo '<li class="page-item' . $active . '"><a class="page-link" href="' . ($i !== $page ? '?page=' . $i . '&' . http_build_query(array_merge($_GET, ['page' => $i])) : '#') . '">' . $i . '</a></li>';
+            }
+
+            // Next button
+            echo '<li class="page-item' . ($page === $totalPages ? ' disabled' : '') . '"><a class="page-link" href="' . ($page < $totalPages ? '?page=' . ($page + 1) . '&' . http_build_query(array_merge($_GET, ['page' => ($page + 1)])) : '#') . '"> > </a></li>';
+            ?>
+        </ul>
+    </nav>
+
     <form style="margin-top: 10rem;">
         <?php
-        // any previously selected categories should be preserved
+        // Any previously selected categories should be preserved
         foreach ($selected_categories as $category) {
-            echo <<< EOL
-            <input value="$category" name="categories[]" type="hidden">
-            EOL;
+            echo '<input value="' . $category . '" name="categories[]" type="hidden">';
         }
-        ?>
-        <!--any previously selected filter should be preserved-->
-        <input value="<?= htmlspecialchars($sort_option) ?>" name="sort" type="hidden"/>
-        <input value="<?= htmlspecialchars($search_keyword) ?>" name="keyword" type="hidden"/>
+        // Any previously selected filter should be preserved
+        echo '<input value="' . htmlspecialchars($sort_option) . '" name="sort" type="hidden"/>';
+        echo '<input value="' . htmlspecialchars($search_keyword) . '" name="keyword" type="hidden"/>';
 
-        <button type="submit" name="page" value="<?= $page + 1 ?>">Load More</button>
+        ?>
     </form>
 
 </main>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    AOS.init();
-  });
+document.addEventListener("DOMContentLoaded", function() {
+  AOS.init();
+});
 </script>

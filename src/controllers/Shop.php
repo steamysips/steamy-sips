@@ -122,6 +122,8 @@ class Shop
         // Fetch all products from the database
         $all_products = Product::getAll();
 
+        $this->data['all_products'] = $all_products;
+
         // Apply filtering based on search keyword and category (existing functionality)
         $filtered_products = array_filter($all_products, array($this, "match_keyword"));
         $filtered_products = array_filter($filtered_products, array($this, "match_category"));
