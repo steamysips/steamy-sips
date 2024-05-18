@@ -48,7 +48,16 @@
       "description": "The date and time when the product was created"
     }
   },
-  "required": ["name", "calories", "img_url", "img_alt_text", "category", "price", "description", "created_date"],
+  "required": [
+    "name",
+    "calories",
+    "img_url",
+    "img_alt_text",
+    "category",
+    "price",
+    "description",
+    "created_date"
+  ],
   "additionalProperties": false,
   "patternProperties": {
     "img_url": {
