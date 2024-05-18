@@ -96,7 +96,7 @@ class Store
      */
     public function save(): bool
     {
-        if (!$this->validate()) {
+        if (!empty($this->validate())) {
             return false;
         }
 
@@ -126,12 +126,21 @@ class Store
 
     public function validate(): array
     {
-        $errors = [];
         $errors = $this->address->validate();
 
         // Perform phone number length check
         if (strlen($this->phone_no) < 7) {
             $errors ['phone_no'] = "Phone number must be at least 7 characters long";
+        }
+
+        // Validate latitude and longitude
+        $latitude = $this->address->getLatitude();
+        $longitude = $this->address->getLongitude();
+
+        if ($latitude == null || $longitude == null ||
+            ($latitude < -90 || $latitude > 90 ||
+                $longitude < -180 || $longitude > 180)) {
+            $errors['coordinates'] = "Invalid latitude or longitude.";
         }
 
         return $errors;
@@ -157,17 +166,17 @@ class Store
         $results = self::query($query, $params);
 
         $products = [];
-       foreach ($results as $result) {
-           $products[] = new Product(
-               $result->product_id,
-               $result->name,
-               $result->calories,
-               $result->img_url,
-               $result->img_alt_text,
-               $result->category,
-               $result->price,
-               $result->description
-           );
+        foreach ($results as $result) {
+            $products[] = new Product(
+                $result->product_id,
+                $result->name,
+                $result->calories,
+                $result->img_url,
+                $result->img_alt_text,
+                $result->category,
+                $result->price,
+                $result->description
+            );
         }
         return $products;
     }
