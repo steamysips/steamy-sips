@@ -168,8 +168,8 @@ class Shop
         $this->data['categories'] = Product::getCategories();
         $this->data['sort_option'] = $_GET['sort'] ?? "";
         $this->data['selected_categories'] = $_GET['categories'] ?? [];
-        $this->data['page'] = $this->getPageNumber();
-        $this->data['totalPages'] = ceil(count($filtered_products) / Shop::$MAX_PRODUCTS_PER_PAGE);
+        $this->data['current_page_number'] = $this->getPageNumber();
+        $this->data['total_pages'] = (int)ceil(count($filtered_products) / Shop::$MAX_PRODUCTS_PER_PAGE);
 
         // Render the view with pagination information
         $this->view(
