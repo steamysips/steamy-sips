@@ -29,7 +29,13 @@
           "minLength": 3
         }
       },
-      "required": ["user_id", "email", "first_name", "password", "phone_no"]
+      "required": [
+        "user_id",
+        "email",
+        "first_name",
+        "password",
+        "phone_no"
+      ]
     }
   }
 }

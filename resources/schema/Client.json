@@ -20,7 +20,11 @@
             "minimum": 1
           }
         },
-        "required": ["street", "city", "district_id"]
+        "required": [
+          "street",
+          "city",
+          "district_id"
+        ]
       }
     ]
   }

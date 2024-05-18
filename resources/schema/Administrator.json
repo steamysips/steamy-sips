@@ -15,7 +15,9 @@
             "type": "boolean"
           }
         },
-        "required": ["job_title"]
+        "required": [
+          "job_title"
+        ]
       }
     ]
   }
