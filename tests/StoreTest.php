@@ -10,8 +10,12 @@ use Steamy\Core\Database;
 class StoreTest extends TestCase
 {
     use Database;
+
     private ?Store $dummy_store;
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -19,14 +23,27 @@ class StoreTest extends TestCase
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
             phone_no: "12345678", // Phone number
-            address: new Location("Royal", "Curepipe", 1) // Address
+            address: new Location(
+                street: "Royal",
+                city: "Curepipe",
+                district_id: 1,
+                latitude: 50,
+                longitude: 50
+            )
         );
-        
+
         $success = $this->dummy_store->save();
         if (!$success) {
-            throw new Exception('Unable to save store');
-        }
+            $errors = $this->dummy_store->validate();
+            $error_msg = "Unable to save store to database. ";
+            if (!empty($errors)) {
+                $error_msg .= "Errors: " . implode(',', $errors);
+            } else {
+                $error_msg .= "Attributes seem to be ok as per validate().";
+            }
 
+            throw new Exception($error_msg);
+        }
     }
 
     public function tearDown(): void
@@ -37,7 +54,7 @@ class StoreTest extends TestCase
         }
 
         // clear all data from store tables
-        self::query('DELETE FROM  store_product; DELETE FROM store;');
+        self::query('DELETE FROM store;');
     }
 
     public function testSave(): void
