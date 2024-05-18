@@ -67,6 +67,7 @@ article header {
   display: flex;
   list-style: none;
   border-radius: 0.25rem;
+  gap: 0.45rem;
   margin-top: 2cm;
 }
 
@@ -80,17 +81,15 @@ article header {
   position: relative;
   display: block;
   padding: var(--bs-padding-y) var(--bs-padding-x);
-  color: #007bff;
   text-decoration: none;
   transition: color .25s ease-in-out, background-color .25s ease-in-out;
-  border: 1px solid #dee2e6;
+  outline: 1px solid #dee2e6;
 }
 
 .page-link:hover {
   z-index: 2;
-  color: #0056b3;
-  background-color: #e9ecef;
-  border-color: #dee2e6;
+  background-color: var(--contrast-hover);
+  color: var(--contrast-inverse);
 }
 
 .page-link:focus {
@@ -101,14 +100,13 @@ article header {
 
 .page-item.active .page-link {
   z-index: 3;
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: var(--contrast);
+  color: var(--contrast-inverse);
 }
 
 .page-item.disabled .page-link {
-  color: #6c757d;
+  color: var(--form-element-disabled-opacity);
+  outline-color: var(--form-element-disabled-border-color);
   pointer-events: none;
-  background-color: #fff;
-  border-color: #dee2e6;
+  background-color: var(--form-element-disabled-background-color);
 }
