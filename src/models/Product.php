@@ -260,6 +260,7 @@ class Product
         }
     }
 
+
     public function getAverageRating(): float
     {
         // Query the database to calculate the average rating excluding unverified reviews
@@ -275,7 +276,7 @@ class Product
                 WHERE op.product_id = r.product_id
             )
         EOL;
-        
+
         $params = ['product_id' => $this->product_id];
 
         $result = $this->query($query, $params);
@@ -287,6 +288,11 @@ class Product
         }
 
         return 0; // No reviews, return 0 as the average rating
+    }
+
+    public function deleteProduct(): bool
+    {
+        return $this->delete($this->product_id, $this->table, 'product_id');
     }
 
     public function validate(): array
@@ -410,4 +416,17 @@ class Product
         return $distribution;
     }
 
+    /**
+     * Updates product record in database but does not update the object itself.
+     * @param array $newProductData Associative array indexed by attribute name.
+     * The values are the new product data.
+     * @return bool Success or not
+     */
+    public function updateProduct(array $newProductData): bool
+    {
+        // remove product_id (if present) from user data
+        unset($newProductData['product_id']);
+
+        return $this->update($newProductData, ['product_id' => $this->product_id], $this->table);
+    }
 }

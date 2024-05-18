@@ -17,9 +17,6 @@ declare(strict_types=1);
 <main class="container">
     <div>
         <h1>Contact Us</h1>
-        <?php if (isset($_GET['success']) && $_GET['success'] === 'true') : ?>
-            <p class="success-message">Your message has been sent successfully!</p>
-        <?php endif; ?>
         <form action="" method="post">
             <label for="firstname">First name</label>
             <input type="text" id="firstname" name="first_name" value="<?= htmlspecialchars($defaultFirstName) ?>" required>

@@ -17,6 +17,7 @@ class Shop
     use Controller;
 
     private array $data;
+    private static int $MAX_PRODUCTS_PER_PAGE = 4;
 
     /**
      * Check if a product matches the category filter (if any)
@@ -38,23 +39,51 @@ class Shop
     }
 
     /**
-     * Checks if a product name matches the search keyword (if any)
+     * Checks if a product name matches the search keyword (if any). Matching algorithm is based on fuzzy searching.
      * @param Product $product
-     * @return bool
+     * @return bool True if match found, false otherwise.
      */
     private function match_keyword(Product $product): bool
     {
-        // if there are no search key, accept product
+        // if there are no search keyword specified by user, accept product
         if (empty($_GET['keyword'])) {
             return true;
         }
-        // else accept only products within a levenshtein distance of 3
+
         $search_keyword = strtolower(trim($_GET['keyword']));
         $similarity_threshold = 3;
-        return Utility::levenshteinDistance(
+
+        // calculate edit distance from search keyword to product name
+        $edit_distance = Utility::levenshteinDistance(
+            $search_keyword,
+            strtolower($product->getName())
+        );
+
+        if ($edit_distance <= $similarity_threshold) {
+            return true;
+        }
+
+        // get all words in product name
+        $words = explode(" ", strtolower($product->getName()));
+
+        // for each word calculate edit distance from search keyword
+        foreach ($words as $word) {
+            // ignore words shorter than 4
+            if (strlen($word) < 4) {
+                continue;
+            }
+
+            $edit_distance = Utility::levenshteinDistance(
                 $search_keyword,
-                strtolower($product->getName())
-            ) <= $similarity_threshold;
+                $word
+            );
+
+            if ($edit_distance <= $similarity_threshold) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -71,7 +100,7 @@ class Shop
             return 0;
         }
 
-        // sort by date
+        // sort by descending date
         if ($_GET['sort'] === 'newest') {
             return ($a->getCreatedDate() > $b->getCreatedDate()) ? -1 : 1;
         }
@@ -99,6 +128,46 @@ class Shop
         return 0; // no sorting if invalid sorting option
     }
 
+    /**
+     * @return Product[] Array of products which match filters (excluding pagination) and sorting applied by user
+     */
+    public function getMatchingProducts(): array
+    {
+        // Fetch all products from the database
+        $all_products = Product::getAll();
+
+        // Apply filtering based on search keyword and category (existing functionality)
+        $filtered_products = array_filter($all_products, array($this, "match_keyword"));
+        $filtered_products = array_filter($filtered_products, array($this, "match_category"));
+
+        // Sort the filtered products (existing functionality)
+        usort($filtered_products, array($this, "sort_product"));
+
+        return $filtered_products;
+    }
+
+    /**
+     * @return int Page number on shop page. Defaults to 1.
+     */
+    public function getPageNumber(): int
+    {
+        return (int)($_GET['page'] ?? 1);
+    }
+
+    /**
+     * @param $products
+     * @return array Products which should be displayed on current page
+     */
+    public function applyPagination($products): array
+    {
+        // Slice the products based on pagination
+        return array_slice(
+            $products,
+            ($this->getPageNumber() - 1) * Shop::$MAX_PRODUCTS_PER_PAGE,
+            Shop::$MAX_PRODUCTS_PER_PAGE
+        );
+    }
+
     public function index(): void
     {
         // check if URL follows format /shop/products/<number>
@@ -115,22 +184,11 @@ class Shop
             return;
         }
 
-        // Retrieve the page number from the URL query parameters
-        $page = $_GET['page'] ?? 1;
-        $perPage = (int) $page * 4; // Number of products per page
-
-        // Fetch all products from the database
-        $all_products = Product::getAll();
-
-        // Apply filtering based on search keyword and category (existing functionality)
-        $filtered_products = array_filter($all_products, array($this, "match_keyword"));
-        $filtered_products = array_filter($filtered_products, array($this, "match_category"));
-
-        // Sort the filtered products (existing functionality)
-        usort($filtered_products, array($this, "sort_product"));
+        // get all products that match user criteria
+        $filtered_products = $this->getMatchingProducts();
 
         // Slice the products based on pagination
-        $paginated_products = array_slice($filtered_products, 0, $perPage);
+        $paginated_products = $this->applyPagination($filtered_products);
 
         // Initialize view variables (existing functionality)
         $this->data['products'] = $paginated_products;
@@ -138,7 +196,8 @@ class Shop
         $this->data['categories'] = Product::getCategories();
         $this->data['sort_option'] = $_GET['sort'] ?? "";
         $this->data['selected_categories'] = $_GET['categories'] ?? [];
-        $this->data['page'] = $page;
+        $this->data['current_page_number'] = $this->getPageNumber();
+        $this->data['total_pages'] = (int)ceil(count($filtered_products) / Shop::$MAX_PRODUCTS_PER_PAGE);
 
         // Render the view with pagination information
         $this->view(

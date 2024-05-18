@@ -6,6 +6,7 @@ use Steamy\Model\District;
 
 /**
  * Form for entering user details.
+ * @var bool $form_submitted Whether form was just submitted
  * @var bool $editMode Whether form is being used for editing
  * @var string $defaultFirstName
  * @var string $defaultLastName
@@ -26,10 +27,10 @@ use Steamy\Model\District;
  * @param $input_name string value in name attribute of input tag
  * @return string
  */
-$ariaInvalid = function (string $input_name) use ($errors) {
+$ariaInvalid = function (string $input_name) use ($errors, $form_submitted) {
     // if form is loaded for the first time (form has not been submitted)
     // do not add aria-invalid attribute
-    if (!isset($_POST['form_submit'])) {
+    if (!$form_submitted) {
         return '';
     }
 

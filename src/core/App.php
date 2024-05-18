@@ -18,7 +18,9 @@ class App
      */
     public function exception_handler(Throwable $exception): void
     {
-//        echo "Uncaught exception: ", $exception->getMessage(), "\n";
+        // Uncomment line below only during development
+        echo "Uncaught exception: ", $exception->getMessage(), "\n";
+
         (new Error())->handleUnknownError();
     }
 

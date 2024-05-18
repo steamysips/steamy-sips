@@ -14,11 +14,11 @@ declare(strict_types=1);
             <h1>Sign in</h1>
             <form method="post">
                 <input autofocus type="email" name="email" placeholder="Email" aria-label="Email"
-                       aria-invalid="<?= isset($_POST['login_submit']) ? 'true' : '' ?>"
+                       aria-invalid="<?= !empty($defaultEmail) ? 'true' : '' ?>"
                        value="<?= htmlspecialchars($defaultEmail) ?>" required/>
 
                 <input type="password" name="password" placeholder="Password" aria-label="Password"
-                       aria-invalid="<?= isset($_POST['login_submit']) ? 'true' : '' ?>"
+                       aria-invalid="<?= !empty($defaultEmail) ? 'true' : '' ?>"
                        required/>
 
                 <button name="login_submit" type="submit" class="contrast">Login</button>

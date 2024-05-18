@@ -33,6 +33,7 @@ class Register
         $this->view_data['defaultConfirmPassword'] = "";
         $this->view_data['errors'] = [];
         $this->view_data['editMode'] = false;
+        $this->view_data['form_submitted'] = false;
 
         // get list of districts to be displayed on form
         $this->view_data['districts'] = District::getAll();
@@ -72,6 +73,7 @@ class Register
 
     private function handleFormSubmission(): void
     {
+        $this->view_data['form_submitted'] = true;
         $form_data = $this->getFormData();
 
         // create a new client object
@@ -115,7 +117,7 @@ class Register
                 Utility::redirect('login');
             }
 
-            (new Error())->index("An error occurred while processing your registration. Please try again later.");
+            (new Error())->handleUnknownError();
             die();
         } else {
             $this->loadDataToForm($form_data);
@@ -148,7 +150,7 @@ class Register
     private function handleInvalidURL(): void
     {
         if (!$this->validateURL()) {
-            (new Error())->index("Page not found");
+            (new Error())->handlePageNotFoundError();
             die();
         }
     }
