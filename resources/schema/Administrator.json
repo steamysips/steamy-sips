@@ -1,24 +1,23 @@
 {
-  "administrator": {
-    "allOf": [
-      {
-        "$ref": "User.json#/definitions/user"
-      },
-      {
-        "type": "object",
-        "properties": {
-          "job_title": {
-            "type": "string",
-            "minLength": 4
-          },
-          "is_super_admin": {
-            "type": "boolean"
-          }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "$ref": "User.json#/definitions/user"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "job_title": {
+          "type": "string",
+          "minLength": 4
         },
-        "required": [
-          "job_title"
-        ]
-      }
-    ]
-  }
+        "is_super_admin": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "job_title"
+      ]
+    }
+  ]
 }

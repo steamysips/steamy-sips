@@ -1,31 +1,30 @@
 {
-  "client": {
-    "allOf": [
-      {
-        "$ref": "User.json#/definitions/user"
-      },
-      {
-        "type": "object",
-        "properties": {
-          "street": {
-            "type": "string",
-            "minLength": 4
-          },
-          "city": {
-            "type": "string",
-            "minLength": 3
-          },
-          "district_id": {
-            "type": "integer",
-            "minimum": 1
-          }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "$ref": "User.json#/definitions/user"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "minLength": 4
         },
-        "required": [
-          "street",
-          "city",
-          "district_id"
-        ]
-      }
-    ]
-  }
+        "city": {
+          "type": "string",
+          "minLength": 3
+        },
+        "district_id": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "district_id"
+      ]
+    }
+  ]
 }
