@@ -10,7 +10,7 @@ declare(strict_types=1);
  *
  * @var Order $order order order
  * @var Store $store Store
- * @var Client $client First name of person who placed the order
+ * @var string $client_full_name Full name of person who placed the order
  *
  * Ref: https://github.com/leemunroe/responsive-html-email-template
  */
@@ -33,7 +33,7 @@ use Steamy\Model\Store;
 <body>
 <h1>Order Confirmation</h1>
 
-<p>Dear <?= htmlspecialchars(ucfirst($client->getFirstName()) . " " . ucfirst($client->getLastName())) ?>,</p>
+<p>Dear <?= htmlspecialchars($client_full_name) ?>,</p>
 
 <p>Thank you for your purchase at Steamy Sips! We've received your order successfully. You can find your purchase
     information
