@@ -123,7 +123,7 @@ class Comment
         // remove created_date (let database handle it)
         unset($data['created_date']);
 
-        // perform insertion to the review table
+        // perform insertion to the comment table
         $inserted_id = $this->insert($data, $this->table);
 
         if ($inserted_id === null) {

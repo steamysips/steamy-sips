@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use Exception;
+
 class Client extends User
 {
     protected string $table = 'client';
@@ -292,5 +294,32 @@ class Client extends User
         $base_array['city'] = $this->address->getCity();
 
         return $base_array;
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function sendOrderConfirmationEmail(Order $order): bool
+    {
+        $store = $order->getStore();
+        if (empty($store)) {
+            throw new Exception('Invalid store.');
+        }
+
+        $client_full_name = ucfirst($this->first_name) . " " . ucfirst($this->last_name);
+
+        // fill email template and save to a variable
+        ob_start();
+        require_once __DIR__ . '/../views/mails/OrderConfirmation.php';
+        $html_message = ob_get_contents();
+        ob_end_clean();
+
+        $mailer = new Mailer();
+        return $mailer->sendMail(
+            $this->email,
+            "Order Confirmation | Steamy Sips",
+            $html_message
+        );
     }
 }

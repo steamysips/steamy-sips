@@ -92,34 +92,5 @@ class Mailer
         // Send the message
         return $this->mail->send();
     }
-
-    /**
-     * @throws Exception
-     */
-    public function sendOrderConfirmationEmail(Order $order): bool
-    {
-        $client = Client::getByID($order->getClientID());
-        if (empty($client)) {
-            return false;
-        }
-
-        $store = $order->getStore();
-        if (empty($store)) {
-            return false;
-        }
-
-        // fill email template and save to a variable
-        ob_start();
-        require_once __DIR__ . '/../views/mails/OrderConfirmation.php';
-        $html_message = ob_get_contents();
-        ob_end_clean();
-
-        return $this->sendMail(
-            $client->getEmail(),
-            "Order Confirmation | Steamy Sips",
-            $html_message
-        );
-    }
-
 }
 
