@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 use Steamy\Model\Client;
+use Steamy\Model\Order;
 
 ?>
 
@@ -84,9 +85,11 @@ use Steamy\Model\Client;
         <figure>
             <table>
                 <tr>
-                    <th>Date</th>
                     <th>Order ID</th>
+                    <th>Store ID</th>
+                    <th>Date</th>
                     <th>Status</th>
+                    <th>Total Price</th>
                     <th>Actions</th>
                 </tr>
 
@@ -94,12 +97,16 @@ use Steamy\Model\Client;
                 foreach ($orders as $order) {
                     $date = htmlspecialchars($order->created_date);
                     $id = filter_var($order->order_id, FILTER_SANITIZE_NUMBER_INT);
+                    $storeid = filter_var($order->store_id, FILTER_SANITIZE_NUMBER_INT);
                     $status = htmlspecialchars($order->status);
+                    $totalPrice = $order->total_price;
                     echo <<< EOL
                     <tr>
-                        <td>$date</td>
                         <td>$id</td>
+                        <td>$storeid</td>
+                        <td>$date</td>
                         <td>$status</td>
+                        <td>$totalPrice</td>
                         <td class="grid">
                             <button>cancel</button>
                         </td>

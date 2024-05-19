@@ -266,15 +266,25 @@ class Order
         return $order_products_arr;
     }
 
-   public static function getOrdersByClientId(int $client_id, int $limit = 5): array
-   {
-       $db = self::connect();
-       $stmt = $db->prepare('
-           SELECT order_id, created_date, status
-           FROM `order`
-           WHERE client_id = :client_id
-           ORDER BY created_date DESC
-           LIMIT :limit
+    /**
+    * Retrieves a list of orders for a specific client, including the total price of products in each order.
+    *
+    * @param int $client_id The ID of the client whose orders are to be retrieved.
+    * @param int $limit The maximum number of orders to retrieve. Defaults to 5.
+    * @return array An array of stdClass objects, each containing order details and the total price.
+    * @throws PDOException If there is an error executing the database query.
+    */
+    public static function getOrdersByClientId(int $client_id, int $limit = 5): array
+    {
+        $db = self::connect();
+        $stmt = $db->prepare('
+        SELECT o.order_id, o.created_date, o.status, o.store_id, SUM(op.unit_price * op.quantity) AS total_price
+        FROM `order` o
+        JOIN order_product op ON o.order_id = op.order_id
+        WHERE o.client_id = :client_id
+        GROUP BY o.order_id, o.created_date, o.status, o.store_id
+        ORDER BY o.created_date DESC
+        LIMIT :limit;
         ');
         $stmt->bindParam(':client_id', $client_id, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -282,6 +292,7 @@ class Order
 
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
 
 
     public function getOrderID(): int
