@@ -124,7 +124,7 @@ class Cart
         // send confirmation email if order was successfully saved
         if ($success_order) {
             try {
-                (new Mailer())->sendOrderConfirmationEmail($new_order);
+                $signed_client->sendOrderConfirmationEmail($new_order);
             } catch (Exception $e) {
                 error_log($e->getMessage());
             }

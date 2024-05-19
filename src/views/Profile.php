@@ -6,6 +6,7 @@ declare(strict_types=1);
  * The following attributes are defined in controllers/Profile.php
  *
  * @var $client Client signed in client
+ * @var $show_account_deletion_confirmation bool Whether to display a confirmation dialog for account deletion
  * @var $orders array array of orders
  */
 
@@ -176,6 +177,7 @@ use Steamy\Model\Client;
                 <form>
                     <button type="submit" name="account_delete_submit">Delete</button>
                 </form>
+
             </article>
         </div>
     </div>
@@ -216,4 +218,19 @@ use Steamy\Model\Client;
 
 
 </script>
-
+<?php
+if ($show_account_deletion_confirmation) : ?>
+    <dialog open>
+        <article>
+            <h3>Deleting your account! </h3>
+            <p>Are you sure you want to delete your account? This action is irreversible.</p>
+            <footer>
+                <form method="post" class="grid">
+                    <button class="secondary" type="submit" name="cancel_delete">Cancel</button>
+                    <button type="submit" name="confirm_delete">Confirm</button>
+                </form>
+            </footer>
+        </article>
+    </dialog>
+<?php
+endif; ?>
