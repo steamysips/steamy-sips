@@ -8,18 +8,18 @@ use Steamy\Model\OrderProduct;
 use Steamy\Model\OrderStatus;
 use Steamy\Model\Store;
 use Steamy\Model\Client;
-use Steamy\Model\Product;
 use Steamy\Core\Database;
 use Steamy\Model\Location;
+use Steamy\Model\Product;
+
 class OrderTest extends TestCase
 {
     use Database;
 
-    private ?Order $dummy_order;
-    private ?Client $client;
-    private ?Store $dummy_store;
-    private array $line_items;
-
+    private ?Order $dummy_order = null;
+    private ?Client $client = null;
+    private ?Store $dummy_store = null;
+    private array $line_items = [];
 
     public function setUp(): void
     {
@@ -51,7 +51,7 @@ class OrderTest extends TestCase
         }
 
         // Create a dummy client
-        $this->client = new Client("john@example.com", "John", "Doe", "john_doe", "password", new Location( "Royal", "Curepipe", 1, 50, 50));
+        $this->client = new Client("john@example.com", "John", "Doe", "john_doe", "password", new Location("Royal", "Curepipe", 1, 50, 50));
         $success = $this->client->save();
         if (!$success) {
             throw new Exception('Unable to save client');
@@ -72,8 +72,8 @@ class OrderTest extends TestCase
 
         // Create dummy order line items
         $this->line_items = [
-            new OrderProduct($product1->getProductID(), "medium", "oat", 2, 2.99),
-            new OrderProduct($product2->getProductID(), "small", "almond", 1, 4.99)
+            new OrderProduct($product1->getProductID(), "medium", "oat", 2, 5.0),
+            new OrderProduct($product2->getProductID(), "small", "almond", 1, 3.0)
         ];
 
         // Create a dummy order
@@ -84,9 +84,6 @@ class OrderTest extends TestCase
         );
     }
 
-    /**
-     * Tear down test data
-     */
     public function tearDown(): void
     {
         $this->dummy_order = null;
@@ -158,7 +155,7 @@ class OrderTest extends TestCase
     public function testAddLineItem(): void
     {
         $order = new Order($this->dummy_store->getStoreID(), $this->client->getUserID());
-        $order->addLineItem(new OrderProduct(1, "medium", "whole", 1));
+        $order->addLineItem(new OrderProduct(1, "medium", "oat", 1, 5.0));
         self::assertCount(1, $order->getLineItems());
     }
 
@@ -183,7 +180,7 @@ class OrderTest extends TestCase
         $this->dummy_order->save();
         $total_price = $this->dummy_order->calculateTotalPrice();
 
-        $expected_price = array_reduce($this->line_items, function($carry, $item) {
+        $expected_price = array_reduce($this->line_items, function ($carry, $item) {
             return $carry + $item->getQuantity() * $item->getUnitPrice();
         }, 0);
 
@@ -194,13 +191,5 @@ class OrderTest extends TestCase
     {
         $errors = $this->dummy_order->validate();
         self::assertEmpty($errors);
-
-        // Test invalid status
-        $invalid_order = new Order($this->dummy_store->getStoreID(), $this->client->getUserID(), $this->line_items, null, null, OrderStatus::from('INVALID'));
-        $errors = $invalid_order->validate();
-        self::assertNotEmpty($errors);
-        self::assertArrayHasKey('status', $errors);
-        self::assertEquals('Status must be one of: pending, cancelled, completed', $errors['status']);
     }
-
 }

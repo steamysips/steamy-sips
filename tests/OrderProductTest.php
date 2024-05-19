@@ -19,15 +19,15 @@ class OrderProductTest extends TestCase
     private ?Client $client;
     private ?Store $dummy_store;
     private ?Product $dummy_product;
-    private ?OrderProduct $orderProduct;
+    private array $line_items = [];
 
     public function setUp(): void
     {
         parent::setUp();
-        
+
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
-            phone_no: "987654321", 
+            phone_no: "987654321", // Phone number
             address: new Location(
                 street: "Augus",
                 city: "Flacq",
@@ -57,32 +57,32 @@ class OrderProductTest extends TestCase
             throw new Exception('Unable to save client');
         }
 
-        // Create dummy products
+        // Create a dummy product
         $this->dummy_product = new Product("Latte", 50, "latte.jpeg", "A delicious latte", "Beverage", 5.0, "A cup of latte", new DateTime());
         $success = $this->dummy_product->save();
         if (!$success) {
             throw new Exception('Unable to save product');
         }
 
+        // Create dummy order line items
+        $this->line_items = [
+            new OrderProduct($this->dummy_product->getProductID(), "medium", "oat", 2, 5.0)
+        ];
+
         // Create a dummy order
-        $this->dummy_order = new Order($this->dummy_store->getStoreID(), $this->client->getUserID());
+        $this->dummy_order = new Order(
+            $this->dummy_store->getStoreID(),
+            $this->client->getUserID()
+        );
+
+        // Add line items to the order
+        foreach ($this->line_items as $line_item) {
+            $this->dummy_order->addLineItem($line_item);
+        }
+
         $success = $this->dummy_order->save();
         if (!$success) {
             throw new Exception('Unable to save order');
-        }
-
-        // Create dummy orderProduct
-        $this->orderProduct = new OrderProduct(
-            product_id: $this->dummy_product->getProductID(), 
-            cup_size: "medium", 
-            milk_type: "oat", 
-            quantity: 2, 
-            unit_price: 2.99,
-            order_id: $this->dummy_order->getOrderID()
-        );
-        $success = $this->orderProduct->save();
-        if (!$success) {
-            throw new Exception('Unable to save order product');
         }
     }
 
@@ -92,7 +92,7 @@ class OrderProductTest extends TestCase
         $this->client = null;
         $this->dummy_store = null;
         $this->dummy_product = null;
-        $this->orderProduct = null;
+        $this->line_items = [];
 
         // Clear all data from relevant tables
         self::query('DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;');
@@ -103,7 +103,7 @@ class OrderProductTest extends TestCase
         $invalidOrderProduct = new OrderProduct(
             product_id: $this->dummy_product->getProductID(),
             cup_size: "extra large",  // Invalid cup size
-            milk_type: "cow",         // Invalid milk type
+            milk_type: "invalid milk", // Invalid milk type
             quantity: -1,             // Invalid quantity
             unit_price: -2.99,        // Invalid unit price
             order_id: $this->dummy_order->getOrderID()
@@ -119,6 +119,7 @@ class OrderProductTest extends TestCase
 
     public function testGetByID(): void
     {
+        // Assuming getByID is a method that retrieves an OrderProduct by order ID and product ID
         $retrievedOrderProduct = OrderProduct::getByID($this->dummy_order->getOrderID(), $this->dummy_product->getProductID());
 
         $this->assertNotNull($retrievedOrderProduct);
@@ -127,6 +128,6 @@ class OrderProductTest extends TestCase
         $this->assertEquals("medium", $retrievedOrderProduct->getCupSize());
         $this->assertEquals("oat", $retrievedOrderProduct->getMilkType());
         $this->assertEquals(2, $retrievedOrderProduct->getQuantity());
-        $this->assertEquals(2.99, $retrievedOrderProduct->getUnitPrice());
+        $this->assertEquals(5.0, $retrievedOrderProduct->getUnitPrice());
     }
 }
