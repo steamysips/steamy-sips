@@ -45,7 +45,7 @@ jobs:
           -u $DB_USER \
           -p $DB_PASSWORD \
           -o dist \
-          -s cafe
+          -s cafe \
           -vizjs
 
       - name: Deploy
