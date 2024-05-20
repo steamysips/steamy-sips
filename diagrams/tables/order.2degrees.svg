@@ -118,7 +118,7 @@
 <polygon fill="none" stroke="#000000" points="288,-363.7 288,-385.7 397,-385.7 397,-363.7 288,-363.7"/>
 <text text-anchor="start" x="308" y="-370.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">status</text>
 <polygon fill="none" stroke="#000000" points="397,-363.7 397,-385.7 480,-385.7 480,-363.7 397,-363.7"/>
-<text text-anchor="start" x="400" y="-371.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">varchar[20]</text>
+<text text-anchor="start" x="400" y="-371.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">enum[9]</text>
 <polygon fill="none" stroke="#000000" points="288,-341.7 288,-363.7 397,-363.7 397,-341.7 288,-341.7"/>
 <text text-anchor="start" x="308" y="-348.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">created_date</text>
 <polygon fill="none" stroke="#000000" points="397,-341.7 397,-363.7 480,-363.7 480,-341.7 397,-341.7"/>

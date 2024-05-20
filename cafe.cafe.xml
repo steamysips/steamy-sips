@@ -5,7 +5,7 @@
             <parent catalog="cafe" column="user_id" foreignKey="admin_fk" implied="false" onDeleteCascade="true" table="user"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="job_title" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="0" digits="0" id="2" name="is_super_admin" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="2" name="is_super_admin" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
          <primaryKey column="user_id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="user_id"/>
@@ -19,7 +19,7 @@
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="street" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="city" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="district_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="district_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="district_id" foreignKey="client_district_district_id_fk" implied="false" onDeleteCascade="false" table="district"/>
          </column>
          <primaryKey column="user_id" sequenceNumberInPK="1"/>
@@ -42,7 +42,7 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="user_id" foreignKey="comment_user_user_id_fk" implied="false" onDeleteCascade="false" table="user"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="review_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="review_id" nullable="false" remarks="ID of review under which comment is found" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="review_id" foreignKey="comment_review_review_id_fk" implied="false" onDeleteCascade="false" table="review"/>
          </column>
          <primaryKey column="comment_id" sequenceNumberInPK="1"/>
@@ -77,13 +77,13 @@
          <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="order_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <child catalog="cafe" column="order_id" foreignKey="order_product_order_order_id_fk" implied="false" onDeleteCascade="false" table="order_product"/>
          </column>
-         <column autoUpdated="false" defaultValue="pending" digits="0" id="1" name="status" nullable="true" remarks="" size="20" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="true" remarks="" size="19" type="DATETIME" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="pickup_date" nullable="true" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="pending" digits="0" id="1" name="status" nullable="false" remarks="" size="9" type="enum('pending', 'cancelled', 'completed')" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="pickup_date" nullable="true" remarks="Date when client picks up his order at the store" size="19" type="DATETIME" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="client_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="user_id" foreignKey="order_fk" implied="false" onDeleteCascade="false" table="client"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="store_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="store_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="store_id" foreignKey="order_store_store_id_fk" implied="false" onDeleteCascade="false" table="store"/>
          </column>
          <primaryKey column="order_id" sequenceNumberInPK="1"/>
@@ -104,10 +104,10 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="product_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="product_id" foreignKey="order_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="product"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="cup_size" nullable="false" remarks="" size="20" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="milk_type" nullable="false" remarks="" size="20" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="quantity" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="5" name="unit_price" nullable="true" remarks="" size="10" type="DECIMAL" typeCode="3"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="cup_size" nullable="false" remarks="" size="6" type="enum('small', 'medium', 'large')" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="milk_type" nullable="false" remarks="" size="7" type="enum('almond', 'coconut', 'oat', 'soy')" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="quantity" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="5" name="unit_price" nullable="false" remarks="Unit price of product" size="10" type="DECIMAL" typeCode="3"/>
          <primaryKey column="order_id" sequenceNumberInPK="1"/>
          <primaryKey column="product_id" sequenceNumberInPK="2"/>
          <primaryKey column="cup_size" sequenceNumberInPK="3"/>
@@ -129,7 +129,7 @@
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="token_hash" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="expiry_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="used" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="used" nullable="false" remarks="Whether token has been used once" size="1" type="BIT" typeCode="-7"/>
          <primaryKey column="request_id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="request_id"/>
@@ -145,12 +145,12 @@
             <child catalog="cafe" column="product_id" foreignKey="store_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="store_product"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="calories" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="calories" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="img_url" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="img_alt_text" nullable="false" remarks="" size="150" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="category" nullable="false" remarks="" size="50" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="2" id="6" name="price" nullable="false" remarks="" size="10" type="DECIMAL" typeCode="3"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="description" nullable="true" remarks="" size="65535" type="TEXT" typeCode="-1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="description" nullable="false" remarks="" size="65535" type="TEXT" typeCode="-1"/>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="8" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
          <primaryKey column="product_id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
@@ -164,10 +164,10 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="rating" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="text" nullable="false" remarks="" size="2000" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="client_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="client_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="user_id" foreignKey="review_1fk" implied="false" onDeleteCascade="true" table="client"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="product_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="product_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="product_id" foreignKey="review_2fk" implied="false" onDeleteCascade="true" table="product"/>
          </column>
          <primaryKey column="review_id" sequenceNumberInPK="1"/>
@@ -230,10 +230,10 @@
             <child catalog="cafe" column="user_id" foreignKey="request_fk" implied="false" onDeleteCascade="true" table="password_change_request"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="email" nullable="false" remarks="" size="320" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="first_name" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="password" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="first_name" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="password" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="phone_no" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="last_name" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="last_name" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <primaryKey column="user_id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="user_id"/>
