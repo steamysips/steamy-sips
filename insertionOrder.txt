@@ -1,0 +1,12 @@
+user
+product
+district
+store
+client
+review
+comment
+order
+administrator
+password_change_request
+order_product
+store_product

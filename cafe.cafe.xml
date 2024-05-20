@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?><database name="cafe" schema="cafe" type="MySQL - 8.0.36-0ubuntu0.22.04.1">
+   <tables>
+      <table catalog="cafe" name="administrator" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="user_id" foreignKey="admin_fk" implied="false" onDeleteCascade="true" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="job_title" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="2" name="is_super_admin" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="client" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="client_id" foreignKey="order_fk" implied="false" onDeleteCascade="false" table="order"/>
+            <child catalog="cafe" column="client_id" foreignKey="review_1fk" implied="false" onDeleteCascade="true" table="review"/>
+            <parent catalog="cafe" column="user_id" foreignKey="client_fk" implied="false" onDeleteCascade="true" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="street" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="city" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="district_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="district_id" foreignKey="client_district_district_id_fk" implied="false" onDeleteCascade="false" table="district"/>
+         </column>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="user_id"/>
+         </index>
+         <index name="client_district_district_id_fk" unique="false">
+            <column ascending="true" name="district_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="comment" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="comment_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="parent_comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="text" nullable="false" remarks="" size="2000" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="parent_comment_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="user_id" foreignKey="comment_user_user_id_fk" implied="false" onDeleteCascade="false" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="review_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="review_id" foreignKey="comment_review_review_id_fk" implied="false" onDeleteCascade="false" table="review"/>
+         </column>
+         <primaryKey column="comment_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="comment_id"/>
+         </index>
+         <index name="comment_comment_comment_id_fk" unique="false">
+            <column ascending="true" name="parent_comment_id"/>
+         </index>
+         <index name="comment_review_review_id_fk" unique="false">
+            <column ascending="true" name="review_id"/>
+         </index>
+         <index name="comment_user_user_id_fk" unique="false">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="district" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="district_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="district_id" foreignKey="client_district_district_id_fk" implied="false" onDeleteCascade="false" table="client"/>
+            <child catalog="cafe" column="district_id" foreignKey="store_district_district_id_fk" implied="false" onDeleteCascade="false" table="store"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="30" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="district_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="district_id"/>
+         </index>
+         <index name="name" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="order" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="order_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="order_id" foreignKey="order_product_order_order_id_fk" implied="false" onDeleteCascade="false" table="order_product"/>
+         </column>
+         <column autoUpdated="false" defaultValue="pending" digits="0" id="1" name="status" nullable="true" remarks="" size="20" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="true" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="pickup_date" nullable="true" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="client_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="user_id" foreignKey="order_fk" implied="false" onDeleteCascade="false" table="client"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="store_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="store_id" foreignKey="order_store_store_id_fk" implied="false" onDeleteCascade="false" table="store"/>
+         </column>
+         <primaryKey column="order_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="order_id"/>
+         </index>
+         <index name="order_fk" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="order_store_store_id_fk" unique="false">
+            <column ascending="true" name="store_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="order_product" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="order_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="order_id" foreignKey="order_product_order_order_id_fk" implied="false" onDeleteCascade="false" table="order"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="product_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="product_id" foreignKey="order_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="product"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="cup_size" nullable="false" remarks="" size="20" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="milk_type" nullable="false" remarks="" size="20" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="quantity" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="5" name="unit_price" nullable="true" remarks="" size="10" type="DECIMAL" typeCode="3"/>
+         <primaryKey column="order_id" sequenceNumberInPK="1"/>
+         <primaryKey column="product_id" sequenceNumberInPK="2"/>
+         <primaryKey column="cup_size" sequenceNumberInPK="3"/>
+         <primaryKey column="milk_type" sequenceNumberInPK="4"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="order_id"/>
+            <column ascending="true" name="product_id"/>
+            <column ascending="true" name="cup_size"/>
+            <column ascending="true" name="milk_type"/>
+         </index>
+         <index name="order_product_product_product_id_fk" unique="false">
+            <column ascending="true" name="product_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="password_change_request" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="request_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="user_id" foreignKey="request_fk" implied="false" onDeleteCascade="true" table="user"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="token_hash" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="expiry_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="4" name="used" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <primaryKey column="request_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="request_id"/>
+         </index>
+         <index name="request_fk" unique="false">
+            <column ascending="true" name="user_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="product" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="product_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="product_id" foreignKey="order_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="order_product"/>
+            <child catalog="cafe" column="product_id" foreignKey="review_2fk" implied="false" onDeleteCascade="true" table="review"/>
+            <child catalog="cafe" column="product_id" foreignKey="store_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="store_product"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="calories" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="img_url" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="img_alt_text" nullable="false" remarks="" size="150" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="category" nullable="false" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="2" id="6" name="price" nullable="false" remarks="" size="10" type="DECIMAL" typeCode="3"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="description" nullable="true" remarks="" size="65535" type="TEXT" typeCode="-1"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="8" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <primaryKey column="product_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="product_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="review" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="review_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="review_id" foreignKey="comment_review_review_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="rating" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="text" nullable="false" remarks="" size="2000" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="client_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="user_id" foreignKey="review_1fk" implied="false" onDeleteCascade="true" table="client"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="product_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="product_id" foreignKey="review_2fk" implied="false" onDeleteCascade="true" table="product"/>
+         </column>
+         <primaryKey column="review_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="review_id"/>
+         </index>
+         <index name="review_1fk" unique="false">
+            <column ascending="true" name="client_id"/>
+         </index>
+         <index name="review_2fk" unique="false">
+            <column ascending="true" name="product_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="store" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="store_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="store_id" foreignKey="order_store_store_id_fk" implied="false" onDeleteCascade="false" table="order"/>
+            <child catalog="cafe" column="store_id" foreignKey="store_product_store_store_id_fk" implied="false" onDeleteCascade="false" table="store_product"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="phone_no" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="street" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="coordinate" nullable="false" remarks="" size="65535" type="GEOMETRY" typeCode="-2"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="district_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="district_id" foreignKey="store_district_district_id_fk" implied="false" onDeleteCascade="false" table="district"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="city" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="store_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="store_id"/>
+         </index>
+         <index name="store_coordinate_index" unique="false">
+            <column ascending="true" name="coordinate"/>
+         </index>
+         <index name="store_district_district_id_fk" unique="false">
+            <column ascending="true" name="district_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="store_product" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="store_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="store_id" foreignKey="store_product_store_store_id_fk" implied="false" onDeleteCascade="false" table="store"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="product_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <parent catalog="cafe" column="product_id" foreignKey="store_product_product_product_id_fk" implied="false" onDeleteCascade="false" table="product"/>
+         </column>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="2" name="stock_level" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4"/>
+         <primaryKey column="store_id" sequenceNumberInPK="1"/>
+         <primaryKey column="product_id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="store_id"/>
+            <column ascending="true" name="product_id"/>
+         </index>
+         <index name="store_product_product_product_id_fk" unique="false">
+            <column ascending="true" name="product_id"/>
+         </index>
+      </table>
+      <table catalog="cafe" name="user" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
+            <child catalog="cafe" column="user_id" foreignKey="admin_fk" implied="false" onDeleteCascade="true" table="administrator"/>
+            <child catalog="cafe" column="user_id" foreignKey="client_fk" implied="false" onDeleteCascade="true" table="client"/>
+            <child catalog="cafe" column="user_id" foreignKey="comment_user_user_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+            <child catalog="cafe" column="user_id" foreignKey="request_fk" implied="false" onDeleteCascade="true" table="password_change_request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="email" nullable="false" remarks="" size="320" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="first_name" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="password" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="phone_no" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="last_name" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="user_id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="user_id"/>
+         </index>
+         <index name="unique_email" unique="true">
+            <column ascending="true" name="email"/>
+         </index>
+      </table>
+   </tables>
+</database>
