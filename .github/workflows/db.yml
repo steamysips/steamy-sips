@@ -29,7 +29,11 @@ jobs:
           wget https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar
           wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.4.0.tar.gz
           tar -xvzf mysql-connector-j-8.4.0.tar.gz
-          sudo apt install graphviz          
+
+      - name: Output dependencies information
+        run: |
+            mysql --version
+            java --version
 
       - name: Generate schema spy website
         run: |
@@ -42,6 +46,7 @@ jobs:
           -p $DB_PASSWORD \
           -o dist \
           -s cafe
+          -vizjs
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
