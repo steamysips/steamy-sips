@@ -146,6 +146,16 @@ class Store
         return $errors;
     }
 
+    public function addProductStock(int $product_id, int $quantity): bool
+    {
+        $query = "INSERT INTO store_product (store_id, product_id, stock_level) VALUES (:store_id, :product_id, :quantity)
+                  ON DUPLICATE KEY UPDATE stock_level = stock_level + :quantity";
+        $params = ['store_id' => $this->store_id, 'product_id' => $product_id, 'quantity' => $quantity];
+        $result = self::query($query, $params);
+
+        return $result;
+    }
+
     public function getProductStock(int $product_id): int
     {
         $query = "SELECT stock_level FROM store_product WHERE store_id = :store_id AND product_id = :product_id;";

@@ -70,6 +70,10 @@ class OrderTest extends TestCase
             throw new Exception('Unable to save product 2');
         }
 
+        // Add stock to the store for the products
+        $this->dummy_store->addProductStock($product1->getProductID(), 10);
+        $this->dummy_store->addProductStock($product2->getProductID(), 10);
+
         // Create dummy order line items
         $this->line_items = [
             new OrderProduct($product1->getProductID(), "medium", "oat", 2, 5.0),
