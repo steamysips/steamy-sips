@@ -6,11 +6,8 @@ declare(strict_types=1);
  * The following attributes are defined in controllers/Profile.php
  *
  * @var $client Client signed in client
- * @var $orders array array of orders
+ * @var $orders Order[] array of orders
  */
-
-use Steamy\Model\Client;
-use Steamy\Model\Order;
 
 ?>
 
@@ -95,18 +92,18 @@ use Steamy\Model\Order;
 
                 <?php
                 foreach ($orders as $order) {
-                    $date = htmlspecialchars($order->created_date);
-                    $id = filter_var($order->order_id, FILTER_SANITIZE_NUMBER_INT);
-                    $storeid = filter_var($order->store_id, FILTER_SANITIZE_NUMBER_INT);
-                    $status = htmlspecialchars($order->status);
-                    $totalPrice = $order->total_price;
+                    $date = htmlspecialchars($order->getCreatedDate()->format('Y-m-d H:i:s'));
+                    $id = filter_var($order->getOrderID(), FILTER_SANITIZE_NUMBER_INT);
+                    $storeid = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+                    $status = htmlspecialchars($order->getStatus()->value);
+                    $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
                     echo <<< EOL
                     <tr>
                         <td>$id</td>
                         <td>$storeid</td>
                         <td>$date</td>
                         <td>$status</td>
-                        <td>$totalPrice</td>
+                        <td>\$$totalPrice</td>
                         <td class="grid">
                             <button>cancel</button>
                         </td>

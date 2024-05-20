@@ -10,7 +10,6 @@ use Exception;
 use PDOException;
 use Steamy\Core\Model;
 use Steamy\Core\Utility;
-use Steamy\Core\Database;
 
 class Order
 {
@@ -267,22 +266,20 @@ class Order
     }
 
     /**
-    * Retrieves a list of orders for a specific client, including the total price of products in each order.
+    * Retrieves a list of orders for a specific client.
     *
     * @param int $client_id The ID of the client whose orders are to be retrieved.
     * @param int $limit The maximum number of orders to retrieve. Defaults to 5.
-    * @return array An array of stdClass objects, each containing order details and the total price.
+    * @return Order[] An array of Order objects.
     * @throws PDOException If there is an error executing the database query.
     */
     public static function getOrdersByClientId(int $client_id, int $limit = 5): array
     {
         $db = self::connect();
         $stmt = $db->prepare('
-        SELECT o.order_id, o.created_date, o.status, o.store_id, SUM(op.unit_price * op.quantity) AS total_price
+        SELECT o.order_id, o.created_date, o.status, o.store_id, o.pickup_date, o.client_id
         FROM `order` o
-        JOIN order_product op ON o.order_id = op.order_id
         WHERE o.client_id = :client_id
-        GROUP BY o.order_id, o.created_date, o.status, o.store_id
         ORDER BY o.created_date DESC
         LIMIT :limit;
         ');
@@ -290,7 +287,26 @@ class Order
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
+        $orderDataArray = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $orders = [];
+
+        foreach ($orderDataArray as $orderData) {
+            // Get the line items for this order
+            $lineItems = self::getOrderProducts((int)$orderData->order_id);
+
+            // Create an Order object with the retrieved data
+            $orders[] = new Order(
+                store_id: (int)$orderData->store_id,
+                client_id: (int)$orderData->client_id,
+                line_items: $lineItems,
+                order_id: (int)$orderData->order_id,
+                pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
+                status: OrderStatus::from($orderData->status),
+                created_date: Utility::stringToDate($orderData->created_date),
+            );
+        }
+
+        return $orders;
     }
 
 
