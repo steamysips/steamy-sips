@@ -12,7 +12,7 @@ use Steamy\Core\Utility;
 class Review
 {
     use Model;
-
+    protected string $table = 'review';
     private int $review_id;
     private int $product_id;
 
@@ -86,6 +86,74 @@ class Review
             rating: $result->rating,
             created_date: Utility::stringToDate($result->created_date)
         );
+    }
+
+    /**
+     * Retrieve all reviews from the database.
+     *
+     * @return array Array of Review objects representing all reviews in the database.
+     */
+    public static function getAll(): array
+    {
+        // Prepare and execute SQL query to retrieve all reviews
+        $query = "SELECT * FROM review";
+        $results = self::query($query);
+
+        // Fetch all reviews as Review objects
+        $reviews = [];
+        foreach ($results as $result) {
+            $obj = new Review(
+                product_id: $result->product_id,
+                client_id: $result->client_id,
+                text: $result->text,
+                rating: $result->rating,
+                created_date: Utility::stringToDate($result->created_date)
+            );
+            $obj->setReviewID($result->review_id);
+            $reviews[] = $obj;
+        }
+
+        return $reviews;
+    }
+
+    /**
+     * Retrieves all reviews for a particular product from the database.
+     *
+     * @param int $productId The ID of the product.
+     * @return array An array containing all reviews for the specified product.
+     */
+    public static function getAllReviewsForProduct(int $productId): array
+    {
+        $query = "SELECT * FROM review WHERE product_id = :product_id";
+        $params = ['product_id' => $productId];
+        return self::query($query, $params);
+    }
+
+    /**
+     * Updates review record in database but does not update the object itself.
+     * @param array $newReviewData Associative array indexed by attribute name.
+     * The values are the new review data.
+     * @return bool Success or not
+     */
+    public function updateReview (array $newReviewData): bool
+    {
+        // remove review_id (if present) from user data
+        unset($newReviewData['review_id']);
+
+        return $this->update($newReviewData, ['review_id' => $this->review_id], $this->table);
+    }
+
+    /**
+     * Deletes a review with the specified ID from the database.
+     *
+     * @param int $reviewId The ID of the review to delete.
+     * @return bool True if the deletion was successful, false otherwise.
+     */
+    public static function deleteReview(int $reviewId): bool
+    {
+        $query = "DELETE FROM review WHERE review_id = :review_id";
+        $params = ['review_id' => $reviewId];
+        return self::query($query, $params);
     }
 
     public function getReviewID(): int
