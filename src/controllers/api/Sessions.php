@@ -11,7 +11,14 @@ use Steamy\Model\Administrator;
  */
 class Sessions
 {
-    private function handleLogin(): void
+
+    public static array $routes = [
+        'POST' => [
+            '/api/v1/products' => 'handleLogin',
+        ]
+    ];
+
+    public function handleLogin(): void
     {
         $email = trim($_POST['email'] ?? "");
         $password = trim($_POST['password'] ?? "");
@@ -38,17 +45,5 @@ class Sessions
 
         $_SESSION['admin_email'] = $email;
         session_regenerate_id();
-    }
-
-    public function index(): void
-    {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'POST':
-                $this->handleLogin();
-                break;
-            default:
-                http_response_code(400);
-                die();
-        }
     }
 }
