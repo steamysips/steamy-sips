@@ -17,6 +17,7 @@ class Products
             '/api/v1/products' => 'getAllProducts',
             '/api/v1/products/categories' => 'getProductCategories',
             '/api/v1/products/{id}' => 'getProductById',
+            '/api/v1/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
             '/api/v1/products' => 'createProduct',
@@ -210,5 +211,24 @@ class Products
             http_response_code(500); // Internal Server Error
             echo json_encode(['error' => 'Failed to update product']);
         }
+    }
+
+    /**
+     * Get all reviews for a particular product by its ID.
+     */
+    public function getAllReviewsForProduct(): void
+    {
+        // Get product ID from URL
+        $productId = (int)Utility::splitURL()[3];
+
+        // Instantiate the Reviews controller
+        $reviewsController = new Reviews();
+
+        // Call the method to get all reviews for the specified product
+        // Since the Reviews controller method expects the ID to be in the URL, we'll set it directly
+        $_SERVER['REQUEST_URI'] = "/api/v1/products/$productId/reviews";
+
+        // Call the method from the Reviews controller
+        $reviewsController->getAllReviewsForProduct();
     }
 }
