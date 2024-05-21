@@ -12,10 +12,27 @@ class Products
 {
     use Model;
 
+    public static array $routes = [
+        'GET' => [
+            '/api/v1/products' => 'getAllProducts',
+            '/api/v1/products/categories' => 'getProductCategories',
+            '/api/v1/products/{id}' => 'getProductById',
+        ],
+        'POST' => [
+            '/api/v1/products' => 'createProduct',
+        ],
+        'PUT' => [
+            '/api/v1/products/{id}' => 'updateProduct',
+        ],
+        'DELETE' => [
+            '/api/v1/products/{id}' => 'deleteProduct',
+        ]
+    ];
+
     /**
      * Get the list of all products available in the store.
      */
-    private function getAllProducts(): void
+    public function getAllProducts(): void
     {
         // Retrieve all products from the database
         $allProducts = Product::getAll();
@@ -33,7 +50,7 @@ class Products
     /**
      * Get the details of a specific product by its ID.
      */
-    private function getProductById(): void
+    public function getProductById(): void
     {
         $productId = (int)Utility::splitURL()[3];
 
@@ -55,7 +72,7 @@ class Products
     /**
      * Get the list of product categories.
      */
-    private function getProductCategories(): void
+    public function getProductCategories(): void
     {
         // Retrieve all product categories from the database
         $categories = Product::getCategories();
@@ -67,7 +84,7 @@ class Products
     /**
      * Create a new product entry in the database.
      */
-    private function createProduct(): void
+    public function createProduct(): void
     {
         // Retrieve POST data
         $postData = $_POST;
@@ -126,7 +143,7 @@ class Products
     /**
      * Delete a product with the specified ID.
      */
-    private function deleteProduct(): void
+    public function deleteProduct(): void
     {
         $productId = (int)Utility::splitURL()[3];
 
@@ -155,7 +172,7 @@ class Products
     /**
      * Update the details of a product with the specified ID.
      */
-    private function updateProduct(): void
+    public function updateProduct(): void
     {
         $productId = (int)Utility::splitURL()[3];
 
@@ -192,67 +209,6 @@ class Products
             // Failed to update product
             http_response_code(500); // Internal Server Error
             echo json_encode(['error' => 'Failed to update product']);
-        }
-    }
-
-    private function getHandler($routes): ?string
-    {
-        foreach ($routes[$_SERVER['REQUEST_METHOD']] as $route => $handler) {
-            $pattern = str_replace('/', '\/', $route); // Convert to regex pattern
-            $pattern = preg_replace(
-                '/\{([a-zA-Z0-9_]+)\}/',
-                '(?P<$1>[^\/]+)',
-                $pattern
-            ); // Replace placeholders with regex capture groups
-            $pattern = '/^' . $pattern . '$/';
-
-            if (preg_match($pattern, '/' . Utility::getURL(), $matches)) {
-                return $handler;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Main entry point for the Products API.
-     */
-    public function index(): void
-    {
-        $routes = [
-            'GET' => [
-                '/api/v1/products' => 'getAllProducts',
-                '/api/v1/products/categories' => 'getProductCategories',
-                '/api/v1/products/{id}' => 'getProductById',
-            ],
-            'POST' => [
-                '/api/v1/products' => 'createProduct',
-            ],
-            'PUT' => [
-                '/api/v1/products/{id}' => 'updateProduct',
-            ],
-            'DELETE' => [
-                '/api/v1/products/{id}' => 'deleteProduct',
-            ]
-        ];
-
-        // Handle the request
-        $handler = $this->getHandler($routes);
-
-        if ($handler !== null) {
-            $functionName = $handler;
-            if (method_exists($this, $functionName)) {
-                call_user_func(array($this, $functionName));
-            } else {
-                // Handle function not found
-                http_response_code(404);
-                echo "Function Not Found";
-                die();
-            }
-        } else {
-            // Handle route not found
-            http_response_code(404);
-            echo "Route Not Found";
-            die();
         }
     }
 }
