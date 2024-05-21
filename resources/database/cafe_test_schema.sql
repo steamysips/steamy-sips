@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `administrator`;
 CREATE TABLE `administrator` (
                                  `user_id` int(11) unsigned NOT NULL,
                                  `job_title` varchar(255) NOT NULL,
-                                 `is_super_admin` tinyint(1) DEFAULT 0,
+                                 `is_super_admin` tinyint(1) NOT NULL DEFAULT 0,
                                  PRIMARY KEY (`user_id`),
                                  CONSTRAINT `admin_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
                                  CONSTRAINT `job_title_length` CHECK (char_length(`job_title`) > 3)
@@ -51,7 +51,7 @@ CREATE TABLE `client` (
                           `user_id` int(11) unsigned NOT NULL,
                           `street` varchar(255) NOT NULL,
                           `city` varchar(255) NOT NULL,
-                          `district_id` int(11) unsigned DEFAULT NULL,
+                          `district_id` int(11) unsigned NOT NULL,
                           PRIMARY KEY (`user_id`),
                           KEY `client_district_district_id_fk` (`district_id`),
                           CONSTRAINT `client_district_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`) ON UPDATE CASCADE,
@@ -74,7 +74,7 @@ CREATE TABLE `comment` (
                            `created_date` datetime NOT NULL DEFAULT current_timestamp(),
                            `parent_comment_id` int(10) unsigned DEFAULT NULL,
                            `user_id` int(10) unsigned NOT NULL,
-                           `review_id` int(10) unsigned DEFAULT NULL,
+                           `review_id` int(10) unsigned NOT NULL COMMENT 'ID of review under which comment is found	',
                            PRIMARY KEY (`comment_id`),
                            KEY `comment_comment_comment_id_fk` (`parent_comment_id`),
                            KEY `comment_user_user_id_fk` (`user_id`),
@@ -94,10 +94,9 @@ DROP TABLE IF EXISTS `district`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `district` (
                             `district_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                            `name` varchar(30) NOT NULL,
+                            `name` enum('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems') NOT NULL,
                             PRIMARY KEY (`district_id`),
-                            UNIQUE KEY `name` (`name`),
-                            CONSTRAINT `name_values` CHECK (`name` in ('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems'))
+                            UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -110,11 +109,11 @@ DROP TABLE IF EXISTS `order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `order` (
                          `order_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                         `status` varchar(20) DEFAULT 'pending',
-                         `created_date` datetime DEFAULT current_timestamp(),
-                         `pickup_date` datetime DEFAULT NULL,
+                         `status` enum('pending','cancelled','completed') NOT NULL DEFAULT 'pending',
+                         `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+                         `pickup_date` datetime DEFAULT NULL COMMENT 'Date when client picks up his order at the store',
                          `client_id` int(11) unsigned DEFAULT NULL,
-                         `store_id` int(10) unsigned DEFAULT NULL,
+                         `store_id` int(10) unsigned NOT NULL,
                          PRIMARY KEY (`order_id`),
                          KEY `order_fk` (`client_id`),
                          KEY `order_store_store_id_fk` (`store_id`),
@@ -134,16 +133,14 @@ DROP TABLE IF EXISTS `order_product`;
 CREATE TABLE `order_product` (
                                  `order_id` int(11) unsigned NOT NULL,
                                  `product_id` int(11) unsigned NOT NULL,
-                                 `cup_size` varchar(20) NOT NULL,
-                                 `milk_type` varchar(20) NOT NULL,
-                                 `quantity` int(11) unsigned DEFAULT NULL,
-                                 `unit_price` decimal(10,2) DEFAULT NULL,
+                                 `cup_size` enum('small','medium','large') NOT NULL,
+                                 `milk_type` enum('almond','coconut','oat','soy') NOT NULL,
+                                 `quantity` int(11) unsigned NOT NULL,
+                                 `unit_price` decimal(10,2) NOT NULL COMMENT 'Unit price of product',
                                  PRIMARY KEY (`order_id`,`product_id`,`cup_size`,`milk_type`),
                                  KEY `order_product_product_product_id_fk` (`product_id`),
                                  CONSTRAINT `order_product_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
                                  CONSTRAINT `order_product_product_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-                                 CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
-                                 CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy')),
                                  CONSTRAINT `quantity_range` CHECK (`quantity` > 0),
                                  CONSTRAINT `unit_price_range` CHECK (`unit_price` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -161,7 +158,7 @@ CREATE TABLE `password_change_request` (
                                            `user_id` int(11) unsigned NOT NULL,
                                            `token_hash` varchar(255) NOT NULL,
                                            `expiry_date` datetime NOT NULL,
-                                           `used` tinyint(1) NOT NULL DEFAULT 0,
+                                           `used` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Whether token has been used once	',
                                            PRIMARY KEY (`request_id`),
                                            KEY `request_fk` (`user_id`),
                                            CONSTRAINT `request_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -178,12 +175,12 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
                            `product_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                            `name` varchar(255) NOT NULL,
-                           `calories` int(11) unsigned DEFAULT NULL CHECK (`calories` >= 0),
+                           `calories` int(11) unsigned NOT NULL,
                            `img_url` varchar(255) NOT NULL,
                            `img_alt_text` varchar(150) NOT NULL,
                            `category` varchar(50) NOT NULL,
                            `price` decimal(10,2) NOT NULL,
-                           `description` text DEFAULT NULL CHECK (char_length(`description`) > 0),
+                           `description` text NOT NULL CHECK (char_length(`description`) > 0),
                            `created_date` datetime NOT NULL DEFAULT current_timestamp(),
                            PRIMARY KEY (`product_id`),
                            CONSTRAINT `name_length` CHECK (char_length(`name`) > 2),
@@ -205,8 +202,8 @@ CREATE TABLE `review` (
                           `rating` int(11) unsigned NOT NULL,
                           `created_date` datetime NOT NULL DEFAULT current_timestamp(),
                           `text` varchar(2000) NOT NULL,
-                          `client_id` int(11) unsigned DEFAULT NULL,
-                          `product_id` int(11) unsigned DEFAULT NULL,
+                          `client_id` int(11) unsigned NOT NULL,
+                          `product_id` int(11) unsigned NOT NULL,
                           PRIMARY KEY (`review_id`),
                           KEY `review_1fk` (`client_id`),
                           KEY `review_2fk` (`product_id`),
@@ -266,10 +263,10 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
                         `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                         `email` varchar(320) NOT NULL,
-                        `first_name` varchar(255) DEFAULT NULL,
-                        `password` varchar(255) DEFAULT NULL,
+                        `first_name` varchar(255) NOT NULL,
+                        `password` varchar(255) NOT NULL,
                         `phone_no` varchar(255) NOT NULL,
-                        `last_name` varchar(255) DEFAULT NULL,
+                        `last_name` varchar(255) NOT NULL,
                         PRIMARY KEY (`user_id`),
                         UNIQUE KEY `unique_email` (`email`),
                         CONSTRAINT `email_format` CHECK (`email` like '%@%.%'),
@@ -289,4 +286,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15 20:45:06
+-- Dump completed on 2024-05-21  8:07:34
