@@ -9,6 +9,7 @@ use Steamy\Core\Utility;
 use Steamy\Model\Client;
 use Steamy\Model\District;
 use Steamy\Model\Location;
+use Steamy\Model\Order;
 
 class Profile
 {
@@ -218,17 +219,10 @@ class Profile
             return;
         }
 
-        // TODO: fetch 5 latest orders
-        $this->view_data["orders"] = array_fill(
-            0,
-            5,
-            (object)[
-                'date' => '16/01/2024',
-                'id' => 4343,
-                'cost' => 100.00,
-                'status' => 'Completed'
-            ]
-        );
+        // Fetch orders for the signed-in client
+        $orders = Order::getOrdersByClientId($this->signed_client->getUserID());
+
+        $this->view_data["orders"] = $orders;
 
         // initialize user details for template
         $this->view_data["name"] = $this->signed_client->getFirstName() . " " . $this->signed_client->getLastName();
