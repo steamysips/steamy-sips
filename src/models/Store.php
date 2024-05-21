@@ -146,6 +146,30 @@ class Store
         return $errors;
     }
 
+    /**
+     * Increments stock of a product
+     * @param int $product_id ID of product whose stock will increase
+     * @param int $quantity Amount by which stock increases
+     * @return bool Success or not
+     */
+    public function addProductStock(int $product_id, int $quantity): bool
+    {
+        $conn = self::connect();
+        $query = "INSERT INTO store_product (store_id, product_id, stock_level) VALUES (:store_id, :product_id, :quantity)
+                  ON DUPLICATE KEY UPDATE stock_level = stock_level + :quantity";
+        $params = ['store_id' => $this->store_id, 'product_id' => $product_id, 'quantity' => $quantity];
+        $stm = $conn->prepare($query);
+        $stm->execute($params);
+
+        $rows_affected = $stm->rowCount();
+        $conn = null;
+        return $rows_affected === 1;
+    }
+
+    /**
+     * @param int $product_id
+     * @return int Stock level of product. Defaults to 0.
+     */
     public function getProductStock(int $product_id): int
     {
         $query = "SELECT stock_level FROM store_product WHERE store_id = :store_id AND product_id = :product_id;";
@@ -159,6 +183,9 @@ class Store
         }
     }
 
+    /**
+     * @return Product[] Array of products which store sells.
+     */
     public function getProducts(): array
     {
         $query = "SELECT p.* FROM product p JOIN store_product sp ON p.product_id = sp.product_id WHERE sp.store_id = :store_id;";
