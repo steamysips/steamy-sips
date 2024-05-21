@@ -19,6 +19,7 @@ use Steamy\Model\District;
  * @var string $defaultConfirmPassword
  * @var array $errors list of errors in form after submission
  * @var District[] $districts list of all district objects
+ * @var bool $registration_is_successful
  */
 
 
@@ -220,3 +221,18 @@ $ariaInvalid = function (string $input_name) use ($errors, $form_submitted) {
     }
   }
 </script>
+
+<dialog <?= $registration_is_successful ? "open" : "" ?>>
+    <article>
+        <h3>Successfully registered! 🎉</h3>
+        <p>Thank you for joining Steamy Sips. Your account has been successfully created.</p>
+        <footer>
+            <a href="/login"
+               role="button"
+               data-target="my-modal"
+            >
+                Return to sign in
+            </a>
+        </footer>
+    </article>
+</dialog>
