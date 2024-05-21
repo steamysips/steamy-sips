@@ -64,7 +64,7 @@
             <child catalog="cafe" column="district_id" foreignKey="client_district_district_id_fk" implied="false" onDeleteCascade="false" table="client"/>
             <child catalog="cafe" column="district_id" foreignKey="store_district_district_id_fk" implied="false" onDeleteCascade="false" table="store"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="30" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="name" nullable="false" remarks="" size="18" type="enum('Moka', 'Port Louis', 'Flacq', 'Curepipe', 'Black River', 'Savanne', 'Grand Port', 'Riviere du Rempart', 'Pamplemousses', 'Mahebourg', 'Plaines Wilhems')" typeCode="1"/>
          <primaryKey column="district_id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="district_id"/>
