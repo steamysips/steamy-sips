@@ -5,9 +5,12 @@ declare(strict_types=1);
 /**
  * The following attributes are defined in controllers/Profile.php
  *
- * @var $client Client signed in client
- * @var $orders Order[] array of orders
+ * @var Client $client signed in client
+ * @var Order[] $orders array of orders
  */
+
+use Steamy\Model\Client;
+use Steamy\Model\Order;
 
 ?>
 
@@ -95,7 +98,7 @@ declare(strict_types=1);
                     $date = htmlspecialchars($order->getCreatedDate()->format('Y-m-d H:i:s'));
                     $id = filter_var($order->getOrderID(), FILTER_SANITIZE_NUMBER_INT);
                     $storeid = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
-                    $status = htmlspecialchars($order->getStatus()->value);
+                    $status = htmlspecialchars(ucfirst($order->getStatus()->value));
                     $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
                     echo <<< EOL
                     <tr>
@@ -108,7 +111,7 @@ declare(strict_types=1);
                             <button>cancel</button>
                         </td>
                     </tr>
-                EOL;
+                    EOL;
                 }
 
                 ?>
