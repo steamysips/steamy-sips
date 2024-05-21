@@ -21,6 +21,9 @@ class OrderProductTest extends TestCase
     private ?Product $dummy_product;
     private array $line_items = [];
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -51,14 +54,30 @@ class OrderProductTest extends TestCase
         }
 
         // Create a dummy client
-        $this->client = new Client("john@example.com", "John", "Doe", "john_doe", "password", new Location("Royal", "Curepipe", 1, 50, 50));
+        $this->client = new Client(
+            "john@example.com",
+            "John",
+            "Doe",
+            "john_doe",
+            "password",
+            new Location("Royal", "Curepipe", 1, 50, 50)
+        );
         $success = $this->client->save();
         if (!$success) {
             throw new Exception('Unable to save client');
         }
 
         // Create a dummy product
-        $this->dummy_product = new Product("Latte", 50, "latte.jpeg", "A delicious latte", "Beverage", 5.0, "A cup of latte", new DateTime());
+        $this->dummy_product = new Product(
+            "Latte",
+            50,
+            "latte.jpeg",
+            "A delicious latte",
+            "Beverage",
+            5.0,
+            "A cup of latte",
+            new DateTime()
+        );
         $success = $this->dummy_product->save();
         if (!$success) {
             throw new Exception('Unable to save product');
@@ -98,7 +117,9 @@ class OrderProductTest extends TestCase
         $this->line_items = [];
 
         // Clear all data from relevant tables
-        self::query('DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;');
+        self::query(
+            'DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;'
+        );
     }
 
     public function testValidate(): void
@@ -123,7 +144,10 @@ class OrderProductTest extends TestCase
     public function testGetByID(): void
     {
         // Assuming getByID is a method that retrieves an OrderProduct by order ID and product ID
-        $retrievedOrderProduct = OrderProduct::getByID($this->dummy_order->getOrderID(), $this->dummy_product->getProductID());
+        $retrievedOrderProduct = OrderProduct::getByID(
+            $this->dummy_order->getOrderID(),
+            $this->dummy_product->getProductID()
+        );
 
         $this->assertNotNull($retrievedOrderProduct);
         $this->assertEquals($this->dummy_order->getOrderID(), $retrievedOrderProduct->getOrderID());

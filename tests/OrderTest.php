@@ -21,6 +21,9 @@ class OrderTest extends TestCase
     private ?Store $dummy_store = null;
     private array $line_items = [];
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -51,20 +54,45 @@ class OrderTest extends TestCase
         }
 
         // Create a dummy client
-        $this->client = new Client("john@example.com", "John", "Doe", "john_doe", "password", new Location("Royal", "Curepipe", 1, 50, 50));
+        $this->client = new Client(
+            "john@example.com",
+            "John",
+            "Doe",
+            "john_doe",
+            "password",
+            new Location("Royal", "Curepipe", 1, 50, 50)
+        );
         $success = $this->client->save();
         if (!$success) {
             throw new Exception('Unable to save client');
         }
 
         // Create dummy products
-        $product1 = new Product("Latte", 50, "latte.jpeg", "A delicious latte", "Beverage", 5.0, "A cup of latte", new DateTime());
+        $product1 = new Product(
+            "Latte",
+            50,
+            "latte.jpeg",
+            "A delicious latte",
+            "Beverage",
+            5.0,
+            "A cup of latte",
+            new DateTime()
+        );
         $success = $product1->save();
         if (!$success) {
             throw new Exception('Unable to save product 1');
         }
 
-        $product2 = new Product("Espresso", 30, "espresso.jpeg", "A strong espresso", "Beverage", 3.0, "A cup of espresso", new DateTime());
+        $product2 = new Product(
+            "Espresso",
+            30,
+            "espresso.jpeg",
+            "A strong espresso",
+            "Beverage",
+            3.0,
+            "A cup of espresso",
+            new DateTime()
+        );
         $success = $product2->save();
         if (!$success) {
             throw new Exception('Unable to save product 2');
@@ -96,7 +124,9 @@ class OrderTest extends TestCase
         $this->line_items = [];
 
         // Clear all data from relevant tables
-        self::query('DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;');
+        self::query(
+            'DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;'
+        );
     }
 
     public function testConstructor(): void
@@ -132,6 +162,9 @@ class OrderTest extends TestCase
         self::assertEquals($this->dummy_order->getStoreID(), $result['store_id']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSave(): void
     {
         $success = $this->dummy_order->save();
@@ -156,6 +189,9 @@ class OrderTest extends TestCase
         $order->save();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testAddLineItem(): void
     {
         $order = new Order($this->dummy_store->getStoreID(), $this->client->getUserID());
@@ -163,6 +199,9 @@ class OrderTest extends TestCase
         self::assertCount(1, $order->getLineItems());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetByID(): void
     {
         $this->dummy_order->save();
@@ -179,6 +218,9 @@ class OrderTest extends TestCase
         self::assertNull(Order::getByID(-1));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCalculateTotalPrice(): void
     {
         $this->dummy_order->save();
