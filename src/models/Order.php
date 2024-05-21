@@ -122,7 +122,7 @@ class Order
         $update_stock_stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
-            if (!$line_item->validate()) {
+            if (!empty($line_item->validate())) {
                 // line item contains invalid attributes
                 $conn->rollBack();
                 $conn = null;
@@ -192,9 +192,14 @@ class Order
      *
      * @param OrderProduct $orderProduct
      * @return void
+     * @throws Exception
      */
     public function addLineItem(OrderProduct $orderProduct): void
     {
+        $errors = $orderProduct->validate();
+        if (!empty($errors)) {
+            throw new Exception("Invalid line item: " . json_encode($errors));
+        }
         $this->line_items[] = $orderProduct;
     }
 
