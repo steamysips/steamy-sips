@@ -1,0 +1,56 @@
+name: Generate schema
+
+on:
+  push:
+    paths:
+      - resources/database/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_USER: root # do not change
+      DB_PASSWORD: root # do not change
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup database
+        run: |
+          mysql -V
+          sudo /etc/init.d/mysql start
+          mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 < "resources/database/cafe_schema.sql"
+          mysql -e "USE cafe; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
+
+      - name: Install spyschema dependencies
+        run: |
+          wget https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar
+          wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.4.0.tar.gz
+          tar -xvzf mysql-connector-j-8.4.0.tar.gz
+
+      - name: Output dependencies information
+        run: |
+            mysql --version
+            java --version
+
+      - name: Generate schema spy website
+        run: |
+          java -jar schemaspy-6.2.4.jar \
+          -t mysql \
+          -dp mysql-connector-j-8.4.0/mysql-connector-j-8.4.0.jar \
+          -db cafe \
+          -host localhost \
+          -u $DB_USER \
+          -p $DB_PASSWORD \
+          -o dist \
+          -s cafe \
+          -vizjs
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

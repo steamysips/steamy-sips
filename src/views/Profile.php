@@ -3,14 +3,15 @@
 declare(strict_types=1);
 
 /**
- * The following attributes are defined in controllers/Profile.php
+ * The following attributes are defined in controllers/Profile.php:
  *
- * @var $client Client signed in client
- * @var $show_account_deletion_confirmation bool Whether to display a confirmation dialog for account deletion
- * @var $orders array array of orders
+ * @var Client $client signed in client
+ * @var Order[] $orders array of orders
+ * @var bool $show_account_deletion_confirmation Whether to display a confirmation dialog for account deletion
  */
 
 use Steamy\Model\Client;
+use Steamy\Model\Order;
 
 ?>
 
@@ -85,20 +86,21 @@ use Steamy\Model\Client;
         <figure>
             <table>
                 <tr>
-                    <th>Date</th>
                     <th>Order ID</th>
-                    <th>Total cost</th>
+                    <th>Store ID</th>
+                    <th>Date</th>
                     <th>Status</th>
+                    <th>Total Price</th>
                     <th>Actions</th>
                 </tr>
 
                 <?php
-
                 foreach ($orders as $order) {
-                    $date = htmlspecialchars($order->date);
-                    $id = filter_var($order->id, FILTER_SANITIZE_NUMBER_INT);
-                    $cost = filter_var($order->cost, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-                    $status = htmlspecialchars($order->status);
+                    $date = htmlspecialchars($order->getCreatedDate()->format('Y-m-d H:i:s'));
+                    $id = filter_var($order->getOrderID(), FILTER_SANITIZE_NUMBER_INT);
+                    $storeid = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+                    $status = htmlspecialchars(ucfirst($order->getStatus()->value));
+                    $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
 
                     // Determine button states
                     $cancelDisabled = $status === 'completed' ? 'disabled' : '';
@@ -106,10 +108,11 @@ use Steamy\Model\Client;
 
                     echo <<< EOL
                     <tr>
-                        <td>$date</td>
                         <td>$id</td>
-                        <td>$cost</td>
+                        <td>$storeid</td>
+                        <td>$date</td>
                         <td>$status</td>
+                        <td>\$$totalPrice</td>
                         <td class="grid">
                             <form method="post" action="/profile/cancelOrder">
                                 <input type="hidden" name="order_id" value="$id">
@@ -123,7 +126,6 @@ use Steamy\Model\Client;
                     </tr>
                     EOL;
                 }
-
 
                 ?>
 
@@ -215,9 +217,8 @@ use Steamy\Model\Client;
         },
     );
   });
-
-
 </script>
+
 <?php
 if ($show_account_deletion_confirmation) : ?>
     <dialog open>

@@ -29,7 +29,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (1,'Royal Road','Rochester',2),(2,'Main Road','Curepipe',9),(10,'Main Road','Curepipe',9);
+INSERT INTO `client` VALUES (1,'Royal Road','Rochester',2),(2,'Main Road','Curepipe',9);
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 

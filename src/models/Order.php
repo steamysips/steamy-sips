@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use PDO;
 use DateTime;
 use Exception;
 use PDOException;
@@ -121,7 +122,7 @@ class Order
         $update_stock_stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
-            if (!$line_item->validate()) {
+            if (!empty($line_item->validate())) {
                 // line item contains invalid attributes
                 $conn->rollBack();
                 $conn = null;
@@ -191,9 +192,14 @@ class Order
      *
      * @param OrderProduct $orderProduct
      * @return void
+     * @throws Exception
      */
     public function addLineItem(OrderProduct $orderProduct): void
     {
+        $errors = $orderProduct->validate();
+        if (!empty($errors)) {
+            throw new Exception("Invalid line item: " . json_encode($errors));
+        }
         $this->line_items[] = $orderProduct;
     }
 
@@ -289,6 +295,52 @@ class Order
         }
 
         return $order_products_arr;
+    }
+
+    /**
+     * Retrieves a list of orders for a specific client.
+     *
+     * @param int $client_id The ID of the client whose orders are to be retrieved.
+     * @param int $limit The maximum number of orders to retrieve. Defaults to 5.
+     * @return Order[] An array of Order objects ordered in descending order of created_date
+     * @throws PDOException If there is an error executing the database query.
+     */
+    public static function getOrdersByClientId(int $client_id, int $limit = 5): array
+    {
+        $db = self::connect();
+        $stmt = $db->prepare(
+            '
+        SELECT o.order_id, o.created_date, o.status, o.store_id, o.pickup_date, o.client_id
+        FROM `order` o
+        WHERE o.client_id = :client_id
+        ORDER BY o.created_date DESC
+        LIMIT :limit;
+        '
+        );
+        $stmt->bindParam(':client_id', $client_id, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $orderDataArray = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $orders = [];
+
+        foreach ($orderDataArray as $orderData) {
+            // Get the line items for this order
+            $lineItems = self::getOrderProducts((int)$orderData->order_id);
+
+            // Create an Order object with the retrieved data
+            $orders[] = new Order(
+                store_id: (int)$orderData->store_id,
+                client_id: (int)$orderData->client_id,
+                line_items: $lineItems,
+                order_id: (int)$orderData->order_id,
+                pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
+                status: OrderStatus::from($orderData->status),
+                created_date: Utility::stringToDate($orderData->created_date),
+            );
+        }
+        $db = null;
+        return $orders;
     }
 
 
