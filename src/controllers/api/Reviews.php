@@ -50,8 +50,7 @@ class Reviews
      */
     public function getAllReviewsForProduct(): void
     {
-        $productId = (int)Utility::splitURL()[4];
-
+        $productId = (int)Utility::splitURL()[3];
         // Check if product exists
         if (ProductModel::getById($productId) === null) {
             // product not found, return 404
