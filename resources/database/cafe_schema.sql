@@ -94,10 +94,9 @@ DROP TABLE IF EXISTS `district`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `district` (
   `district_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL,
+  `name` enum('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems') NOT NULL,
   PRIMARY KEY (`district_id`),
-  UNIQUE KEY `name` (`name`),
-  CONSTRAINT `name_values` CHECK (`name` in ('Moka','Port Louis','Flacq','Curepipe','Black River','Savanne','Grand Port','Riviere du Rempart','Pamplemousses','Mahebourg','Plaines Wilhems'))
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -134,16 +133,14 @@ DROP TABLE IF EXISTS `order_product`;
 CREATE TABLE `order_product` (
   `order_id` int(11) unsigned NOT NULL,
   `product_id` int(11) unsigned NOT NULL,
-  `cup_size` enum('small','medium','large') NOT NULL CHECK (`cup_size` in ('small','medium','large')),
-  `milk_type` enum('almond','coconut','oat','soy') NOT NULL CHECK (`milk_type` in ('almond','coconut','oat','soy')),
+  `cup_size` enum('small','medium','large') NOT NULL,
+  `milk_type` enum('almond','coconut','oat','soy') NOT NULL,
   `quantity` int(11) unsigned NOT NULL,
   `unit_price` decimal(10,2) NOT NULL COMMENT 'Unit price of product',
   PRIMARY KEY (`order_id`,`product_id`,`cup_size`,`milk_type`),
   KEY `order_product_product_product_id_fk` (`product_id`),
   CONSTRAINT `order_product_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
   CONSTRAINT `order_product_product_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `cup_size` CHECK (`cup_size` in ('small','medium','large')),
-  CONSTRAINT `milk_type` CHECK (`milk_type` in ('almond','coconut','oat','soy')),
   CONSTRAINT `quantity_range` CHECK (`quantity` > 0),
   CONSTRAINT `unit_price_range` CHECK (`unit_price` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -178,7 +175,7 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `product_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `calories` int(11) unsigned NOT NULL CHECK (`calories` >= 0),
+  `calories` int(11) unsigned NOT NULL,
   `img_url` varchar(255) NOT NULL,
   `img_alt_text` varchar(150) NOT NULL,
   `category` varchar(50) NOT NULL,
@@ -289,4 +286,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-20 21:56:52
+-- Dump completed on 2024-05-21  8:07:34
