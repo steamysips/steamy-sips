@@ -38,8 +38,13 @@ trait Controller
         return $script_str;
     }
 
+    /**
+     * @return Client|null Client account of currently logged-in user. Null if no one is logged in.
+     */
     private function getSignedInClient(): ?Client
     {
+        // $_SESSION['user'] was set to the client email on login
+        // if it is empty, no one is logged in
         if (empty($_SESSION['user'])) {
             return null;
         }

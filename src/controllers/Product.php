@@ -21,7 +21,7 @@ class Product
 
     private ?ProductModel $product = null; // product to be displayed
     private array $view_data;
-    private ?User $signed_user = null; // currently logged-in user
+    private ?User $signed_user; // currently logged-in user
 
     public function __construct()
     {
@@ -38,13 +38,10 @@ class Product
         // get product id from URL
         $product_id = filter_var(Utility::splitURL()[2], FILTER_VALIDATE_INT);
 
-        // check if user is logged in
-        $reviewer_email = $_SESSION['user'] ?? "";
-
         // get user details
-        $user_account = Client::getByEmail($reviewer_email);
-        if (!empty($user_account)) {
-            $this->signed_user = $user_account;
+        $this->signed_user = $this->getSignedInClient();
+
+        if (!empty($this->signed_user)) {
             $this->view_data["signed_in_user"] = true;
         }
 
