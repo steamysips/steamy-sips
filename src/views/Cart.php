@@ -16,24 +16,11 @@ use Steamy\Model\Store;
 ?>
 <dialog id="my-modal">
     <article>
-        <a href="#"
-           aria-label="Close"
-           class="close"
-           data-target="my-modal"
-        >
-        </a>
         <h3>Checkout successful! ✨</h3>
+        <p>Your order has been successfully placed and an email has been sent to you.</p>
         <footer>
-            <a href="#"
-               role="button"
-               class="secondary"
-               data-target="my-modal"
-            >
-                Ok
-            </a>
             <a href="/profile"
                role="button"
-               data-target="my-modal"
             >
                 View order
             </a>
