@@ -258,7 +258,7 @@ if (!empty($comment_form_info)): ?>
 
                 <textarea name="comment" placeholder="Your comment" cols="20" rows="5"></textarea>
                 <small style="color:red"><?= $comment_form_info['error'] ?? "" ?></small>
-                <button class="secondary" type="submit">Submit</button>
+                <button class="secondary" type="submit" <?= $signed_in_user ? "" : "disabled" ?>>Submit</button>
             </form>
         </article>
     </dialog>

@@ -76,7 +76,7 @@ class Profile
      */
     private function handleUnsignedUsers(): void
     {
-        if (!array_key_exists('user', $_SESSION) || !isset($_SESSION['user'])) {
+        if (empty($this->getSignedInClient())) {
             Utility::redirect('login');
         }
     }
