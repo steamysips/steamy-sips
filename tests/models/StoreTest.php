@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+namespace models;
+
+use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Model\Store;
-use Steamy\Model\Location;
 use Steamy\Core\Database;
+use Steamy\Model\Location;
+use Steamy\Model\Store;
 
 class StoreTest extends TestCase
 {
@@ -114,13 +117,29 @@ class StoreTest extends TestCase
             // Valid phone number, valid address (no errors)
             ["1234567890", new Location("Royal", "Curepipe", 1, 50, 50), []],
             // Invalid phone number (less than 7 characters)
-            ["123456", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "123456",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Empty phone number
-            ["", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Invalid characters in phone number
-            ["123abc", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "123abc",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Invalid address with invalid latitude/longitude
-            ["1234567890", new Location("Royal", "Curepipe", 1, -100, 50), ["coordinates" => "Invalid latitude or longitude."]],
+            [
+                "1234567890",
+                new Location("Royal", "Curepipe", 1, -100, 50),
+                ["coordinates" => "Invalid latitude or longitude."]
+            ],
         ];
     }
 }

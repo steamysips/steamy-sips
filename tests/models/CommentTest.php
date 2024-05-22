@@ -2,22 +2,30 @@
 
 declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
-use Steamy\Model\Comment;
-use Steamy\Model\Review;
-use Steamy\Model\Location;
-use Steamy\Model\Client;
-use Steamy\Core\Database;
-use Steamy\Model\Product;
+namespace models;
 
-Class CommentTest extends TestCase
+use DateTime;
+use Exception;
+use PHPUnit\Framework\TestCase;
+use Steamy\Core\Database;
+use Steamy\Model\Client;
+use Steamy\Model\Comment;
+use Steamy\Model\Location;
+use Steamy\Model\Product;
+use Steamy\Model\Review;
+
+class CommentTest extends TestCase
 {
     use Database;
+
     private ?Comment $dummy_comment;
     private ?Review $dummy_review;
     private ?Client $reviewer;
     private ?Product $dummy_product;
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         // Create a dummy product for testing
@@ -31,7 +39,7 @@ Class CommentTest extends TestCase
             "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
             new DateTime()
         );
-            
+
         $success = $this->dummy_product->save();
         if (!$success) {
             throw new Exception('Unable to save product');
@@ -84,16 +92,18 @@ Class CommentTest extends TestCase
         $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM  comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;');
+        self::query(
+            'DELETE FROM  comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;'
+        );
     }
 
     public function testConstructor(): void
     {
         self::assertEquals('This is a test comment.', $this->dummy_comment->getText());
-         self::assertNotNull($this->dummy_comment->getUserID());
-         self::assertNotNull($this->dummy_comment->getReviewID());
-         self::assertNull($this->dummy_comment->getParentCommentID());
-         self::assertInstanceOf(DateTime::class, $this->dummy_comment->getCreatedDate());
+        self::assertNotNull($this->dummy_comment->getUserID());
+        self::assertNotNull($this->dummy_comment->getReviewID());
+        self::assertNull($this->dummy_comment->getParentCommentID());
+        self::assertInstanceOf(DateTime::class, $this->dummy_comment->getCreatedDate());
     }
 
     public function testValidate(): void
@@ -146,7 +156,7 @@ Class CommentTest extends TestCase
         self::assertFalse($saved);
     }
 
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         // Test fetching an existing comment
         $comment_id = $this->dummy_comment->getCommentID();

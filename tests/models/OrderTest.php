@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+namespace models;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Steamy\Core\Database;
+use Steamy\Model\Client;
+use Steamy\Model\Location;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\OrderStatus;
-use Steamy\Model\Store;
-use Steamy\Model\Client;
-use Steamy\Core\Database;
-use Steamy\Model\Location;
 use Steamy\Model\Product;
+use Steamy\Model\Store;
 
 class OrderTest extends TestCase
 {
@@ -202,7 +206,7 @@ class OrderTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         $this->dummy_order->save();
         $order_id = $this->dummy_order->getOrderID();

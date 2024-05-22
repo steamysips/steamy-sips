@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
+namespace models;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Steamy\Core\Database;
+use Steamy\Model\Client;
+use Steamy\Model\Location;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
-use Steamy\Model\Store;
-use Steamy\Model\Client;
 use Steamy\Model\Product;
-use Steamy\Core\Database;
-use Steamy\Model\Location;
+use Steamy\Model\Store;
 
 class OrderProductTest extends TestCase
 {
@@ -141,7 +145,7 @@ class OrderProductTest extends TestCase
         $this->assertArrayHasKey('unit_price', $errors);
     }
 
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         // Assuming getByID is a method that retrieves an OrderProduct by order ID and product ID
         $retrievedOrderProduct = OrderProduct::getByID(

@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+namespace models;
+
+use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Model\Administrator;
 use Steamy\Core\Database;
+use Steamy\Model\Administrator;
 
 final class AdministratorTest extends TestCase
 {

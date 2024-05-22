@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
+namespace models;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
-use Steamy\Model\Review;
 use Steamy\Model\Product;
+use Steamy\Model\Review;
 
 final class ReviewTest extends TestCase
 {
@@ -37,12 +41,12 @@ final class ReviewTest extends TestCase
             "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
             new DateTime()
         );
-            
+
         $success = $this->dummy_product->save();
         if (!$success) {
             throw new Exception('Unable to save product');
         }
-        
+
         // create a client object and save to database
         $this->reviewer = new Client(
             "john_u@gmail.com", "john", "johhny", "User0",
@@ -80,7 +84,9 @@ final class ReviewTest extends TestCase
         $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;');
+        self::query(
+            'DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;'
+        );
     }
 
     public function testConstructor(): void
@@ -154,7 +160,7 @@ final class ReviewTest extends TestCase
         $this->assertEquals('Rating must be between 1 and 5', $errors['rating']); // Assert specific message
     }
 
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         $fetched_review = Review::getByID($this->dummy_review->getReviewID());
 
