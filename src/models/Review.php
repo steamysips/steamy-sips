@@ -12,6 +12,7 @@ use Steamy\Core\Utility;
 class Review
 {
     use Model;
+
     protected string $table = 'review';
     private int $review_id;
     private int $product_id;
@@ -99,6 +100,10 @@ class Review
         $query = "SELECT * FROM review";
         $results = self::query($query);
 
+        if (!$results) {
+            return [];
+        }
+
         // Fetch all reviews as Review objects
         $reviews = [];
         foreach ($results as $result) {
@@ -126,7 +131,8 @@ class Review
     {
         $query = "SELECT * FROM review WHERE product_id = :product_id";
         $params = ['product_id' => $productId];
-        return self::query($query, $params);
+        $result = self::query($query, $params);
+        return $result ?: [];
     }
 
     /**
@@ -135,7 +141,7 @@ class Review
      * The values are the new review data.
      * @return bool Success or not
      */
-    public function updateReview (array $newReviewData): bool
+    public function updateReview(array $newReviewData): bool
     {
         // remove review_id (if present) from user data
         unset($newReviewData['review_id']);
@@ -340,7 +346,7 @@ class Review
 
         // Order the children array of each comment by created_date
         foreach ($commentMap as $comment) {
-            usort($comment->children, function($a, $b) {
+            usort($comment->children, function ($a, $b) {
                 return strtotime($a->created_date) - strtotime($b->created_date);
             });
         }
