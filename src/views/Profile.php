@@ -15,27 +15,22 @@ use Steamy\Model\Order;
 
 ?>
 
-<style>
-  /* Style tab links */
-  .tablink {
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    font-size: 17px;
-    background-color: var(--secondary);
-  }
-
-  .active {
-    background-color: var(--contrast);
-  }
-
-  /* Style the tab content (and add height:100% for full page content) */
-  .tabcontent {
-    display: none;
-    padding: 20px 0;
-  }
-</style>
+<?php
+if ($show_account_deletion_confirmation) : ?>
+    <dialog open>
+        <article>
+            <h3>Deleting your account! </h3>
+            <p>Are you sure you want to delete your account? This action is irreversible.</p>
+            <footer>
+                <form method="post" class="grid">
+                    <button class="secondary" type="submit" name="cancel_delete">Cancel</button>
+                    <button type="submit" name="confirm_delete">Confirm</button>
+                </form>
+            </footer>
+        </article>
+    </dialog>
+<?php
+endif; ?>
 
 <main class="container">
     <h1>My profile</h1>
@@ -173,53 +168,4 @@ use Steamy\Model\Order;
     </div>
 </main>
 
-<script>
-  function openTab(evt, tabName) {
-    console.log("New tab = " + tabName);
-
-    // hide all tab contents
-    const tabcontents = [...document.getElementsByClassName("tabcontent")];
-    for (let i = 0; i < tabcontents.length; i++) {
-      tabcontents[i].style.display = "none";
-    }
-
-    // remove active class from the currently active tab link
-    const tablinks = document.getElementsByClassName("tablink");
-    for (let i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // display content for clicked tab
-    document.getElementById(tabName).style.display = "block";
-
-    // set active class only to the clicked tab link
-    evt.currentTarget.className += " active";
-  }
-
-  const tabs = ["Account", "Orders", "Settings"];
-
-  window.addEventListener("DOMContentLoaded", () => {
-    [...document.getElementsByClassName("tablink")].forEach((tablink, i) => {
-          console.log(i, tablink);
-          tablink.addEventListener("click", (e) => openTab(e, tabs[i]));
-        },
-    );
-  });
-</script>
-
-<?php
-if ($show_account_deletion_confirmation) : ?>
-    <dialog open>
-        <article>
-            <h3>Deleting your account! </h3>
-            <p>Are you sure you want to delete your account? This action is irreversible.</p>
-            <footer>
-                <form method="post" class="grid">
-                    <button class="secondary" type="submit" name="cancel_delete">Cancel</button>
-                    <button type="submit" name="confirm_delete">Confirm</button>
-                </form>
-            </footer>
-        </article>
-    </dialog>
-<?php
-endif; ?>
+<script src="/js/profile_view.bundle.js"></script>

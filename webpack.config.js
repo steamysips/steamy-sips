@@ -7,6 +7,7 @@ module.exports = {
     global_view: entryPath + "global-view.js",
     home_view: entryPath + "home-view.js",
     product_view: entryPath + "product-view.js",
+    profile_view: entryPath + "profile-view.js",
     cart_view: entryPath + "cart-view.js",
     theme_switcher: entryPath + "theme-switcher.js",
   },
