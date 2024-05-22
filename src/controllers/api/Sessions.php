@@ -14,7 +14,7 @@ class Sessions
 
     public static array $routes = [
         'POST' => [
-            '/api/v1/products' => 'handleLogin',
+            '/sessions' => 'handleLogin',
         ]
     ];
 

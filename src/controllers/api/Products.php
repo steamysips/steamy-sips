@@ -14,19 +14,19 @@ class Products
 
     public static array $routes = [
         'GET' => [
-            '/api/v1/products' => 'getAllProducts',
-            '/api/v1/products/categories' => 'getProductCategories',
-            '/api/v1/products/{id}' => 'getProductById',
-            '/api/v1/products/{id}/reviews' => 'getAllReviewsForProduct',
+            '/products' => 'getAllProducts',
+            '/products/categories' => 'getProductCategories',
+            '/products/{id}' => 'getProductById',
+            '/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
-            '/api/v1/products' => 'createProduct',
+            '/products' => 'createProduct',
         ],
         'PUT' => [
-            '/api/v1/products/{id}' => 'updateProduct',
+            '/products/{id}' => 'updateProduct',
         ],
         'DELETE' => [
-            '/api/v1/products/{id}' => 'deleteProduct',
+            '/products/{id}' => 'deleteProduct',
         ]
     ];
 

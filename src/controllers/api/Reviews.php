@@ -13,18 +13,18 @@ class Reviews
 
     public static array $routes = [
         'GET' => [
-            '/api/v1/reviews' => 'getAllReviews',
-            '/api/v1/reviews/{id}' => 'getReviewByID',
-            '/api/v1/products/{id}/reviews' => 'getAllReviewsForProduct',
+            '/reviews' => 'getAllReviews',
+            '/reviews/{id}' => 'getReviewByID',
+            '/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
-            '/api/v1/reviews' => 'createReview',
+            '/reviews' => 'createReview',
         ],
         'PUT' => [
-            '/api/v1/reviews/{id}' => 'updateReview',
+            '/reviews/{id}' => 'updateReview',
         ],
         'DELETE' => [
-            '/api/v1/reviews/{id}' => 'deleteReview',
+            '/reviews/{id}' => 'deleteReview',
         ]
     ];
 
