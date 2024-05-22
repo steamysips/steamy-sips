@@ -122,11 +122,19 @@ class Order
         $update_stock_stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
-            if (!empty($line_item->validate())) {
+            $line_item_errors = $line_item->validate();
+
+            if (!empty($line_item_errors)) {
                 // line item contains invalid attributes
                 $conn->rollBack();
                 $conn = null;
-                throw new Exception("Invalid line item:" . json_encode($line_item));
+
+                $error_message = "Invalid line item:" . json_encode($line_item->toArray());
+                $error_message .= " Errors: " . json_encode($line_item_errors);
+
+                throw new Exception(
+                    $error_message
+                );
             }
 
             // fetch product corresponding to line item
