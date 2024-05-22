@@ -8,6 +8,7 @@ declare(strict_types=1);
  * @var Client $client signed in client
  * @var Order[] $orders array of orders
  * @var bool $show_account_deletion_confirmation Whether to display a confirmation dialog for account deletion
+ * @var bool $reorder_cancel Whether to display reorder and cancel buttons
  */
 
 use Steamy\Model\Client;
@@ -15,11 +16,10 @@ use Steamy\Model\Order;
 
 ?>
 
-<?php
-if ($show_account_deletion_confirmation) : ?>
+<?php if ($show_account_deletion_confirmation) : ?>
     <dialog open>
         <article>
-            <h3>Deleting your account! </h3>
+            <h3>Deleting your account!</h3>
             <p>Are you sure you want to delete your account? This action is irreversible.</p>
             <footer>
                 <form method="post" class="grid">
@@ -29,8 +29,7 @@ if ($show_account_deletion_confirmation) : ?>
             </footer>
         </article>
     </dialog>
-<?php
-endif; ?>
+<?php endif; ?>
 
 <main class="container">
     <h1>My profile</h1>
@@ -49,12 +48,10 @@ endif; ?>
                    disabled>
         </label>
 
-
         <label class="grid">
             Email
             <input value="<?= htmlspecialchars($client->getEmail()) ?>" type="email" disabled>
         </label>
-
 
         <label class="grid">
             Address
@@ -70,12 +67,9 @@ endif; ?>
         <a href="/profile/edit">
             <button>Edit</button>
         </a>
-
     </div>
 
-
     <div id="Orders" class="tabcontent">
-
         <h2>Orders summary</h2>
 
         <figure>
@@ -108,26 +102,25 @@ endif; ?>
                         <td>$date</td>
                         <td>$status</td>
                         <td>\$$totalPrice</td>
-                        <td class="grid">
-                            <form method="post" action="/profile/cancelOrder">
-                                <input type="hidden" name="order_id" value="$id">
-                                <button type="submit" $cancelDisabled>Cancel</button>
-                            </form>
-                            <form method="post" action="/profile/reorderOrder">
-                                <input type="hidden" name="order_id" value="$id">
-                                <button type="submit" $reorderDisabled>Reorder</button>
-                            </form>
-                    </td>
-                    </tr>
                     EOL;
+
+                    if ($reorder_cancel) {
+                        echo <<< EOL
+                        <td class="grid">
+                            <form method="post" class="reorder_cancel">
+                                <input type="hidden" name="reorder_cancel">
+                                <input type="hidden" name="order_id" value="$id">
+                                <button type="submit" name="reorder" $reorderDisabled>Reorder</button>
+                                <button type="submit" name="cancel" $cancelDisabled>Cancel</button>
+                            </form>
+                        </td>
+                        EOL;
+                    }
+                    echo "</tr>";
                 }
-
                 ?>
-
-
             </table>
         </figure>
-
     </div>
 
     <div id="Settings" class="tabcontent">
@@ -174,7 +167,6 @@ endif; ?>
                 <form>
                     <button type="submit" name="account_delete_submit">Delete</button>
                 </form>
-
             </article>
         </div>
     </div>

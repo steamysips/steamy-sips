@@ -26,6 +26,7 @@ class Profile
         $this->view_data['errors'] = [];
         $this->view_data['client'] = null;
         $this->view_data['show_account_deletion_confirmation'] = false;
+        $this->view_data['reorder_cancel'] = false; 
     }
 
     private function handleLogOut(): void
@@ -104,59 +105,61 @@ class Profile
 
     public function reorderOrder(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['order_id'])) {
-            // Handle invalid request
+        $this->view_data['reorder_cancel'] = true;
+        
+        if (isset($_POST['reorder'])){
+
+            $order_id = (int)$_POST['order_id'];
+            $order = Order::getByID($order_id);
+
+            // Create a new order with the same details as the previous order
+            $new_order = new Order(
+                store_id: $order->getStoreID(),
+                client_id: $order->getClientID(),
+                line_items: $order->getLineItems(),
+                pickup_date: null, // or set pickup date as needed
+                status: OrderStatus::PENDING,
+                created_date: new DateTime()
+            );
+
+            // Save the new order
+            $new_order->save();
+
+            // Redirect back to the profile page
             Utility::redirect('profile');
         }
 
-        $order_id = (int)$_POST['order_id'];
-        $order = Order::getByID($order_id);
-
-        if (!$order || $order->getStatus() !== OrderStatus::COMPLETED) {
-            // Order doesn't exist or not completed
-            Utility::redirect('profile');
-        }
-
-        // Create a new order with the same details as the previous order
-        $new_order = new Order(
-            store_id: $order->getStoreID(),
-            client_id: $order->getClientID(),
-            line_items: $order->getLineItems(),
-            pickup_date: null, // or set pickup date as needed
-            status: OrderStatus::PENDING,
-            created_date: new DateTime()
+        $this->view(
+            'Profile',
+            $this->view_data,
+            'Reorder',
+            enableIndexing: false
         );
-
-        // Save the new order
-        $new_order->save();
-
-        // Redirect back to the profile page
-        Utility::redirect('profile');
-        }
-
+    }
 
     public function cancelOrder(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['order_id'])) {
-            // Handle invalid request
+        $this->view_data['reorder_cancel'] = true;
+        
+        if (isset($_POST['cancel'])){
+
+            $order_id = (int)$_POST['order_id'];
+            $order = Order::getByID($order_id);
+
+            // Cancel the order
+            $order->deleteOrder();
+
+            // Redirect back to the profile page
             Utility::redirect('profile');
         }
 
-        $order_id = (int)$_POST['order_id'];
-        $order = Order::getByID($order_id);
-
-        if (!$order || $order->getStatus() === OrderStatus::COMPLETED) {
-            // Order doesn't exist or already completed
-            Utility::redirect('profile');
-        }
-
-        // Cancel the order
-        $order->deleteOrder();
-
-        // Redirect back to the profile page
-        Utility::redirect('profile');
+        $this->view(
+            'Profile',
+            $this->view_data,
+            'Cancel',
+            enableIndexing: false
+        );
     }
-
 
     private function handleProfileEditSubmission(): void
     {
@@ -183,9 +186,7 @@ class Profile
         // check if user entered a new email
         if (!empty($form_data['email']) && $form_data['email'] !== $this->signed_client->getEmail()) {
             // check if a newly typed email already exists in database
-            if (!empty(
-            Client::getByEmail($updated_client->getEmail())
-            )) {
+            if (!empty(Client::getByEmail($updated_client->getEmail()))) {
                 $this->view_data['errors']['email'] = "Email already in use";
             }
         }
@@ -205,7 +206,6 @@ class Profile
                 $this->view_data['errors']['confirmPassword'] = 'Passwords do not match';
             }
         }
-
 
         // if all data valid, update user record and redirect to login page
         if (empty($this->view_data['errors'])) {
@@ -253,6 +253,10 @@ class Profile
             Utility::redirect('login');
         }
 
+        if (isset($_GET['reorder_cancel'])) {
+            $this->reorderOrder() || $this->cancelOrder();
+            return;
+        }
 
         // log out user if logout button clicked
         if (isset($_GET['logout_submit'])) {
