@@ -4,7 +4,6 @@
 
 import Cart from "./models/Cart";
 import CartItem from "./models/CartItem";
-import ModalManager from "./modal";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
@@ -50,6 +49,9 @@ function updateCart(e) {
 }
 
 async function checkout() {
+  // set loading animation on checkout button to prevent multiple form submissions
+  document.querySelector("#checkout-btn").setAttribute("aria-busy", "true");
+
   const myCart = Cart();
   const items = myCart.getItems();
 
@@ -63,10 +65,14 @@ async function checkout() {
     body: JSON.stringify(data),
   });
 
+  // stop loading animation
+  document.querySelector("#checkout-btn").removeAttribute("aria-busy");
+
   if (response.ok) {
     // Clear cart items from localStorage if checkout is successful
     myCart.clear();
-    ModalManager("my-modal").openModal();
+
+    document.querySelector("#my-modal").setAttribute("open", "");
     return;
   }
   const x = await response.json();
@@ -85,9 +91,12 @@ function initCartPage() {
     ...document.querySelectorAll("section input[type='number']"),
   ];
 
-  ModalManager("my-modal").init();
+  const checkoutBtn = document.querySelector("#checkout-btn");
 
-  document.querySelector("#checkout-btn").addEventListener("click", checkout);
+  // if checkout button is present on page (button is absent when cart is empty)
+  if (checkoutBtn !== null) {
+    checkoutBtn.addEventListener("click", checkout);
+  }
 
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateCart);

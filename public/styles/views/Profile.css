@@ -18,11 +18,32 @@ button[name="account_delete_submit"] {
   background-color: red;
 }
 
-table button{
-  padding:5px;
+table button {
+  padding: 5px;
 }
 
-table tr button:first-of-type{
+table tr button:first-of-type {
   border: 0;
   background-color: red;
+}
+
+/* Style tab links */
+.tablink {
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 17px;
+  background-color: var(--secondary);
+}
+
+.active {
+  background-color: var(--contrast);
+  color: var(--contrast-inverse);
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  display: none;
+  padding: 20px 0;
 }
