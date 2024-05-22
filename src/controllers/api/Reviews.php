@@ -14,6 +14,7 @@ class Reviews
     public static array $routes = [
         'GET' => [
             '/api/v1/reviews' => 'getAllReviews',
+            '/api/v1/reviews/{id}' => 'getReviewByID',
             '/api/v1/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
@@ -44,6 +45,26 @@ class Reviews
         // Return JSON response
         echo json_encode($result);
     }
+
+    public function getReviewByID(): void
+    {
+        $id = (int)Utility::splitURL()[3];
+
+        // Retrieve all reviews from the database
+        $review = Review::getByID($id);
+
+        // Check if product exists
+        if ($review === null) {
+            // review not found, return 404
+            http_response_code(404);
+            echo json_encode(['error' => 'Review not found']);
+            return;
+        }
+
+        // Return JSON response
+        echo json_encode($review->toArray());
+    }
+
 
     /**
      * Get all reviews for a particular product by its ID.
@@ -105,6 +126,14 @@ class Reviews
             $postData['text'],
             (int)$postData['rating']
         );
+
+        $errors = $newReview->validate();
+
+        if (!empty($errors)) {
+            http_response_code(400);
+            echo json_encode(['error' => ($errors)]);
+            return;
+        }
 
         // Save the new review to the database
         if ($newReview->save()) {
