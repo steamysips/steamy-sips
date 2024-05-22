@@ -122,20 +122,8 @@ class Order
         $update_stock_stm = $conn->prepare($query);
 
         foreach ($this->line_items as $line_item) {
-            $line_item_errors = $line_item->validate();
-
-            if (!empty($line_item_errors)) {
-                // line item contains invalid attributes
-                $conn->rollBack();
-                $conn = null;
-
-                $error_message = "Invalid line item:" . json_encode($line_item->toArray());
-                $error_message .= " Errors: " . json_encode($line_item_errors);
-
-                throw new Exception(
-                    $error_message
-                );
-            }
+            // set order ID of line item
+            $line_item->setOrderID($new_order_id);
 
             // fetch product corresponding to line item
             $product = Product::getByID($line_item->getProductID());
@@ -147,6 +135,9 @@ class Order
                 throw new Exception("Product with ID " . $line_item->getProductID() . " does not exist");
             }
 
+            // set true unit price of line item
+            $line_item->setUnitPrice($product->getPrice());
+
             // get stock level for current product
             $stock_level = $store->getProductStock($product->getProductID());
 
@@ -154,15 +145,39 @@ class Order
                 // store does not have enough stock
                 $conn->rollBack();
                 $conn = null;
+
+                $error_message = <<< EOL
+                Store with ID $this->store_id has insufficient stock ($stock_level) for the following line item:
+                Product ID = {$line_item->getProductID()} and quantity = {$line_item->getQuantity()}.
+                EOL;
+
+                throw new Exception($error_message);
+            }
+
+            // validate line item
+            $line_item_errors = $line_item->validate();
+            if (!empty($line_item_errors)) {
+                // line item contains invalid attributes
+                $conn->rollBack();
+                $conn = null;
+
+                $line_item_info = json_encode($line_item->toArray());
+                $line_item_errors = json_encode($line_item_errors);
+
+                $error_message = <<< EOL
+                Invalid line item:
+                $line_item_info
+                
+                Errors:
+                $line_item_errors
+                EOL;
+
                 throw new Exception(
-                    "Store with ID " . $this->store_id
-                    . " has insufficient stock for product " . $line_item->getProductID()
+                    $error_message
                 );
             }
 
-            // insert into order_product table
-            $line_item->setOrderID($new_order_id);
-            $line_item->setUnitPrice($product->getPrice());
+            // insert line item into order_product table
 
             $success = $insert_line_item_stm->execute($line_item->toArray());
             if (!$success) {
