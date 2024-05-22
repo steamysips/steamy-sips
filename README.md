@@ -25,13 +25,16 @@ The code for the admin website is found in a separate repository.
 ## Main features
 
 - MVC pattern
-- Dynamic routing
+- Semantic URL routing
 - Email-based password recovery
 - Email notification on order
 - Testing with phpUnit
 - Mobile-responsive website
-- Javascript code bundling with backwards compatibility
+- Utilizes Webpack for efficient code bundling and compatibility with older browsers.
 - Product review system with nested comments
+- Fuzzy searching on shop page
+- Pagination
+- SEO optimized
 - REST API
 
 ## Documentation
