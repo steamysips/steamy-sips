@@ -40,14 +40,22 @@ class Password
      */
     private function sendResetEmail(string $email, string $resetLink): void
     {
-        //Implement logic to send reset email using Mailer class
-        $mailer = new Mailer();
-        $subject = "Reset Your Password | Steamy Sips";
-        $htmlMessage = "Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
-        $plainMessage = "Click the link below to reset your password:\n$resetLink";
-        $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
-    }
+    $subject = "Reset Your Password | Steamy Sips";
 
+    // Capture the HTML template content
+    ob_start();
+    $userEmail = $email;
+    require __DIR__ . '/../views/mails/PasswordReset.php';
+    $htmlMessage = ob_get_clean();
+
+    // Plain message as fallback
+    $plainMessage = "Click the link below to reset your password:\n$resetLink";
+
+    // Send the email
+    $mailer = new Mailer();
+    $mailer->sendMail($email, $subject, $htmlMessage, $plainMessage);
+    }
+  
     /**
      * Invoked when  user submits an email on form.
      * @throws Exception Email could not be sent
