@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Controller;
 
 use Exception;
+use PDOException;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Order;
@@ -110,13 +111,17 @@ class Cart
         // attempt to save order. An exception will be generated in case of any errors.
         try {
             $success_order = $new_order->save();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            http_response_code(503);
+            echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+            return;
         } catch (Exception $e) {
             error_log($e->getMessage());
-            http_response_code(500);
+            http_response_code(400);
             echo json_encode(['error' => $e->getMessage()]);
             return;
         }
-
         // if order was unsuccessfully saved without any exceptions generated
         if (!$success_order) {
             http_response_code(500);
@@ -137,6 +142,9 @@ class Cart
             http_response_code(503);
             echo json_encode(['error' => "Order was saved but email could not be sent for an unknown reason."]);
         }
+
+        // if everything is good, tell client to reset the document view
+        http_response_code(205);
     }
 
     public function index(): void
