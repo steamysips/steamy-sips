@@ -21,7 +21,11 @@ class API
 
     public function __construct()
     {
+        // Set the Content-Type header to application/json
         header("Content-Type:application/json");
+
+        // Allow access from any origin (CORS)
+        header('Access-Control-Allow-Origin: *');
 
         $this->resource = Utility::splitURL()[2] ?? "";
     }
@@ -32,32 +36,83 @@ class API
      */
     private function validateURLFormat(): bool
     {
-        return preg_match("/^api\/v1/", $_GET["url"]) > 0;
+        return preg_match("/^api\/v1/", Utility::getURL()) > 0;
+    }
+
+
+    /**
+     * Returns the name of function responsible for handling the current request, as defined by the $routes variable.
+     * @param string $controllerName class name of controller
+     * @return string|null
+     */
+    private function getHandler(string $controllerName): ?string
+    {
+        $all_routes = $controllerName::$routes;
+
+        // check if there are handlers defined for current request method
+        $my_routes = $all_routes[$_SERVER['REQUEST_METHOD']] ?? "";
+        if (empty($my_routes)) {
+            return null;
+        }
+
+        foreach ($my_routes as $route => $handler) {
+            $pattern = str_replace('/', '\/', $route); // Convert to regex pattern
+            $pattern = preg_replace(
+                '/\{([a-zA-Z0-9_]+)\}/',
+                '(?P<$1>[^\/]+)',
+                $pattern
+            ); // Replace placeholders with regex capture groups
+            $pattern = '/^' . $pattern . '$/';
+
+            if (preg_match($pattern, '/' . Utility::getURL(), $matches)) {
+                return $handler;
+            }
+        }
+        return null;
     }
 
     public function index(): void
     {
         if (!$this->validateURLFormat()) {
             http_response_code(400);
-            die();
+            return;
         }
 
-        // call appropriate controller to handle resource
+        // check if there is a controller to handle resource
         $controllerClassName = 'Steamy\\Controller\\API\\' . ucfirst($this->resource);
+        if (!class_exists($controllerClassName)) {
+            // no controller available
+            http_response_code(404);
+            echo 'Invalid resource: ' . $this->resource; // comment this line for production
+            return;
+        }
+
+        // determine which function to call in the controller to handle route
+        $functionName = $this->getHandler($controllerClassName);
+        if ($functionName === null) {
+            // Controller does not have any method defined for route
+            http_response_code(404);
+            echo "Request has not been defined in \$routes for " . $controllerClassName;
+            return;
+        }
+
+        $controller = new $controllerClassName();
+
+        if (!method_exists($controller, $functionName)) {
+            // handle function not found in controller
+            http_response_code(500);
+            echo $controllerClassName . ' does not have a public method ' . $functionName;
+            return;
+        }
+
+        // call function in controller for handling request
         try {
-            if (class_exists($controllerClassName)) {
-                (new $controllerClassName())->index();
-            } else {
-                http_response_code(404);
-                die();
-            }
+            call_user_func(array($controller, $functionName));
         } catch (Exception $e) {
             http_response_code(500);
 
             // Uncomment line below only when testing API
             echo $e->getMessage();
-
-            die();
         }
     }
 }
