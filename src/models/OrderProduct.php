@@ -20,6 +20,15 @@ class OrderProduct
     private int $quantity;
     private float $unit_price;
 
+    /**
+     * Create a new OrderProduct object
+     * @param int $product_id
+     * @param string $cup_size
+     * @param string $milk_type
+     * @param int $quantity
+     * @param float|null $unit_price If not set, the default $unit_price is -1.
+     * @param int|null $order_id If not set, the default $order_id is -1.
+     */
     public function __construct(
         int $product_id,
         string $cup_size,
