@@ -50,6 +50,9 @@ function updateCart(e) {
 }
 
 async function checkout() {
+  // set loading animation on checkout button to prevent multiple form submissions
+  document.querySelector("#checkout-btn").setAttribute("aria-busy", "true");
+
   const myCart = Cart();
   const items = myCart.getItems();
 
@@ -62,6 +65,9 @@ async function checkout() {
     method: "POST",
     body: JSON.stringify(data),
   });
+
+  // stop loading animation
+  document.querySelector("#checkout-btn").setAttribute("aria-busy", "false");
 
   if (response.ok) {
     // Clear cart items from localStorage if checkout is successful
