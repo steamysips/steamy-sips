@@ -7,7 +7,6 @@ namespace Steamy\Controller;
 use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
-use Steamy\Model\Mailer;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
@@ -71,8 +70,6 @@ class Cart
 
     private function handleCheckout(): void
     {
-        // TODO: write appropriate errors to Cart view instead of sending response code
-
         // check if user is logged in
         $signed_client = $this->getSignedInClient();
         if (!$signed_client) {
@@ -110,24 +107,35 @@ class Cart
             $new_order->addLineItem($line_item);
         }
 
-        // save order
-        $success_order = false;
+        // attempt to save order. An exception will be generated in case of any errors.
         try {
             $success_order = $new_order->save();
-            http_response_code($success_order ? 201 : 400);
         } catch (Exception $e) {
             error_log($e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
+            return;
         }
 
-        // send confirmation email if order was successfully saved
-        if ($success_order) {
-            try {
-                $signed_client->sendOrderConfirmationEmail($new_order);
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-            }
+        // if order was unsuccessfully saved without any exceptions generated
+        if (!$success_order) {
+            http_response_code(500);
+            echo json_encode(['error' => "Order could not be saved for an unknown reason."]);
+            return;
+        }
+
+        // send confirmation email
+        try {
+            $success_mail = $signed_client->sendOrderConfirmationEmail($new_order);
+        } catch (Exception $e) {
+            http_response_code(503);
+            echo json_encode(['error' => "Order was saved but email could not be sent: " . $e->getMessage()]);
+            return;
+        }
+
+        if (!$success_mail) {
+            http_response_code(503);
+            echo json_encode(['error' => "Order was saved but email could not be sent for an unknown reason."]);
         }
     }
 
