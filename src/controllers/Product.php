@@ -19,6 +19,8 @@ class Product
 {
     use Controller;
 
+    private static int $MAX_REVIEWS_PER_PAGE = 2;
+
     private ?ProductModel $product = null; // product to be displayed
     private array $view_data;
     private ?User $signed_user; // currently logged-in user
@@ -231,6 +233,27 @@ class Product
             $this->view_data['comment_form_info'] ['quote_date'] = $comment->getCreatedDate()->format('Y');
         }
     }
+        /**
+     * @return int Page number on shop page. Defaults to 1.
+     */
+    public function getPageNumber(): int
+    {
+        return (int)($_GET['page'] ?? 1);
+    }
+
+    /**
+     * @param $reviews
+     * @return array Reviews which should be displayed on current page
+     */
+    public function applyPagination($reviews): array
+    {
+        // Slice the products based on pagination
+        return array_slice(
+            $reviews,
+            ($this->getPageNumber() - 1) * Product::$MAX_REVIEWS_PER_PAGE,
+            Product::$MAX_REVIEWS_PER_PAGE
+        );
+    }
 
     private function validateURL(): bool
     {
@@ -275,7 +298,13 @@ class Product
             array($this, "filterReviews")
         );
 
+        // Slice the reviews based on pagination
+        $paginated_reviews = $this->applyPagination($this->view_data['product_reviews']);
+
+        $this->view_data['product_reviews'] = $paginated_reviews;
         $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
+        $this->view_data['current_page_number'] = $this->getPageNumber();
+        $this->view_data['total_pages'] = (int)ceil(count($this->view_data['product_reviews']) / Product::$MAX_REVIEWS_PER_PAGE);
 
         $this->view(
             'Product',

@@ -189,6 +189,68 @@ function printComment(StdClass $comment): void
     EOL;
 }
 
+/**
+ * Returns a query string that maintains all current query string parameters and page number.
+ * @param int $page_number
+ * @return string Query string link for page item
+ */
+function getPageItemLink(int $page_number): string
+{
+    // create a string with all past query parameters except page and url
+    unset($_GET['page']);
+    unset($_GET['url']);
+
+    $link = '?' . http_build_query($_GET);
+
+    // add page number as query parameter
+    $link .= '&page=' . $page_number;
+
+    return $link;
+}
+
+/**
+ * Prints page item in HTML format.
+ *
+ * @param int $current_page_number
+ * @param int $page_number Page number of page item
+ * @return void
+ */
+function displayPageItem(int $current_page_number, int $page_number): void
+{
+    $page_link = getPageItemLink($page_number);
+    $className = "page-item" . ($page_number === $current_page_number ? " active" : "");
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$page_number</a>
+    </li>
+    EOL;
+}
+
+/**
+ * Prints navigation button in HTML format
+ * @param int $current_page_number
+ * @param int $total_pages Total number of pages
+ * @param bool $is_left True indicates left navigation button.
+ * @return void
+ */
+function displayNavigationButton(int $current_page_number, int $total_pages, bool $is_left): void
+{
+    $page_link = getPageItemLink($current_page_number + ($is_left ? -1 : 1));
+    $link_content = htmlspecialchars($is_left ? "<" : ">");
+    $className = "page-item";
+
+    if (($current_page_number === 1 && $is_left) || ($current_page_number === $total_pages && !$is_left)) {
+        $className .= " disabled";
+    }
+
+    echo <<< EOL
+    <li class="$className">
+        <a class="page-link" href="$page_link">$link_content</a>
+    </li>
+    EOL;
+}
+
 ?>
 <dialog id="my-modal">
     <article>
@@ -388,6 +450,7 @@ endif ?>
         </div>
     </div>
 
+
     <form id="review-form" action="" method="get">
         <label for="filter-by">Filter by</label>
         <select id="filter-by" required>
@@ -415,5 +478,30 @@ endif ?>
         </ul>
     </div>
 </main>
+
+<nav class="container" style="display: flex; justify-content: center">
+    <ul class="pagination">
+        <?php
+        // Display previous page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            true
+        );
+
+        // Display each page item
+        for ($page_num = 1; $page_num <= $total_pages; $page_num++) {
+            displayPageItem($current_page_number, $page_num);
+        }
+
+        // Display next page button
+        displayNavigationButton(
+            $current_page_number,
+            $total_pages,
+            false
+        );
+        ?>
+    </ul>
+</nav>
 
 <script src="/js/product_view.bundle.js"></script>
