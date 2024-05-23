@@ -112,34 +112,109 @@ public function testVerifyPassword(): void
     self::assertFalse($this->dummy_client->verifyPassword(" abcd"));
 }
 
-public function testGetByEmail(): void
-{
-    // Test for valid email
-    // Save the dummy record to the database
-    $this->dummy_client->save();
-    // Fetch the client by email
-    $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
-    // Assert that the fetched client is not null
-    self::assertNotNull($fetched_client);
+    /**
+     * @dataProvider getByIDProvider
+     */
+    public static function testGetByID(int $userID, ?string $expectedEmail): void
+    {
+        $client = Client::getByID($userID);
+        if ($expectedEmail !== null) {
+            self::assertNotNull($client);
+            self::assertEquals($expectedEmail, $client->getEmail());
+        } else {
+            self::assertNull($client);
+        }
+    }
 
-    // Assert the attributes of the fetched client
-    self::assertEquals("john_u@gmail.com", $fetched_client->getEmail());
-    self::assertEquals("john", $fetched_client->getFirstName());
-    self::assertEquals("johhny", $fetched_client->getLastName());
-    self::assertEquals("13213431", $fetched_client->getPhoneNo());
-    self::assertEquals("Royal Road, Curepipe, Moka", $fetched_client->getAddress()->getFormattedAddress());
+    public static function getByIDProvider(): array
+    {
+        return [
+            [999, null], // Non-existing user
+            [-1, null], // Negative ID
+        ];
+    }
 
-    // Delete the dummy record
-    $fetched_client->deleteUser();
+    /**
+     * @dataProvider getByEmailProvider
+     */
+    public static function testGetByEmail(string $email, ?string $expectedEmail): void
+    {
+        $client = Client::getByEmail($email);
+        if ($expectedEmail !== null) {
+            self::assertNotNull($client);
+            self::assertEquals($expectedEmail, $client->getEmail());
+        } else {
+            self::assertNull($client);
+        }
+    }
 
-    // Add a small delay to ensure the deletion operation is completed
-    usleep(500000); // 500 milliseconds = 0.5 seconds
+    public static function getByEmailProvider(): array
+    {
+        return [
+            ['john_u@gmail.com', 'john_u@gmail.com'], // Existing email
+            ['nonexistent@gmail.com', null], // Non-existing email
+            ['invalidemail', null], // Invalid email format
+        ];
+    }
 
-    // Fetch the client by email again
-    $fetched_client = Client::getByEmail($this->dummy_client->getEmail());
+    /**
+     * @dataProvider updateUserProvider
+     */
+    public static function testUpdateUser(bool $updatePassword, bool $success): void
+    {
+        // Create a client with a known ID
+        $client = Client::getByEmail('john_u@gmail.com');
+        if ($client === null) {
+            self::fail('Failed to fetch client');
+        }
 
-    // Test for invalid email
-    // Assert that the fetched client is null or false
-    self::assertNull($fetched_client);
-}
+        // Update user and check if successful
+        $client->setFirstName('UpdatedName');
+        $client->setLastName('UpdatedLastName');
+        $client->getAddress()->setCity('UpdatedCity');
+
+        if ($updatePassword) {
+            $client->setPassword('newPassword');
+        }
+
+        $result = $client->updateUser($updatePassword);
+        self::assertEquals($success, $result);
+
+        // Check if data was actually updated in the database
+        $updatedClient = Client::getByID($client->getUserID());
+        if ($updatedClient === null) {
+            self::fail('Failed to fetch updated client');
+        }
+
+        self::assertEquals('UpdatedName', $updatedClient->getFirstName());
+        self::assertEquals('UpdatedLastName', $updatedClient->getLastName());
+        self::assertEquals('UpdatedCity', $updatedClient->getAddress()->getCity());
+    }
+
+    public static function updateUserProvider(): array
+    {
+        return [
+            [false, true], // Update without password change
+            [true, true],  // Update with password change
+        ];
+    }
+
+    public function testDeleteUser(): void
+    {
+        // Fetch the client by email to get its ID
+        $client = Client::getByEmail('john_u@gmail.com');
+        if ($client === null) {
+            self::fail('Failed to fetch client');
+        }
+
+        // Delete the user
+        $client->deleteUser();
+
+        // Attempt to fetch the user again
+        $deletedClient = Client::getByID($client->getUserID());
+
+        // Ensure the user does not exist anymore
+        self::assertNull($deletedClient);
+    }
+
 }
