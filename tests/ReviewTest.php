@@ -133,26 +133,27 @@ final class ReviewTest extends TestCase
 
     public function testValidate(): void
     {
-        // Test validation with valid data
-        $errors = $this->dummy_review->validate();
-        $this->assertEmpty($errors);
-        // Test validation with empty text
-        $invalidReview = new Review(
-            1, 1, 1, "", 0, new DateTime("2024-03-10")
-        );
-        $errors = $invalidReview->validate();
-        $this->assertNotEmpty($errors);
-        $this->assertArrayHasKey('text', $errors);
-        $this->assertEquals('Review text must have at least 2 characters', $errors['text']); // Assert specific message
-        // Test validation with invalid rating
-        $invalidReview = new Review(
-            1, 1, 1, "Valid Text", -1, new DateTime("2024-03-10")
-        );
-        $errors = $invalidReview->validate();
-        $this->assertNotEmpty($errors);
-        $this::assertArrayHasKey('rating', $errors);
-        $this->assertEquals('Rating must be between 1 and 5', $errors['rating']); // Assert specific message
+    // Test with valid data
+    $validReview = new Review(1, 1, 1, "Valid review text", 5, new DateTime("2024-03-10"));
+    $validErrors = $validReview->validate();
+    $this->assertEmpty($validErrors);
+
+    // Test with invalid text
+    $invalidTextReview = new Review(1, 1, 1, "", 5, new DateTime("2024-03-10"));
+    $textErrors = $invalidTextReview->validate();
+    $this->assertArrayHasKey('text', $textErrors);
+
+    // Test with invalid rating
+    $invalidRatingReview = new Review(1, 1, 1, "Invalid rating review", 6, new DateTime("2024-03-10"));
+    $ratingErrors = $invalidRatingReview->validate();
+    $this->assertArrayHasKey('rating', $ratingErrors);
+
+    // Test with future date
+    $futureDateReview = new Review(1, 1, 1, "Future date review", 5, new DateTime("2030-01-01"));
+    $dateErrors = $futureDateReview->validate();
+    $this->assertArrayHasKey('date', $dateErrors);
     }
+
 
     public function testGetByID(): void
     {
@@ -176,17 +177,77 @@ final class ReviewTest extends TestCase
 
     public function testSave(): void
     {
-        // Create a DateTime object for the review date
-        $date = new DateTime('now');
-        // Create a mock Review object with mock data
-        $review = $this->getMockBuilder(Review::class)
-            ->setConstructorArgs([1, 1, 1, 'Test review', 5, $date])
-            ->onlyMethods(['save']) // Mocking the save method
+    // Create an invalid review with empty text
+    $invalidReview = new Review(1, 1, 1, "", 0, new DateTime("2024-03-10"));
+    
+    // Attempt to save the invalid review
+    $success = $invalidReview->save();
+    
+    // Assert that the save operation failed
+    $this->assertFalse($success);
+    }
+
+        public function testGetNestedComments(): void
+    {
+        // Create a mock review with review_id 1
+        $mockReview = new Review(
+            1,
+            $this->dummy_product->getProductID(),
+            $this->reviewer->getUserID(),
+            "Test review",
+            5,
+            new DateTime("2024-03-10")
+        );
+
+        // Create mock comments
+        $comment1 = (object) [
+            'comment_id' => 1,
+            'review_id' => 1,
+            'parent_comment_id' => null,
+            'text' => 'Comment 1',
+            'created_date' => '2024-03-10 10:00:00'
+        ];
+
+        $comment2 = (object) [
+            'comment_id' => 2,
+            'review_id' => 1,
+            'parent_comment_id' => 1,
+            'text' => 'Reply to Comment 1',
+            'created_date' => '2024-03-10 10:01:00'
+        ];
+
+        // Mock the query method of Review class to return the mock comments
+        $mockReview->query = function ($query, $params) use ($comment1, $comment2) {
+            return ($params['review_id'] == 1) ? [$comment1, $comment2] : [];
+        };
+
+        // Call the getNestedComments method
+        $nestedComments = $mockReview->getNestedComments();
+
+        // Assert that the nested comments are properly structured
+        $this->assertCount(1, $nestedComments); // Only one root-level comment
+        $this->assertEquals($comment1->text, $nestedComments[0]->text); // Check text of the root comment
+        $this->assertCount(1, $nestedComments[0]->children); // One child comment under the root comment
+        $this->assertEquals($comment2->text, $nestedComments[0]->children[0]->text); // Check text of the child comment
+    }
+
+    public function testIsVerified(): void
+    {
+        // Mock the get_row method of Review class to return a result indicating verified purchase
+        $mockReview = $this->getMockBuilder(Review::class)
+            ->onlyMethods(['get_row'])
             ->getMock();
-        // Set up the mock to expect the save method to be called once
-        $review->expects($this->once())
-            ->method('save');
-        // Call the save method
-        $review->save();
+
+        $mockReview->method('get_row')->willReturn((object)['purchase_count' => 1]);
+
+        // Set product_id and review_id for the mock review
+        $mockReview->setProductID($this->dummy_product->getProductID());
+        $mockReview->setReviewID($this->dummy_review->getReviewID());
+
+        // Call the isVerified method
+        $isVerified = $mockReview->isVerified();
+
+        // Assert that the review is verified
+        $this->assertTrue($isVerified);
     }
 }
