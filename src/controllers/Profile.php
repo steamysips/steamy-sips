@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
-use DateTime;
+use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Client;
@@ -25,8 +25,9 @@ class Profile
         $this->signed_client = null;
         $this->view_data['errors'] = [];
         $this->view_data['client'] = null;
+        $this->view_data["orders"] = [];
+        $this->view_data['order_action_error'] = "";
         $this->view_data['show_account_deletion_confirmation'] = false;
-        $this->view_data['reorder_cancel'] = false; 
     }
 
     private function handleLogOut(): void
@@ -105,60 +106,46 @@ class Profile
 
     public function reorderOrder(): void
     {
-        $this->view_data['reorder_cancel'] = true;
-        
-        if (isset($_POST['reorder'])){
+        $order_id = (int)($_POST['order_id'] ?? -1);
+        $order = Order::getByID($order_id);
 
-            $order_id = (int)$_POST['order_id'];
-            $order = Order::getByID($order_id);
-
-            // Create a new order with the same details as the previous order
-            $new_order = new Order(
-                store_id: $order->getStoreID(),
-                client_id: $order->getClientID(),
-                line_items: $order->getLineItems(),
-                pickup_date: null, // or set pickup date as needed
-                status: OrderStatus::PENDING,
-                created_date: new DateTime()
-            );
-
-            // Save the new order
-            $new_order->save();
-
-            // Redirect back to the profile page
-            Utility::redirect('profile');
+        if (empty($order)) {
+            $this->view_data['order_action_error'] = 'Invalid order ID';
+            return;
         }
 
-        $this->view(
-            'Profile',
-            $this->view_data,
-            'Reorder',
-            enableIndexing: false
+        // Create a new order with the same details as the previous order
+        $new_order = new Order(
+            store_id: $order->getStoreID(),
+            client_id: $order->getClientID(),
+            line_items: Order::getOrderProducts($order_id),
         );
+
+        // Save the new order
+        try {
+            $new_order->save();
+        } catch (Exception $e) {
+            $this->view_data['order_action_error'] = $e->getMessage();
+        }
     }
 
     public function cancelOrder(): void
     {
-        $this->view_data['reorder_cancel'] = true;
-        
-        if (isset($_POST['cancel'])){
+        $order_id = (int)($_POST['order_id'] ?? -1);
+        $order = Order::getByID($order_id);
 
-            $order_id = (int)$_POST['order_id'];
-            $order = Order::getByID($order_id);
-
-            // Cancel the order
-            $order->deleteOrder();
-
-            // Redirect back to the profile page
-            Utility::redirect('profile');
+        if (empty($order)) {
+            $this->view_data['order_action_error'] = 'Invalid order ID';
+            return;
         }
 
-        $this->view(
-            'Profile',
-            $this->view_data,
-            'Cancel',
-            enableIndexing: false
-        );
+        if ($order->getStatus() === OrderStatus::COMPLETED) {
+            $this->view_data['order_action_error'] = 'Cannot cancel an order which is complete';
+            return;
+        }
+
+        // Cancel the order
+        $order->deleteOrder();
     }
 
     private function handleProfileEditSubmission(): void
@@ -253,9 +240,12 @@ class Profile
             Utility::redirect('login');
         }
 
-        if (isset($_GET['reorder_cancel'])) {
-            $this->reorderOrder() || $this->cancelOrder();
-            return;
+        if (isset($_POST['reorder'])) {
+            $this->reorderOrder();
+        }
+
+        if (isset($_POST['cancel_order'])) {
+            $this->cancelOrder();
         }
 
         // log out user if logout button clicked
