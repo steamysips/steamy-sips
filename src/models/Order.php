@@ -286,7 +286,11 @@ class Order
         }
     }
 
-    private static function getOrderProducts(int $order_id): array
+    /**
+     * @param int $order_id
+     * @return OrderProduct[] An array of line items for current order
+     */
+    public static function getOrderProducts(int $order_id): array
     {
         $query = "SELECT *
                   FROM order_product
