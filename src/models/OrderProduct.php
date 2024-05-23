@@ -87,28 +87,35 @@ class OrderProduct
         return $errors;
     }
 
-    public static function getByID(int $order_id, int $product_id): ?OrderProduct
+    public static function getByID(int $order_id, int $product_id = null): ?OrderProduct
     {
-        $query = <<< EOL
-        select * from order_product
-        where order_id = :order_id and product_id = :product_id
-        EOL;
+    $query = 'SELECT * FROM order_product WHERE order_id = :order_id';
+    $params = ['order_id' => $order_id];
 
-        $result = self::query($query, ['order_id' => $order_id, 'product_id' => $product_id]);
-        if (empty($result)) {
-            return null;
-        }
-        $result = $result[0];
-
-        return new OrderProduct(
-            product_id: $result->product_id,
-            cup_size: $result->cup_size,
-            milk_type: $result->milk_type,
-            quantity: $result->quantity,
-            unit_price: (float)$result->unit_price,
-            order_id: $result->order_id,
-        );
+    if ($product_id !== null) {
+        $query .= ' AND product_id = :product_id';
+        $params['product_id'] = $product_id;
     }
+
+    $result = self::query($query, $params);
+    if (empty($result)) {
+        return null;
+    }
+
+    // Assuming there's only one product for a given order if product_id is not provided
+    if ($product_id === null) {
+        $result = $result[0];
+    }
+
+    return new OrderProduct(
+        product_id: $result->product_id,
+        cup_size: $result->cup_size,
+        milk_type: $result->milk_type,
+        quantity: $result->quantity,
+        unit_price: (float)$result->unit_price,
+        order_id: $result->order_id,
+    );
+   }
 
     public function getOrderID(): int
     {

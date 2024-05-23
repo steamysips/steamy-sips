@@ -105,6 +105,7 @@ endif; ?>
                         <td>\$$totalPrice</td>
                         <td class="grid">
                             <button>cancel</button>
+                            <a href="/orders/$id"><button type="button">View</button></a>
                         </td>
                     </tr>
                     EOL;
