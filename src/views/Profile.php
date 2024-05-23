@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @var Client $client signed in client
  * @var Order[] $orders array of orders
  * @var bool $show_account_deletion_confirmation Whether to display a confirmation dialog for account deletion
- * @var bool $reorder_cancel Whether to display reorder and cancel buttons
+ * @var string $order_action_error Error when user performed action on orders tab
  */
 
 use Steamy\Model\Client;
@@ -16,7 +16,8 @@ use Steamy\Model\Order;
 
 ?>
 
-<?php if ($show_account_deletion_confirmation) : ?>
+<?php
+if ($show_account_deletion_confirmation) : ?>
     <dialog open>
         <article>
             <h3>Deleting your account!</h3>
@@ -29,7 +30,8 @@ use Steamy\Model\Order;
             </footer>
         </article>
     </dialog>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <main class="container">
     <h1>My profile</h1>
@@ -72,6 +74,12 @@ use Steamy\Model\Order;
     <div id="Orders" class="tabcontent">
         <h2>Orders summary</h2>
 
+        <?php
+        if (!empty($order_action_error)): ?>
+            <blockquote><strong> ERROR 🔺: <?= $order_action_error ?>.</strong></blockquote>
+        <?php
+        endif ?>
+
         <figure>
             <table>
                 <tr>
@@ -87,36 +95,30 @@ use Steamy\Model\Order;
                 foreach ($orders as $order) {
                     $date = htmlspecialchars($order->getCreatedDate()->format('Y-m-d H:i:s'));
                     $id = filter_var($order->getOrderID(), FILTER_SANITIZE_NUMBER_INT);
-                    $storeid = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+                    $store_id = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
                     $status = htmlspecialchars(ucfirst($order->getStatus()->value));
                     $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
 
                     // Determine button states
-                    $cancelDisabled = $status === 'completed' ? 'disabled' : '';
-                    $reorderDisabled = $status !== 'completed' ? 'disabled' : '';
+                    $cancelDisabled = $order->getStatus()->value === 'completed' ? 'disabled' : '';
 
                     echo <<< EOL
                     <tr>
                         <td>$id</td>
-                        <td>$storeid</td>
+                        <td>$store_id</td>
                         <td>$date</td>
                         <td>$status</td>
                         <td>\$$totalPrice</td>
-                    EOL;
 
-                    if ($reorder_cancel) {
-                        echo <<< EOL
-                        <td class="grid">
-                            <form method="post" class="reorder_cancel">
-                                <input type="hidden" name="reorder_cancel">
+                        <td>
+                            <form style="display: flex; gap:1em;" method="post">
                                 <input type="hidden" name="order_id" value="$id">
-                                <button type="submit" name="reorder" $reorderDisabled>Reorder</button>
-                                <button type="submit" name="cancel" $cancelDisabled>Cancel</button>
+                                <button type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
+                                <button type="submit" name="reorder">Reorder</button>
                             </form>
                         </td>
-                        EOL;
-                    }
-                    echo "</tr>";
+                    </tr>
+                    EOL;
                 }
                 ?>
             </table>
