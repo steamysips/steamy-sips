@@ -1,7 +1,9 @@
 /vendor/
 .vscode
 .idea
-.env
 node_modules
 .phpunit.result.cache
 public/js
+
+.env
+.env.testing

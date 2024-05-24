@@ -18,9 +18,9 @@ trait Database
      */
     protected static function connect(): PDO
     {
-        $string = "mysql:hostname=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+        $string = "mysql:hostname=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'] . ";charset=utf8mb4";
         try {
-            $conn = new PDO($string, DB_USERNAME, DB_PASSWORD);
+            $conn = new PDO($string, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD']);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
         } catch (PDOException $e) {
