@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace models;
+namespace Steamy\Tests\Model;
 
 use Exception;
 use PHPUnit\Framework\TestCase;

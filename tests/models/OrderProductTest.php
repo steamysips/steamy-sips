@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace models;
+namespace Steamy\Tests\Model;
 
 use DateTime;
 use Exception;
