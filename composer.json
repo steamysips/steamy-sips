@@ -25,7 +25,9 @@
     "nesbot/carbon": "^3.3"
   },
   "scripts": {
-    "test": "phpunit tests"
+    "test": "phpunit tests",
+    "modeltest": "phpunit --testsuite models",
+    "apitest": "phpunit --testsuite api"
   },
   "autoload": {
     "psr-4": {
@@ -33,7 +35,11 @@
       "Steamy\\Core\\": "src/core/",
       "Steamy\\Controller\\": "src/controllers/",
       "Steamy\\Controller\\API\\": "src/controllers/api/",
-      "Steamy\\Model\\": "src/models/"
+      "Steamy\\Model\\": "src/models/",
+      "Steamy\\Tests\\": "tests/",
+      "Steamy\\Tests\\Model\\": "tests/models/",
+      "Steamy\\Tests\\Api\\": "tests/api/"
+
     }
   },
   "require-dev": {
