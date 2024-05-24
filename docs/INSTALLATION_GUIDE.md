@@ -60,9 +60,7 @@ In the root directory of the project, create a `.env` file with the following co
 DB_HOST="localhost"
 DB_USERNAME="root"
 DB_PASSWORD=""
-
-PROD_DB_NAME="cafe"
-TEST_DB_NAME="cafe_test"
+DB_NAME="cafe"
 
 BUSINESS_GMAIL=""
 BUSINESS_GMAIL_PASSWORD=""
@@ -77,6 +75,16 @@ whenever a client places an order.
 > It is recommended to use
 > a [Gmail App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237)
 > for `BUSINESS_GMAIL_PASSWORD` instead of your actual gmail account password.
+
+If you want to run tests, create `.env.testing` file in the root directory:
+
+```
+DB_HOST="localhost"
+DB_USERNAME="root"
+DB_PASSWORD=""
+DB_NAME="cafe_test"
+API_BASE_URI="http://steamy.localhost/api/v1/"
+```
 
 ## Database setup
 

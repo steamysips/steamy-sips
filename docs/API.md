@@ -13,6 +13,9 @@
 
 The Steamy Sips API is a REST API.
 
+Add `X-TEST-ENV` to the header of your request if you want to use the testing database. This is required when running
+tests for API.
+
 ## Endpoints
 
 There are two types of endpoints:

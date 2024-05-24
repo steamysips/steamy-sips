@@ -28,10 +28,26 @@ Visit [`http://steamy.localhost/`](http://steamy.localhost/) in your browser to 
 
 ## Run tests
 
-Assuming that your MySQL database is running, in the root directory of the project run tests:
+> [!IMPORTANT]  
+> You must start your MySQL database to be able to run tests in the `tests/models` folder.
+> To run tests in the `tests/api` folder, you need to start both your Apache server and your MySQL database.
+
+To run all tests:
 
 ```bash
 composer test
+```
+
+To run tests only in `tests/models`:
+
+```bash
+composer modeltest
+```
+
+To run tests only in `tests/api`:
+
+```bash
+composer apitest
 ```
 
 ## Export database
