@@ -30,8 +30,6 @@ class OrderTest extends TestCase
      */
     public function setUp(): void
     {
-        parent::setUp();
-
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
             phone_no: "987654321", // Phone number

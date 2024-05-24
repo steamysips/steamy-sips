@@ -21,8 +21,6 @@ class StoreTest extends TestCase
      */
     public function setUp(): void
     {
-        parent::setUp();
-
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
             phone_no: "12345678", // Phone number
