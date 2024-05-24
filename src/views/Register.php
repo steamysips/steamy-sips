@@ -229,7 +229,6 @@ $ariaInvalid = function (string $input_name) use ($errors, $form_submitted) {
         <footer>
             <a href="/login"
                role="button"
-               data-target="my-modal"
             >
                 Return to sign in
             </a>
