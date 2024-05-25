@@ -233,7 +233,8 @@ class Product
             $this->view_data['comment_form_info'] ['quote_date'] = $comment->getCreatedDate()->format('Y');
         }
     }
-        /**
+    
+    /**
      * @return int Page number on shop page. Defaults to 1.
      */
     public function getPageNumber(): int

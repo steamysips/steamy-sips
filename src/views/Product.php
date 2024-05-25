@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 /**
+ * @var $current_page_number Current page number.
+ * @var $total_pages Total number of pages
  * @var $product Product product information
  * @var $product_reviews Review[] List of product reviews to be displayed with any filters applied
  * @var $current_review_filter string
