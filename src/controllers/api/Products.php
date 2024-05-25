@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Steamy\Controller\API;
 
+use Opis\JsonSchema\{Helper, Validator, Errors\ErrorFormatter};
 use Steamy\Core\Utility;
 use Steamy\Model\Product;
 use Steamy\Core\Model;
@@ -87,45 +88,46 @@ class Products
      */
     public function createProduct(): void
     {
-        // Retrieve POST data
-        $postData = $_POST;
+        $data = (object) json_decode(file_get_contents("php://input"), true);
 
-        // TODO : Use json schema validation here
-        // Check if required fields are present
-        $requiredFields = [
-            'name',
-            'calories',
-            'img_url',
-            'img_alt_text',
-            'category',
-            'price',
-            'description'
-        ];
+        var_dump($data);
 
-        if (empty($postData)) {
+        $schemaPath = __DIR__ . '/../../../resources/schemas';
+        $validator = new Validator();
+
+        $validator->resolver()->registerPrefix(
+            "https://example.com/",
+            $schemaPath,
+        );
+
+        $result = $validator->validate(
+            $data,
+            "https://example.com/products/create.json"
+        );
+
+
+
+        if (!($result->isValid())) {
+            $errors = (new ErrorFormatter())->format($result->error());
+            $response = [
+                'errors' => $errors
+            ];
             http_response_code(400);
-            echo json_encode(['error' => "Missing fields: " . implode(', ', $requiredFields)]);
+            echo json_encode($response);
             return;
         }
 
-        foreach ($requiredFields as $field) {
-            if (empty($postData[$field])) {
-                // Required field is missing, return 400 Bad Request
-                http_response_code(400);
-                echo json_encode(['error' => "Missing required field: $field"]);
-                return;
-            }
-        }
+        return;
 
         // Create a new Product object
         $newProduct = new Product(
-            $postData['name'],
-            (int)$postData['calories'],
-            $postData['img_url'],
-            $postData['img_alt_text'],
-            $postData['category'],
-            (float)$postData['price'],
-            $postData['description']
+            $data['name'],
+            (int)$data['calories'],
+            $data['img_url'],
+            $data['img_alt_text'],
+            $data['category'],
+            (float)$data['price'],
+            $data['description']
         );
 
         // Save the new product to the database
