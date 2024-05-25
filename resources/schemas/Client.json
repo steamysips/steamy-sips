@@ -24,7 +24,8 @@
         "street",
         "city",
         "district_id"
-      ]
+      ],
+      "additionalProperties": false
     }
   ]
 }

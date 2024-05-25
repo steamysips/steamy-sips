@@ -34,5 +34,6 @@
     "text",
     "client_id",
     "product_id"
-  ]
+  ],
+  "additionalProperties": false
 }
