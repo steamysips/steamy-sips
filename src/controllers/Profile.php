@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Steamy\Controller;
 
+use Exception;
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
 use Steamy\Model\Client;
 use Steamy\Model\District;
 use Steamy\Model\Location;
 use Steamy\Model\Order;
+use Steamy\Model\OrderStatus;
 
 class Profile
 {
@@ -23,6 +25,8 @@ class Profile
         $this->signed_client = null;
         $this->view_data['errors'] = [];
         $this->view_data['client'] = null;
+        $this->view_data["orders"] = [];
+        $this->view_data['order_action_error'] = "";
         $this->view_data['show_account_deletion_confirmation'] = false;
     }
 
@@ -100,6 +104,50 @@ class Profile
         );
     }
 
+    public function reorderOrder(): void
+    {
+        $order_id = (int)($_POST['order_id'] ?? -1);
+        $order = Order::getByID($order_id);
+
+        if (empty($order)) {
+            $this->view_data['order_action_error'] = 'Invalid order ID';
+            return;
+        }
+
+        // Create a new order with the same details as the previous order
+        $new_order = new Order(
+            store_id: $order->getStoreID(),
+            client_id: $order->getClientID(),
+            line_items: Order::getOrderProducts($order_id),
+        );
+
+        // Save the new order
+        try {
+            $new_order->save();
+        } catch (Exception $e) {
+            $this->view_data['order_action_error'] = $e->getMessage();
+        }
+    }
+
+    public function cancelOrder(): void
+    {
+        $order_id = (int)($_POST['order_id'] ?? -1);
+        $order = Order::getByID($order_id);
+
+        if (empty($order)) {
+            $this->view_data['order_action_error'] = 'Invalid order ID';
+            return;
+        }
+
+        if ($order->getStatus() === OrderStatus::COMPLETED) {
+            $this->view_data['order_action_error'] = 'Cannot cancel an order which is complete';
+            return;
+        }
+
+        // Cancel the order
+        $order->deleteOrder();
+    }
+
     private function handleProfileEditSubmission(): void
     {
         $form_data = (new Register())->getFormData();
@@ -125,9 +173,7 @@ class Profile
         // check if user entered a new email
         if (!empty($form_data['email']) && $form_data['email'] !== $this->signed_client->getEmail()) {
             // check if a newly typed email already exists in database
-            if (!empty(
-            Client::getByEmail($updated_client->getEmail())
-            )) {
+            if (!empty(Client::getByEmail($updated_client->getEmail()))) {
                 $this->view_data['errors']['email'] = "Email already in use";
             }
         }
@@ -147,7 +193,6 @@ class Profile
                 $this->view_data['errors']['confirmPassword'] = 'Passwords do not match';
             }
         }
-
 
         // if all data valid, update user record and redirect to login page
         if (empty($this->view_data['errors'])) {
@@ -195,6 +240,13 @@ class Profile
             Utility::redirect('login');
         }
 
+        if (isset($_POST['reorder'])) {
+            $this->reorderOrder();
+        }
+
+        if (isset($_POST['cancel_order'])) {
+            $this->cancelOrder();
+        }
 
         // log out user if logout button clicked
         if (isset($_GET['logout_submit'])) {
