@@ -17,8 +17,13 @@ final class ClientTest extends TestCase
     {
         $address = new Location("Royal Road", "Curepipe", 1);
         $this->dummy_client = new Client(
-            "john_u@gmail.com", "john", "johhny", "abcd",
-            "13213431", $address);
+            "john_u@gmail.com",
+            "john",
+            "johhny",
+            "abcd",
+            "13213431",
+            $address
+        );
 
         $success = $this->dummy_client->save();
         if (!$success) {
@@ -26,91 +31,99 @@ final class ClientTest extends TestCase
         }
     }
 
-public function tearDown(): void
-{
-    $this->dummy_client = null;
+    public function tearDown(): void
+    {
+        $this->dummy_client = null;
 
         // Clear all data from client and user tables
         self::query('DELETE FROM client; DELETE FROM user;');
-}
+    }
 
-public function testConstructor(): void
-{
-    // check if fields were correctly set
-    self::assertEquals("john_u@gmail.com", $this->dummy_client->getEmail());
-    self::assertEquals("john", $this->dummy_client->getFirstName());
-    self::assertEquals("johhny", $this->dummy_client->getLastName());
-    self::assertEquals("13213431", $this->dummy_client->getPhoneNo());
-    self::assertEquals("Royal Road, Curepipe, Moka", $this->dummy_client->getAddress()->getFormattedAddress());
-}
+    public function testConstructor(): void
+    {
+        // check if fields were correctly set
+        self::assertEquals("john_u@gmail.com", $this->dummy_client->getEmail());
+        self::assertEquals("john", $this->dummy_client->getFirstName());
+        self::assertEquals("johhny", $this->dummy_client->getLastName());
+        self::assertEquals("13213431", $this->dummy_client->getPhoneNo());
+        self::assertEquals("Royal Road, Curepipe, Moka", $this->dummy_client->getAddress()->getFormattedAddress());
+    }
 
-public function testToArray(): void
-{
-    $result = $this->dummy_client->toArray();
+    public function testToArray(): void
+    {
+        $result = $this->dummy_client->toArray();
 
-    // check if all required keys are present
-    $this->assertArrayHasKey('user_id', $result);
-    $this->assertArrayHasKey('email', $result);
-    $this->assertArrayHasKey('first_name', $result);
-    $this->assertArrayHasKey('last_name', $result);
-    $this->assertArrayHasKey('phone_no', $result);
-    $this->assertArrayHasKey('district_id', $result);
-    $this->assertArrayHasKey('street', $result);
-    $this->assertArrayHasKey('city', $result);
-    $this->assertArrayHasKey('password', $result);
+        // check if all required keys are present
+        $this->assertArrayHasKey('user_id', $result);
+        $this->assertArrayHasKey('email', $result);
+        $this->assertArrayHasKey('first_name', $result);
+        $this->assertArrayHasKey('last_name', $result);
+        $this->assertArrayHasKey('phone_no', $result);
+        $this->assertArrayHasKey('district_id', $result);
+        $this->assertArrayHasKey('street', $result);
+        $this->assertArrayHasKey('city', $result);
+        $this->assertArrayHasKey('password', $result);
 
-    // check if actual values are correct
-    self::assertEquals("john_u@gmail.com", $result['email']);
-    self::assertEquals("john", $result['first_name']);
-    self::assertEquals("johhny", $result['last_name']);
-    self::assertEquals("13213431", $result['phone_no']);
-    self::assertEquals("Royal Road", $result['street']);
-    self::assertEquals("Curepipe", $result['city']);
-    self::assertEquals(1, $result['district_id']);
-}
+        // check if actual values are correct
+        self::assertEquals("john_u@gmail.com", $result['email']);
+        self::assertEquals("john", $result['first_name']);
+        self::assertEquals("johhny", $result['last_name']);
+        self::assertEquals("13213431", $result['phone_no']);
+        self::assertEquals("Royal Road", $result['street']);
+        self::assertEquals("Curepipe", $result['city']);
+        self::assertEquals(1, $result['district_id']);
+    }
 
-public function testValidate(): void
-{
-    $client = new Client(
-        "", "", "", "abcd",
-        "", new Location(), // pass an empty Location object for testing
-    );
+    public function testValidate(): void
+    {
+        $client = new Client(
+            "",
+            "",
+            "",
+            "abcd",
+            "",
+            new Location(), // pass an empty Location object for testing
+        );
 
-    // Test if existence checks work
-    self::assertEquals([
-        'email' => 'Invalid email format',
-        'first_name' => 'First name must be at least 3 characters long',
-        'last_name' => 'Last name must be at least 3 characters long',
-        'phone_no' => 'Phone number must be at least 7 characters long',
-        'district' => 'District does not exist'
-    ], $client->validate());
+        // Test if existence checks work
+        self::assertEquals([
+            'email' => 'Invalid email format',
+            'first_name' => 'First name must be at least 3 characters long',
+            'last_name' => 'Last name must be at least 3 characters long',
+            'phone_no' => 'Phone number must be at least 7 characters long',
+            'district' => 'District does not exist'
+        ], $client->validate());
 
-    // Test for range checks
-    $client = new Client(
-        "a@a.com", "Jo", "Doe", "1234567",
-        "123456", new Location(), // pass an empty Location object for testing
-    );
+        // Test for range checks
+        $client = new Client(
+            "a@a.com",
+            "Jo",
+            "Doe",
+            "1234567",
+            "123456",
+            new Location(), // pass an empty Location object for testing
+        );
 
-    self::assertEquals([
-        'first_name' => 'First name must be at least 3 characters long',
-        'phone_no' => 'Phone number must be at least 7 characters long',
-        'district' => 'District does not exist'
-    ], $client->validate());
-}
+        self::assertEquals([
+            'first_name' => 'First name must be at least 3 characters long',
+            'phone_no' => 'Phone number must be at least 7 characters long',
+            'district' => 'District does not exist'
+        ], $client->validate());
+    }
 
-public function testVerifyPassword(): void
-{
-    // verify true password
-    self::assertTrue($this->dummy_client->verifyPassword("abcd"));
+    public function testVerifyPassword(): void
+    {
+        // verify true password
+        self::assertTrue($this->dummy_client->verifyPassword("abcd"));
 
-    // reject empty string
-    self::assertFalse($this->dummy_client->verifyPassword(""));
+        // reject empty string
+        self::assertFalse($this->dummy_client->verifyPassword(""));
 
-    // reject any other string
-    self::assertFalse($this->dummy_client->verifyPassword("abcde"));
-    self::assertFalse($this->dummy_client->verifyPassword("abcd "));
-    self::assertFalse($this->dummy_client->verifyPassword(" abcd"));
-}
+        // reject any other string
+        self::assertFalse($this->dummy_client->verifyPassword("abcde"));
+        self::assertFalse($this->dummy_client->verifyPassword("abcd "));
+        self::assertFalse($this->dummy_client->verifyPassword(" abcd"));
+    }
 
     /**
      * @dataProvider getByIDProvider
@@ -216,5 +229,4 @@ public function testVerifyPassword(): void
         // Ensure the user does not exist anymore
         self::assertNull($deletedClient);
     }
-
 }
