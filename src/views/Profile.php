@@ -8,6 +8,7 @@ declare(strict_types=1);
  * @var Client $client signed in client
  * @var Order[] $orders array of orders
  * @var bool $show_account_deletion_confirmation Whether to display a confirmation dialog for account deletion
+ * @var string $order_action_error Error when user performed action on orders tab
  */
 
 use Steamy\Model\Client;
@@ -19,7 +20,7 @@ use Steamy\Model\Order;
 if ($show_account_deletion_confirmation) : ?>
     <dialog open>
         <article>
-            <h3>Deleting your account! </h3>
+            <h3>Deleting your account!</h3>
             <p>Are you sure you want to delete your account? This action is irreversible.</p>
             <footer>
                 <form method="post" class="grid">
@@ -49,12 +50,10 @@ endif; ?>
                    disabled>
         </label>
 
-
         <label class="grid">
             Email
             <input value="<?= htmlspecialchars($client->getEmail()) ?>" type="email" disabled>
         </label>
-
 
         <label class="grid">
             Address
@@ -70,13 +69,16 @@ endif; ?>
         <a href="/profile/edit">
             <button>Edit</button>
         </a>
-
     </div>
 
-
     <div id="Orders" class="tabcontent">
-
         <h2>Orders summary</h2>
+
+        <?php
+        if (!empty($order_action_error)): ?>
+            <blockquote><strong> ERROR 🔺: <?= $order_action_error ?>.</strong></blockquote>
+        <?php
+        endif ?>
 
         <figure>
             <table>
@@ -93,19 +95,28 @@ endif; ?>
                 foreach ($orders as $order) {
                     $date = htmlspecialchars($order->getCreatedDate()->format('Y-m-d H:i:s'));
                     $id = filter_var($order->getOrderID(), FILTER_SANITIZE_NUMBER_INT);
-                    $storeid = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
+                    $store_id = filter_var($order->getStoreID(), FILTER_SANITIZE_NUMBER_INT);
                     $status = htmlspecialchars(ucfirst($order->getStatus()->value));
                     $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
+
+                    // Determine button states
+                    $cancelDisabled = $order->getStatus()->value === 'completed' ? 'disabled' : '';
+
                     echo <<< EOL
                     <tr>
                         <td>$id</td>
-                        <td>$storeid</td>
+                        <td>$store_id</td>
                         <td>$date</td>
                         <td>$status</td>
                         <td>\$$totalPrice</td>
-                        <td class="grid">
-                            <button>cancel</button>
-                            <a href="/orders/$id"><button type="button">View</button></a>
+
+                        <td>
+                            <form style="display: flex; gap:1em;" method="post">
+                                <a href="/orders/$id"><button type="button">View</button></a>
+                                <input type="hidden" name="order_id" value="$id">
+                                <button type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
+                                <button type="submit" name="reorder">Reorder</button>
+                            </form>
                         </td>
                     </tr>
                     EOL;

@@ -259,7 +259,38 @@ class Order
         );
     }
 
-    private static function getOrderProducts(int $order_id): array
+    /**
+     * Deletes the order and associated line items from the database.
+     */
+    public function deleteOrder(): void
+    {
+        $conn = self::connect();
+        $conn->beginTransaction();
+
+        try {
+            // Delete line items first
+            $query = "DELETE FROM order_product WHERE order_id = :order_id";
+            $stm = $conn->prepare($query);
+            $stm->execute(['order_id' => $this->order_id]);
+
+            // Delete the order itself
+            $query = "DELETE FROM `order` WHERE order_id = :order_id";
+            $stm = $conn->prepare($query);
+            $stm->execute(['order_id' => $this->order_id]);
+
+            $conn->commit();
+        } catch (PDOException $e) {
+            $conn->rollBack();
+        } finally {
+            $conn = null;
+        }
+    }
+
+    /**
+     * @param int $order_id
+     * @return OrderProduct[] An array of line items for current order
+     */
+    public static function getOrderProducts(int $order_id): array
     {
         $query = "SELECT *
                   FROM order_product
