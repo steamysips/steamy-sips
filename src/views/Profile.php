@@ -112,10 +112,10 @@ endif; ?>
 
                         <td>
                             <form style="display: flex; gap:1em;" method="post">
-                                <a href="/orders/$id"><button type="button">View</button></a>
+                                <a style="height: 60px" class="secondary" href="/orders/$id" role="button">View</a>
                                 <input type="hidden" name="order_id" value="$id">
-                                <button type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
-                                <button type="submit" name="reorder">Reorder</button>
+                                <button style="height: 60px" type="submit" name="reorder">Reorder</button>
+                                <button style="height: 60px" type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
                             </form>
                         </td>
                     </tr>
