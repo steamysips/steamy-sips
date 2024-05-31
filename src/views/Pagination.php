@@ -45,7 +45,11 @@ function displayNavigationButton(int $current_page_number, int $total_pages, str
     $link_content = htmlspecialchars($is_left ? "<" : ">");
     $className = "page-item";
 
-    if (($current_page_number <= 1 && $is_left) || ($current_page_number >= $total_pages && !$is_left)) {
+    if (($current_page_number > $total_pages) || // invalid page number
+        ($current_page_number < 1) || // invalid page number
+        ($current_page_number === 1 && $is_left) || // first page
+        ($current_page_number === $total_pages && !$is_left) // last page
+    ) {
         $className .= " disabled";
     }
 
