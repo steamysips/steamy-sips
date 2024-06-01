@@ -6,7 +6,6 @@ namespace Steamy\Controller;
 
 use Steamy\Core\Controller;
 use Steamy\Core\Utility;
-use Steamy\Model\Client;
 use Steamy\Model\Comment;
 use Steamy\Model\Review;
 use Steamy\Model\User;
@@ -18,6 +17,8 @@ use \Steamy\Model\Product as ProductModel;
 class Product
 {
     use Controller;
+
+    private static int $MAX_REVIEWS_PER_PAGE = 2;
 
     private ?ProductModel $product = null; // product to be displayed
     private array $view_data;
@@ -232,6 +233,14 @@ class Product
         }
     }
 
+    /**
+     * @return int Page number on shop page. Defaults to 1.
+     */
+    public function getPageNumber(): int
+    {
+        return (int)($_GET['page'] ?? 1);
+    }
+
     private function validateURL(): bool
     {
         return preg_match("/^shop\/products\/[0-9]+$/", Utility::getURL()) === 1;
@@ -270,10 +279,22 @@ class Product
             $this->handleCommentSubmission();
         }
 
-        $this->view_data['product_reviews'] = array_filter(
+        // get all reviews that match criteria
+        $all_matching_reviews = array_filter(
             $this->view_data['product_reviews'],
             array($this, "filterReviews")
         );
+
+        $pagination_controller = new Pagination(
+            Product::$MAX_REVIEWS_PER_PAGE,
+            count($all_matching_reviews),
+            $this->getPageNumber()
+        );
+
+        // get html code for displaying pagination
+        $this->view_data['review_pagination'] = $pagination_controller->getHTML();
+
+        $this->view_data['product_reviews'] = $pagination_controller->getCurrentItems($all_matching_reviews);
 
         $this->view_data['rating_distribution'] = $this->formatRatingDistribution();
 

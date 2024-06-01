@@ -11,6 +11,7 @@ declare(strict_types=1);
  * @var $default_rating int default rating in form
  * @var $rating_distribution string An array containing the percentages of ratings
  * @var $comment_form_info ?array Array with information to be displayed on comment form
+ * @var $review_pagination string HTML code for review pagination
  */
 
 use Steamy\Core\Utility;
@@ -190,6 +191,7 @@ function printComment(StdClass $comment): void
 }
 
 ?>
+
 <dialog id="my-modal">
     <article>
         <a href="#"
@@ -415,5 +417,7 @@ endif ?>
         </ul>
     </div>
 </main>
+
+<?= $review_pagination ?>
 
 <script src="/js/product_view.bundle.js"></script>
