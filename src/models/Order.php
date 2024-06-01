@@ -260,21 +260,15 @@ class Order
     }
 
     /**
-     * Deletes the order and associated line items from the database.
+     * Cancels the order and associated line items from the database.
      */
-    public function deleteOrder(): void
+    public function cancelOrder(): void
     {
         $conn = self::connect();
         $conn->beginTransaction();
 
         try {
-            // Delete line items first
-            $query = "DELETE FROM order_product WHERE order_id = :order_id";
-            $stm = $conn->prepare($query);
-            $stm->execute(['order_id' => $this->order_id]);
-
-            // Delete the order itself
-            $query = "DELETE FROM `order` WHERE order_id = :order_id";
+            $query = "UPDATE `order` SET status = 'cancelled' WHERE order_id = :order_id";
             $stm = $conn->prepare($query);
             $stm->execute(['order_id' => $this->order_id]);
 

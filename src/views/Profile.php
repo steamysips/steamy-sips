@@ -100,7 +100,7 @@ endif; ?>
                     $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
 
                     // Determine button states
-                    $cancelDisabled = $order->getStatus()->value === 'completed' ? 'disabled' : '';
+                    $cancelDisabled = ($order->getStatus()->value === 'completed' || $order->getStatus()->value === 'cancelled') ? 'disabled' : '';
 
                     echo <<< EOL
                     <tr>
