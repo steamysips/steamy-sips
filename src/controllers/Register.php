@@ -34,6 +34,7 @@ class Register
         $this->view_data['errors'] = [];
         $this->view_data['editMode'] = false;
         $this->view_data['form_submitted'] = false;
+        $this->view_data['registration_is_successful'] = false;
 
         // get list of districts to be displayed on form
         $this->view_data['districts'] = District::getAll();
@@ -114,11 +115,11 @@ class Register
             $success = $client->save();
 
             if ($success) {
-                Utility::redirect('login');
+                $this->view_data['registration_is_successful'] = true;
+            } else {
+                (new Error())->handleUnknownError();
+                die();
             }
-
-            (new Error())->handleUnknownError();
-            die();
         } else {
             $this->loadDataToForm($form_data);
         }
