@@ -100,7 +100,7 @@ endif; ?>
                     $totalPrice = htmlspecialchars(number_format($order->calculateTotalPrice(), 2));
 
                     // Determine button states
-                    $cancelDisabled = $order->getStatus()->value === 'completed' ? 'disabled' : '';
+                    $cancelDisabled = ($order->getStatus()->value === 'completed' || $order->getStatus()->value === 'cancelled') ? 'disabled' : '';
 
                     echo <<< EOL
                     <tr>
@@ -112,17 +112,22 @@ endif; ?>
 
                         <td>
                             <form style="display: flex; gap:1em;" method="post">
+                                <a style="height: 60px" class="secondary" href="/orders/$id" role="button">View</a>
                                 <input type="hidden" name="order_id" value="$id">
-                                <button type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
-                                <button type="submit" name="reorder">Reorder</button>
+                                <button style="height: 60px" type="submit" name="reorder">Reorder</button>
+                                <button style="height: 60px" type="submit" name="cancel_order" $cancelDisabled>Cancel</button>
                             </form>
                         </td>
                     </tr>
                     EOL;
                 }
+
                 ?>
+
+
             </table>
         </figure>
+
     </div>
 
     <div id="Settings" class="tabcontent">
@@ -169,6 +174,7 @@ endif; ?>
                 <form>
                     <button type="submit" name="account_delete_submit">Delete</button>
                 </form>
+
             </article>
         </div>
     </div>

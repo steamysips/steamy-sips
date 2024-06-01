@@ -87,17 +87,22 @@ class OrderProduct
         return $errors;
     }
 
+    /**
+     * order_id and product_id are the primary of the record to be searched.
+     * @param int $order_id
+     * @param int $product_id
+     * @return OrderProduct|null
+     */
     public static function getByID(int $order_id, int $product_id): ?OrderProduct
     {
-        $query = <<< EOL
-        select * from order_product
-        where order_id = :order_id and product_id = :product_id
-        EOL;
+        $query = 'SELECT * FROM order_product WHERE order_id = ? and product_id= ?';
+        $params = [$order_id, $product_id];
 
-        $result = self::query($query, ['order_id' => $order_id, 'product_id' => $product_id]);
+        $result = self::query($query, $params);
         if (empty($result)) {
             return null;
         }
+
         $result = $result[0];
 
         return new OrderProduct(
