@@ -94,10 +94,16 @@ declare(strict_types=1);
 
 <?= $template_content ?>
 
-<footer id="page-footer" class="container-fluid">
-    <small class="secondary">
-        © <?= date("Y") ?> Steamy Sips Café
-    </small>
+<footer id="page-footer" class="container">
+    <ul>
+        <li><a class="secondary" href="/#about-us">About Us</a></li>
+        <li><a class="secondary" href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a class="secondary" href="terms-of-use.html">Terms of Use</a></li>
+        <li><a class="secondary" href="/contact">Contact Us</a></li>
+    </ul>
+    <div>
+        © <?= date("Y") ?> Steamy Sips Café. All rights reserved.
+    </div>
 </footer>
 </body>
 </html>
