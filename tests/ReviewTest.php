@@ -84,7 +84,10 @@ final class ReviewTest extends TestCase
         $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query('DELETE FROM comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;');
+        self::query(
+            'DELETE FROM comment; DELETE FROM review; DELETE FROM client;
+                DELETE FROM user; DELETE FROM store_product; DELETE FROM product;'
+        );
     }
 
     public function testConstructor(): void
@@ -236,6 +239,20 @@ final class ReviewTest extends TestCase
         $this->assertTrue($success);
         $this->assertGreaterThan(0, $specialCharReview->getReviewID());
 
+
+        // Create a review of length exactly 2000
+        $longTextReview = new Review(
+            product_id: $this->dummy_product->getProductID(),
+            client_id: $this->reviewer->getUserID(),
+            text: str_repeat("A", 2000),
+            rating: 4,
+            created_date: new DateTime()
+        );
+        // Attempt to save the review with long text
+        $success = $longTextReview->save();
+        // Assert that the save operation failed because max length of review is 2000
+        $this->assertTrue($success);
+
         // Create a review with extremely long text
         $longTextReview = new Review(
             product_id: $this->dummy_product->getProductID(),
@@ -246,9 +263,9 @@ final class ReviewTest extends TestCase
         );
         // Attempt to save the review with long text
         $success = $longTextReview->save();
-        // Assert that the save operation succeeded
-        $this->assertTrue($success);
-        $this->assertGreaterThan(0, $longTextReview->getReviewID());
+        // Assert that the save operation failed because max length of review is 2000
+        $this->assertFalse($success);
+
 
         // Test saving duplicate reviews
         $duplicateReview = new Review(
@@ -264,6 +281,7 @@ final class ReviewTest extends TestCase
         $this->assertTrue($success);
         $this->assertGreaterThan(0, $duplicateReview->getReviewID());
     }
+
     public function testGetNestedComments(): void
     {
         $review = new Review(review_id: 1);
