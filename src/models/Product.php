@@ -114,6 +114,10 @@ class Product
         $query = "SELECT * FROM product";
         $results = self::query($query);
 
+        if (empty($results)) {
+            return [];
+        }
+
         // convert results to an array of Product
         $products = [];
         foreach ($results as $result) {
