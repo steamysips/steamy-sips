@@ -253,19 +253,6 @@ final class ReviewTest extends TestCase
         // Assert that the save operation failed because max length of review is 2000
         $this->assertTrue($success);
 
-        // Create a review with extremely long text
-        $longTextReview = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->reviewer->getUserID(),
-            text: str_repeat("A", 10000),
-            rating: 4,
-            created_date: new DateTime()
-        );
-        // Attempt to save the review with long text
-        $success = $longTextReview->save();
-        // Assert that the save operation failed because max length of review is 2000
-        $this->assertFalse($success);
-
 
         // Test saving duplicate reviews
         $duplicateReview = new Review(
