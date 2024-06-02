@@ -168,3 +168,14 @@ You can use `php --ini` to find the location of your `php.ini` file.
 ## Autoload setup
 
 Whenever changes are made to the autoload settings in `composer.json`, you must run `composer dump-autoload`.
+
+## Modifying CSS/JS Files
+
+If you need to make changes to the CSS or JavaScript files located in the `public` folder, you need to run the following
+command in your terminal:
+
+```bash
+npm run build
+```
+
+This command will compile your changes and update the necessary files for your application.
