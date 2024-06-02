@@ -145,7 +145,7 @@ class Profile
         }
 
         // Cancel the order
-        $order->deleteOrder();
+        $order->cancelOrder();
     }
 
     private function handleProfileEditSubmission(): void

@@ -16,7 +16,7 @@ class Shop
 {
     use Controller;
 
-    private array $data;
+    private array $view_data;
     private static int $MAX_PRODUCTS_PER_PAGE = 4;
 
     /**
@@ -154,20 +154,6 @@ class Shop
         return (int)($_GET['page'] ?? 1);
     }
 
-    /**
-     * @param $products
-     * @return array Products which should be displayed on current page
-     */
-    public function applyPagination($products): array
-    {
-        // Slice the products based on pagination
-        return array_slice(
-            $products,
-            ($this->getPageNumber() - 1) * Shop::$MAX_PRODUCTS_PER_PAGE,
-            Shop::$MAX_PRODUCTS_PER_PAGE
-        );
-    }
-
     public function index(): void
     {
         // check if URL follows format /shop/products/<number>
@@ -187,22 +173,27 @@ class Shop
         // get all products that match user criteria
         $filtered_products = $this->getMatchingProducts();
 
-        // Slice the products based on pagination
-        $paginated_products = $this->applyPagination($filtered_products);
+        // get html for pagination
+        $pagination_controller = new Pagination(
+            Shop::$MAX_PRODUCTS_PER_PAGE,
+            count($filtered_products),
+            $this->getPageNumber()
+        );
 
-        // Initialize view variables (existing functionality)
-        $this->data['products'] = $paginated_products;
-        $this->data['search_keyword'] = $_GET['keyword'] ?? "";
-        $this->data['categories'] = Product::getCategories();
-        $this->data['sort_option'] = $_GET['sort'] ?? "";
-        $this->data['selected_categories'] = $_GET['categories'] ?? [];
-        $this->data['current_page_number'] = $this->getPageNumber();
-        $this->data['total_pages'] = (int)ceil(count($filtered_products) / Shop::$MAX_PRODUCTS_PER_PAGE);
+        $this->view_data['pagination'] = $pagination_controller->getHTML();
+        $this->view_data['products'] = $pagination_controller->getCurrentItems($filtered_products);
+
+        // Initialize view variables
+        $this->view_data['search_keyword'] = $_GET['keyword'] ?? "";
+        $this->view_data['categories'] = Product::getCategories();
+        $this->view_data['sort_option'] = $_GET['sort'] ?? "";
+        $this->view_data['selected_categories'] = $_GET['categories'] ?? [];
+        $this->view_data['current_page_number'] = $this->getPageNumber();
 
         // Render the view with pagination information
         $this->view(
             'Shop',
-            $this->data,
+            $this->view_data,
             'Shop',
             template_tags: $this->getLibrariesTags(['aos']),
             template_meta_description: "Explore a delightful selection of aromatic coffees, teas, and delectable

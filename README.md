@@ -20,15 +20,16 @@ includes:
 
 For more details, see the [software requirements specification](docs/SOFTWARE_SPECS.md).
 
-The code for the admin website is found in a separate repository.
+This repository contains the code for the client website and the API. The code for the admin website is found in a
+separate repository.
 
 ## Main features
 
 - MVC pattern
 - Semantic URL routing
 - Email-based password recovery
-- Email notification on order
-- Testing with phpUnit
+- Email notification on checkout
+- Integration testing with phpUnit
 - Mobile-responsive website
 - Utilizes Webpack for efficient code bundling and compatibility with older browsers.
 - Product review system with nested comments
@@ -36,6 +37,7 @@ The code for the admin website is found in a separate repository.
 - Pagination
 - SEO optimized
 - REST API
+- API testing with Guzzler and phpUnit
 
 ## Documentation
 
@@ -58,3 +60,17 @@ Attribution-ShareAlike
     - https://github.com/kevinisaac/php-mvc
 4. The filesystem was inspired by https://github.com/php-pds/sklseleton
 5. Additional references are included within the code itself.
+
+# Todo
+
+Add `X-TEST-ENV` to the header of your request and set its value to `testing` if you want to use the testing database.
+This is required when running tests for API. Without this key-value pair, the production database will be used.
+
+USE DOCKER PHP
+
+- read guzzle documentation. read base_uri
+- test database is being used
+- add variable to .env
+
+line 18 in Reviews API is redundant
+use correct namespace

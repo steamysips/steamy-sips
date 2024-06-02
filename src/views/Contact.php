@@ -46,3 +46,13 @@ declare(strict_types=1);
         </form>
     </div>
 </main>
+
+<dialog <?= $contact_us_successful ? "open" : "" ?>>
+    <article>
+        <h3>Thank You for Contacting Us! 🔎</h3>
+        <p>Your message has been successfully sent. Our team will review your inquiry and get back to you shortly. We appreciate your interest in our services.</p>
+        <footer>
+            <a href="/home" role="button" data-target="my-modal">Return to Home</a>
+        </footer>
+    </article>
+</dialog>

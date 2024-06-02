@@ -263,6 +263,10 @@ class Review
             $errors['text'] = "Review text must have at least 2 characters";
         }
 
+        if (strlen($this->text) > 2000) {
+            $errors['text'] = "Review text must have at most 2000 characters";
+        }
+
         if (!filter_var($this->rating, FILTER_VALIDATE_INT, [
             "options" => [
                 "min_range" => Review::MIN_RATING,

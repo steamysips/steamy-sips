@@ -21,9 +21,22 @@ body > nav [data-tooltip]:not(a,button,input) {
 }
 
 #page-footer {
-  padding: 1rem 0;
+  font-size: 15px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 40px 0;
+}
+
+#page-footer > ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 1em;
+}
+
+#page-footer > ul > li {
+  font-size: 15px;
+  list-style-type: none;
 }
 
 .warning {
