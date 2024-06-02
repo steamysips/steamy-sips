@@ -4,66 +4,50 @@ declare(strict_types=1);
 
 namespace Steamy\Tests\Api;
 
-use DateTime;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use PHPUnit\Framework\TestCase;
-use GuzzleHttp\Client as GuzzleClient;
-use Steamy\Core\Database;
 use Steamy\Model\Product;
+use Steamy\Tests\helpers\APIHelper;
+use Steamy\Tests\helpers\TestHelper;
+use Throwable;
 
 final class ProductsTest extends TestCase
 {
-    use Database;
+    use TestHelper;
+    use APIHelper;
 
-    private ?GuzzleClient $client;
     private Product $dummy_product;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::initFaker();
+        self::initGuzzle();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$faker = null;
+        self::$guzzle = null;
+    }
+
+    public function onNotSuccessfulTest(Throwable $t): never
+    {
+        self::printFakerSeed();
+        parent::onNotSuccessfulTest($t);
+    }
 
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        // Create a handler stack
-        $handlerStack = HandlerStack::create();
-
-        // Add middleware to the handler stack
-        $handlerStack->push(Middleware::mapRequest(function ($request) {
-            // Add custom header to each request
-            return $request->withHeader('X-Test-Env', 'testing');
-        }));
-
-        $this->client = new GuzzleClient([
-            'base_uri' => $_ENV['API_BASE_URI'],
-            'http_errors' => false, // Optionally disable throwing exceptions for HTTP errors
-            'handler' => $handlerStack,
-
-        ]);
-
-        // Create a dummy product for testing
-        $this->dummy_product = new Product(
-            "Velvet Bean",
-            70,
-            "Velvet.jpeg",
-            "Velvet Bean Image",
-            "Velvet",
-            6.50,
-            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
-            new DateTime()
-        );
-
-        $success = $this->dummy_product->save();
-        if (!$success) {
-            throw new Exception('Unable to save product');
-        }
+        $this->dummy_product = self::createProduct();
     }
 
     public function tearDown(): void
     {
-        $this->client = null;
-        self::query('DELETE FROM product;');
+        self::resetDatabase();
     }
 
     /**
@@ -71,7 +55,7 @@ final class ProductsTest extends TestCase
      */
     public function testGetAllProducts()
     {
-        $response = $this->client->get('products');
+        $response = self::$guzzle->get('products');
         $this->assertEquals(200, $response->getStatusCode());
 
         $body = $response->getBody();
@@ -91,7 +75,6 @@ final class ProductsTest extends TestCase
         $this->assertEquals($this->dummy_product->getDescription(), $data['description']);
         $this->assertEquals($this->dummy_product->getImgAltText(), $data['img_alt_text']);
 
-
         // only check presence of the following keys but not the actual value
         $this->assertArrayHasKey('product_id', $data);
         $this->assertArrayHasKey('created_date', $data);
@@ -104,7 +87,7 @@ final class ProductsTest extends TestCase
     public function testGetProductById()
     {
         // test valid product ID
-        $response = $this->client->get('products/' . $this->dummy_product->getProductID());
+        $response = self::$guzzle->get('products/' . $this->dummy_product->getProductID());
         $this->assertEquals(200, $response->getStatusCode());
         $data = json_decode($response->getBody()->getContents(), true);
         $this->assertIsArray($data);
@@ -112,7 +95,7 @@ final class ProductsTest extends TestCase
         $this->assertEquals($this->dummy_product->getProductID(), $data['product_id']);
 
         // test invalid product ID
-        $response = $this->client->get('products/-1');
+        $response = self::$guzzle->get('products/-1');
         $this->assertEquals(404, $response->getStatusCode());
     }
 
@@ -121,7 +104,7 @@ final class ProductsTest extends TestCase
      */
     public function testGetProductCategories()
     {
-        $response = $this->client->get('products/categories');
+        $response = self::$guzzle->get('products/categories');
         $this->assertEquals(200, $response->getStatusCode());
         $data = json_decode($response->getBody()->getContents(), true);
         $this->assertIsArray($data);
@@ -135,7 +118,7 @@ final class ProductsTest extends TestCase
     public function testCreateProduct()
     {
         self::markTestIncomplete('Incomplete test');
-        $response = $this->client->post('products', [
+        $response = self::$guzzle->post('products', [
             'json' => [
                 'name' => 'Test Product',
                 'category' => 'Test Category',
@@ -152,7 +135,7 @@ final class ProductsTest extends TestCase
     public function testDeleteProductById()
     {
         self::markTestIncomplete('Incomplete test');
-        $response = $this->client->delete('products/1');
+        $response = self::$guzzle->delete('products/1');
         $this->assertEquals(204, $response->getStatusCode());
         // No content expected, so no further assertions needed
     }
@@ -163,7 +146,7 @@ final class ProductsTest extends TestCase
     public function testUpdateProductById()
     {
         self::markTestIncomplete('Incomplete test');
-        $response = $this->client->put('products/1', [
+        $response = self::$guzzle->put('products/1', [
             'json' => [
                 'name' => 'Updated Product',
                 'category' => 'Updated Category',
