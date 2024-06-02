@@ -13,10 +13,14 @@ use Steamy\Model\Client;
 final class ProductTest extends TestCase
 {
     use Database;
+
     private ?Product $dummy_product;
     private ?Client $dummy_client;
     private ?Review $dummy_review;
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         $address = new Location("Royal Road", "Curepipe", 1);
@@ -85,8 +89,14 @@ final class ProductTest extends TestCase
         self::assertEquals("Velvet Bean Image", $this->dummy_product->getImgAltText());
         self::assertEquals("Velvet", $this->dummy_product->getCategory());
         self::assertEquals(6.50, $this->dummy_product->getPrice());
-        self::assertEquals("Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder", $this->dummy_product->getDescription());
-        self::assertInstanceOf(DateTime::class, $this->dummy_product->getCreatedDate()); // Check if created_date is an instance of DateTime
+        self::assertEquals(
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            $this->dummy_product->getDescription()
+        );
+        self::assertInstanceOf(
+            DateTime::class,
+            $this->dummy_product->getCreatedDate()
+        ); // Check if created_date is an instance of DateTime
     }
 
     public function testToArray(): void
@@ -111,8 +121,14 @@ final class ProductTest extends TestCase
         self::assertEquals("Velvet Bean Image", $result['img_alt_text']);
         self::assertEquals("Velvet", $result['category']);
         self::assertEquals(6.50, $result['price']);
-        self::assertEquals("Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder", $result['description']);
-        self::assertInstanceOf(DateTime::class, $result['created_date']); // Check if created_date is an instance of DateTime
+        self::assertEquals(
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            $result['description']
+        );
+        self::assertInstanceOf(
+            DateTime::class,
+            $result['created_date']
+        ); // Check if created_date is an instance of DateTime
     }
 
     public function testSave(): void
@@ -132,6 +148,10 @@ final class ProductTest extends TestCase
 
         // Check if there are no validation errors
         $this->assertEmpty($errors);
+
+        $this->markTestIncomplete(
+            'This test lacks test cases, ...',
+        );
     }
 
     public function testGetRatingDistribution(): void
@@ -141,6 +161,10 @@ final class ProductTest extends TestCase
         // Check if the distribution contains the expected keys and values
         $this->assertArrayHasKey(5, $distribution);
         $this->assertEquals(100.0, $distribution[5]); // 1 out of 1 reviews is 5 stars
+
+        $this->markTestIncomplete(
+            'This test lacks test cases, ...',
+        );
     }
 
     public function testDeleteProduct(): void
@@ -154,6 +178,10 @@ final class ProductTest extends TestCase
         // Check if the product no longer exists in the database
         $product = Product::getByID($product_id);
         $this->assertNull($product);
+
+        $this->markTestIncomplete(
+            'This test lacks test cases, ...',
+        );
     }
 
     public function testUpdateProduct(): void
@@ -189,6 +217,10 @@ final class ProductTest extends TestCase
         $averageRating = $this->dummy_product->getAverageRating();
 
         $this->assertNotEquals(999.0, $averageRating);
+
+        $this->markTestIncomplete(
+            'This test lacks test cases, ...',
+        );
     }
 
     public function testGetReviews(): void
