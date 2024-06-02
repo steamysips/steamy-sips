@@ -15,7 +15,6 @@ class Reviews
         'GET' => [
             '/reviews' => 'getAllReviews',
             '/reviews/{id}' => 'getReviewByID',
-            '/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
             '/reviews' => 'createReview',
@@ -63,28 +62,6 @@ class Reviews
 
         // Return JSON response
         echo json_encode($review->toArray());
-    }
-
-
-    /**
-     * Get all reviews for a particular product by its ID.
-     */
-    public function getAllReviewsForProduct(): void
-    {
-        $productId = (int)Utility::splitURL()[3];
-        // Check if product exists
-        if (ProductModel::getById($productId) === null) {
-            // product not found, return 404
-            http_response_code(404);
-            echo json_encode(['error' => 'Product not found']);
-            return;
-        }
-
-        // Retrieve all reviews for the specified product from the database
-        $reviews = Review::getAllReviewsForProduct($productId);
-
-        // Return JSON response
-        echo json_encode($reviews);
     }
 
     /**
