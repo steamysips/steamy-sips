@@ -26,6 +26,8 @@ class Contact
         $this->view_data['defaultEmail'] = "";
         $this->view_data['defaultMessage'] = "";
         $this->view_data['errors'] = [];
+        $this->view_data['contact_us_successful'] = false;
+
     }
 
     /**
@@ -84,7 +86,7 @@ class Contact
         if (empty($this->view_data['errors'])) {
             $success = $this->mailBusinessInbox($form_data);
             if ($success) {
-                Utility::redirect('home');
+                $this->view_data['contact_us_successful'] = true;
             } else {
                 (new Error())->handleMailingError();
             }
@@ -100,18 +102,18 @@ class Contact
      */
     private function mailBusinessInbox($form_data): bool
     {
-        // Concatenate form data into the email message
-        $htmlMessage = "You have received a new message from: <br>";
-        $htmlMessage .= "Name: " . $form_data['first_name'] . " " . $form_data['last_name'] . "<br>";
-        $htmlMessage .= "Email: " . $form_data['email'] . "<br>";
-        $htmlMessage .= "Message: " . $form_data['message'] . "<br>";
+        // Load the email template
+        ob_start();
+        extract($form_data);
+        include __DIR__ . '/../views/mails/Contact.php';
+        $htmlMessage = ob_get_clean();
 
         $plainMessage = "You have received a new message from:\n";
         $plainMessage .= "Name: " . $form_data['first_name'] . " " . $form_data['last_name'] . "\n";
         $plainMessage .= "Email: " . $form_data['email'] . "\n";
         $plainMessage .= "Message: " . $form_data['message'] . "\n";
 
-        //Implement logic to send email to admin using Mailer class
+        // Implement logic to send email to admin using Mailer class
         $mailer = new Mailer();
         $subject = "New Contact Message from " . $form_data['first_name'] . " " . $form_data['last_name'];
 
