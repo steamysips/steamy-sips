@@ -60,7 +60,6 @@ trait TestHelper
     public static function resetDatabase(): void
     {
         $conn = self::connect();
-        $conn->beginTransaction();
 
         // Order of deletion is important to prevent foreign key violation
         $query = <<< SQL
@@ -82,7 +81,6 @@ trait TestHelper
         SQL;
 
         $conn->exec($query);
-        $conn->commit();
         $conn = null;
     }
 
