@@ -11,7 +11,6 @@ use Steamy\Model\Client;
 use Steamy\Model\Location;
 use Steamy\Model\Review;
 use Steamy\Model\Product;
-use Faker\Factory;
 use Steamy\Tests\helpers\TestHelper;
 use Throwable;
 
@@ -25,9 +24,7 @@ final class ReviewTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        self::$faker = Factory::create();
-        self::$seed = mt_rand();
-        self::$faker->seed(self::$seed);
+        self::initFaker();
     }
 
     public static function tearDownAfterClass(): void
@@ -37,16 +34,7 @@ final class ReviewTest extends TestCase
 
     public function onNotSuccessfulTest(Throwable $t): never
     {
-        $seed = self::$seed;
-
-        $error_message = <<< EOL
-        
-        ------------ Faker seed ------------
-        Faker seed for failed test: $seed
-        ------------------------------------
-        EOL;
-
-        error_log($error_message);
+        self::printFakerSeed();
         parent::onNotSuccessfulTest($t);
     }
 

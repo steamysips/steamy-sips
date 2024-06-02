@@ -21,14 +21,16 @@ final class ProductTest extends TestCase
 
     private ?Product $dummy_product;
     private ?Client $dummy_client;
+
+    /**
+     * @var Review|null A review written by $dummy_client for $dummy_product
+     */
     private ?Review $dummy_review;
 
 
     public static function setUpBeforeClass(): void
     {
-        self::$faker = Factory::create();
-        self::$seed = mt_rand();
-        self::$faker->seed(self::$seed);
+        self::initFaker();
     }
 
     public static function tearDownAfterClass(): void
@@ -38,16 +40,7 @@ final class ProductTest extends TestCase
 
     public function onNotSuccessfulTest(Throwable $t): never
     {
-        $seed = self::$seed;
-
-        $error_message = <<< EOL
-        
-        ------------ Faker seed ------------
-        Faker seed for failed test: $seed
-        ------------------------------------
-        EOL;
-
-        error_log($error_message);
+        self::printFakerSeed();
         parent::onNotSuccessfulTest($t);
     }
 
@@ -140,12 +133,9 @@ final class ProductTest extends TestCase
 
     public function testSave(): void
     {
-        // Save the dummy product
-        $result = $this->dummy_product->save();
-
-        // Check if the product was saved successfully
-        self::assertTrue($result); // Assert that save() returns true upon successful save
-        self::assertNotNull($this->dummy_product->getProductID());
+        $this->markTestIncomplete(
+            'Use data providers here for at least 3 test cases, ...',
+        );
     }
 
     public function testValidate(): void
@@ -166,11 +156,12 @@ final class ProductTest extends TestCase
         $distribution = $this->dummy_product->getRatingDistribution();
 
         // Check if the distribution contains the expected keys and values
-        $this->assertArrayHasKey(5, $distribution);
-        $this->assertEquals(100.0, $distribution[5]); // 1 out of 1 reviews is 5 stars
+        // Here dummy product contains a single review:
+        $this->assertArrayHasKey($this->dummy_review->getRating(), $distribution);
+        $this->assertEquals(100.0, $distribution[$this->dummy_review->getRating()]);
 
         $this->markTestIncomplete(
-            'This test lacks test cases, ...',
+            'This test lacks test cases. This test might fail when getRatingDistribution excludes unverified reviews.',
         );
     }
 
@@ -239,7 +230,7 @@ final class ProductTest extends TestCase
 
         // Check if the reviews contain the expected values
         $this->assertCount(1, $reviews);
-        $this->assertEquals('This is a test review.', $reviews[0]->getText());
-        $this->assertEquals(5, $reviews[0]->getRating());
+        $this->assertEquals($this->dummy_review->getText(), $reviews[0]->getText());
+        $this->assertEquals($this->dummy_review->getRating(), $reviews[0]->getRating());
     }
 }

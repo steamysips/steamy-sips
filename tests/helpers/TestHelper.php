@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Steamy\Tests\helpers;
 
-use DateTime;
 use Exception;
+use Faker\Factory;
 use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
@@ -23,6 +23,35 @@ trait TestHelper
     private static ?Generator $faker;
     private static int $seed;
 
+    /**
+     * Initializes faker generator with a random seed
+     * @return void
+     */
+    public static function initFaker(): void
+    {
+        self::$faker = Factory::create();
+        self::$seed = mt_rand();
+        self::$faker->seed(self::$seed);
+    }
+
+    /**
+     * Prints current faker seed to terminal
+     * @return void
+     */
+    public static function printFakerSeed(): void
+    {
+        $seed = self::$seed;
+
+        $error_message = <<< EOL
+        
+        ------------ Faker seed ------------
+        Faker seed for failed test: $seed
+        ------------------------------------
+        
+        EOL;
+
+        error_log($error_message);
+    }
 
     /**
      * Clears data from all tables except district table.
@@ -58,14 +87,15 @@ trait TestHelper
     }
 
     /**
-     * Creates a client and saves it to database
+     * Creates a random client and saves it to database.
+     * Client email is guaranteed to be unique.
      * @return Client
      * @throws Exception
      */
     public static function createClient(): Client
     {
         $client = new Client(
-            self::$faker->email(),
+            self::$faker->unique()->email(),
             self::$faker->firstName(),
             self::$faker->lastName(),
             self::$faker->password(),
@@ -81,30 +111,64 @@ trait TestHelper
     }
 
     /**
-     * Creates a product and saves it to database.
+     * Creates a random product and saves it to database.
      * @return Product
      * @throws Exception
      */
     public static function createProduct(): Product
     {
         $product = new Product(
-            self::$faker->company(),
-            70,
-            "Velvet.jpeg",
-            self::$faker->sentence(),
-            self::$faker->word(),
-            6.50,
-            self::$faker->sentence(),
-            new DateTime()
+            name: self::$faker->company(),
+            calories: self::$faker->numberBetween(1, 500),
+            img_url: "Velvet.jpeg",
+            img_alt_text: self::$faker->sentence(),
+            category: self::$faker->lexify(),
+            price: 6.50,
+            description: self::$faker->sentence()
         );
 
         $success = $product->save();
 
         if (!$success) {
-            throw new Exception('Unable to save product to database');
+            $json = json_encode($product->toArray());
+            $errors = json_encode($product->validate());
+
+            $msg = <<< EOL
+            Unable to save product to database:
+            $json
+            
+            Attribute errors:
+            $errors
+            EOL;
+
+            throw new Exception($msg);
         }
 
         return $product;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function createStore(): Store
+    {
+        $store = new Store(
+            phone_no: self::$faker->phoneNumber(),
+            address: new Location(
+                street: self::$faker->streetAddress(),
+                city: self::$faker->city(),
+                district_id: self::$faker->numberBetween(1, 9),
+                latitude: self::$faker->numberBetween(-90, 90),
+                longitude: self::$faker->numberBetween(-180, 180)
+            )
+        );
+
+        $success = $store->save();
+
+        if (!$success) {
+            throw new Exception('Unable to save store to database');
+        }
+        return $store;
     }
 
     /**
@@ -121,20 +185,7 @@ trait TestHelper
             // place an order for  client and product
 
             // create store
-            $store = new Store(
-                phone_no: "13213431",
-                address: new Location(
-                    street: "Royal",
-                    city: "Curepipe",
-                    district_id: 1,
-                    latitude: 50,
-                    longitude: 50
-                )
-            );
-            $success = $store->save();
-            if (!$success) {
-                throw new Exception('Unable to create store');
-            }
+            $store = self::createStore();
 
             // Add stock to the store for the product to be bought
             $store->addProductStock($product->getProductID(), 10);
@@ -152,8 +203,8 @@ trait TestHelper
         $review = new Review(
             product_id: $product->getProductID(),
             client_id: $client->getUserID(),
-            text: "This is a test review.",
-            rating: 5
+            text: self::$faker->sentence(10),
+            rating: self::$faker->numberBetween(1, 5)
         );
 
         $success = $review->save();
