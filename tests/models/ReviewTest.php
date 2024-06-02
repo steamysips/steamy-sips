@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
-use Steamy\Model\Order;
-use Steamy\Model\OrderProduct;
 use Steamy\Model\Review;
 use Steamy\Model\Product;
-use Steamy\Model\Store;
 use Faker\Factory;
-use Faker\Generator;
+use Steamy\Tests\helpers\TestHelper;
+use Throwable;
 
 final class ReviewTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
-    private static ?Generator $faker;
     private ?Review $dummy_review;
     private ?Client $reviewer;
     private ?Product $dummy_product;
@@ -26,11 +26,28 @@ final class ReviewTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::$faker = Factory::create();
+        self::$seed = mt_rand();
+        self::$faker->seed(self::$seed);
     }
 
     public static function tearDownAfterClass(): void
     {
         self::$faker = null;
+    }
+
+    public function onNotSuccessfulTest(Throwable $t): never
+    {
+        $seed = self::$seed;
+
+        $error_message = <<< EOL
+        
+        ------------ Faker seed ------------
+        Faker seed for failed test: $seed
+        ------------------------------------
+        EOL;
+
+        error_log($error_message);
+        parent::onNotSuccessfulTest($t);
     }
 
     /**
@@ -43,125 +60,7 @@ final class ReviewTest extends TestCase
         $this->reviewer = null;
         $this->dummy_product = null;
 
-
-        self::query(
-            "DELETE FROM order_product;
-                    DELETE FROM `order`;
-                    DELETE FROM comment;
-                    DELETE FROM review;
-                    DELETE FROM client;
-                    DELETE FROM user;
-                    DELETE FROM store_product;
-                    DELETE FROM store;
-                    DELETE FROM product;
-                    "
-        );
-    }
-
-    /**
-     * Creates a client and saves it to database
-     * @return Client
-     * @throws Exception
-     */
-    public static function createClient(): Client
-    {
-        $client = new Client(
-            self::$faker->email(),
-            self::$faker->name(),
-            self::$faker->name(),
-            "User0",
-            "13213431",
-            new Location("Royal Road", "Curepipe", 1)
-        );
-
-        $success = $client->save();
-        if (!$success) {
-            throw new Exception('Unable to save client');
-        }
-        return $client;
-    }
-
-    /**
-     * Creates a product and saves it to database.
-     * @return Product
-     * @throws Exception
-     */
-    public static function createProduct(): Product
-    {
-        $product = new Product(
-            "Velvet Bean",
-            70,
-            "Velvet.jpeg",
-            "Velvet Bean Image",
-            "Velvet",
-            6.50,
-            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
-            new DateTime()
-        );
-
-        $success = $product->save();
-        if (!$success) {
-            throw new Exception('Unable to save product');
-        }
-        return $product;
-    }
-
-    /**
-     * Create a review and saves it to database.
-     * @param Product $product A valid product already present in database
-     * @param Client $client A valid client already present in database
-     * @param bool $verified Whether to create an order for client for given product.
-     * @return Review
-     * @throws Exception
-     */
-    public static function createReview(Product $product, Client $client, bool $verified = false): Review
-    {
-        if ($verified) {
-            // place an order for  client and product
-
-            // create store
-            $store = new Store(
-                phone_no: "13213431",
-                address: new Location(
-                    street: "Royal",
-                    city: "Curepipe",
-                    district_id: 1,
-                    latitude: 50,
-                    longitude: 50
-                )
-            );
-            $success = $store->save();
-            if (!$success) {
-                throw new Exception('Unable to create store');
-            }
-
-            // Add stock to the store for the product to be bought
-            $store->addProductStock($product->getProductID(), 10);
-
-            $order = new Order($store->getStoreID(), $client->getUserID(), [
-                new OrderProduct($product->getProductID(), 'small', 'oat', 1)
-            ]);
-
-            $success = $order->save();
-            if (!$success) {
-                throw new Exception('Unable to save order');
-            }
-        }
-
-        $review = new Review(
-            product_id: $product->getProductID(),
-            client_id: $client->getUserID(),
-            text: "This is a test review.",
-            rating: 5
-        );
-
-        $success = $review->save();
-
-        if (!$success) {
-            throw new Exception('Unable to save review');
-        }
-
-        return $review;
+        self::resetDatabase();
     }
 
     /**

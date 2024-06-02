@@ -9,11 +9,12 @@ use PHPUnit\Framework\TestCase;
 use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
+use Steamy\Tests\helpers\TestHelper;
 
 
 final class ClientTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Client $dummy_client;
 
@@ -39,7 +40,7 @@ final class ClientTest extends TestCase
         $this->dummy_client = null;
 
         // Clear all data from client and user tables
-        self::query('DELETE FROM client; DELETE FROM user;');
+        self::resetDatabase();
     }
 
     public function testConstructor(): void

@@ -7,17 +7,17 @@ namespace Steamy\Tests\Model;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
+use Steamy\Tests\helpers\TestHelper;
 
 class OrderProductTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Order $dummy_order;
     private ?Client $client;
@@ -119,9 +119,7 @@ class OrderProductTest extends TestCase
         $this->line_items = [];
 
         // Clear all data from relevant tables
-        self::query(
-            'DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;'
-        );
+        self::resetDatabase();
     }
 
     public function testValidate(): void

@@ -7,16 +7,16 @@ namespace Steamy\Tests\Model;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Comment;
 use Steamy\Model\Location;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
+use Steamy\Tests\helpers\TestHelper;
 
 class CommentTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Comment $dummy_comment;
     private ?Review $dummy_review;
@@ -92,9 +92,7 @@ class CommentTest extends TestCase
         $this->dummy_product = null;
 
         // clear all data from review and client tables
-        self::query(
-            'DELETE FROM  comment; DELETE FROM review; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product;'
-        );
+        self::resetDatabase();
     }
 
     public function testConstructor(): void

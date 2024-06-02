@@ -6,13 +6,13 @@ namespace Steamy\Tests\Model;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Core\Database;
 use Steamy\Model\Location;
 use Steamy\Model\Store;
+use Steamy\Tests\helpers\TestHelper;
 
 class StoreTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Store $dummy_store;
 
@@ -55,7 +55,7 @@ class StoreTest extends TestCase
         }
 
         // clear all data from store tables
-        self::query('DELETE FROM store;');
+        self::resetDatabase();
     }
 
     /**
