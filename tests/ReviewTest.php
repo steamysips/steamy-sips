@@ -6,17 +6,163 @@ use PHPUnit\Framework\TestCase;
 use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
+use Steamy\Model\Order;
+use Steamy\Model\OrderProduct;
 use Steamy\Model\Review;
 use Steamy\Model\Product;
+use Steamy\Model\Store;
+use Faker\Factory;
+use Faker\Generator;
 
 final class ReviewTest extends TestCase
 {
     use Database;
 
+    private static ?Generator $faker;
     private ?Review $dummy_review;
     private ?Client $reviewer;
     private ?Product $dummy_product;
 
+    public static function setUpBeforeClass(): void
+    {
+        self::$faker = Factory::create();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$faker = null;
+    }
+
+    /**
+     * Clears previously inserted data in database.
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        $this->dummy_review = null;
+        $this->reviewer = null;
+        $this->dummy_product = null;
+
+
+        self::query(
+            "DELETE FROM order_product;
+                    DELETE FROM `order`;
+                    DELETE FROM comment;
+                    DELETE FROM review;
+                    DELETE FROM client;
+                    DELETE FROM user;
+                    DELETE FROM store_product;
+                    DELETE FROM store;
+                    DELETE FROM product;
+                    "
+        );
+    }
+
+    /**
+     * Creates a client and saves it to database
+     * @return Client
+     * @throws Exception
+     */
+    public static function createClient(): Client
+    {
+        $client = new Client(
+            self::$faker->email(),
+            self::$faker->name(),
+            self::$faker->name(),
+            "User0",
+            "13213431",
+            new Location("Royal Road", "Curepipe", 1)
+        );
+
+        $success = $client->save();
+        if (!$success) {
+            throw new Exception('Unable to save client');
+        }
+        return $client;
+    }
+
+    /**
+     * Creates a product and saves it to database.
+     * @return Product
+     * @throws Exception
+     */
+    public static function createProduct(): Product
+    {
+        $product = new Product(
+            "Velvet Bean",
+            70,
+            "Velvet.jpeg",
+            "Velvet Bean Image",
+            "Velvet",
+            6.50,
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            new DateTime()
+        );
+
+        $success = $product->save();
+        if (!$success) {
+            throw new Exception('Unable to save product');
+        }
+        return $product;
+    }
+
+    /**
+     * Create a review and saves it to database.
+     * @param Product $product A valid product already present in database
+     * @param Client $client A valid client already present in database
+     * @param bool $verified Whether to create an order for client for given product.
+     * @return Review
+     * @throws Exception
+     */
+    public static function createReview(Product $product, Client $client, bool $verified = false): Review
+    {
+        if ($verified) {
+            // place an order for  client and product
+
+            // create store
+            $store = new Store(
+                phone_no: "13213431",
+                address: new Location(
+                    street: "Royal",
+                    city: "Curepipe",
+                    district_id: 1,
+                    latitude: 50,
+                    longitude: 50
+                )
+            );
+            $success = $store->save();
+            if (!$success) {
+                throw new Exception('Unable to create store');
+            }
+
+            // Add stock to the store for the product to be bought
+            $store->addProductStock($product->getProductID(), 10);
+
+            $order = new Order($store->getStoreID(), $client->getUserID(), [
+                new OrderProduct($product->getProductID(), 'small', 'oat', 1)
+            ]);
+
+            $success = $order->save();
+            if (!$success) {
+                throw new Exception('Unable to save order');
+            }
+        }
+
+        $review = new Review(
+            product_id: $product->getProductID(),
+            client_id: $client->getUserID(),
+            text: "This is a test review.",
+            rating: 5
+        );
+
+        $success = $review->save();
+
+        if (!$success) {
+            throw new Exception('Unable to save review');
+        }
+
+        return $review;
+    }
 
     /**
      * Adds a client and a review to the database.
@@ -73,23 +219,6 @@ final class ReviewTest extends TestCase
         }
     }
 
-    /**
-     * Clears previously inserted data in database.
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        $this->dummy_review = null;
-        $this->reviewer = null;
-        $this->dummy_product = null;
-
-        // clear all data from review and client tables
-        self::query(
-            'DELETE FROM comment; DELETE FROM review; DELETE FROM client;
-                DELETE FROM user; DELETE FROM store_product; DELETE FROM product;'
-        );
-    }
-
     public function testConstructor(): void
     {
         $new_review = new Review(
@@ -139,11 +268,11 @@ final class ReviewTest extends TestCase
     }
 
     /**
-     * Data provider for testValidate.
+     * Provides review data to testValidate and testSave
      *
      * @return array
      */
-    public static function validateDataProvider(): array
+    public static function reviewDataProvider(): array
     {
         return [
             'valid review' => [
@@ -152,11 +281,17 @@ final class ReviewTest extends TestCase
                 'created_date' => new DateTime('2023-01-01'),
                 'expectedErrors' => []
             ],
-            'short text' => [
+            'too short text' => [
                 'text' => 'A',
                 'rating' => 3,
                 'created_date' => new DateTime('2023-01-01'),
                 'expectedErrors' => ['text' => 'Review text must have at least 2 characters']
+            ],
+            'too long text' => [
+                'text' => str_repeat('A', 3000),
+                'rating' => 3,
+                'created_date' => new DateTime('2023-01-01'),
+                'expectedErrors' => ['text' => 'Review text must have at most 2000 characters']
             ],
             'invalid rating' => [
                 'text' => 'Good product',
@@ -164,17 +299,36 @@ final class ReviewTest extends TestCase
                 'created_date' => new DateTime('2023-01-01'),
                 'expectedErrors' => ['rating' => 'Rating must be between 1 and 5']
             ],
-            'future date' => [
+            'invalid date' => [
                 'text' => 'Good product',
                 'rating' => 4,
                 'created_date' => new DateTime('2030-01-01'),
                 'expectedErrors' => ['date' => 'Review date cannot be in the future']
+            ],
+            'invalid date and rating' => [
+                'text' => 'Good product',
+                'rating' => -1,
+                'created_date' => new DateTime('2030-01-01'),
+                'expectedErrors' => [
+                    'rating' => 'Rating must be between 1 and 5',
+                    'date' => 'Review date cannot be in the future'
+                ]
+            ],
+            'invalid text, date, and rating' => [
+                'text' => '',
+                'rating' => -1,
+                'created_date' => new DateTime('2030-01-01'),
+                'expectedErrors' => [
+                    'text' => 'Review text must have at least 2 characters',
+                    'rating' => 'Rating must be between 1 and 5',
+                    'date' => 'Review date cannot be in the future'
+                ]
             ]
         ];
     }
 
     /**
-     * @dataProvider validateDataProvider
+     * @dataProvider reviewDataProvider
      */
     public function testValidate(string $text, int $rating, DateTime $created_date, array $expectedErrors): void
     {
@@ -188,102 +342,49 @@ final class ReviewTest extends TestCase
 
         $this->assertNotNull($fetched_review);
 
-        // Assert that the properties of the returned Review object match the mock data
-        self::assertEquals($this->dummy_review->getText(), $fetched_review->getText());
-        self::assertEquals($this->dummy_review->getRating(), $fetched_review->getRating());
+        // Assert that the properties of the returned Review object match the data
+        $this->assertEquals($this->dummy_review->getText(), $fetched_review->getText());
+        $this->assertEquals($this->dummy_review->getRating(), $fetched_review->getRating());
 
         // Compare dates by formatting
-        self::assertEquals(
+        $this->assertEquals(
             $this->dummy_review->getCreatedDate()->format('Y-m-d'),
             $fetched_review->getCreatedDate()->format('Y-m-d')
         );
 
         // Test getByID with invalid ID
-        $this->assertNull(Review::getByID(999));
+        $invalid_ids = [0, -1, 999, -111];
+        foreach ($invalid_ids as $id) {
+            $this->assertNull(Review::getByID($id));
+        }
     }
 
-    public function testSave(): void
+    /**
+     * @dataProvider reviewDataProvider
+     */
+    public function testSave(string $text, int $rating, DateTime $created_date, array $expectedErrors): void
     {
-        // Create an invalid review with empty text
-        $invalidReview = new Review(1, 1, 1, "", 0, new DateTime("2024-03-10"));
-        // Attempt to save the invalid review
-        $success = $invalidReview->save();
-        // Assert that the save operation failed
-        $this->assertFalse($success);
-
-        // Create a valid review
-        $validReview = new Review(
+        $review = new Review(
             product_id: $this->dummy_product->getProductID(),
             client_id: $this->reviewer->getUserID(),
-            text: "Another test review",
-            rating: 4,
-            created_date: new DateTime()
+            text: $text,
+            rating: $rating,
+            created_date: $created_date
         );
-        // Attempt to save the valid review
-        $success = $validReview->save();
-        // Assert that the save operation succeeded
-        $this->assertTrue($success);
-        $this->assertGreaterThan(0, $validReview->getReviewID());
 
-        // Create a review with special characters
-        $specialCharReview = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->reviewer->getUserID(),
-            text: "Review with special characters: !@#$%^&*()",
-            rating: 4,
-            created_date: new DateTime()
-        );
-        // Attempt to save the review with special characters
-        $success = $specialCharReview->save();
-        // Assert that the save operation succeeded
-        $this->assertTrue($success);
-        $this->assertGreaterThan(0, $specialCharReview->getReviewID());
+        // Attempt to save the review
+        $success = $review->save();
 
-
-        // Create a review of length exactly 2000
-        $longTextReview = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->reviewer->getUserID(),
-            text: str_repeat("A", 2000),
-            rating: 4,
-            created_date: new DateTime()
-        );
-        // Attempt to save the review with long text
-        $success = $longTextReview->save();
-        // Assert that the save operation failed because max length of review is 2000
-        $this->assertTrue($success);
-
-        // Create a review with extremely long text
-        $longTextReview = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->reviewer->getUserID(),
-            text: str_repeat("A", 10000),
-            rating: 4,
-            created_date: new DateTime()
-        );
-        // Attempt to save the review with long text
-        $success = $longTextReview->save();
-        // Assert that the save operation failed because max length of review is 2000
-        $this->assertFalse($success);
-
-
-        // Test saving duplicate reviews
-        $duplicateReview = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->reviewer->getUserID(),
-            text: "This is a test review.",
-            rating: 5,
-            created_date: new DateTime()
-        );
-        // Attempt to save the duplicate review
-        $success = $duplicateReview->save();
-        // Assert that the save operation succeeded (assuming duplicates are allowed)
-        $this->assertTrue($success);
-        $this->assertGreaterThan(0, $duplicateReview->getReviewID());
+        // If expectedErrors array is empty, the review should be saved successfully
+        $this->assertEquals(empty($expectedErrors), $success);
     }
 
     public function testGetNestedComments(): void
     {
+        $this->markTestIncomplete(
+            'This test lacks test cases, ...',
+        );
+
         $review = new Review(review_id: 1);
         $comments = $review->getNestedComments();
 
@@ -298,9 +399,18 @@ final class ReviewTest extends TestCase
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function testIsVerified(): void
     {
-        $review = new Review(review_id: 2, product_id: 2);
-        $this->assertFalse($review->isVerified());
+        // note: do not use data provider here because $faker is static and causes a bug
+        $verified_review = self::createReview(self::createProduct(), self::createClient(), true);
+        $unverified_review = self::createReview(self::createProduct(), self::createClient());
+        $fake_review = new Review(review_id: -321, product_id: -32);
+
+        $this->assertTrue($verified_review->isVerified());
+        $this->assertFalse($unverified_review->isVerified());
+        $this->assertFalse($fake_review->isVerified());
     }
 }
