@@ -68,8 +68,7 @@ final class ReviewTest extends TestCase
             "Velvet Bean Image",
             "Velvet",
             6.50,
-            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
-            new DateTime()
+            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder"
         );
 
         $success = $this->dummy_product->save();
@@ -224,22 +223,32 @@ final class ReviewTest extends TestCase
         $this->assertEquals($expectedErrors, $review->validate());
     }
 
-    public function testGetByID(): void
+    public function testGetByIDForValidId(): void
     {
         $fetched_review = Review::getByID($this->dummy_review->getReviewID());
 
         $this->assertNotNull($fetched_review);
 
-        // Assert that the properties of the returned Review object match the data
-        $this->assertEquals($this->dummy_review->getText(), $fetched_review->getText());
-        $this->assertEquals($this->dummy_review->getRating(), $fetched_review->getRating());
+        $expected_data = $this->dummy_review->toArray();
+        $fetched_data = $fetched_review->toArray();
+
+        // ignore creation dates because the date for expected review
+        // was set by php while the date for fetched_data was set by mysql
+        unset($expected_data['created_date']);
+        unset($fetched_data['created_date']);
+
+        // compare all attributes except created_date
+        $this->assertEquals($expected_data, $fetched_data);
 
         // Compare dates by formatting
         $this->assertEquals(
             $this->dummy_review->getCreatedDate()->format('Y-m-d'),
             $fetched_review->getCreatedDate()->format('Y-m-d')
         );
+    }
 
+    public function testGetByIDForInvalidId(): void
+    {
         // Test getByID with invalid ID
         $invalid_ids = [0, -1, 999, -111];
         foreach ($invalid_ids as $id) {
