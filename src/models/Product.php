@@ -314,7 +314,7 @@ class Product
         }
 
         // Validate img_url
-        if (!preg_match('/\.(png|jpeg|avif)$/', $this->img_url)) {
+        if (!preg_match('/\.(png|jpeg|avif|jpg|webp)$/', $this->img_url)) {
             $errors['img_url'] = "Image URL must end with .png, .jpeg, or .avif";
         }
 
