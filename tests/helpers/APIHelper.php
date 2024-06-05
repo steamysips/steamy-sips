@@ -12,6 +12,10 @@ trait APIHelper
 {
     private static ?GuzzleClient $guzzle;
 
+    /**
+     * Initializes static variable $guzzle so that API requests can be made.
+     * @return void
+     */
     public static function initGuzzle(): void
     {
         // Create a handler stack
@@ -25,9 +29,18 @@ trait APIHelper
 
         self::$guzzle = new GuzzleClient([
             'base_uri' => $_ENV['API_BASE_URI'],
-            'http_errors' => false, // Optionally disable throwing exceptions for HTTP errors
+            'http_errors' => false, // disable throwing exceptions for HTTP errors
             'handler' => $handlerStack,
-
         ]);
+    }
+
+    /**
+     * Logs data in JSON format in terminal. Use for debugging only.
+     * @param $data
+     * @return void
+     */
+    public static function log_json($data): void
+    {
+        error_log(json_encode($data, JSON_PRETTY_PRINT));
     }
 }
