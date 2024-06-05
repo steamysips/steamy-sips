@@ -25,6 +25,12 @@ class OrderTest extends TestCase
     private ?Store $dummy_store = null;
     private array $line_items = [];
 
+    public static function setUpBeforeClass(): void
+    {
+        self::initFaker();
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */

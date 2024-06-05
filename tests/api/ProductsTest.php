@@ -23,6 +23,7 @@ final class ProductsTest extends TestCase
     {
         self::initFaker();
         self::initGuzzle();
+        self::resetDatabase();
     }
 
     public static function tearDownAfterClass(): void

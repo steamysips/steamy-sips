@@ -27,6 +27,7 @@ class OrderProductTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::initFaker();
+        self::resetDatabase();
     }
 
     public static function tearDownAfterClass(): void

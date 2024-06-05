@@ -18,6 +18,11 @@ final class ClientTest extends TestCase
 
     private ?Client $dummy_client;
 
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */

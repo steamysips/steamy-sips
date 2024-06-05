@@ -15,6 +15,11 @@ final class AdministratorTest extends TestCase
 
     private ?Administrator $dummy_admin;
 
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */

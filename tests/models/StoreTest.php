@@ -16,6 +16,11 @@ class StoreTest extends TestCase
 
     private ?Store $dummy_store;
 
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */

@@ -29,6 +29,7 @@ final class ProductTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        self::resetDatabase();
         self::initFaker();
     }
 

@@ -23,6 +23,11 @@ class CommentTest extends TestCase
     private ?Client $reviewer;
     private ?Product $dummy_product;
 
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */
