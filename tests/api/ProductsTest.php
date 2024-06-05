@@ -160,22 +160,27 @@ final class ProductsTest extends TestCase
 
     /**
      * @throws GuzzleException
+     * @throws Exception
      */
     public function testUpdateProductById()
     {
-        self::markTestIncomplete('Incomplete test');
-        $response = self::$guzzle->put('products/1', [
-            'json' => [
-                'name' => 'Updated Product',
-                'category' => 'Updated Category',
-                'price' => 199.99,
-                // Add more fields as needed
-            ]
-        ]);
+        // update a non-existent product
+        $response = self::$guzzle->put('products/0');
+        $this->assertEquals(404, $response->getStatusCode());
+
+        // save a valid product to database
+        $old_product = self::createProduct();
+
+        // update the name of a valid product
+        $new_name = 'dashkdla';
+
+        $response = self::$guzzle->put(
+            'products/' . $old_product->getProductID(),
+            ['json' => ['name' => $new_name]]
+        );
+
         $this->assertEquals(200, $response->getStatusCode());
-        $data = json_decode($response->getBody()->getContents(), true);
-        $this->assertArrayHasKey('id', $data);
-        $this->assertEquals(1, $data['id']);
-        // Add more assertions as needed
+        $new_product = Product::getByID($old_product->getProductID());
+        $this->assertEquals($new_name, $new_product->getName());
     }
 }
