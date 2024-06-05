@@ -90,18 +90,7 @@ class Products
     {
         $data = (object)json_decode(file_get_contents("php://input"), true);
 
-        $schemaPath = __DIR__ . '/../../../resources/schemas';
-        $validator = new Validator();
-
-        $validator->resolver()->registerPrefix(
-            "https://example.com/",
-            $schemaPath,
-        );
-
-        $result = $validator->validate(
-            $data,
-            "https://example.com/products/create.json"
-        );
+        $result = Utility::validateAgainstSchema($data, "products/create.json");
 
         if (!($result->isValid())) {
             $errors = (new ErrorFormatter())->format($result->error());
