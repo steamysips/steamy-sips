@@ -92,10 +92,21 @@ trait TestHelper
      */
     public static function createClient(): Client
     {
+        $first_name = self::$faker->firstName();
+        $last_name = self::$faker->lastName();
+
+        // ensure that length is correct
+        if (strlen($first_name) < 3) {
+            $first_name .= "aaa";
+        }
+        if (strlen($last_name) < 3) {
+            $last_name .= "aaa";
+        }
+
         $client = new Client(
             self::$faker->unique()->email(),
-            self::$faker->firstName(),
-            self::$faker->lastName(),
+            $first_name,
+            $last_name,
             self::$faker->password(),
             self::$faker->phoneNumber(),
             new Location(self::$faker->streetAddress(), self::$faker->city(), self::$faker->numberBetween(1, 9))
@@ -103,7 +114,18 @@ trait TestHelper
 
         $success = $client->save();
         if (!$success) {
-            throw new Exception('Unable to save a unique client to database');
+            $json = json_encode($client->toArray());
+            $errors = json_encode($client->validate());
+
+            $msg = <<< EOL
+            Unable to save client to database:
+            $json
+            
+            Attribute errors:
+            $errors
+            EOL;
+
+            throw new Exception($msg);
         }
         return $client;
     }
@@ -115,10 +137,13 @@ trait TestHelper
      */
     public static function createProduct(): Product
     {
+        $img_ext = self::$faker->randomElement(['png', 'jpeg', 'avif', 'jpg', 'webp']);
+        $product_name = self::$faker->words(2, true);
+
         $product = new Product(
-            name: self::$faker->company(),
+            name: $product_name,
             calories: self::$faker->numberBetween(1, 500),
-            img_url: "Velvet.jpeg",
+            img_url: $product_name . "." . $img_ext,
             img_alt_text: self::$faker->sentence(),
             category: self::$faker->lexify(),
             price: 6.50,
@@ -164,7 +189,18 @@ trait TestHelper
         $success = $store->save();
 
         if (!$success) {
-            throw new Exception('Unable to save store to database');
+            $json = json_encode($store->toArray());
+            $errors = json_encode($store->validate());
+
+            $msg = <<< EOL
+            Unable to save store to database:
+            $json
+            
+            Attribute errors:
+            $errors
+            EOL;
+
+            throw new Exception($msg);
         }
         return $store;
     }
@@ -194,7 +230,17 @@ trait TestHelper
 
             $success = $order->save();
             if (!$success) {
-                throw new Exception('Unable to save order');
+                $json = json_encode($order->toArray());
+                $errors = json_encode($order->validate());
+
+                $msg = <<< EOL
+                Unable to save order to database:
+                $json
+                
+                Attribute errors:
+                $errors
+                EOL;
+                throw new Exception($msg);
             }
         }
 
@@ -208,7 +254,17 @@ trait TestHelper
         $success = $review->save();
 
         if (!$success) {
-            throw new Exception('Unable to save review');
+            $json = json_encode($review->toArray());
+            $errors = json_encode($review->validate());
+
+            $msg = <<< EOL
+                Unable to save review to database:
+                $json
+                
+                Attribute errors:
+                $errors
+                EOL;
+            throw new Exception($msg);
         }
 
         return $review;
