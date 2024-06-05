@@ -114,30 +114,47 @@ final class ProductsTest extends TestCase
 
     /**
      * @throws GuzzleException
+     * @throws Exception Expected product could not be created
      */
-    public function testCreateProduct()
+    public function testCreateValidProduct()
     {
-        self::markTestIncomplete('Incomplete test');
-        $response = self::$guzzle->post('products', [
-            'json' => [
-                'name' => 'Test Product',
-                'category' => 'Test Category',
-                'price' => 99.99,
-                // Add more fields as needed
-            ]
-        ]);
+        $expected_product = self::createProduct(false);
+
+        $data_to_send = $expected_product->toArray();
+        unset($data_to_send['product_id']);
+        unset($data_to_send['created_date']);
+
+//        self::log_json($data_to_send);
+
+        $response = self::$guzzle->post(
+            'products',
+            ['json' => $data_to_send]
+        );
+
+        $data_received = json_decode($response->getBody()->getContents(), true);
+//        self::log_json($data_received);
+
         $this->assertEquals(201, $response->getStatusCode());
-        $data = json_decode($response->getBody()->getContents(), true);
-        $this->assertArrayHasKey('id', $data);
-        // Add more assertions as needed
+
+        $this->assertArrayHasKey('product_id', $data_received);
+        self::assertTrue($data_received['product_id'] > 0);
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
     public function testDeleteProductById()
     {
-        self::markTestIncomplete('Incomplete test');
-        $response = self::$guzzle->delete('products/1');
+        // delete a non-existent product
+        $response = self::$guzzle->delete('products/0');
+        $this->assertEquals(404, $response->getStatusCode());
+
+        // delete a valid product
+        $product = self::createProduct();
+        $response = self::$guzzle->delete('products/' . $product->getProductID());
         $this->assertEquals(204, $response->getStatusCode());
-        // No content expected, so no further assertions needed
+        self::assertNull(Product::getByID($product->getProductID()));
     }
 
     /**
