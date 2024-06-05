@@ -5,6 +5,10 @@
   "description": "A product object",
   "type": "object",
   "properties": {
+    "product_id": {
+      "type": "integer",
+      "description": "Unique identifier for product"
+    },
     "name": {
       "type": "string",
       "description": "The name of the product",
@@ -18,7 +22,7 @@
     },
     "img_url": {
       "type": "string",
-      "format": "uri",
+      "pattern": "^.+\\.(png|jpeg|avif|jpg|webp)$",
       "description": "The URL of the product image"
     },
     "img_alt_text": {
@@ -49,11 +53,5 @@
       "description": "The date and time when the product was created"
     }
   },
-  "additionalProperties": false,
-  "patternProperties": {
-    "img_url": {
-      "pattern": "^.+\\.(png|jpeg|avif|jpg|webp)$",
-      "description": "The URL should end with one of the supported image formats: png, jpeg, avif, jpg, webp"
-    }
-  }
+  "additionalProperties": false
 }

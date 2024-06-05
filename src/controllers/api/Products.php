@@ -88,9 +88,7 @@ class Products
      */
     public function createProduct(): void
     {
-        $data = (object) json_decode(file_get_contents("php://input"), true);
-
-        var_dump($data);
+        $data = (object)json_decode(file_get_contents("php://input"), true);
 
         $schemaPath = __DIR__ . '/../../../resources/schemas';
         $validator = new Validator();
@@ -105,29 +103,25 @@ class Products
             "https://example.com/products/create.json"
         );
 
-
-
         if (!($result->isValid())) {
             $errors = (new ErrorFormatter())->format($result->error());
             $response = [
-                'errors' => $errors
+                'error' => $errors
             ];
             http_response_code(400);
             echo json_encode($response);
             return;
         }
 
-        return;
-
         // Create a new Product object
         $newProduct = new Product(
-            $data['name'],
-            (int)$data['calories'],
-            $data['img_url'],
-            $data['img_alt_text'],
-            $data['category'],
-            (float)$data['price'],
-            $data['description']
+            $data->name,
+            $data->calories,
+            $data->img_url,
+            $data->img_alt_text,
+            $data->category,
+            (float)$data->price,
+            $data->description
         );
 
         // Save the new product to the database

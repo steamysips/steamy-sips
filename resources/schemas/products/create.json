@@ -3,20 +3,36 @@
   "$id": "https://example.com/products/create.json",
   "title": "Create Product",
   "properties": {
-    "product": {
-      "$ref": "https://example.com/definitions/product.json"
+    "name": {
+      "$ref": "https://example.com/common/product.json#/properties/name"
+    },
+    "calories": {
+      "$ref": "https://example.com/common/product.json#/properties/calories"
+    },
+    "img_url": {
+      "$ref": "https://example.com/common/product.json#/properties/img_url"
+    },
+    "img_alt_text": {
+      "$ref": "https://example.com/common/product.json#/properties/img_alt_text"
+    },
+    "category": {
+      "$ref": "https://example.com/common/product.json#/properties/category"
+    },
+    "price": {
+      "$ref": "https://example.com/common/product.json#/properties/price"
+    },
+    "description": {
+      "$ref": "https://example.com/common/product.json#/properties/description"
     }
   },
   "required": [
-    "product"
+    "name",
+    "calories",
+    "img_url",
+    "img_alt_text",
+    "category",
+    "price",
+    "description"
   ],
-  "definitions": {
-    "product": {
-      "required": [
-        "name",
-        "calories",
-        "img_url"
-      ]
-    }
-  }
+  "additionalProperties": false
 }
