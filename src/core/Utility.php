@@ -168,7 +168,7 @@ class Utility
      */
     public static function validateAgainstSchema(object $data, string $schemaPath): ValidationResult
     {
-        $schemaDirPath = __DIR__ . '/../../../resources/schemas';
+        $schemaDirPath = __DIR__ . '/../../resources/schemas';
         $schemaPrefix = "https://example.com/";
 
         $validator = new Validator();
