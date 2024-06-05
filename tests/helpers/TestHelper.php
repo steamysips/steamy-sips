@@ -85,12 +85,13 @@ trait TestHelper
     }
 
     /**
-     * Creates a random client and saves it to database.
+     * Creates a random valid client and may save it to database.
      * Client email is guaranteed to be unique.
+     * @param bool $saveToDatabase Defaults to true.
      * @return Client
      * @throws Exception
      */
-    public static function createClient(): Client
+    public static function createClient(bool $saveToDatabase = true): Client
     {
         $first_name = self::$faker->firstName();
         $last_name = self::$faker->lastName();
@@ -112,6 +113,10 @@ trait TestHelper
             new Location(self::$faker->streetAddress(), self::$faker->city(), self::$faker->numberBetween(1, 9))
         );
 
+        if (!$saveToDatabase) {
+            return $client;
+        }
+
         $success = $client->save();
         if (!$success) {
             $json = json_encode($client->toArray());
@@ -131,11 +136,12 @@ trait TestHelper
     }
 
     /**
-     * Creates a random product and saves it to database.
+     * Creates a random valid product and may save it to database.
+     * @param bool $saveToDatabase Defaults to True.
      * @return Product
      * @throws Exception
      */
-    public static function createProduct(): Product
+    public static function createProduct(bool $saveToDatabase = true): Product
     {
         $img_ext = self::$faker->randomElement(['png', 'jpeg', 'avif', 'jpg', 'webp']);
         $product_name = self::$faker->words(2, true);
@@ -149,6 +155,10 @@ trait TestHelper
             price: 6.50,
             description: self::$faker->sentence()
         );
+
+        if (!$saveToDatabase) {
+            return $product;
+        }
 
         $success = $product->save();
 
@@ -173,7 +183,7 @@ trait TestHelper
     /**
      * @throws Exception
      */
-    public static function createStore(): Store
+    public static function createStore(bool $saveToDatabase = true): Store
     {
         $store = new Store(
             phone_no: self::$faker->phoneNumber(),
@@ -185,6 +195,10 @@ trait TestHelper
                 longitude: self::$faker->numberBetween(-180, 180)
             )
         );
+
+        if (!$saveToDatabase) {
+            return $store;
+        }
 
         $success = $store->save();
 
@@ -268,10 +282,5 @@ trait TestHelper
         }
 
         return $review;
-    }
-
-    public static function logAction($action)
-    {
-        // Implementation of logging an action
     }
 }
