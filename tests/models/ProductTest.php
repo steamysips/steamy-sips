@@ -6,7 +6,6 @@ namespace Steamy\Tests\Model;
 
 use DateTime;
 use Exception;
-use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
