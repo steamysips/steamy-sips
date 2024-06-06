@@ -137,7 +137,7 @@ class Store
         $latitude = $this->address->getLatitude();
         $longitude = $this->address->getLongitude();
 
-        if ($latitude == null || $longitude == null ||
+        if ($latitude === null || $longitude === null ||
             ($latitude < -90 || $latitude > 90 ||
                 $longitude < -180 || $longitude > 180)) {
             $errors['coordinates'] = "Invalid latitude or longitude.";
