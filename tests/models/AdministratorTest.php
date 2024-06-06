@@ -81,7 +81,7 @@ final class AdministratorTest extends TestCase
         self::assertEquals("prince", $result['last_name']);
         self::assertEquals("13213431", $result['phone_no']);
         self::assertEquals("Manager", $result['job_title']);
-        self::assertTrue($result['is_super_admin'] == 0);
+        self::assertEquals(0, $result['is_super_admin']);
     }
 
     public function testValidate(): void
