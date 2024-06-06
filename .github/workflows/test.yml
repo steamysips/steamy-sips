@@ -66,5 +66,5 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Run test suite
-        run: composer test
+      - name: Run model test suite
+        run: composer modeltest
