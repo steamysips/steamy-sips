@@ -2,15 +2,23 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Administrator;
-use Steamy\Core\Database;
+use Steamy\Tests\helpers\TestHelper;
 
 final class AdministratorTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Administrator $dummy_admin;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
 
     /**
      * @throws Exception
@@ -33,9 +41,7 @@ final class AdministratorTest extends TestCase
     {
         // Clear the administrator object
         $this->dummy_admin = null;
-
-        // Clear all data from administrator and user tables
-        self::query('DELETE FROM administrator; DELETE FROM user;');
+        self::resetDatabase();
     }
 
     public function testConstructor(): void

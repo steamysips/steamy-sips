@@ -14,8 +14,8 @@ class Districts
 
     public static array $routes = [
         'GET' => [
-            '/api/v1/districts' => 'getAllDistricts',
-            '/api/v1/districts/{id}' => 'getDistrictById',
+            '/districts' => 'getAllDistricts',
+            '/districts/{id}' => 'getDistrictById',
         ]
     ];
 

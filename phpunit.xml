@@ -4,8 +4,11 @@
         <const name="PHPUNIT_STEAMY_TESTSUITE" value="true"/>
     </php>
     <testsuites>
-        <testsuite name="unit">
-            <directory>tests/</directory>
+        <testsuite name="models">
+            <directory>tests/models</directory>
+        </testsuite>
+        <testsuite name="api">
+            <directory>tests/api</directory>
         </testsuite>
     </testsuites>
 </phpunit>

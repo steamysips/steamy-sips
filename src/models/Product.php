@@ -114,6 +114,10 @@ class Product
         $query = "SELECT * FROM product";
         $results = self::query($query);
 
+        if (empty($results)) {
+            return [];
+        }
+
         // convert results to an array of Product
         $products = [];
         foreach ($results as $result) {
@@ -310,7 +314,7 @@ class Product
         }
 
         // Validate img_url
-        if (!preg_match('/\.(png|jpeg|avif)$/', $this->img_url)) {
+        if (!preg_match('/\.(png|jpeg|avif|jpg|webp)$/', $this->img_url)) {
             $errors['img_url'] = "Image URL must end with .png, .jpeg, or .avif";
         }
 

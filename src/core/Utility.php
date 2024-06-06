@@ -6,6 +6,8 @@ namespace Steamy\Core;
 
 use DateTime;
 use Exception;
+use Opis\JsonSchema\{ValidationResult, Validator};
+
 
 /**
  * Utility class containing various helper functions.
@@ -156,5 +158,29 @@ class Utility
         } catch (Exception) {
             return null;
         }
+    }
+
+    /**
+     * @param object $data Data to be validated
+     * @param string $schemaPath Relative path (starting from schema folder) to schema file.
+     * Example: `products/create.json`
+     * @return ValidationResult
+     */
+    public static function validateAgainstSchema(object $data, string $schemaPath): ValidationResult
+    {
+        $schemaDirPath = __DIR__ . '/../../resources/schemas';
+        $schemaPrefix = "https://example.com/";
+
+        $validator = new Validator();
+
+        $validator->resolver()->registerPrefix(
+            $schemaPrefix,
+            $schemaDirPath,
+        );
+
+        return $validator->validate(
+            $data,
+            $schemaPrefix . $schemaPath
+        );
     }
 }

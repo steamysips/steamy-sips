@@ -60,17 +60,3 @@ Attribution-ShareAlike
     - https://github.com/kevinisaac/php-mvc
 4. The filesystem was inspired by https://github.com/php-pds/sklseleton
 5. Additional references are included within the code itself.
-
-# Todo
-
-Add `X-TEST-ENV` to the header of your request and set its value to `testing` if you want to use the testing database.
-This is required when running tests for API. Without this key-value pair, the production database will be used.
-
-USE DOCKER PHP
-
-- read guzzle documentation. read base_uri
-- test database is being used
-- add variable to .env
-
-line 18 in Reviews API is redundant
-use correct namespace

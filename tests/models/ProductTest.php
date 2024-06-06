@@ -2,44 +2,76 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Steamy\Model\Product;
 use Steamy\Model\Review;
-use Steamy\Core\Database;
-use Steamy\Model\Location;
 use Steamy\Model\Client;
+use Steamy\Tests\helpers\TestHelper;
+use Throwable;
 
 
 final class ProductTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Product $dummy_product;
     private ?Client $dummy_client;
+
+    /**
+     * @var Review|null A review written by $dummy_client for $dummy_product
+     */
     private ?Review $dummy_review;
+
+
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+        self::initFaker();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$faker = null;
+    }
+
+    public function onNotSuccessfulTest(Throwable $t): never
+    {
+        self::printFakerSeed();
+        parent::onNotSuccessfulTest($t);
+    }
 
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        $address = new Location("Royal Road", "Curepipe", 1);
-        $this->dummy_client = new Client(
-            "jo@gmail.com",
-            "john",
-            "johnny",
-            "abcd",
-            "13213431",
-            $address
-        );
-
-        $success = $this->dummy_client->save();
-        if (!$success) {
-            throw new Exception('Unable to save client');
-        }
+        $this->dummy_client = self::createClient();
 
         // Create a dummy product for testing
-        $this->dummy_product = new Product(
+        $this->dummy_product = self::createProduct();
+
+        // Create a review object and save to the database
+        $this->dummy_review = self::createReview($this->dummy_product, $this->dummy_client);
+    }
+
+    public function tearDown(): void
+    {
+        $this->dummy_product = null;
+        $this->dummy_client = null;
+        $this->dummy_review = null;
+
+        self::resetDatabase();
+    }
+
+    public function testConstructor(): void
+    {
+        // Do not use dummy_product to test constructor as dummy_product attributes may change
+
+        $product = new Product(
             "Velvet Bean",
             70,
             "Velvet.jpeg",
@@ -50,52 +82,20 @@ final class ProductTest extends TestCase
             new DateTime()
         );
 
-        $success = $this->dummy_product->save();
-        if (!$success) {
-            throw new Exception('Unable to save product');
-        }
-
-        // Create a review object and save to the database
-        $this->dummy_review = new Review(
-            product_id: $this->dummy_product->getProductID(),
-            client_id: $this->dummy_client->getUserID(),
-            text: "This is a test review.",
-            rating: 5,
-            created_date: new DateTime()
-        );
-        $success = $this->dummy_review->save();
-
-        if (!$success) {
-            throw new Exception('Unable to save review');
-        }
-    }
-
-    public function tearDown(): void
-    {
-        $this->dummy_product = null;
-        $this->dummy_client = null;
-        $this->dummy_review = null;
-
-        // Clear all data from product, review, and client tables
-        self::query('DELETE FROM review; DELETE FROM product; DELETE FROM client; DELETE FROM user;');
-    }
-
-    public function testConstructor(): void
-    {
         // Check if product attributes are correctly set
-        self::assertEquals("Velvet Bean", $this->dummy_product->getName());
-        self::assertEquals(70, $this->dummy_product->getCalories());
-        self::assertEquals("Velvet.jpeg", $this->dummy_product->getImgRelativePath());
-        self::assertEquals("Velvet Bean Image", $this->dummy_product->getImgAltText());
-        self::assertEquals("Velvet", $this->dummy_product->getCategory());
-        self::assertEquals(6.50, $this->dummy_product->getPrice());
+        self::assertEquals("Velvet Bean", $product->getName());
+        self::assertEquals(70, $product->getCalories());
+        self::assertEquals("Velvet.jpeg", $product->getImgRelativePath());
+        self::assertEquals("Velvet Bean Image", $product->getImgAltText());
+        self::assertEquals("Velvet", $product->getCategory());
+        self::assertEquals(6.50, $product->getPrice());
         self::assertEquals(
             "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
-            $this->dummy_product->getDescription()
+            $product->getDescription()
         );
         self::assertInstanceOf(
             DateTime::class,
-            $this->dummy_product->getCreatedDate()
+            $product->getCreatedDate()
         ); // Check if created_date is an instance of DateTime
     }
 
@@ -115,14 +115,14 @@ final class ProductTest extends TestCase
         $this->assertArrayHasKey('created_date', $result); // Ensure created_date is included in toArray result
 
         // Check if the actual values are correct
-        self::assertEquals("Velvet Bean", $result['name']);
-        self::assertEquals(70, $result['calories']);
-        self::assertEquals("Velvet.jpeg", $result['img_url']);
-        self::assertEquals("Velvet Bean Image", $result['img_alt_text']);
-        self::assertEquals("Velvet", $result['category']);
-        self::assertEquals(6.50, $result['price']);
+        self::assertEquals($this->dummy_product->getName(), $result['name']);
+        self::assertEquals($this->dummy_product->getCalories(), $result['calories']);
+        self::assertEquals($this->dummy_product->getImgRelativePath(), $result['img_url']);
+        self::assertEquals($this->dummy_product->getImgAltText(), $result['img_alt_text']);
+        self::assertEquals($this->dummy_product->getCategory(), $result['category']);
+        self::assertEquals($this->dummy_product->getPrice(), $result['price']);
         self::assertEquals(
-            "Each bottle contains 90% Pure Coffee powder and 10% Velvet bean Powder",
+            $this->dummy_product->getDescription(),
             $result['description']
         );
         self::assertInstanceOf(
@@ -133,12 +133,9 @@ final class ProductTest extends TestCase
 
     public function testSave(): void
     {
-        // Save the dummy product
-        $result = $this->dummy_product->save();
-
-        // Check if the product was saved successfully
-        self::assertTrue($result); // Assert that save() returns true upon successful save
-        self::assertNotNull($this->dummy_product->getProductID());
+        $this->markTestIncomplete(
+            'Use data providers here for at least 3 test cases, ...',
+        );
     }
 
     public function testValidate(): void
@@ -159,11 +156,12 @@ final class ProductTest extends TestCase
         $distribution = $this->dummy_product->getRatingDistribution();
 
         // Check if the distribution contains the expected keys and values
-        $this->assertArrayHasKey(5, $distribution);
-        $this->assertEquals(100.0, $distribution[5]); // 1 out of 1 reviews is 5 stars
+        // Here dummy product contains a single review:
+        $this->assertArrayHasKey($this->dummy_review->getRating(), $distribution);
+        $this->assertEquals(100.0, $distribution[$this->dummy_review->getRating()]);
 
         $this->markTestIncomplete(
-            'This test lacks test cases, ...',
+            'This test lacks test cases. This test might fail when getRatingDistribution excludes unverified reviews.',
         );
     }
 
@@ -232,7 +230,7 @@ final class ProductTest extends TestCase
 
         // Check if the reviews contain the expected values
         $this->assertCount(1, $reviews);
-        $this->assertEquals('This is a test review.', $reviews[0]->getText());
-        $this->assertEquals(5, $reviews[0]->getRating());
+        $this->assertEquals($this->dummy_review->getText(), $reviews[0]->getText());
+        $this->assertEquals($this->dummy_review->getRating(), $reviews[0]->getRating());
     }
 }

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Steamy\Controller\API;
 
+use Opis\JsonSchema\{Errors\ErrorFormatter};
 use Steamy\Core\Utility;
 use Steamy\Model\Product;
 use Steamy\Core\Model;
+use Steamy\Model\Product as ProductModel;
+use Steamy\Model\Review;
 
 class Products
 {
@@ -14,19 +17,19 @@ class Products
 
     public static array $routes = [
         'GET' => [
-            '/api/v1/products' => 'getAllProducts',
-            '/api/v1/products/categories' => 'getProductCategories',
-            '/api/v1/products/{id}' => 'getProductById',
-            '/api/v1/products/{id}/reviews' => 'getAllReviewsForProduct',
+            '/products' => 'getAllProducts',
+            '/products/categories' => 'getProductCategories',
+            '/products/{id}' => 'getProductById',
+            '/products/{id}/reviews' => 'getAllReviewsForProduct',
         ],
         'POST' => [
-            '/api/v1/products' => 'createProduct',
+            '/products' => 'createProduct',
         ],
         'PUT' => [
-            '/api/v1/products/{id}' => 'updateProduct',
+            '/products/{id}' => 'updateProduct',
         ],
         'DELETE' => [
-            '/api/v1/products/{id}' => 'deleteProduct',
+            '/products/{id}' => 'deleteProduct',
         ]
     ];
 
@@ -87,45 +90,29 @@ class Products
      */
     public function createProduct(): void
     {
-        // Retrieve POST data
-        $postData = $_POST;
+        $data = (object)json_decode(file_get_contents("php://input"), true);
 
-        // TODO : Use json schema validation here
-        // Check if required fields are present
-        $requiredFields = [
-            'name',
-            'calories',
-            'img_url',
-            'img_alt_text',
-            'category',
-            'price',
-            'description'
-        ];
+        $result = Utility::validateAgainstSchema($data, "products/create.json");
 
-        if (empty($postData)) {
+        if (!($result->isValid())) {
+            $errors = (new ErrorFormatter())->format($result->error());
+            $response = [
+                'error' => $errors
+            ];
             http_response_code(400);
-            echo json_encode(['error' => "Missing fields: " . implode(', ', $requiredFields)]);
+            echo json_encode($response);
             return;
-        }
-
-        foreach ($requiredFields as $field) {
-            if (empty($postData[$field])) {
-                // Required field is missing, return 400 Bad Request
-                http_response_code(400);
-                echo json_encode(['error' => "Missing required field: $field"]);
-                return;
-            }
         }
 
         // Create a new Product object
         $newProduct = new Product(
-            $postData['name'],
-            (int)$postData['calories'],
-            $postData['img_url'],
-            $postData['img_alt_text'],
-            $postData['category'],
-            (float)$postData['price'],
-            $postData['description']
+            $data->name,
+            $data->calories,
+            $data->img_url,
+            $data->img_alt_text,
+            $data->category,
+            (float)$data->price,
+            $data->description
         );
 
         // Save the new product to the database
@@ -177,30 +164,32 @@ class Products
     {
         $productId = (int)Utility::splitURL()[3];
 
-        // Retrieve PUT request data
-        $putData = json_decode(file_get_contents("php://input"), true);
-
-        // Check if PUT data is valid
-        if (empty($putData)) {
-            // Invalid JSON data
-            http_response_code(400); // Bad Request
-            echo json_encode(['error' => 'Invalid JSON data']);
-            return;
-        }
-
-        // Retrieve existing product
+        // Retrieve the product by ID
         $product = Product::getByID($productId);
 
         // Check if product exists
         if ($product === null) {
-            // Product not found
-            http_response_code(404); // Not Found
+            // Product not found, return 404
+            http_response_code(404);
             echo json_encode(['error' => 'Product not found']);
+            return;
+        }
+        // Retrieve PUT request data
+        $data = (object)json_decode(file_get_contents("php://input"), true);
+        $result = Utility::validateAgainstSchema($data, "products/update.json");
+
+        if (!($result->isValid())) {
+            $errors = (new ErrorFormatter())->format($result->error());
+            $response = [
+                'error' => $errors
+            ];
+            http_response_code(400);
+            echo json_encode($response);
             return;
         }
 
         // Update product in the database
-        $success = $product->updateProduct($putData);
+        $success = $product->updateProduct((array)$data);
 
         if ($success) {
             // Product updated successfully
@@ -221,14 +210,18 @@ class Products
         // Get product ID from URL
         $productId = (int)Utility::splitURL()[3];
 
-        // Instantiate the Reviews controller
-        $reviewsController = new Reviews();
+        // Check if product exists
+        if (ProductModel::getById($productId) === null) {
+            // product not found, return 404
+            http_response_code(404);
+            echo json_encode(['error' => 'Product not found']);
+            return;
+        }
 
-        // Call the method to get all reviews for the specified product
-        // Since the Reviews controller method expects the ID to be in the URL, we'll set it directly
-        $_SERVER['REQUEST_URI'] = "/api/v1/products/$productId/reviews";
+        // Retrieve all reviews for the specified product from the database
+        $reviews = Review::getAllReviewsForProduct($productId);
 
-        // Call the method from the Reviews controller
-        $reviewsController->getAllReviewsForProduct();
+        // Return JSON response
+        echo json_encode($reviews);
     }
 }

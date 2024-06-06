@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Steamy\Model\Client;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
-use Steamy\Model\Store;
-use Steamy\Model\Client;
 use Steamy\Model\Product;
-use Steamy\Core\Database;
-use Steamy\Model\Location;
+use Steamy\Model\Store;
+use Steamy\Tests\helpers\TestHelper;
+use Throwable;
 
 class OrderProductTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Order $dummy_order;
     private ?Client $client;
@@ -21,74 +24,45 @@ class OrderProductTest extends TestCase
     private ?Product $dummy_product;
     private array $line_items = [];
 
+    public static function setUpBeforeClass(): void
+    {
+        self::initFaker();
+        self::resetDatabase();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$faker = null;
+    }
+
+    public function onNotSuccessfulTest(Throwable $t): never
+    {
+        self::printFakerSeed();
+        parent::onNotSuccessfulTest($t);
+    }
+
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        parent::setUp();
-
         // Initialize a dummy store object for testing
-        $this->dummy_store = new Store(
-            phone_no: "987654321", // Phone number
-            address: new Location(
-                street: "Augus",
-                city: "Flacq",
-                district_id: 2,
-                latitude: 60,
-                longitude: 60
-            )
-        );
-
-        $success = $this->dummy_store->save();
-        if (!$success) {
-            $errors = $this->dummy_store->validate();
-            $error_msg = "Unable to save store to database. ";
-            if (!empty($errors)) {
-                $error_msg .= "Errors: " . implode(',', $errors);
-            } else {
-                $error_msg .= "Attributes seem to be ok as per validate().";
-            }
-
-            throw new Exception($error_msg);
-        }
+        $this->dummy_store = self::createStore();
 
         // Create a dummy client
-        $this->client = new Client(
-            "john@example.com",
-            "John",
-            "Doe",
-            "john_doe",
-            "password",
-            new Location("Royal", "Curepipe", 1, 50, 50)
-        );
-        $success = $this->client->save();
-        if (!$success) {
-            throw new Exception('Unable to save client');
-        }
+        $this->client = self::createClient();
 
         // Create a dummy product
-        $this->dummy_product = new Product(
-            "Latte",
-            50,
-            "latte.jpeg",
-            "A delicious latte",
-            "Beverage",
-            5.0,
-            "A cup of latte",
-            new DateTime()
-        );
-        $success = $this->dummy_product->save();
-        if (!$success) {
-            throw new Exception('Unable to save product');
-        }
+        $this->dummy_product = self::createProduct();
 
         // Update stock level for the product
         $this->dummy_store->addProductStock($this->dummy_product->getProductID(), 10);
 
         // Create dummy order line items
         $this->line_items = [
-            new OrderProduct($this->dummy_product->getProductID(), "medium", "oat", 2, 5.0)
+            new OrderProduct(
+                $this->dummy_product->getProductID(), "medium", "oat", 2
+            )
         ];
 
         // Create a dummy order
@@ -117,9 +91,7 @@ class OrderProductTest extends TestCase
         $this->line_items = [];
 
         // Clear all data from relevant tables
-        self::query(
-            'DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;'
-        );
+        self::resetDatabase();
     }
 
     public function testValidate(): void
@@ -141,7 +113,7 @@ class OrderProductTest extends TestCase
         $this->assertArrayHasKey('unit_price', $errors);
     }
 
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         // Assuming getByID is a method that retrieves an OrderProduct by order ID and product ID
         $retrievedOrderProduct = OrderProduct::getByID(
@@ -155,6 +127,6 @@ class OrderProductTest extends TestCase
         $this->assertEquals("medium", $retrievedOrderProduct->getCupSize());
         $this->assertEquals("oat", $retrievedOrderProduct->getMilkType());
         $this->assertEquals(2, $retrievedOrderProduct->getQuantity());
-        $this->assertEquals(5.0, $retrievedOrderProduct->getUnitPrice());
+        $this->assertEquals($this->dummy_product->getPrice(), $retrievedOrderProduct->getUnitPrice());
     }
 }

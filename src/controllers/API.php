@@ -17,6 +17,8 @@ class API
 {
     use Controller;
 
+    public static string $API_BASE_URI = '/api/v1'; // root-relative
+
     private string $resource;
 
     public function __construct()
@@ -56,6 +58,7 @@ class API
         }
 
         foreach ($my_routes as $route => $handler) {
+            $route = API::$API_BASE_URI . $route;
             $pattern = str_replace('/', '\/', $route); // Convert to regex pattern
             $pattern = preg_replace(
                 '/\{([a-zA-Z0-9_]+)\}/',

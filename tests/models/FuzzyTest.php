@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
 use PHPUnit\Framework\TestCase;
 use Steamy\Core\Utility;
 
@@ -24,7 +26,7 @@ class FuzzyTest extends TestCase
             ['Espreso', $strings, 1, ['Espresso']], // Missing 's'
             ['Espressso', $strings, 1, ['Espresso']], // Extra 's'
             ['', $strings, 1, []], // Empty search term
-            [(string) 123, $strings, 1, []], // Non-string search term (integer)
+            ["123", $strings, 1, []], // Non-string search term (integer)
             ['Latte!', $strings, 1, ['Latte']], // Search term containing special characters
             ['eSPRESSO', $strings, 1, ['Espresso']], // Case sensitivity test
         ];

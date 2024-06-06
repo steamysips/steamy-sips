@@ -6,3 +6,8 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # send everything else to index page
 RewriteRule ^(.*)$ index.php?url=$1 [NC,L,QSA]
+
+# pass X-Test-Env header to PHP as $_SERVER['HTTP_X_TEST_ENV'].
+<IfModule mod_headers.c>
+    SetEnvIfNoCase X-Test-Env "testing" HTTP_X_TEST_ENV=testing
+</IfModule>

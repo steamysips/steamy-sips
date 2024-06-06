@@ -2,32 +2,40 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Steamy\Model\Client;
+use Steamy\Model\Location;
 use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\OrderStatus;
-use Steamy\Model\Store;
-use Steamy\Model\Client;
-use Steamy\Core\Database;
-use Steamy\Model\Location;
 use Steamy\Model\Product;
+use Steamy\Model\Store;
+use Steamy\Tests\helpers\TestHelper;
 
 class OrderTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Order $dummy_order = null;
     private ?Client $client = null;
     private ?Store $dummy_store = null;
     private array $line_items = [];
 
+    public static function setUpBeforeClass(): void
+    {
+        self::initFaker();
+        self::resetDatabase();
+    }
+
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        parent::setUp();
-
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
             phone_no: "987654321", // Phone number
@@ -124,9 +132,7 @@ class OrderTest extends TestCase
         $this->line_items = [];
 
         // Clear all data from relevant tables
-        self::query(
-            'DELETE FROM order_product; DELETE FROM `order`; DELETE FROM client; DELETE FROM user; DELETE FROM store_product; DELETE FROM product; DELETE FROM store;'
-        );
+        self::resetDatabase();
     }
 
     public function testConstructor(): void
@@ -202,7 +208,7 @@ class OrderTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetByID(): void
+    public function testGetById(): void
     {
         $this->dummy_order->save();
         $order_id = $this->dummy_order->getOrderID();

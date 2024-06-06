@@ -2,24 +2,30 @@
 
 declare(strict_types=1);
 
+namespace Steamy\Tests\Model;
+
+use Exception;
 use PHPUnit\Framework\TestCase;
-use Steamy\Model\Store;
 use Steamy\Model\Location;
-use Steamy\Core\Database;
+use Steamy\Model\Store;
+use Steamy\Tests\helpers\TestHelper;
 
 class StoreTest extends TestCase
 {
-    use Database;
+    use TestHelper;
 
     private ?Store $dummy_store;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::resetDatabase();
+    }
 
     /**
      * @throws Exception
      */
     public function setUp(): void
     {
-        parent::setUp();
-
         // Initialize a dummy store object for testing
         $this->dummy_store = new Store(
             phone_no: "12345678", // Phone number
@@ -54,7 +60,7 @@ class StoreTest extends TestCase
         }
 
         // clear all data from store tables
-        self::query('DELETE FROM store;');
+        self::resetDatabase();
     }
 
     /**
@@ -114,13 +120,29 @@ class StoreTest extends TestCase
             // Valid phone number, valid address (no errors)
             ["1234567890", new Location("Royal", "Curepipe", 1, 50, 50), []],
             // Invalid phone number (less than 7 characters)
-            ["123456", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "123456",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Empty phone number
-            ["", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Invalid characters in phone number
-            ["123abc", new Location("Royal", "Curepipe", 1, 50, 50), ["phone_no" => "Phone number must be at least 7 characters long"]],
+            [
+                "123abc",
+                new Location("Royal", "Curepipe", 1, 50, 50),
+                ["phone_no" => "Phone number must be at least 7 characters long"]
+            ],
             // Invalid address with invalid latitude/longitude
-            ["1234567890", new Location("Royal", "Curepipe", 1, -100, 50), ["coordinates" => "Invalid latitude or longitude."]],
+            [
+                "1234567890",
+                new Location("Royal", "Curepipe", 1, -100, 50),
+                ["coordinates" => "Invalid latitude or longitude."]
+            ],
         ];
     }
 }
