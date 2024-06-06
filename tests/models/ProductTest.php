@@ -131,25 +131,90 @@ final class ProductTest extends TestCase
         ); // Check if created_date is an instance of DateTime
     }
 
-    public function testSave(): void
-    {
-        $this->markTestIncomplete(
-            'Use data providers here for at least 3 test cases, ...',
-        );
-    }
+public function testSave(): void
+{
+    // Prepare test data
+    $newProductData = [
+        'name' => 'New Product',
+        'calories' => 100,
+        'img_url' => 'new_product.jpeg',
+        'img_alt_text' => 'New Product Image',
+        'category' => 'New Category',
+        'price' => 10.00,
+        'description' => 'New Product Description'
+    ];
 
-    public function testValidate(): void
-    {
-        // Validate the dummy product
-        $errors = $this->dummy_product->validate();
+    // Create a new product object with the test data
+    $newProduct = new Product(
+        $newProductData['name'],
+        $newProductData['calories'],
+        $newProductData['img_url'],
+        $newProductData['img_alt_text'],
+        $newProductData['category'],
+        $newProductData['price'],
+        $newProductData['description']
+    );
 
-        // Check if there are no validation errors
-        $this->assertEmpty($errors);
+    // Save the product to the database
+    $result = $newProduct->save();
 
-        $this->markTestIncomplete(
-            'This test lacks test cases, ...',
-        );
-    }
+    // Assert that the product was saved successfully
+    $this->assertTrue($result);
+
+    // Fetch the saved product from the database
+    $savedProduct = Product::getByID($newProduct->getProductID());
+
+    // Assert that the saved product matches the test data
+    $this->assertEquals($newProductData['name'], $savedProduct->getName());
+    $this->assertEquals($newProductData['calories'], $savedProduct->getCalories());
+    $this->assertEquals($newProductData['img_url'], $savedProduct->getImgRelativePath());
+    $this->assertEquals($newProductData['img_alt_text'], $savedProduct->getImgAltText());
+    $this->assertEquals($newProductData['category'], $savedProduct->getCategory());
+    $this->assertEquals($newProductData['price'], $savedProduct->getPrice());
+    $this->assertEquals($newProductData['description'], $savedProduct->getDescription());
+}
+
+
+public function testValidate(): void
+{
+    // Prepare test data with invalid values
+    $invalidProductData = [
+        'name' => '', // Empty name
+        'calories' => -10, // Negative calories
+        'img_url' => 'invalid_image.txt', // Invalid image extension
+        'img_alt_text' => 'Invalid', // Invalid image alt text length
+        'category' => '', // Empty category
+        'price' => 0, // Zero price
+        'description' => '' // Empty description
+    ];
+
+    // Create a new product object with the invalid test data
+    $invalidProduct = new Product(
+        $invalidProductData['name'],
+        $invalidProductData['calories'],
+        $invalidProductData['img_url'],
+        $invalidProductData['img_alt_text'],
+        $invalidProductData['category'],
+        $invalidProductData['price'],
+        $invalidProductData['description']
+    );
+
+    // Validate the product
+    $errors = $invalidProduct->validate();
+
+    // Assert that validation errors are present for each invalid field
+    $this->assertArrayHasKey('name', $errors);
+    $this->assertArrayHasKey('calories', $errors);
+    $this->assertArrayHasKey('img_url', $errors);
+    $this->assertArrayHasKey('img_alt_text', $errors);
+    $this->assertArrayHasKey('category', $errors);
+    $this->assertArrayHasKey('price', $errors);
+    $this->assertArrayHasKey('description', $errors);
+
+    // Assert that there are exactly 7 validation errors
+    $this->assertCount(7, $errors);
+}
+
 
     public function testGetRatingDistribution(): void
     {
