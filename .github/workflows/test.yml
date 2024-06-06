@@ -37,19 +37,17 @@ jobs:
           mysql -u$DB_USER -p$DB_PASSWORD -hlocalhost -P3306 -Dcafe_test < "resources/database/cafe_test_data.sql"
           mysql -e "USE cafe_test; SHOW TABLES;" -u$DB_USER -p$DB_PASSWORD
 
-      - name: Create .env file
+      - name: Create .env.testing file
         env:
-            ENV: |
-              PUBLIC_ROOT="http://localhost/steamy-sips/public"
-              DB_HOST="localhost"
-              DB_USERNAME="root"
-              DB_PASSWORD="root"
-              TEST_DB_NAME="cafe_test"
-              BUSINESS_GMAIL=""
-              BUSINESS_GMAIL_PASSWORD=""
+          ENV: |
+            DB_HOST="localhost"
+            DB_USERNAME="root"
+            DB_PASSWORD="root"
+            DB_NAME="cafe_test"
+            API_BASE_URI="http://steamy.localhost/api/v1/"
         run: |
-          echo "$ENV" > .env
-          cat .env
+          echo "$ENV" > .env.testing
+          cat .env.testing
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
