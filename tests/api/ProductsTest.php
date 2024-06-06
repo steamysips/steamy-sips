@@ -12,6 +12,8 @@ use Steamy\Tests\helpers\APIHelper;
 use Steamy\Tests\helpers\TestHelper;
 use Throwable;
 
+use function PHPUnit\Framework\assertEquals;
+
 final class ProductsTest extends TestCase
 {
     use TestHelper;
@@ -162,25 +164,100 @@ final class ProductsTest extends TestCase
      * @throws GuzzleException
      * @throws Exception
      */
-    public function testUpdateProductById()
+    public function testUpdateProductByIdForInvalidProduct()
     {
-        // update a non-existent product
         $response = self::$guzzle->put('products/0');
         $this->assertEquals(404, $response->getStatusCode());
 
+        $response = self::$guzzle->put('products/-43');
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+
+    public static function provideNewProductData(): array
+    {
+        return [
+            'new name' => [
+                'new_data' => [
+                    'name' => 'dsajd'
+                ],
+                'changed_data' => [
+                    'name' => 'dsajd'
+                ]
+            ],
+            'new product id' => [
+                'new_data' => [
+                    'product_id' => 444
+                ],
+                'changed_data' => [
+                    'product_id' => null
+                ]
+            ],
+            'new name and description' => [
+                'new_data' => [
+                    'name' => 'my new name',
+                    'description' => 'new description'
+                ],
+                'changed_data' => [
+                    'name' => 'my new name',
+                    'description' => 'new description'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     * @dataProvider  provideNewProductData
+     */
+    public function testUpdateProductByIdForValidProduct(array $new_data, array $expected_data)
+    {
         // save a valid product to database
         $old_product = self::createProduct();
+        $old_data = $old_product->toArray();
 
         // update the name of a valid product
-        $new_name = 'dashkdla';
-
         $response = self::$guzzle->put(
             'products/' . $old_product->getProductID(),
-            ['json' => ['name' => $new_name]]
+            ['json' => $new_data]
         );
 
+        if (array_key_exists('product_id', $new_data)) {
+            // if request attempts to modify product ID, request should be rejected
+            $this->assertEquals(400, $response->getStatusCode());
+
+            // ensure that original product was not modified
+            $fetched_product = Product::getByID($old_product->getProductID());
+            self::assertNotNull($fetched_product);
+
+            $fetched_data = $fetched_product->toArray();
+
+            unset($old_data['created_date']);
+            unset($fetched_data['created_date']);
+
+            assertEquals($old_data, $fetched_data);
+
+            return;
+        }
+
+        // else request is valid
+
         $this->assertEquals(200, $response->getStatusCode());
-        $new_product = Product::getByID($old_product->getProductID());
-        $this->assertEquals($new_name, $new_product->getName());
+
+        // fetch same product directly from database
+        $fetched_product = Product::getByID($old_product->getProductID());
+        self::assertNotNull($fetched_product);
+        $fetched_data = $fetched_product->toArray();
+
+        foreach (array_keys($expected_data) as $key) {
+            if ($expected_data[$key] === null) {
+                // data corresponding to key must not change
+                $this->assertEquals($old_data[$key], $fetched_data[$key]);
+            } else {
+                // data corresponding to key must change
+                $this->assertEquals($expected_data[$key], $fetched_data[$key]);
+            }
+        }
     }
 }
