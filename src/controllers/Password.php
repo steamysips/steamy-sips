@@ -162,7 +162,7 @@ class Password
     {
         // check if url is of form /password
         if (Utility::getURL() === 'password') {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // user has submitted his email
                 try {
                     $this->handleEmailSubmission();
@@ -183,7 +183,7 @@ class Password
 
         // check if url is of form /password/reset
         if (Utility::getURL() === 'password/reset') {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $this->handlePasswordSubmission();
             }
             // display form asking user for his new password

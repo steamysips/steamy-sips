@@ -130,7 +130,7 @@ $ariaInvalid = function (string $input_name) use ($errors, $form_submitted) {
                             <option value="<?= filter_var(
                                 $district->getID(),
                                 FILTER_SANITIZE_NUMBER_INT
-                            ) ?>" <?= $defaultDistrictID == $district->getID(
+                            ) ?>" <?= $defaultDistrictID === $district->getID(
                             ) ? "selected" : "" ?>><?= htmlspecialchars($district->getName()) ?></option>
                         <?php
                         endforeach; ?>
