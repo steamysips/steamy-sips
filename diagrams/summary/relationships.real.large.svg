@@ -81,10 +81,37 @@
 <polyline fill="none" stroke="#000000" points="192.5,-1047.2 188.5191,-1046.8091 "/>
 <ellipse fill="none" stroke="#000000" cx="185.3345" cy="-1046.4964" rx="3.2" ry="3.2"/>
 </g>
-<!-- order -->
+<!-- district -->
 <g id="node2" class="node">
+<title>district</title>
+<g id="a_node2"><a xlink:href="../../tables/district.html" xlink:title="district" target="_top">
+<polygon fill="#ffffff" stroke="transparent" points="10,-385.2 10,-471.2 98,-471.2 98,-385.2 10,-385.2"/>
+<polygon fill="#f5f5f5" stroke="transparent" points="10,-448.2 10,-471.2 98,-471.2 98,-448.2 10,-448.2"/>
+<polygon fill="none" stroke="#000000" points="10,-448.2 10,-471.2 98,-471.2 98,-448.2 10,-448.2"/>
+<text text-anchor="start" x="15" y="-456.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">district</text>
+<text text-anchor="start" x="63.5219" y="-456.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
+<polygon fill="none" stroke="#000000" points="10,-426.2 10,-448.2 98,-448.2 98,-426.2 10,-426.2"/>
+<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="15" y="-443.2"/>
+<text text-anchor="start" x="30" y="-433.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">district_id</text>
+<polygon fill="#ffffff" stroke="transparent" points="10,-404.2 10,-426.2 98,-426.2 98,-404.2 10,-404.2"/>
+<polygon fill="none" stroke="#000000" points="10,-404.2 10,-426.2 98,-426.2 98,-404.2 10,-404.2"/>
+<text text-anchor="start" x="30" y="-411.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">name</text>
+<polygon fill="#ffffff" stroke="transparent" points="10,-385.2 10,-404.2 30,-404.2 30,-385.2 10,-385.2"/>
+<polygon fill="none" stroke="#000000" points="10,-385.2 10,-404.2 30,-404.2 30,-385.2 10,-385.2"/>
+<text text-anchor="start" x="13" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
+<polygon fill="#ffffff" stroke="transparent" points="30,-385.2 30,-404.2 72,-404.2 72,-385.2 30,-385.2"/>
+<polygon fill="none" stroke="#000000" points="30,-385.2 30,-404.2 72,-404.2 72,-385.2 30,-385.2"/>
+<text text-anchor="start" x="36.6105" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">0 rows</text>
+<polygon fill="#ffffff" stroke="transparent" points="72,-385.2 72,-404.2 98,-404.2 98,-385.2 72,-385.2"/>
+<polygon fill="none" stroke="#000000" points="72,-385.2 72,-404.2 98,-404.2 98,-385.2 72,-385.2"/>
+<text text-anchor="start" x="79.4053" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">2 &gt;</text>
+</a>
+</g>
+</g>
+<!-- order -->
+<g id="node3" class="node">
 <title>order</title>
-<g id="a_node2"><a xlink:href="../../tables/order.html" xlink:title="order" target="_top">
+<g id="a_node3"><a xlink:href="../../tables/order.html" xlink:title="order" target="_top">
 <polygon fill="#ffffff" stroke="transparent" points="426.5,-383.2 426.5,-557.2 535.5,-557.2 535.5,-383.2 426.5,-383.2"/>
 <polygon fill="#f5f5f5" stroke="transparent" points="427,-534.2 427,-557.2 536,-557.2 536,-534.2 427,-534.2"/>
 <polygon fill="none" stroke="#000000" points="427,-534.2 427,-557.2 536,-557.2 536,-534.2 427,-534.2"/>
@@ -201,33 +228,6 @@
 <path fill="none" stroke="#000000" d="M413.1924,-440.0681C372.3423,-469.0112 345.8302,-617.2 301.5,-617.2"/>
 <polygon fill="#000000" stroke="#000000" points="419.4552,-437.8601 428.197,-438.5952 423.2276,-436.53 427,-435.2 427,-435.2 427,-435.2 423.2276,-436.53 425.803,-431.8048 419.4552,-437.8601 419.4552,-437.8601"/>
 <ellipse fill="none" stroke="#000000" cx="416.4373" cy="-438.9241" rx="3.2" ry="3.2"/>
-</g>
-<!-- district -->
-<g id="node3" class="node">
-<title>district</title>
-<g id="a_node3"><a xlink:href="../../tables/district.html" xlink:title="district" target="_top">
-<polygon fill="#ffffff" stroke="transparent" points="10,-385.2 10,-471.2 98,-471.2 98,-385.2 10,-385.2"/>
-<polygon fill="#f5f5f5" stroke="transparent" points="10,-448.2 10,-471.2 98,-471.2 98,-448.2 10,-448.2"/>
-<polygon fill="none" stroke="#000000" points="10,-448.2 10,-471.2 98,-471.2 98,-448.2 10,-448.2"/>
-<text text-anchor="start" x="15" y="-456.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">district</text>
-<text text-anchor="start" x="63.5219" y="-456.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
-<polygon fill="none" stroke="#000000" points="10,-426.2 10,-448.2 98,-448.2 98,-426.2 10,-426.2"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="15" y="-443.2"/>
-<text text-anchor="start" x="30" y="-433.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">district_id</text>
-<polygon fill="#ffffff" stroke="transparent" points="10,-404.2 10,-426.2 98,-426.2 98,-404.2 10,-404.2"/>
-<polygon fill="none" stroke="#000000" points="10,-404.2 10,-426.2 98,-426.2 98,-404.2 10,-404.2"/>
-<text text-anchor="start" x="30" y="-411.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">name</text>
-<polygon fill="#ffffff" stroke="transparent" points="10,-385.2 10,-404.2 30,-404.2 30,-385.2 10,-385.2"/>
-<polygon fill="none" stroke="#000000" points="10,-385.2 10,-404.2 30,-404.2 30,-385.2 10,-385.2"/>
-<text text-anchor="start" x="13" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
-<polygon fill="#ffffff" stroke="transparent" points="30,-385.2 30,-404.2 72,-404.2 72,-385.2 30,-385.2"/>
-<polygon fill="none" stroke="#000000" points="30,-385.2 30,-404.2 72,-404.2 72,-385.2 30,-385.2"/>
-<text text-anchor="start" x="36.6105" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">0 rows</text>
-<polygon fill="#ffffff" stroke="transparent" points="72,-385.2 72,-404.2 98,-404.2 98,-385.2 72,-385.2"/>
-<polygon fill="none" stroke="#000000" points="72,-385.2 72,-404.2 98,-404.2 98,-385.2 72,-385.2"/>
-<text text-anchor="start" x="79.4053" y="-391.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">2 &gt;</text>
-</a>
-</g>
 </g>
 <!-- product -->
 <g id="node4" class="node">

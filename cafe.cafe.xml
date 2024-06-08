@@ -32,12 +32,12 @@
       </table>
       <table catalog="cafe" name="comment" numRows="0" remarks="" type="TABLE">
          <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="comment_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
-            <child catalog="cafe" column="parent_comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+            <child catalog="cafe" column="parent_comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="true" table="comment"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="text" nullable="false" remarks="" size="2000" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="0" id="2" name="created_date" nullable="false" remarks="" size="19" type="DATETIME" typeCode="93"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="parent_comment_id" nullable="true" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
-            <parent catalog="cafe" column="comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="false" table="comment"/>
+            <parent catalog="cafe" column="comment_id" foreignKey="comment_comment_comment_id_fk" implied="false" onDeleteCascade="true" table="comment"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="user_id" nullable="false" remarks="" size="10" type="INT UNSIGNED" typeCode="4">
             <parent catalog="cafe" column="user_id" foreignKey="comment_user_user_id_fk" implied="false" onDeleteCascade="false" table="user"/>

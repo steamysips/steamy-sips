@@ -120,7 +120,7 @@
                                             <tr>
                                                 <td title="comment.parent_comment_id references comment.comment_id via comment_comment_comment_id_fk"><a href='comment.html'>comment</a><span class='relatedKey'>.parent_comment_id</span></td>
                                                 <td class="constraint detail">comment_comment_comment_id_fk</td>
-                                                <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td class="constraint detail"><span title='Cascade on delete:&#10;Deletion of parent deletes child'>C</span></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -180,7 +180,7 @@
                                             <tr>
                                                 <td title="comment.parent_comment_id references comment.comment_id via comment_comment_comment_id_fk"><a href='comment.html'>comment</a><span class='relatedKey'>.comment_id</span></td>
                                                 <td class="constraint detail">comment_comment_comment_id_fk</td>
-                                                <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                                <td class="constraint detail"><span title='Cascade on delete:&#10;Deletion of parent deletes child'>C</span></td>
                                             </tr>
                                         </table>
                                     </td>
