@@ -130,8 +130,8 @@ class OrderProductTest extends TestCase
         $this->assertNotNull($retrievedOrderProduct);
         $this->assertEquals($this->dummy_order->getOrderID(), $retrievedOrderProduct->getOrderID());
         $this->assertEquals($this->dummy_product->getProductID(), $retrievedOrderProduct->getProductID());
-        $this->assertEquals("medium", $retrievedOrderProduct->getCupSize());
-        $this->assertEquals("oat", $retrievedOrderProduct->getMilkType());
+        $this->assertEquals(OrderCupSize::MEDIUM, $retrievedOrderProduct->getCupSize());
+        $this->assertEquals(OrderMilkType::OAT, $retrievedOrderProduct->getMilkType());
         $this->assertEquals(2, $retrievedOrderProduct->getQuantity());
         $this->assertEquals($this->dummy_product->getPrice(), $retrievedOrderProduct->getUnitPrice());
     }
