@@ -12,6 +12,8 @@ use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
+use Steamy\Model\OrderMilkType;
+use Steamy\Model\OrderCupSize;
 
 class Cart
 {
@@ -101,8 +103,19 @@ class Cart
         foreach ($form_data['items'] as $item) {
             $line_item = new OrderProduct(
                 product_id: filter_var($item['productID'], FILTER_VALIDATE_INT),
-                cup_size: strtolower($item['cupSize']),
-                milk_type: strtolower($item['milkType']),
+                cup_size: match (strtolower($item['cupSize'])) { // Using match for enum conversion
+                    'small' => OrderCupSize::SMALL,
+                    'medium' => OrderCupSize::MEDIUM,
+                    'large' => OrderCupSize::LARGE,
+                    default => throw new Exception('Invalid cup size: ' . $item['cupSize'])
+                },
+                milk_type: match (strtolower($item['milkType'])) { // Using match for enum conversion
+                    'almond' => OrderMilkType::ALMOND,
+                    'coconut' => OrderMilkType::COCONUT,
+                    'oat' => OrderMilkType::OAT,
+                    'soy' => OrderMilkType::SOY,
+                    default => throw new Exception('Invalid milk type: ' . $item['milkType'])
+                },
                 quantity: filter_var($item['quantity'], FILTER_VALIDATE_INT)
             );
             $new_order->addLineItem($line_item);
