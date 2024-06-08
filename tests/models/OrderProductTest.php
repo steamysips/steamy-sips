@@ -11,6 +11,8 @@ use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
+use Steamy\Model\OrderMilkType;
+use Steamy\Model\OrderCupSize;
 use Steamy\Tests\helpers\TestHelper;
 use Throwable;
 
@@ -61,7 +63,11 @@ class OrderProductTest extends TestCase
         // Create dummy order line items
         $this->line_items = [
             new OrderProduct(
-                $this->dummy_product->getProductID(), "medium", "oat", 2
+                product_id: $this->dummy_product->getProductID(),
+                cup_size: OrderCupSize::MEDIUM,
+                milk_type: OrderMilkType::OAT,
+                quantity: 2,
+                unit_price: 5.0
             )
         ];
 
@@ -98,8 +104,8 @@ class OrderProductTest extends TestCase
     {
         $invalidOrderProduct = new OrderProduct(
             product_id: $this->dummy_product->getProductID(),
-            cup_size: "extra large",  // Invalid cup size
-            milk_type: "invalid milk", // Invalid milk type
+            cup_size: OrderCupSize::LARGE,
+            milk_type: OrderMilkType::SOY,
             quantity: -1,             // Invalid quantity
             unit_price: -2.99,        // Invalid unit price
             order_id: $this->dummy_order->getOrderID()

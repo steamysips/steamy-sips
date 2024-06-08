@@ -302,8 +302,8 @@ class Order
         foreach ($data as $result) {
             $order_products_arr[] = new OrderProduct(
                 product_id: $result->product_id,
-                cup_size: $result->cup_size,
-                milk_type: $result->milk_type,
+                cup_size: OrderCupSize::from($result->cup_size), // Convert string to enum
+                milk_type: OrderMilkType::from($result->milk_type), // Convert string to enum
                 quantity: $result->quantity,
                 unit_price: (float)$result->unit_price,
                 order_id: $result->order_id,
