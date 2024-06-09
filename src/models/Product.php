@@ -393,18 +393,18 @@ class Product
     {
         // Query the database to get the percentage distribution of ratings
         $query = <<< EOL
-            SELECT rating, 
-            COUNT(*) * 100.0 / (
-                SELECT COUNT(*)
+                SELECT rating, 
+                COUNT(*) * 10.0 / (
+                    SELECT COUNT(*)
+                    FROM order_product op
+                    JOIN `order` o ON op.order_id = o.order_id
+                    WHERE op.product_id = :product_id
+                    ) AS percentage
                 FROM review r
-                JOIN order_product op ON r.client_id = op.client_id
-                JOIN `order` o ON op.order_id = o.order_id
-                WHERE r.product_id = :product_id 
-                AND op.product_id = :product_id
-            ) AS percentage
-            FROM review
-            WHERE product_id = :product_id
-            GROUP BY rating
+                JOIN `order` o ON r.client_id = o.client_id
+                JOIN order_product op ON op.order_id = o.order_id
+                WHERE op.product_id = :product_id
+                GROUP BY rating;
         EOL;
 
         $params = ['product_id' => $this->product_id];
