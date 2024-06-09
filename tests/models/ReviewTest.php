@@ -351,7 +351,7 @@ final class ReviewTest extends TestCase
     public function testIsVerified(): void
     {
         // note: do not use data provider here because $faker is static and causes a bug
-        $verified_review = self::createReview(self::createProduct(), self::createClient(), true);
+        $verified_review = self::createReview(self::createProduct(), self::createClient(), null, true);
         $unverified_review = self::createReview(self::createProduct(), self::createClient());
         $fake_review = new Review(review_id: -321, product_id: -32);
 

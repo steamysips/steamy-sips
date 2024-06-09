@@ -227,7 +227,7 @@ trait TestHelper
      * @return Review
      * @throws Exception
      */
-    public static function createReview(Product $product, Client $client, bool $verified = false): Review
+    public static function createReview(Product $product, Client $client, int $rating = null, bool $verified = false): Review
     {
         if ($verified) {
             // place an order for  client and product

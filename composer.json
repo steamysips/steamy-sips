@@ -25,7 +25,7 @@
     "nesbot/carbon": "^3.3"
   },
   "scripts": {
-    "test": "phpunit tests",
+    "test": "phpunit --testdox tests",
     "modeltest": "phpunit --testsuite models",
     "apitest": "phpunit --testsuite api"
   },
