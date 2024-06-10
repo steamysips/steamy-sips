@@ -223,12 +223,17 @@ trait TestHelper
      * Create a review and saves it to database.
      * @param Product $product A valid product already present in database
      * @param Client $client A valid client already present in database
+     * @param int|null $rating Rating for review
      * @param bool $verified Whether to create an order for client for given product.
      * @return Review
      * @throws Exception
      */
-    public static function createReview(Product $product, Client $client, int $rating = null, bool $verified = false): Review
-    {
+    public static function createReview(
+        Product $product,
+        Client $client,
+        int $rating = null,
+        bool $verified = false
+    ): Review {
         if ($verified) {
             // place an order for  client and product
 
@@ -262,7 +267,7 @@ trait TestHelper
             product_id: $product->getProductID(),
             client_id: $client->getUserID(),
             text: self::$faker->sentence(10),
-            rating: self::$faker->numberBetween(1, 5)
+            rating: $rating ?? self::$faker->numberBetween(1, 5)
         );
 
         $success = $review->save();
