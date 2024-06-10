@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/review.json",
+  "title": "Review",
+  "description": "A review object",
+  "type": "object",
+  "properties": {
+    "review_id": {
+      "type": "integer",
+      "description": "Unique identifier for review"
+    },
+    "rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating of the product"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date and time when the review was created"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2000,
+      "description": "The text of the review"
+    },
+    "client_id": {
+      "type": "integer",
+      "description": "Identifier for the client who wrote the review"
+    },
+    "product_id": {
+      "type": "integer",
+      "description": "Identifier for the product being reviewed"
+    }
+  },
+  "additionalProperties": false
+}
