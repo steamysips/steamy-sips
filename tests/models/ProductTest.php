@@ -216,6 +216,9 @@ final class ProductTest extends TestCase
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function testGetRatingDistribution(): void
     {
         // Create a new product for testing
@@ -296,30 +299,41 @@ final class ProductTest extends TestCase
         $this->assertEquals('Updated description', $updatedProduct->getDescription());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetAverageRating(): void
     {
-        // Create a new product for testing
-        $product = self::createProduct();
+        // reset database as we don't want previously created reviews from setUp.
+        self::resetDatabase();
 
-        // Create mock review data with different ratings
-        $reviewsData = [
-            ['rating' => 5],
-            ['rating' => 4],
-            ['rating' => 3],
-            ['rating' => 2],
-            ['rating' => 1],
-        ];
-        // Insert mock review data into the database
-        foreach ($reviewsData as $reviewData) {
-            self::createReview($product, $this->dummy_client, $reviewData['rating'], true);
+        $this->dummy_product = self::createProduct();
+        $this->dummy_client = self::createClient();
+
+        // Create a random number of verified reviews with different ratings
+        $verifiedReviewRatings = [];
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            $verifiedReviewRatings[] = $rating;
+            self::createReview($this->dummy_product, $this->dummy_client, $rating, true);
         }
+
+        // Note:  $this->dummy_client can be a verified reviewer do not write unverified reviews with it
+
+        // Create a random number of unverified reviews with different ratings
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            self::createReview($this->dummy_product, self::createClient(), $rating);
+        }
+
         // Retrieve the average rating for the product
-        $averageRating = $product->getAverageRating();
+        $averageRating = $this->dummy_product->getAverageRating();
 
         // Assert that the average rating is accurate
-        $expectedAverageRating = (5 + 4 + 3 + 2 + 1) / count($reviewsData);
-
-        $this->assertEquals($expectedAverageRating, $averageRating);
+        $expectedAverageRating = count($verifiedReviewRatings) === 0 ? 0 : (float)array_sum(
+                $verifiedReviewRatings
+            ) / count($verifiedReviewRatings);
+        $this->assertEqualsWithDelta($expectedAverageRating, $averageRating, 0.0001);
     }
 
     public function testGetReviews(): void
