@@ -149,6 +149,72 @@ class Administrator extends User
         return $administrator;
     }
 
+    public function updateAdministrator(bool $updatePassword = false): bool
+    {
+        $conn = self::connect();
+        $conn->beginTransaction();
+
+        $user_data = [
+            'email' => $this->getEmail(),
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
+            'phone_no' => $this->getPhoneNo(),
+            'user_id' => $this->user_id
+        ];
+
+        $query = <<< EOL
+        UPDATE user
+        SET email = :email,
+            first_name = :first_name,
+            last_name = :last_name,
+            phone_no = :phone_no
+    EOL;
+
+        if ($updatePassword) {
+            $query .= ", password = :password ";
+            $user_data['password'] = $this->password;
+        }
+
+        $query .= " WHERE user_id = :user_id";
+
+        $stm = $conn->prepare($query);
+        $success = $stm->execute($user_data);
+
+        // if error occurred
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        // Update job title and super admin status in the administrator table
+        $query = <<< EOL
+        UPDATE administrator
+        SET job_title = :job_title,
+            is_super_admin = :is_super_admin
+        WHERE user_id = :user_id
+    EOL;
+
+        $stm = $conn->prepare($query);
+        $success = $stm->execute([
+            'job_title' => $this->job_title,
+            'is_super_admin' => $this->is_super_admin ? 1 : 0,
+            'user_id' => $this->user_id
+        ]);
+
+        // if error occurred
+        if (!$success) {
+            $conn->rollBack();
+            $conn = null;
+            return false;
+        }
+
+        $conn->commit();
+        $conn = null;
+        return true;
+    }
+
+
     public function getJobTitle(): string
     {
         return $this->job_title;

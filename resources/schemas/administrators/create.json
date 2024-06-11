@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/administrators/create.json",
+  "title": "Create Administrator",
+  "properties": {
+    "user_id": {
+      "$ref": "https://example.com/common/administrator.json#/properties/user_id"
+    },
+    "email": {
+      "$ref": "https://example.com/common/administrator.json#/properties/email"
+    },
+    "first_name": {
+      "$ref": "https://example.com/common/administrator.json#/properties/first_name"
+    },
+    "last_name": {
+      "$ref": "https://example.com/common/administrator.json#/properties/last_name"
+    },
+    "password": {
+      "$ref": "https://example.com/common/administrator.json#/properties/password"
+    },
+    "phone_no": {
+      "$ref": "https://example.com/common/administrator.json#/properties/phone_no"
+    },
+    "job_title": {
+      "$ref": "https://example.com/common/administrator.json#/properties/job_title"
+    },
+    "is_super_admin": {
+      "$ref": "https://example.com/common/administrator.json#/properties/is_super_admin"
+    }
+  },
+  "required": [
+    "user_id",
+    "email",
+    "first_name",
+    "last_name",
+    "password",
+    "phone_no",
+    "job_title"
+  ],
+  "additionalProperties": false
+}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
+use Steamy\Core\Utility;
+
 use Exception;
 
 class Client extends User
@@ -181,7 +183,7 @@ class Client extends User
         return true;
     }
 
-    public function updateUser(bool $updatePassword = false): bool
+    public function updateClient(bool $updatePassword = false): bool
     {
         $conn = self::connect();
         $conn->beginTransaction();
@@ -256,6 +258,11 @@ class Client extends User
         return $this->address;
     }
 
+    public function setAddress(Location $address): void
+    {
+        $this->address = $address;
+    }
+
     /**
      * Validates attributes of current user and returns an array of errors.
      *
@@ -295,6 +302,68 @@ class Client extends User
 
         return $base_array;
     }
+    /**
+     * Get all orders for a specific user.
+     *
+     * @param int $userId The ID of the user.
+     * @return Order|null Array of Order objects if found, otherwise null.
+     */
+    public static function getAllOrdersForUser(int $userId): ?Order
+    {
+        if ($userId < 0) {
+            return null;
+        }
+
+        $query = "SELECT * FROM `order` WHERE `client_id` = :userId";
+        $orderData = self::query($query, ['userId' => $userId]);
+
+        if (empty($orderData)) {
+            return null;
+        }
+
+        $orderData = $orderData[0];
+
+        return new Order(
+            store_id: $orderData->store_id,
+            client_id: $orderData->client_id,
+            order_id: $orderData->order_id,
+            pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
+            status: OrderStatus::from($orderData->status),
+            created_date: Utility::stringToDate($orderData->created_date),
+        );
+    }
+
+    /**
+     * Get all reviews for a specific user.
+     *
+     * @param int $userId The ID of the user.
+     * @return Review|null Array of Review objects if found, otherwise null.
+     */
+    public static function getAllReviewsForUser(int $userId): ?Review
+    {
+        if ($userId < 0) {
+            return null;
+        }
+
+        $query = "SELECT * FROM `review` WHERE `client_id` = :userId";
+        $result = Review::query($query, ['userId' => $userId]);
+
+        if (empty($result)) {
+            return null;
+        }
+
+        $result = $result[0];
+
+        return new Review(
+            review_id: $result->review_id,
+            product_id: $result->product_id,
+            client_id: $result->client_id,
+            text: $result->text,
+            rating: $result->rating,
+            created_date: Utility::stringToDate($result->created_date)
+        );
+    }
+
 
 
     /**

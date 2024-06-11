@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/administrator.json",
+  "title": "Administrator",
+  "description": "An administrator object",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "$ref": "https://example.com/common/user.json#/properties/user_id"
+    },
+    "email": {
+      "$ref": "https://example.com/common/user.json#/properties/email"
+    },
+    "first_name": {
+      "$ref": "https://example.com/common/user.json#/properties/first_name"
+    },
+    "last_name": {
+      "$ref": "https://example.com/common/user.json#/properties/last_name"
+    },
+    "password": {
+      "$ref": "https://example.com/common/user.json#/properties/password"
+    },
+    "phone_no": {
+      "$ref": "https://example.com/common/user.json#/properties/phone_no"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Job title of the administrator",
+      "minLength": 4
+    },
+    "is_super_admin": {
+      "type": "boolean",
+      "description": "If the administrator is a super admin"
+    }
+  },
+  "required": [
+    "user_id",
+    "email",
+    "first_name",
+    "last_name",
+    "password",
+    "phone_no",
+    "job_title"
+  ],
+  "additionalProperties": false
+}
