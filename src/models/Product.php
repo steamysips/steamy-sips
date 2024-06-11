@@ -85,7 +85,7 @@ class Product
             return [];
         }
 
-        $callback = fn($obj): string => $obj->category;
+        $callback = fn ($obj): string => $obj->category;
 
         return array_map($callback, $result);
     }
@@ -393,11 +393,18 @@ class Product
     {
         // Query the database to get the percentage distribution of ratings
         $query = <<< EOL
-            SELECT rating, 
-            COUNT(*) * 100.0 / (SELECT COUNT(*) FROM review WHERE product_id = :product_id) AS percentage
-            FROM review
-            WHERE product_id = :product_id
-            GROUP BY rating
+                SELECT rating, 
+                COUNT(*) * 10.0 / (
+                    SELECT COUNT(*)
+                    FROM order_product op
+                    JOIN `order` o ON op.order_id = o.order_id
+                    WHERE op.product_id = :product_id
+                    ) AS percentage
+                FROM review r
+                JOIN `order` o ON r.client_id = o.client_id
+                JOIN order_product op ON op.order_id = o.order_id
+                WHERE op.product_id = :product_id
+                GROUP BY rating;
         EOL;
 
         $params = ['product_id' => $this->product_id];
