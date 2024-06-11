@@ -133,53 +133,141 @@ final class ProductTest extends TestCase
 
     public function testSave(): void
     {
-        $this->markTestIncomplete(
-            'Use data providers here for at least 3 test cases, ...',
+        // Prepare test data
+        $newProductData = [
+            'name' => 'New Product',
+            'calories' => 100,
+            'img_url' => 'new_product.jpeg',
+            'img_alt_text' => 'New Product Image',
+            'category' => 'New Category',
+            'price' => 10.00,
+            'description' => 'New Product Description'
+        ];
+
+        // Create a new product object with the test data
+        $newProduct = new Product(
+            $newProductData['name'],
+            $newProductData['calories'],
+            $newProductData['img_url'],
+            $newProductData['img_alt_text'],
+            $newProductData['category'],
+            $newProductData['price'],
+            $newProductData['description']
         );
+
+        // Save the product to the database
+        $result = $newProduct->save();
+
+        // Assert that the product was saved successfully
+        $this->assertTrue($result);
+
+        // Fetch the saved product from the database
+        $savedProduct = Product::getByID($newProduct->getProductID());
+
+        // Assert that the saved product matches the test data
+        $this->assertEquals($newProductData['name'], $savedProduct->getName());
+        $this->assertEquals($newProductData['calories'], $savedProduct->getCalories());
+        $this->assertEquals($newProductData['img_url'], $savedProduct->getImgRelativePath());
+        $this->assertEquals($newProductData['img_alt_text'], $savedProduct->getImgAltText());
+        $this->assertEquals($newProductData['category'], $savedProduct->getCategory());
+        $this->assertEquals($newProductData['price'], $savedProduct->getPrice());
+        $this->assertEquals($newProductData['description'], $savedProduct->getDescription());
     }
+
 
     public function testValidate(): void
     {
-        // Validate the dummy product
-        $errors = $this->dummy_product->validate();
+        // Prepare test data with invalid values
+        $invalidProductData = [
+            'name' => '', // Empty name
+            'calories' => -10, // Negative calories
+            'img_url' => 'invalid_image.txt', // Invalid image extension
+            'img_alt_text' => 'In', // Invalid image alt text length
+            'category' => '', // Empty category
+            'price' => 0, // Zero price
+            'description' => '' // Empty description
+        ];
 
-        // Check if there are no validation errors
-        $this->assertEmpty($errors);
-
-        $this->markTestIncomplete(
-            'This test lacks test cases, ...',
+        // Create a new product object with the invalid test data
+        $invalidProduct = new Product(
+            $invalidProductData['name'],
+            $invalidProductData['calories'],
+            $invalidProductData['img_url'],
+            $invalidProductData['img_alt_text'],
+            $invalidProductData['category'],
+            $invalidProductData['price'],
+            $invalidProductData['description']
         );
+
+        // Validate the product
+        $errors = $invalidProduct->validate();
+
+        // Assert that validation errors are present for each invalid field
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayHasKey('calories', $errors);
+        $this->assertArrayHasKey('img_url', $errors);
+        $this->assertArrayHasKey('img_alt_text', $errors);
+        $this->assertArrayHasKey('category', $errors);
+        $this->assertArrayHasKey('price', $errors);
+        $this->assertArrayHasKey('description', $errors);
+
+        // Assert that there are exactly 7 validation errors
+        $this->assertCount(7, $errors);
     }
 
+
+    /**
+     * @throws Exception
+     */
     public function testGetRatingDistribution(): void
     {
-        $distribution = $this->dummy_product->getRatingDistribution();
+        // reset data from setUp
+        self::resetDatabase();
 
-        // Check if the distribution contains the expected keys and values
-        // Here dummy product contains a single review:
-        $this->assertArrayHasKey($this->dummy_review->getRating(), $distribution);
-        $this->assertEquals(100.0, $distribution[$this->dummy_review->getRating()]);
+        // Create a new product for testing
+        $product = self::createProduct();
+        $this->dummy_client = self::createClient();
 
-        $this->markTestIncomplete(
-            'This test lacks test cases. This test might fail when getRatingDistribution excludes unverified reviews.',
-        );
+        // Create mock review data with different ratings
+        $verifiedReviewRatings = [5, 4, 3, 2, 1, 5, 4, 3, 4, 5];
+        // Insert mock review data into the database
+        foreach ($verifiedReviewRatings as $reviewData) {
+            self::createReview($product, $this->dummy_client, $reviewData, true);
+        }
+
+        // Create a random number of unverified reviews with different ratings
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            self::createReview($product, self::createClient(), $rating);
+        }
+
+        // Retrieve the rating distribution for the product
+        $ratingDistribution = $product->getRatingDistribution();
+
+        // Assert that the rating distribution is accurate
+        $expectedDistribution = [
+            1 => 10.0, // 1 star
+            2 => 10.0, // 2 stars
+            3 => 20.0, // 3 stars
+            4 => 30.0, // 4 stars
+            5 => 30.0, // 5 stars
+        ];
+        $this->assertEquals($expectedDistribution, $ratingDistribution);
     }
 
     public function testDeleteProduct(): void
     {
-        $product_id = $this->dummy_product->getProductID();
-        $result = $this->dummy_product->deleteProduct();
+        // Save the product to the database
+        $product = $this->dummy_product;
 
-        // Check if the product was deleted successfully
-        $this->assertTrue($result);
-
-        // Check if the product no longer exists in the database
-        $product = Product::getByID($product_id);
-        $this->assertNull($product);
-
-        $this->markTestIncomplete(
-            'This test lacks test cases, ...',
-        );
+        // Delete the product from the database
+        $success = $product->deleteProduct();
+        // Assert that the delete operation was successful
+        self::assertTrue($success);
+        // Try to retrieve the product by ID to check if it was deleted
+        $deletedProduct = Product::getByID($product->getProductID());
+        // Assert that the product is no longer in the database
+        self::assertNull($deletedProduct);
     }
 
     public function testUpdateProduct(): void
@@ -210,15 +298,41 @@ final class ProductTest extends TestCase
         $this->assertEquals('Updated description', $updatedProduct->getDescription());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testGetAverageRating(): void
     {
+        // reset database as we don't want previously created reviews from setUp.
+        self::resetDatabase();
+
+        $this->dummy_product = self::createProduct();
+        $this->dummy_client = self::createClient();
+
+        // Create a random number of verified reviews with different ratings
+        $verifiedReviewRatings = [];
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            $verifiedReviewRatings[] = $rating;
+            self::createReview($this->dummy_product, $this->dummy_client, $rating, true);
+        }
+
+        // Note:  $this->dummy_client can be a verified reviewer do not write unverified reviews with it
+
+        // Create a random number of unverified reviews with different ratings
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            self::createReview($this->dummy_product, self::createClient(), $rating);
+        }
+
+        // Retrieve the average rating for the product
         $averageRating = $this->dummy_product->getAverageRating();
 
-        $this->assertNotEquals(999.0, $averageRating);
-
-        $this->markTestIncomplete(
-            'This test lacks test cases, ...',
-        );
+        // Assert that the average rating is accurate
+        $expectedAverageRating = count($verifiedReviewRatings) === 0 ? 0 : (float)array_sum(
+                $verifiedReviewRatings
+            ) / count($verifiedReviewRatings);
+        $this->assertEqualsWithDelta($expectedAverageRating, $averageRating, 0.0001);
     }
 
     public function testGetReviews(): void
