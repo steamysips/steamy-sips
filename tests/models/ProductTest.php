@@ -221,25 +221,24 @@ final class ProductTest extends TestCase
      */
     public function testGetRatingDistribution(): void
     {
+        // reset data from setUp
+        self::resetDatabase();
+
         // Create a new product for testing
         $product = self::createProduct();
+        $this->dummy_client = self::createClient();
 
         // Create mock review data with different ratings
-        $reviewsData = [
-            ['rating' => 5],
-            ['rating' => 4],
-            ['rating' => 3],
-            ['rating' => 2],
-            ['rating' => 1],
-            ['rating' => 5],
-            ['rating' => 4],
-            ['rating' => 3],
-            ['rating' => 4],
-            ['rating' => 5],
-        ];
+        $verifiedReviewRatings = [5, 4, 3, 2, 1, 5, 4, 3, 4, 5];
         // Insert mock review data into the database
-        foreach ($reviewsData as $reviewData) {
-            self::createReview($product, $this->dummy_client, $reviewData['rating'], true);
+        foreach ($verifiedReviewRatings as $reviewData) {
+            self::createReview($product, $this->dummy_client, $reviewData, true);
+        }
+
+        // Create a random number of unverified reviews with different ratings
+        for ($i = 0; $i < self::$faker->numberBetween(0, 10); $i++) {
+            $rating = self::$faker->numberBetween(1, 5);
+            self::createReview($product, self::createClient(), $rating);
         }
 
         // Retrieve the rating distribution for the product
