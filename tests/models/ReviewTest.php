@@ -12,6 +12,7 @@ use Steamy\Model\Location;
 use Steamy\Model\Review;
 use Steamy\Model\Product;
 use Steamy\Tests\helpers\TestHelper;
+use Steamy\Model\Comment;
 use Throwable;
 
 final class ReviewTest extends TestCase
@@ -278,23 +279,71 @@ final class ReviewTest extends TestCase
 
     public function testGetNestedComments(): void
     {
-        $this->markTestIncomplete(
-            'This test lacks test cases, ...',
+        // Create a review
+        $review = new Review(
+            product_id: $this->dummy_product->getProductID(),
+            client_id: $this->reviewer->getUserID(),
+            text: "This is a test review for nested comments.",
+            rating: 4
         );
+        $review->save();
 
-        $review = new Review(review_id: 1);
-        $comments = $review->getNestedComments();
+        // Create root level comment
+        $comment1 = new Comment(
+            review_id: $review->getReviewID(),
+            user_id: $this->reviewer->getUserID(),
+            text: "This is a root level comment."
+        );
+        $comment1->save();
 
-        $this->assertIsArray($comments);
-        foreach ($comments as $comment) {
-            $this->assertObjectHasAttribute('children', $comment);
-            if (!empty($comment->children)) {
-                foreach ($comment->children as $childComment) {
-                    $this->assertObjectHasAttribute('children', $childComment);
-                }
-            }
-        }
+        // Create nested comments
+        $comment2 = new Comment(
+            review_id: $review->getReviewID(),
+            user_id: $this->reviewer->getUserID(),
+            text: "This is a child comment.",
+            parent_comment_id: $comment1->getCommentID()
+        );
+        $comment2->save();
+
+        $comment3 = new Comment(
+            review_id: $review->getReviewID(),
+            user_id: $this->reviewer->getUserID(),
+            text: "This is another root level comment."
+        );
+        $comment3->save();
+
+        $comment4 = new Comment(
+            review_id: $review->getReviewID(),
+            user_id: $this->reviewer->getUserID(),
+            text: "This is a child of a child comment.",
+            parent_comment_id: $comment2->getCommentID()
+        );
+        $comment4->save();
+
+        // Fetch nested comments
+        $nestedComments = $review->getNestedComments();
+
+        // Check if the structure is correct
+        $this->assertIsArray($nestedComments);
+        $this->assertCount(2, $nestedComments); // Should have 2 root level comments
+
+        // Verify the first root level comment
+        $this->assertEquals($comment1->getCommentID(), $nestedComments[0]->comment_id);
+        $this->assertCount(1, $nestedComments[0]->children); // Should have 1 child
+
+        // Verify the child comment of the first root level comment
+        $this->assertEquals($comment2->getCommentID(), $nestedComments[0]->children[0]->comment_id);
+        $this->assertCount(1, $nestedComments[0]->children[0]->children); // Should have 1 child
+
+        // Verify the child of the child comment
+        $this->assertEquals($comment4->getCommentID(), $nestedComments[0]->children[0]->children[0]->comment_id);
+        $this->assertCount(0, $nestedComments[0]->children[0]->children[0]->children); // Should have no children
+
+        // Verify the second root level comment
+        $this->assertEquals($comment3->getCommentID(), $nestedComments[1]->comment_id);
+        $this->assertCount(0, $nestedComments[1]->children); // Should have no children
     }
+
 
     /**
      * @throws Exception
@@ -302,7 +351,11 @@ final class ReviewTest extends TestCase
     public function testIsVerified(): void
     {
         // note: do not use data provider here because $faker is static and causes a bug
-        $verified_review = self::createReview(self::createProduct(), self::createClient(), true);
+        $verified_review = self::createReview(
+            self::createProduct(),
+            self::createClient(),
+            verified: true
+        );
         $unverified_review = self::createReview(self::createProduct(), self::createClient());
         $fake_review = new Review(review_id: -321, product_id: -32);
 
