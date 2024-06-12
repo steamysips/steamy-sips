@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/orders/update_orderproduct.json",
+  "title": "Update Order Product",
+  "properties": {
+    "order_id": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/order_id"
+    },
+    "product_id": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/product_id"
+    },
+    "cup_size": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/cup_size"
+    },
+    "milk_type": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/milk_type"
+    },
+    "quantity": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/quantity"
+    },
+    "unit_price": {
+      "$ref": "https://example.com/common/orderproduct.json#/properties/unit_price"
+    }
+  },
+  "additionalProperties": false
+}

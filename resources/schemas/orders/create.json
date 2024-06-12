@@ -21,7 +21,6 @@
   },
   "required": [
     "status",
-    "created_date",
     "client_id",
     "store_id"
   ],

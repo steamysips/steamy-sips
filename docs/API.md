@@ -61,7 +61,7 @@ Note:
 
 | Endpoint                     | Description                                           | Protected | Query string parameters      |
 |------------------------------|-------------------------------------------------------|-----------|------------------------------|
-| `GET /api/v1/orders/`        | Get the list of all orders.                           | Yes       | `sort`, `group-by`, `status` |
+| `GET /api/v1/orders`        | Get the list of all orders.                           | Yes       | `sort`, `group-by`, `status` |
 | `GET /api/v1/orders/[id]`    | Get the details of a specific order by its ID.        | Yes       |
 | `POST /api/v1/orders`        | Create a new order for products.                      | Yes       |
 | `PUT /api/v1/orders/[id]`    | Update the details of an order with the specified ID. | Yes       |

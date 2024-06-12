@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/orderproduct.json",
+  "title": "Order Product",
+  "description": "An order product object",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "integer",
+      "description": "Unique identifier for order"
+    },
+    "product_id": {
+      "type": "integer",
+      "description": "Unique identifier for product"
+    },
+    "cup_size": {
+      "type": "string",
+      "enum": ["small", "medium", "large"],
+      "description": "Size of the cup"
+    },
+    "milk_type": {
+      "type": "string",
+      "enum": ["almond", "coconut", "oat", "soy"],
+      "description": "Type of milk"
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Quantity of the product"
+    },
+    "unit_price": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Unit price of the product"
+    }
+  },
+  "additionalProperties": false
+}

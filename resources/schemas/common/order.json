@@ -7,7 +7,7 @@
   "properties": {
     "order_id": {
       "type": "integer",
-      "description": "Unique identifier for the order"
+      "description": "Unique identifier for order"
     },
     "status": {
       "type": "string",
@@ -22,15 +22,15 @@
     "pickup_date": {
       "type": "string",
       "format": "date-time",
-      "description": "The date and time when the order will be picked up"
+      "description": "Date when client picks up the order at the store"
     },
     "client_id": {
       "type": "integer",
-      "description": "The client who placed the order"
+      "description": "ID of the client who placed the order"
     },
     "store_id": {
       "type": "integer",
-      "description": "The store where the order will be picked up"
+      "description": "ID of the store where the order was placed"
     }
   },
   "additionalProperties": false

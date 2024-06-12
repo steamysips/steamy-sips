@@ -6,6 +6,9 @@
     "status": {
       "$ref": "https://example.com/common/order.json#/properties/status"
     },
+    "created_date": {
+      "$ref": "https://example.com/common/order.json#/properties/created_date"
+    },
     "pickup_date": {
       "$ref": "https://example.com/common/order.json#/properties/pickup_date"
     },

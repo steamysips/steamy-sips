@@ -69,55 +69,57 @@ class Orders
      */
     public function createOrder(): void
     {
-        $data = json_decode(file_get_contents("php://input"), true);
-
-        $result = Utility::validateAgainstSchema($data, "orders/create.json");
-
-        if (!$result->isValid()) {
-            $errors = (new ErrorFormatter())->format($result->error());
-            $response = ['error' => $errors];
-            http_response_code(400);
-            echo json_encode($response);
-            return;
-        }
-
-        if (empty($data['line_items'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Line items cannot be empty']);
-            return;
-        }
-
-        $lineItems = array_map(function ($item) {
-            return new OrderProduct(
-                product_id: $item['product_id'],
-                cup_size: $item['cup_size'],
-                milk_type: $item['milk_type'],
-                quantity: $item['quantity'],
-                unit_price: $item['unit_price']
-            );
-        }, $data['line_items']);
-
-        $newOrder = new Order(
-            store_id: $data['store_id'],
-            client_id: $data['client_id'],
-            line_items: $lineItems,
-            pickup_date: isset($data['pickup_date']) ? Utility::stringToDate($data['pickup_date']) : null
-        );
-
         try {
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!$data) {
+                throw new \Exception('Invalid JSON input');
+            }
+
+            // Validate the order data against the schemas
+            $orderValidationResult = Utility::validateAgainstSchema((object)$data, "orders/create.json");
+            $orderProductValidationResult = Utility::validateAgainstSchema((object)$data, "orders/create_orderproduct.json");
+
+            if (!$orderValidationResult->isValid() || !$orderProductValidationResult->isValid()) {
+                $errors = array_merge(
+                    (new ErrorFormatter())->format($orderValidationResult->error()),
+                    (new ErrorFormatter())->format($orderProductValidationResult->error())
+                );
+                http_response_code(400);
+                echo json_encode(['error' => $errors]);
+                return;
+            }
+
+            // Ensure that the only allowed properties are included
+            $lineItems = array_map(function ($item) {
+                return [
+                    'product_id' => $item['product_id'] ?? null,
+                    'cup_size' => $item['cup_size'] ?? null,
+                    'milk_type' => $item['milk_type'] ?? null,
+                    'quantity' => $item['quantity'] ?? null,
+                    'unit_price' => $item['unit_price'] ?? null
+                ];
+            }, $data['line_items'] ?? []);
+
+            // Create a new Order object
+            $newOrder = new Order(
+                store_id: (int)$data['store_id'],
+                client_id: (int)$data['client_id'],
+                line_items: $lineItems,
+                pickup_date: isset($data['pickup_date']) ? Utility::stringToDate($data['pickup_date']) : null
+            );
+
+            // Save the order
             if ($newOrder->save()) {
                 http_response_code(201);
                 echo json_encode(['message' => 'Order created successfully', 'order_id' => $newOrder->getOrderID()]);
             } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to create order']);
+                throw new \Exception('Failed to create order');
             }
         } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
     }
-
     /**
      * Update the details of an order with the specified ID.
      */
@@ -133,10 +135,10 @@ class Orders
             return;
         }
 
-        $data = json_decode(file_get_contents("php://input"), true);
+        $data = (object)json_decode(file_get_contents("php://input"), true);
         $result = Utility::validateAgainstSchema($data, "orders/update.json");
 
-        if (!$result->isValid()) {
+        if (!($result->isValid())) {
             $errors = (new ErrorFormatter())->format($result->error());
             $response = ['error' => $errors];
             http_response_code(400);
@@ -144,8 +146,18 @@ class Orders
             return;
         }
 
-        $order->setPickupDate(isset($data['pickup_date']) ? Utility::stringToDate($data['pickup_date']) : null);
-        $order->setStatus(OrderStatus::from($data['status']));
+        $lineItems = array_map(function ($item) {
+            return new OrderProduct(
+                product_id: $item['product_id'],
+                cup_size: $item['cup_size'],
+                milk_type: $item['milk_type'],
+                quantity: $item['quantity'],
+                unit_price: $item['unit_price']
+            );
+        }, $data->line_items);
+
+        $order->setPickupDate($data->pickup_date ? Utility::stringToDate($data->pickup_date) : null);
+        $order->setStatus(OrderStatus::from($data->status));
 
         try {
             if ($order->save()) {
@@ -160,6 +172,7 @@ class Orders
             echo json_encode(['error' => $e->getMessage()]);
         }
     }
+
     /**
      * Delete an order with the specified ID.
      */

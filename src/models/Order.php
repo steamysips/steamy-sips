@@ -318,7 +318,7 @@ class Order
      */
     public static function getAll(): array
     {
-        $query = "SELECT * FROM order";
+        $query = "SELECT * FROM `order`";
         $results = self::query($query);
 
         if (empty($results)) {
@@ -332,7 +332,7 @@ class Order
                 store_id: $result->store_id,
                 client_id: $result->client_id,
                 status: OrderStatus::from($result->status),
-                pickup_date: Utility::stringToDate($result->pickup_date),
+                pickup_date: $result->pickup_date ? Utility::stringToDate($result->pickup_date) : null,
                 created_date: Utility::stringToDate($result->created_date)
             );
             $obj->setOrderID($result->order_id);
