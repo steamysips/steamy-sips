@@ -7,6 +7,7 @@
         - [Product](#product)
         - [Order](#order)
         - [Review](#review)
+        - [Comment](#comment)
         - [District](#district)
     - [Query string parameters](#query-string-parameters)
 - [References](#references)
@@ -76,6 +77,17 @@ Note:
 | `POST /api/v1/reviews`              | Create a new review for a product.                    | Yes       |
 | `PUT /api/v1/reviews/[id]`          | Update the details of a review with the specified ID. | Yes       |
 | `DELETE /api/v1/reviews/[id]`       | Delete a review with the specified ID.                | Yes       |
+
+
+### Comment
+
+| Endpoint                             | Description                                            | Protected |
+|--------------------------------------|--------------------------------------------------------|-----------|
+| `GET /api/v1/comments`               | Get the list of all comments.                          | No        |
+| `GET /api/v1/comments/[id]`          | Get the details of a specific comments by its ID.      | No        |
+| `POST /api/v1/comments`              | Create a new comment  for a product.                   | Yes       |
+| `PUT /api/v1/comments/[id]`          | Update the details of a comment with the specified ID. | Yes       |
+| `DELETE /api/v1/comments/[id]`       | Delete a comment with the specified ID.                | Yes       |
 
 ### District
 

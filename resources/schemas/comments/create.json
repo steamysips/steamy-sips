@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/comments/create.json",
+  "title": "Create Comment",
+  "properties": {
+    "text": {
+      "$ref": "https://example.com/common/comment.json#/properties/text"
+    },
+    "parent_comment_id": {
+      "$ref": "https://example.com/common/comment.json#/properties/parent_comment_id"
+    },
+    "user_id": {
+      "$ref": "https://example.com/common/comment.json#/properties/user_id"
+    },
+    "review_id": {
+      "$ref": "https://example.com/common/comment.json#/properties/review_id"
+    }
+  },
+  "required": [
+    "text",
+    "user_id",
+    "review_id"
+  ],
+  "additionalProperties": false
+}

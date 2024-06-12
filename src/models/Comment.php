@@ -207,4 +207,42 @@ class Comment
     {
         $this->created_date = $created_date;
     }
+
+        public function deleteComment(): bool
+    {
+        return $this->delete($this->comment_id, $this->table, 'comment_id');
+    }
+
+    /**
+     * Retrieve all comments.
+     *
+     * @return array An array of Comment objects.
+     */
+    public static function getAll(): array
+    {
+        $query = "SELECT * FROM comment";
+        $result = Comment::query($query);
+
+        $comments = [];
+        foreach ($result as $row) {
+            $comments[] = new Comment(
+                user_id: $row->user_id,
+                review_id: $row->review_id,
+                comment_id: $row->comment_id,
+                parent_comment_id: $row->parent_comment_id,
+                text: $row->text,
+                created_date: Utility::stringToDate($row->created_date)
+            );
+        }
+
+        return $comments;
+    }
+
+    public function updateComment(array $newCommentData): bool
+    {
+        // remove comment_id (if present) from user data
+        unset($newCommentData['comment_id']);
+
+        return $this->update($newCommentData, ['comment_id' => $this->comment_id], $this->table);
+    }
 }
