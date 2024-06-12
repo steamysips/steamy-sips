@@ -85,7 +85,7 @@ class Product
             return [];
         }
 
-        $callback = fn($obj): string => $obj->category;
+        $callback = fn ($obj): string => $obj->category;
 
         return array_map($callback, $result);
     }
@@ -276,19 +276,17 @@ class Product
                 -- get IDs of all clients who purchased current product
                 SELECT DISTINCT o.client_id
                 FROM `order` o
-                JOIN order_product op ON o.order_id = op.order_id
-                WHERE op.product_id = r.product_id
+                JOIN order_product op
+                ON o.order_id = op.order_id
+                AND op.product_id = r.product_id
             )
         EOL;
 
-        $params = ['product_id' => $this->product_id];
-
-        $result = $this->query($query, $params);
+        $result = $this->query($query, ['product_id' => $this->product_id]);
 
         // Extract the average rating from the result array
         if (!empty($result)) {
-            $averageRating = $result[0]->average_rating;
-            return $averageRating !== null ? round((float)$averageRating, 2) : 0; // Round to two decimal places
+            return (float)$result[0]->average_rating;
         }
 
         return 0; // No reviews, return 0 as the average rating
@@ -393,11 +391,18 @@ class Product
     {
         // Query the database to get the percentage distribution of ratings
         $query = <<< EOL
-            SELECT rating, 
-            COUNT(*) * 100.0 / (SELECT COUNT(*) FROM review WHERE product_id = :product_id) AS percentage
-            FROM review
-            WHERE product_id = :product_id
-            GROUP BY rating
+                SELECT rating, 
+                COUNT(*) * 10.0 / (
+                    SELECT COUNT(*)
+                    FROM order_product op
+                    JOIN `order` o ON op.order_id = o.order_id
+                    WHERE op.product_id = :product_id
+                    ) AS percentage
+                FROM review r
+                JOIN `order` o ON r.client_id = o.client_id
+                JOIN order_product op ON op.order_id = o.order_id
+                WHERE op.product_id = :product_id
+                GROUP BY rating;
         EOL;
 
         $params = ['product_id' => $this->product_id];
