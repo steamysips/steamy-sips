@@ -174,7 +174,7 @@ class Reviews
         }
 
         // Attempt to delete the review
-        if ($review->deleteReview($reviewId)) {
+        if ($review->deleteReview()) {
             // Review successfully deleted
             http_response_code(204); // No Content
         } else {

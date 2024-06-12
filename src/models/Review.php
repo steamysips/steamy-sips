@@ -149,17 +149,9 @@ class Review
         return $this->update($newReviewData, ['review_id' => $this->review_id], $this->table);
     }
 
-    /**
-     * Deletes a review with the specified ID from the database.
-     *
-     * @param int $reviewId The ID of the review to delete.
-     * @return bool True if the deletion was successful, false otherwise.
-     */
-    public static function deleteReview(int $reviewId): bool
+    public function deleteReview(): bool
     {
-        $query = "DELETE FROM review WHERE review_id = :review_id";
-        $params = ['review_id' => $reviewId];
-        return self::query($query, $params);
+        return $this->delete($this->review_id, $this->table, 'review_id');
     }
 
     public function getReviewID(): int
