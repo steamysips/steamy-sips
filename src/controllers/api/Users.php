@@ -89,9 +89,9 @@ class Users
         $isClient = isset($data->street) && isset($data->city) && isset($data->district_id);
 
         if ($isAdministrator) {
-            $result = Utility::validateAgainstSchema($data, "administrator/create.json");
+            $result = Utility::validateAgainstSchema($data, "administrators/create.json");
         } elseif ($isClient) {
-            $result = Utility::validateAgainstSchema($data, "client/create.json");
+            $result = Utility::validateAgainstSchema($data, "clients/create.json");
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Invalid user type']);
@@ -205,9 +205,9 @@ class Users
         $isClient = isset($data->street) && isset($data->city) && isset($data->district_id);
 
         if ($isAdministrator) {
-            $result = Utility::validateAgainstSchema($data, "administrator/update.json");
+            $result = Utility::validateAgainstSchema($data, "administrators/update.json");
         } elseif ($isClient) {
-            $result = Utility::validateAgainstSchema($data, "client/update.json");
+            $result = Utility::validateAgainstSchema($data, "clients/update.json");
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Invalid user type']);
