@@ -104,6 +104,9 @@ class Profile
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function reorderOrder(): void
     {
         $order_id = (int)($_POST['order_id'] ?? -1);
@@ -127,6 +130,8 @@ class Profile
         } catch (Exception $e) {
             $this->view_data['order_action_error'] = $e->getMessage();
         }
+
+        $this->signed_client->sendOrderConfirmationEmail($new_order);
     }
 
     public function cancelOrder(): void

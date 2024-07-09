@@ -12,6 +12,8 @@ use Steamy\Model\Order;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
+use Steamy\Model\OrderMilkType;
+use Steamy\Model\OrderCupSize;
 
 class Cart
 {
@@ -101,8 +103,8 @@ class Cart
         foreach ($form_data['items'] as $item) {
             $line_item = new OrderProduct(
                 product_id: filter_var($item['productID'], FILTER_VALIDATE_INT),
-                cup_size: strtolower($item['cupSize']),
-                milk_type: strtolower($item['milkType']),
+                cup_size: OrderCupSize::from(strtolower($item['cupSize'])),
+                milk_type: OrderMilkType::from(strtolower($item['milkType'])),
                 quantity: filter_var($item['quantity'], FILTER_VALIDATE_INT)
             );
             $new_order->addLineItem($line_item);
@@ -141,6 +143,7 @@ class Cart
         if (!$success_mail) {
             http_response_code(503);
             echo json_encode(['error' => "Order was saved but email could not be sent for an unknown reason."]);
+            return;
         }
 
         // if everything is good, tell client to reset the document view
