@@ -6,8 +6,6 @@ namespace Steamy\Model;
 
 use Exception;
 use Steamy\Core\Model;
-use Steamy\Model\OrderMilkType;
-use Steamy\Model\OrderCupSize;
 
 class OrderProduct
 {
@@ -74,16 +72,6 @@ class OrderProduct
             $errors['quantity'] = 'Quantity must be a positive integer';
         }
 
-        // Validate milk type using enum values
-        if (!in_array($this->milk_type, [OrderMilkType::ALMOND, OrderMilkType::COCONUT, OrderMilkType::OAT, OrderMilkType::SOY])) {
-            $errors['milk_type'] = 'Milk type invalid';
-        }
-
-        // Validate cup size using enum values
-        if (!in_array($this->cup_size, [OrderCupSize::SMALL, OrderCupSize::MEDIUM, OrderCupSize::LARGE])) {
-            $errors['cup_size'] = 'Cup size type invalid';
-        }
-
         if ($this->unit_price <= 0) {
             $errors['unit_price'] = 'Unit price cannot be negative';
         }
@@ -111,8 +99,8 @@ class OrderProduct
 
         return new OrderProduct(
             product_id: $result->product_id,
-            cup_size: $result->cup_size,
-            milk_type: $result->milk_type,
+            cup_size: OrderCupSize::from($result->cup_size),
+            milk_type: OrderMilkType::from($result->milk_type),
             quantity: $result->quantity,
             unit_price: (float)$result->unit_price,
             order_id: $result->order_id,
@@ -189,8 +177,8 @@ class OrderProduct
         return [
             'order_id' => $this->order_id,
             'product_id' => $this->product_id,
-            'cup_size' => $this->cup_size->value, 
-            'milk_type' => $this->milk_type->value, 
+            'cup_size' => $this->cup_size->value,
+            'milk_type' => $this->milk_type->value,
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
         ];

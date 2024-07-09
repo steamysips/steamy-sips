@@ -33,7 +33,7 @@ class Order
         array $line_items = [],
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
-        OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
+        OrderStatus $status = OrderStatus::PENDING,
         DateTime $created_date = new DateTime(),
     ) {
         $this->store_id = $store_id;
@@ -273,7 +273,7 @@ class Order
             $stm->execute(['order_id' => $this->order_id]);
 
             $conn->commit();
-        } catch (PDOException $e) {
+        } catch (PDOException) {
             $conn->rollBack();
         } finally {
             $conn = null;
