@@ -95,6 +95,7 @@ class Profile
         $this->view_data['districts'] = District::getAll();
         $this->view_data['defaultPassword'] = $password;
         $this->view_data['defaultConfirmPassword'] = $password_confirm;
+        $this->view_data['form_submitted'] = false;
 
         $this->view(
             'Register',
