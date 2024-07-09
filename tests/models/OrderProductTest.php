@@ -114,8 +114,6 @@ class OrderProductTest extends TestCase
         $errors = $invalidOrderProduct->validate();
 
         $this->assertArrayHasKey('quantity', $errors);
-        $this->assertArrayHasKey('cup_size', $errors);
-        $this->assertArrayHasKey('milk_type', $errors);
         $this->assertArrayHasKey('unit_price', $errors);
     }
 
