@@ -67,7 +67,7 @@ class API
             ); // Replace placeholders with regex capture groups
             $pattern = '/^' . $pattern . '$/';
 
-            if (preg_match($pattern, '/' . Utility::getURL(), $matches)) {
+            if (preg_match($pattern, '/' . Utility::getURL())) {
                 return $handler;
             }
         }
