@@ -270,11 +270,17 @@ final class ReviewTest extends TestCase
             created_date: $created_date
         );
 
-        // Attempt to save the review
-        $success = $review->save();
-
         // If expectedErrors array is empty, the review should be saved successfully
-        $this->assertEquals(empty($expectedErrors), $success);
+        if (empty($expectedErrors)) {
+            $success = $review->save();
+            self::assertTrue($success);
+        } else {
+            try {
+                $review->save();
+            } catch (Exception $e) {
+                $this->assertEquals($e->getMessage(), json_encode($expectedErrors));
+            }
+        }
     }
 
     public function testGetNestedComments(): void

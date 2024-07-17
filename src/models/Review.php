@@ -217,34 +217,34 @@ class Review
     /**
      * Saves review to database if attributes are valid. review_id and created_date attributes
      * are automatically set by database and any set values are ignored.
+     * The review_id of the current object is updated after a successful insertion.
      * @return bool
+     * @throws Exception
      */
     public function save(): bool
     {
         // If attributes of the object are invalid, exit
-        if (count($this->validate()) > 0) {
-            return false;
+        $validation_errors = $this->validate();
+        if (count($validation_errors) > 0) {
+            throw new Exception(json_encode($validation_errors));
         }
 
         // Get data to be inserted into the review table
         $reviewData = $this->toArray();
 
-        // Remove review_id as it is auto-incremented in database
+        // let database handle  review_id and creation date
         unset($reviewData['review_id']);
-
-        unset($reviewData['created_date']); // let database handle creation date
+        unset($reviewData['created_date']);
 
         // Perform insertion to the review table
-        try {
-            $inserted_id = $this->insert($reviewData, 'review');
-            if ($inserted_id === null) {
-                return false;
-            }
-            $this->review_id = $inserted_id;
-            return true;
-        } catch (Exception) {
-            return false;
+        $inserted_id = $this->insert($reviewData, 'review');
+
+        if ($inserted_id === null) {
+            throw new Exception("Insertion failed for some unknown reason");
         }
+
+        $this->review_id = $inserted_id;
+        return true;
     }
 
     public function validate(): array
