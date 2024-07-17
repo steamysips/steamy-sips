@@ -7,8 +7,8 @@ declare(strict_types=1);
  * @var string $template_content HTML of the main content of page
  * @var string $template_meta_description Meta description of page
  * @var string $template_tags Additional tags (script, link, ...) for page
+ * @var bool $is_user_signed_in Whether user is signed in or not
  */
-
 ?>
 
 <!DOCTYPE html>
@@ -31,13 +31,13 @@ declare(strict_types=1);
 
     <title><?= $template_title ?></title>
 </head>
-<body>
 
+<body>
 <nav class="container-fluid">
     <ul>
         <li>
-            <a href="/" class="contrast">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+            <a href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -49,25 +49,31 @@ declare(strict_types=1);
                     <path d="M3 10h14v5a6 6 0 0 1 -6 6h-2a6 6 0 0 1 -6 -6v-5z"/>
                     <path d="M16.746 16.726a3 3 0 1 0 .252 -5.555"/>
                 </svg>
-                <h4>steamy sips</h4>
+                <strong style="font-size: 25px">steamy sips</strong>
             </a>
         </li>
     </ul>
     <ul>
         <li>
-            <a href="/shop" class="contrast" data-tooltip="Shop" data-placement="bottom">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10
-                     -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/>
-                </svg>
+            <a href="/shop">
+                <strong>Shop</strong>
             </a>
         </li>
         <li>
-            <a href="/cart" class="contrast" data-tooltip="Shopping cart" data-placement="bottom">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+            <a href="/profile">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/>
+                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
+                </svg>
+                <strong><?= $is_user_signed_in ? "My account" : "Sign in" ?></strong>
+            </a>
+        </li>
+        <li>
+            <a href="/cart">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="12"
                      height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                      stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -76,17 +82,7 @@ declare(strict_types=1);
                     <path d="M17 17h-11v-14h-2"/>
                     <path d="M6 5l14 1l-1 7h-13"/>
                 </svg>
-            </a>
-        </li>
-        <li>
-            <a href="/profile" class="contrast" data-tooltip="Profile" data-placement="bottom">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/>
-                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
-                </svg>
+                <span><strong id="mini-cart-count">(0)</strong></span>
             </a>
         </li>
     </ul>
@@ -97,8 +93,8 @@ declare(strict_types=1);
 <footer id="page-footer" class="container">
     <ul>
         <li><a class="secondary" href="/#about-us">About Us</a></li>
-        <li><a class="secondary" href="privacy-policy.html">Privacy Policy</a></li>
-        <li><a class="secondary" href="terms-of-use.html">Terms of Use</a></li>
+        <li><a class="secondary" href="/#">Privacy Policy</a></li>
+        <li><a class="secondary" href="/#">Terms of Use</a></li>
         <li><a class="secondary" href="/contact">Contact Us</a></li>
     </ul>
     <div>

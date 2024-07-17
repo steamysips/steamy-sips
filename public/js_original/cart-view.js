@@ -46,6 +46,11 @@ function updateCart(e) {
     currentCartItem.quantity = newQuantity;
     currentCart.addItem(currentCartItem);
   }
+
+  const itemCount = Cart().getCartSize();
+
+  // update cart item count in header
+  document.querySelector("#mini-cart-count").textContent = `(${itemCount})`;
 }
 
 async function checkout() {
@@ -102,6 +107,11 @@ function initCartPage() {
     input.addEventListener("change", updateCart);
     input.addEventListener("keydown", preventKeyboardInput);
   });
+
+  const itemCount = Cart().getCartSize();
+
+  // update cart item count in header
+  document.querySelector("#mini-cart-count").textContent = `(${itemCount})`;
 }
 
 async function uploadCart() {

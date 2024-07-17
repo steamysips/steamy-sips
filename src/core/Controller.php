@@ -107,6 +107,8 @@ trait Controller
         $template_content = ob_get_contents();
         ob_end_clean();
 
+        $is_user_signed_in = $this->getSignedInClient() !== null;
+
         // display global view template
         require_once __DIR__ . "/../views/Template.php";
     }
