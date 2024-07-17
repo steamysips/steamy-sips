@@ -37,8 +37,8 @@ use Steamy\Model\OrderProduct;
                 <tr>
                     <td><?= htmlspecialchars($item->getProductName()) ?></td>
                     <td><?= filter_var($item->getQuantity(), FILTER_SANITIZE_NUMBER_INT) ?></td>
-                    <td><?= htmlspecialchars($item->getMilkType()) ?></td>
-                    <td><?= htmlspecialchars($item->getCupSize()) ?></td>
+                    <td><?= htmlspecialchars(ucfirst($item->getMilkType()->value)) ?></td>
+                    <td><?= htmlspecialchars(ucfirst($item->getCupSize()->value)) ?></td>
                     <td>$<?= (number_format($item->getUnitPrice(), 2)) ?></td>
                 </tr>
             <?php

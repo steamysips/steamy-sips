@@ -15,24 +15,24 @@ class OrderProduct
 
     private int $order_id;
     private int $product_id;
-    private string $cup_size;
-    private string $milk_type;
+    private OrderCupSize $cup_size;
+    private OrderMilkType $milk_type;
     private int $quantity;
     private float $unit_price;
 
     /**
      * Create a new OrderProduct object
      * @param int $product_id
-     * @param string $cup_size
-     * @param string $milk_type
+     * @param OrderCupSize $cup_size
+     * @param OrderMilkType $milk_type
      * @param int $quantity
      * @param float|null $unit_price If not set, the default $unit_price is -1.
      * @param int|null $order_id If not set, the default $order_id is -1.
      */
     public function __construct(
         int $product_id,
-        string $cup_size,
-        string $milk_type,
+        OrderCupSize $cup_size,
+        OrderMilkType $milk_type,
         int $quantity,
         ?float $unit_price = null,
         ?int $order_id = null,
@@ -72,14 +72,6 @@ class OrderProduct
             $errors['quantity'] = 'Quantity must be a positive integer';
         }
 
-        if (!in_array($this->milk_type, ['almond', 'coconut', 'oat', 'soy'])) {
-            $errors['milk_type'] = 'Milk type invalid';
-        }
-
-        if (!in_array($this->cup_size, ['small', 'medium', 'large'])) {
-            $errors['cup_size'] = 'Cup size type invalid';
-        }
-
         if ($this->unit_price <= 0) {
             $errors['unit_price'] = 'Unit price cannot be negative';
         }
@@ -107,8 +99,8 @@ class OrderProduct
 
         return new OrderProduct(
             product_id: $result->product_id,
-            cup_size: $result->cup_size,
-            milk_type: $result->milk_type,
+            cup_size: OrderCupSize::from($result->cup_size),
+            milk_type: OrderMilkType::from($result->milk_type),
             quantity: $result->quantity,
             unit_price: (float)$result->unit_price,
             order_id: $result->order_id,
@@ -130,12 +122,12 @@ class OrderProduct
         return Product::getByID($this->product_id)->getName();
     }
 
-    public function getCupSize(): string
+    public function getCupSize(): OrderCupSize
     {
         return $this->cup_size;
     }
 
-    public function getMilkType(): string
+    public function getMilkType(): OrderMilkType
     {
         return $this->milk_type;
     }
@@ -160,12 +152,12 @@ class OrderProduct
         $this->product_id = $product_id;
     }
 
-    public function setCupSize(string $cup_size): void
+    public function setCupSize(OrderCupSize $cup_size): void
     {
         $this->cup_size = $cup_size;
     }
 
-    public function setMilkType(string $milk_type): void
+    public function setMilkType(OrderMilkType $milk_type): void
     {
         $this->milk_type = $milk_type;
     }
@@ -185,8 +177,8 @@ class OrderProduct
         return [
             'order_id' => $this->order_id,
             'product_id' => $this->product_id,
-            'cup_size' => $this->cup_size,
-            'milk_type' => $this->milk_type,
+            'cup_size' => $this->cup_size->value,
+            'milk_type' => $this->milk_type->value,
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
         ];

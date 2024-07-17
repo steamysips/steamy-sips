@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 
 
-use Steamy\Model\Client;
 use Steamy\Model\Order;
 use Steamy\Model\Store;
 
@@ -66,10 +65,10 @@ use Steamy\Model\Store;
         $quantity = $orderProduct->getQuantity();
         $pricePerUnit = $orderProduct->getUnitPrice();
         $subtotal = $pricePerUnit * $quantity;
-        $size = htmlspecialchars(ucfirst($orderProduct->getCupSize()));
+        $size = htmlspecialchars(ucfirst($orderProduct->getCupSize()->value));
         $total += $subtotal;
         $milk = htmlspecialchars(
-            ucfirst($orderProduct->getMilkType())
+            ucfirst($orderProduct->getMilkType()->value)
         );
 
         echo <<< HTML
@@ -91,7 +90,7 @@ use Steamy\Model\Store;
     </tbody>
 </table>
 
-<p>Your order is now being processed and you will receive a notification once your order is ready. If you have any
+<p>Your order is now being processed, and you will receive a notification once your order is ready. If you have any
     questions, feel free to call our store at <?= $store->getPhoneNo() ?>.</p>
 
 <p>Best Regards,</p>

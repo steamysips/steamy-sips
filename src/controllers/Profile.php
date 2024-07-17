@@ -95,6 +95,7 @@ class Profile
         $this->view_data['districts'] = District::getAll();
         $this->view_data['defaultPassword'] = $password;
         $this->view_data['defaultConfirmPassword'] = $password_confirm;
+        $this->view_data['form_submitted'] = false;
 
         $this->view(
             'Register',
@@ -104,6 +105,9 @@ class Profile
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function reorderOrder(): void
     {
         $order_id = (int)($_POST['order_id'] ?? -1);
@@ -127,6 +131,8 @@ class Profile
         } catch (Exception $e) {
             $this->view_data['order_action_error'] = $e->getMessage();
         }
+
+        $this->signed_client->sendOrderConfirmationEmail($new_order);
     }
 
     public function cancelOrder(): void

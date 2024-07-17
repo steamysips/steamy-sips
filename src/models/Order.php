@@ -33,7 +33,7 @@ class Order
         array $line_items = [],
         ?int $order_id = null,
         ?DateTime $pickup_date = null,
-        OrderStatus $status = OrderStatus::PENDING, // Default to 'pending',
+        OrderStatus $status = OrderStatus::PENDING,
         DateTime $created_date = new DateTime(),
     ) {
         $this->store_id = $store_id;
@@ -273,7 +273,7 @@ class Order
             $stm->execute(['order_id' => $this->order_id]);
 
             $conn->commit();
-        } catch (PDOException $e) {
+        } catch (PDOException) {
             $conn->rollBack();
         } finally {
             $conn = null;
@@ -302,8 +302,8 @@ class Order
         foreach ($data as $result) {
             $order_products_arr[] = new OrderProduct(
                 product_id: $result->product_id,
-                cup_size: $result->cup_size,
-                milk_type: $result->milk_type,
+                cup_size: OrderCupSize::from($result->cup_size), // Convert string to enum
+                milk_type: OrderMilkType::from($result->milk_type), // Convert string to enum
                 quantity: $result->quantity,
                 unit_price: (float)$result->unit_price,
                 order_id: $result->order_id,
