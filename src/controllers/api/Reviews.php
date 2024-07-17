@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Steamy\Controller\API;
 
 use Opis\JsonSchema\{Errors\ErrorFormatter};
+use Exception;
 use Steamy\Core\Utility;
 use Steamy\Model\Review;
-use Steamy\Model\Product as ProductModel;
 
 class Reviews
 {
@@ -96,11 +96,13 @@ class Reviews
         );
 
         // Save the new review to the database
-        if ($newReview->save()) {
+        try {
+            $newReview->save();
             // Review created successfully, return 201 Created
             http_response_code(201);
-            echo json_encode(['message' => 'Review created successfully', 'review_id' => $newReview->getReviewID()]);
-        } else {
+            echo json_encode(['message' => 'Review created successfully', 'review_id' => $newReview->getReviewID()]
+            );
+        } catch (Exception $e) {
             // Failed to create review, return 500 Internal Server Error
             http_response_code(500);
             echo json_encode(['error' => 'Failed to create review']);
