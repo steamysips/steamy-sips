@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Steamy\Controller\API;
 
+use Opis\JsonSchema\{Errors\ErrorFormatter};
+use Exception;
 use Steamy\Core\Utility;
 use Steamy\Model\Review;
-use \Steamy\Model\Product as ProductModel;
 
 class Reviews
 {
@@ -70,54 +71,38 @@ class Reviews
     public function createReview(): void
     {
         // Retrieve POST data
-        $postData = $_POST;
+        $data = (object)json_decode(file_get_contents("php://input"), true);
 
-        // TODO: Implement validation for required fields and data types
-        // Check if required fields are present
-        $requiredFields = [
-            'product_id',
-            'client_id',
-            'text',
-            'rating',
-        ];
+        // Validate against JSON schema
+        $result = Utility::validateAgainstSchema($data, "reviews/create.json");
 
-        if (empty($postData)) {
+        if (!($result->isValid())) {
+            $errors = (new ErrorFormatter())->format($result->error());
+            $response = [
+                'error' => $errors
+            ];
             http_response_code(400);
-            echo json_encode(['error' => "Missing fields: " . implode(', ', $requiredFields)]);
+            echo json_encode($response);
             return;
         }
 
-        foreach ($requiredFields as $field) {
-            if (empty($postData[$field])) {
-                // Required field is missing, return 400 Bad Request
-                http_response_code(400);
-                echo json_encode(['error' => "Missing required field: $field"]);
-                return;
-            }
-        }
         // Create a new Review object
         $newReview = new Review(
             null, // review_id will be auto-generated
-            (int)$postData['product_id'],
-            (int)$postData['client_id'],
-            $postData['text'],
-            (int)$postData['rating']
+            (int)$data->product_id,
+            (int)$data->client_id,
+            $data->text,
+            (int)$data->rating
         );
 
-        $errors = $newReview->validate();
-
-        if (!empty($errors)) {
-            http_response_code(400);
-            echo json_encode(['error' => ($errors)]);
-            return;
-        }
-
         // Save the new review to the database
-        if ($newReview->save()) {
+        try {
+            $newReview->save();
             // Review created successfully, return 201 Created
             http_response_code(201);
-            echo json_encode(['message' => 'Review created successfully', 'review_id' => $newReview->getReviewID()]);
-        } else {
+            echo json_encode(['message' => 'Review created successfully', 'review_id' => $newReview->getReviewID()]
+            );
+        } catch (Exception $e) {
             // Failed to create review, return 500 Internal Server Error
             http_response_code(500);
             echo json_encode(['error' => 'Failed to create review']);
@@ -132,13 +117,18 @@ class Reviews
         $reviewId = (int)Utility::splitURL()[3];
 
         // Retrieve PUT request data
-        $putData = json_decode(file_get_contents("php://input"), true);
+        $data = (object)json_decode(file_get_contents("php://input"), true);
 
-        // Check if PUT data is valid
-        if (empty($putData)) {
-            // Invalid JSON data
-            http_response_code(400); // Bad Request
-            echo json_encode(['error' => 'Invalid JSON data']);
+        // Validate against JSON schema
+        $result = Utility::validateAgainstSchema($data, "reviews/update.json");
+
+        if (!($result->isValid())) {
+            $errors = (new ErrorFormatter())->format($result->error());
+            $response = [
+                'error' => $errors
+            ];
+            http_response_code(400);
+            echo json_encode($response);
             return;
         }
 
@@ -154,7 +144,7 @@ class Reviews
         }
 
         // Update review in the database
-        $success = $review->updateReview($putData);
+        $success = $review->updateReview((array)$data);
 
         if ($success) {
             // Review updated successfully
@@ -186,7 +176,7 @@ class Reviews
         }
 
         // Attempt to delete the review
-        if ($review->deleteReview($reviewId)) {
+        if ($review->deleteReview()) {
             // Review successfully deleted
             http_response_code(204); // No Content
         } else {
