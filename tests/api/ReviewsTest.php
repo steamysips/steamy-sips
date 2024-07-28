@@ -19,8 +19,6 @@ final class ReviewsTest extends TestCase
     use TestHelper;
     use APIHelper;
 
-    private Review $dummy_review;
-
     public static function setUpBeforeClass(): void
     {
         self::initFaker();
@@ -40,34 +38,32 @@ final class ReviewsTest extends TestCase
         parent::onNotSuccessfulTest($t);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function setUp(): void
-    {
-        $this->dummy_review = self::createReview();
-    }
-
     public function tearDown(): void
     {
         self::resetDatabase();
     }
 
+    public function testCreateReview()
+    {
+        self::markTestIncomplete('TODO');
+    }
+
     /**
      * @throws GuzzleException
+     * @throws Exception
      */
     public function testUpdateReview()
     {
+        $review = self::createReview(self::createProduct(), self::createClient(), 4);
+
         // Create new review data
         $newData = [
             'text' => 'Updated review text',
             'rating' => 4,
-            'client_id' => $this->dummy_review->getClientID(),
-            'product_id' => $this->dummy_review->getProductID(),
         ];
 
         // Send PUT request to update the review
-        $response = self::$guzzle->put('reviews/' . $this->dummy_review->getReviewID(), [
+        $response = self::$guzzle->put('reviews/' . $review->getReviewID(), [
             'json' => $newData,
         ]);
 
@@ -79,28 +75,26 @@ final class ReviewsTest extends TestCase
         // Check if the update was successful
         $this->assertEquals('Review updated successfully', $json['message']);
 
-        // Fetch the updated review
-        $response = self::$guzzle->get('reviews/' . $this->dummy_review->getReviewID());
-        $this->assertEquals(200, $response->getStatusCode());
-
-        $updatedReview = json_decode($response->getBody()->getContents(), true);
+        // Fetch the review from the database
+        $saved_review = Review::getByID($review->getReviewID());
 
         // Verify the review was updated
-        $this->assertEquals($newData['text'], $updatedReview['text']);
-        $this->assertEquals($newData['rating'], $updatedReview['rating']);
+        $this->assertEquals($newData['text'], $saved_review->getText());
+        $this->assertEquals($newData['rating'], $saved_review->getRating());
+
+        // ensure that all other attributes did not change
+        assertEquals($review->getReviewID(), $saved_review->getReviewID());
+        assertEquals($review->getProductID(), $saved_review->getProductID());
+        assertEquals($review->getClientID(), $saved_review->getClientID());
+
+        $this->assertEquals(
+            $review->getCreatedDate()->format('Y-m-d'),
+            $saved_review->getCreatedDate()->format('Y-m-d')
+        );
     }
 
-    // Helper function to create a review for testing
-    private static function createReview(): Review
+    public function testDeleteReview()
     {
-        $review = new Review(
-            null,
-            self::$faker->randomDigitNotNull,
-            self::$faker->randomDigitNotNull,
-            self::$faker->text(100),
-            self::$faker->numberBetween(1, 5)
-        );
-        $review->save();
-        return $review;
+        self::markTestIncomplete('TODO');
     }
 }
