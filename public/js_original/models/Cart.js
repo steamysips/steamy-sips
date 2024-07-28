@@ -1,7 +1,7 @@
 /**
  * A function for managing the cart in localStorage.
  * @returns {{getItems: (function(): CartItem[]), removeItem: (function(CartItem): void), isEmpty: (function(): boolean),
- * clear: (function(): void), addItem: (function(CartItem): void)}}
+ * clear: (function(): void), addItem: (function(CartItem): void)}, getCartSize: (function(): number)}}
  */
 function Cart() {
   /**
@@ -82,7 +82,18 @@ function Cart() {
     localStorage.setItem("cart", "[]");
   }
 
-  return { addItem, isEmpty, getItems, removeItem, clear };
+  /**
+   *
+   * @returns {number} Total number of items in cart
+   */
+  function getCartSize() {
+    return getItems().reduce(
+      (accumulator, item) => accumulator + item.quantity,
+      0,
+    );
+  }
+
+  return { addItem, isEmpty, getItems, removeItem, clear, getCartSize };
 }
 
 export default Cart;

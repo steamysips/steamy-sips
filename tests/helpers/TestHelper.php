@@ -10,6 +10,8 @@ use Steamy\Core\Database;
 use Steamy\Model\Client;
 use Steamy\Model\Location;
 use Steamy\Model\Order;
+use Steamy\Model\OrderCupSize;
+use Steamy\Model\OrderMilkType;
 use Steamy\Model\OrderProduct;
 use Steamy\Model\Product;
 use Faker\Generator;
@@ -244,7 +246,7 @@ trait TestHelper
             $store->addProductStock($product->getProductID(), 10);
 
             $order = new Order($store->getStoreID(), $client->getUserID(), [
-                new OrderProduct($product->getProductID(), 'small', 'oat', 1)
+                new OrderProduct($product->getProductID(), OrderCupSize::LARGE, OrderMilkType::ALMOND, 1)
             ]);
 
             $success = $order->save();
