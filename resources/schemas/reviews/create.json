@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/reviews/create.json",
+  "title": "Create Review",
+  "properties": {
+    "rating": {
+      "$ref": "https://example.com/common/review.json#/properties/rating"
+    },
+    "text": {
+      "$ref": "https://example.com/common/review.json#/properties/text"
+    },
+    "client_id": {
+      "$ref": "https://example.com/common/review.json#/properties/client_id"
+    },
+    "product_id": {
+      "$ref": "https://example.com/common/review.json#/properties/product_id"
+    }
+  },
+  "required": [
+    "rating",
+    "text",
+    "client_id",
+    "product_id"
+  ],
+  "additionalProperties": false
+}

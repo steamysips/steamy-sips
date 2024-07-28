@@ -270,11 +270,17 @@ final class ReviewTest extends TestCase
             created_date: $created_date
         );
 
-        // Attempt to save the review
-        $success = $review->save();
-
         // If expectedErrors array is empty, the review should be saved successfully
-        $this->assertEquals(empty($expectedErrors), $success);
+        if (empty($expectedErrors)) {
+            $success = $review->save();
+            self::assertTrue($success);
+        } else {
+            try {
+                $review->save();
+            } catch (Exception $e) {
+                $this->assertEquals($e->getMessage(), json_encode($expectedErrors));
+            }
+        }
     }
 
     public function testGetNestedComments(): void
@@ -290,33 +296,33 @@ final class ReviewTest extends TestCase
 
         // Create root level comment
         $comment1 = new Comment(
-            review_id: $review->getReviewID(),
             user_id: $this->reviewer->getUserID(),
+            review_id: $review->getReviewID(),
             text: "This is a root level comment."
         );
         $comment1->save();
 
         // Create nested comments
         $comment2 = new Comment(
-            review_id: $review->getReviewID(),
             user_id: $this->reviewer->getUserID(),
-            text: "This is a child comment.",
-            parent_comment_id: $comment1->getCommentID()
+            review_id: $review->getReviewID(),
+            parent_comment_id: $comment1->getCommentID(),
+            text: "This is a child comment."
         );
         $comment2->save();
 
         $comment3 = new Comment(
-            review_id: $review->getReviewID(),
             user_id: $this->reviewer->getUserID(),
+            review_id: $review->getReviewID(),
             text: "This is another root level comment."
         );
         $comment3->save();
 
         $comment4 = new Comment(
-            review_id: $review->getReviewID(),
             user_id: $this->reviewer->getUserID(),
-            text: "This is a child of a child comment.",
-            parent_comment_id: $comment2->getCommentID()
+            review_id: $review->getReviewID(),
+            parent_comment_id: $comment2->getCommentID(),
+            text: "This is a child of a child comment."
         );
         $comment4->save();
 

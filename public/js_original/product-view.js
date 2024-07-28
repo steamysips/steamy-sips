@@ -27,6 +27,11 @@ function handleAddToCart(e) {
 
   // open modal to display success
   successAddToCartModal.openModal();
+
+  const itemCount = Cart().getCartSize();
+
+  // update cart item count in header
+  document.querySelector("#mini-cart-count").textContent = `(${itemCount})`;
 }
 
 function createRatingChart() {

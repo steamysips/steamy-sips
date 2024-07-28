@@ -15,6 +15,8 @@ use Steamy\Model\OrderStatus;
 use Steamy\Model\Product;
 use Steamy\Model\Store;
 use Steamy\Tests\helpers\TestHelper;
+use Steamy\Model\OrderMilkType;
+use Steamy\Model\OrderCupSize;
 
 class OrderTest extends TestCase
 {
@@ -112,8 +114,8 @@ class OrderTest extends TestCase
 
         // Create dummy order line items
         $this->line_items = [
-            new OrderProduct($product1->getProductID(), "medium", "oat", 2, 5.0),
-            new OrderProduct($product2->getProductID(), "small", "almond", 1, 3.0)
+            new OrderProduct($product1->getProductID(), OrderCupSize::MEDIUM, OrderMilkType::OAT, 2, 5.0),
+            new OrderProduct($product2->getProductID(), OrderCupSize::SMALL, OrderMilkType::ALMOND, 1, 3.0)
         ];
 
         // Create a dummy order
@@ -201,7 +203,13 @@ class OrderTest extends TestCase
     public function testAddLineItem(): void
     {
         $order = new Order($this->dummy_store->getStoreID(), $this->client->getUserID());
-        $order->addLineItem(new OrderProduct(1, "medium", "oat", 1, 5.0));
+        $order->addLineItem(new OrderProduct(
+            product_id: 1,
+            cup_size: OrderCupSize::MEDIUM,
+            milk_type: OrderMilkType::OAT,
+            quantity: 1,
+            unit_price: 5.0
+        ));
         self::assertCount(1, $order->getLineItems());
     }
 

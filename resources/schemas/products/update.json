@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://example.com/products/update.json",
-  "title": "Create Product",
+  "title": "Update Product",
   "properties": {
     "name": {
       "$ref": "https://example.com/common/product.json#/properties/name"

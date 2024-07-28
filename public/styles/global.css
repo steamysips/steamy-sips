@@ -5,9 +5,25 @@ body > nav {
   background-color: var(--background-color);
 }
 
-body > nav .icon {
+nav a {
+  color: var(--contrast);
+}
+
+/*logo in nav*/
+body > nav > ul:nth-child(1) .icon {
   height: 40px;
   width: 40px;
+}
+
+/*other icons in nav*/
+body > nav > ul:nth-child(2) .icon {
+  height: 28px;
+  width: 28px;
+}
+
+body > nav .icon {
+  height: 20px;
+  width: 20px;
 }
 
 /*style logo on left hand side of navbar*/
