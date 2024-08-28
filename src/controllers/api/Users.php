@@ -37,7 +37,7 @@ class Users
     public function getAllUsers(): void
     {
         // Retrieve all users from the database
-        $allUsers = User::get();
+        $allUsers = User::getUsers();
 
         // Convert users to array format and remove password field
         $result = [];
@@ -59,7 +59,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve user details from the database
-        $user = User::get($userId);
+        $user = User::getById($userId);
 
         // Check if user exists
         if ($user === null) {
@@ -155,7 +155,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve the user by ID
-        $user = User::get($userId);
+        $user = User::getById($userId);
 
         // Check if user exists
         if ($user === null) {
@@ -166,10 +166,7 @@ class Users
         }
 
         // Attempt to delete the user
-        if ($user instanceof Client) {
-            $user->deleteUser();
-            http_response_code(204); // No Content
-        } elseif ($user instanceof Administrator) {
+        if ($user instanceof Client || $user instanceof Administrator) {
             $user->deleteUser();
             http_response_code(204); // No Content
         } else {
@@ -187,7 +184,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve the user by ID
-        $user = User::get($userId);
+        $user = User::getById($userId);
 
         // Check if user exists
         if ($user === null) {
@@ -231,13 +228,15 @@ class Users
 
             $success = $user->updateAdministrator();
         } elseif ($isClient && $user instanceof Client) {
-            $user->setAddress(new Location(
-                $data->street,
-                $data->city,
-                $data->district_id
-            ));
+            $user->setAddress(
+                new Location(
+                    $data->street,
+                    $data->city,
+                    $data->district_id
+                )
+            );
 
-            $success = $user->updateClient();
+            $success = $user->updateUser();
         }
 
         if ($success) {
@@ -252,25 +251,31 @@ class Users
     }
 
     /**
-     * Get all orders for a particular user by their ID.
+     * Get all orders for a particular client by their ID.
      */
     public function getAllOrdersForUser(): void
     {
         $userId = (int)Utility::splitURL()[3];
 
         // Check if user exists
-        if (Client::getByID($userId) === null) {
+        $client = Client::getByID($userId);
+        if ($client === null) {
             // User not found, return 404
             http_response_code(404);
-            echo json_encode(['error' => 'User not found']);
+            echo json_encode(['error' => 'Client not found']);
             return;
         }
 
         // Retrieve all orders for the specified user from the database
-        $orders = Client::getAllOrdersForUser($userId);
+        $orders = $client->getOrders();
 
-        // Return JSON response
-        echo json_encode($orders);
+        // Convert orders to array format
+        $result = [];
+        foreach ($orders as $order) {
+            $result[] = $order->toArray();
+        }
+
+        echo json_encode($result);
     }
 
     /**
@@ -280,8 +285,10 @@ class Users
     {
         $userId = (int)Utility::splitURL()[3];
 
+        $user = User::getById($userId);
+
         // Check if user exists
-        if (Client::getByID($userId) === null) {
+        if ($user === null) {
             // User not found, return 404
             http_response_code(404);
             echo json_encode(['error' => 'User not found']);
@@ -289,7 +296,7 @@ class Users
         }
 
         // Retrieve all reviews for the specified user from the database
-        $reviews = Client::getAllReviewsForUser($userId);
+        $reviews = $user->getReviews();
 
         // Return JSON response
         echo json_encode($reviews);
