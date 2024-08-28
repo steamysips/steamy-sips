@@ -33,12 +33,19 @@ abstract class User
         string $plain_password,
         string $phone_no
     ) {
-        $this->user_id = -1;
         $this->email = $email;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
         $this->password = password_hash($plain_password, PASSWORD_BCRYPT);
         $this->phone_no = $phone_no;
+    }
+
+    /**
+     * @return User[] A list of all users in database
+     */
+    public static function getUsers(): array
+    {
+        return [];
     }
 
     public function toArray(): array
@@ -319,61 +326,42 @@ abstract class User
     }
 
     /**
-     * Get a user by ID or get all users if no ID is provided.
+     * Get all reviews written by user.
      *
-     * @param int|false $userId The ID of the user to fetch, or false to get all users.
-     * @return ?User The User object if found, otherwise null.
+     * @return Review[] Array of Review objects
      */
-    public static function get(int|false $userId = false): ?User
+    public function getReviews(): array
     {
-        $query = "SELECT u.*, a.job_title, a.is_super_admin, c.city, c.street, c.district_id
-              FROM user u
-              LEFT JOIN administrator a ON u.user_id = a.user_id
-              LEFT JOIN client c ON u.user_id = c.user_id";
-
-        if ($userId !== false) {
-            $query .= " WHERE u.user_id = :user_id";
-            $params = ['user_id' => $userId];
-        } else {
-            $params = [];
-        }
-
-        $result = self::get_row($query, $params);
-
-        if (!$result) {
-            return null;
-        }
-
-        // Determine the type of user and return the appropriate object
-        if (isset($result->job_title)) {
-            $user = new Administrator(
-                $result->email,
-                $result->first_name,
-                $result->last_name,
-                "dummy-password", // A dummy password is used since the original password is unknown
-                $result->phone_no,
-                $result->job_title,
-                filter_var($result->is_super_admin, FILTER_VALIDATE_BOOLEAN)
-            );
-        } else {
-            $user = new Client(
-                $result->email,
-                $result->first_name,
-                $result->last_name,
-                "dummy-password", // A dummy password is used since the original password is unknown
-                $result->phone_no,
-                new Location(street: $result->street, city: $result->city, district_id: $result->district_id)
-            );
-        }
-
-        $user->user_id = $result->user_id;
-        $user->password = $result->password;
-
-        return $user;
+        return []; // TODO: Implement getReviews()
     }
 
+
+    /**
+     * Gets a user from database given the user ID.
+     * @param int $userId ID of a user (client or administrator).
+     * @return User|null User matching ID. Null if no such user exist.
+     */
+    public static function getById(int $userId): ?User
+    {
+        $client = Client::getByID($userId);
+        return empty($client) ? Administrator::getById($userId) : $client;
+    }
+
+    /**
+     * Deletes a user record from database.
+     * @return void
+     */
     public function deleteUser(): void
     {
-        $this->delete($this->user_id, $this->table, 'user_id');
+        if ($this instanceof Client) {
+            // delete record from client table
+            $this->delete($this->user_id, 'client', 'user_id');
+        } elseif ($this instanceof Administrator) {
+            // delete record from administrator table
+            $this->delete($this->user_id, 'administrator', 'user_id');
+        }
+
+        // delete record from user table
+        $this->delete($this->user_id, 'user', 'user_id');
     }
 }
