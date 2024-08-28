@@ -1,30 +1,27 @@
-function openTab(evt, tabName) {
-  console.log("New tab = " + tabName);
+/**
+ * This script is responsible for implementing the tab switching logic on the user profile page.
+ */
+import $ from "jquery";
 
+function openTab(tabLinkElement, tabName) {
   // hide all tab contents
-  const tabcontents = [...document.getElementsByClassName("tabcontent")];
-  for (let i = 0; i < tabcontents.length; i++) {
-    tabcontents[i].style.display = "none";
-  }
-
-  // remove active class from the currently active tab link
-  const tablinks = document.getElementsByClassName("tablink");
-  for (let i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
+  $(".tabcontent").hide();
 
   // display content for clicked tab
-  document.getElementById(tabName).style.display = "block";
+  $("#" + tabName).show();
+
+  // remove active class from the currently active tab link (same as removing active class from all tab links)
+  $(".tablink").removeClass("active");
 
   // set active class only to the clicked tab link
-  evt.currentTarget.className += " active";
+  $(tabLinkElement).addClass("active");
 }
 
-const tabs = ["Account", "Orders", "Settings"];
+$(document).ready(() => {
+  const tabIDs = ["Account", "Orders", "Settings"]; // IDs of container for tabs
 
-window.addEventListener("DOMContentLoaded", () => {
-  [...document.getElementsByClassName("tablink")].forEach((tablink, i) => {
-    console.log(i, tablink);
-    tablink.addEventListener("click", (e) => openTab(e, tabs[i]));
+  // when user clicks on a tab, switch to respective tab
+  $(".tablink").each((i, tablink) => {
+    $(tablink).on("click", () => openTab(tablink, tabIDs[i]));
   });
 });
