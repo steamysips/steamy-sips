@@ -45,7 +45,7 @@ abstract class User
      */
     public static function getUsers(): array
     {
-        return [];
+        return []; // TODO: Fetch all client and all administrators
     }
 
     public function toArray(): array
@@ -333,18 +333,6 @@ abstract class User
     public function getReviews(): array
     {
         return []; // TODO: Implement getReviews()
-    }
-
-
-    /**
-     * Gets a user from database given the user ID.
-     * @param int $userId ID of a user (client or administrator).
-     * @return User|null User matching ID. Null if no such user exist.
-     */
-    public static function getById(int $userId): ?User
-    {
-        $client = Client::getByID($userId);
-        return empty($client) ? Administrator::getById($userId) : $client;
     }
 
     /**

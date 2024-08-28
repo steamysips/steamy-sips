@@ -58,10 +58,12 @@ class Users
     {
         $userId = (int)Utility::splitURL()[3];
 
-        // Retrieve user details from the database
-        $user = User::getById($userId);
+        // Retrieve user details from the database. user is either a client or an administrator
+        $user = Client::getById($userId);
+        if ($user === null) {
+            $user = Administrator::getById($userId);
+        }
 
-        // Check if user exists
         if ($user === null) {
             // User not found, return 404
             http_response_code(404);
