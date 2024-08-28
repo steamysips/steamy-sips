@@ -294,7 +294,7 @@ class Client extends User
      */
     public function getOrders(): array
     {
-        return Order::getOrdersByClientId(client_id: $this->user_id);
+        return Order::getOrdersByClientId(client_id: $this->user_id, limit: -1);
     }
 
     /**
