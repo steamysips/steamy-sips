@@ -59,10 +59,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve user details from the database. user is either a client or an administrator
-        $user = Client::getById($userId);
-        if ($user === null) {
-            $user = Administrator::getById($userId);
-        }
+        $user = Client::getById($userId) ?? Administrator::getById($userId);
 
         if ($user === null) {
             // User not found, return 404
@@ -86,19 +83,11 @@ class Users
     {
         $data = (object)json_decode(file_get_contents("php://input"), true);
 
-        // Determine if the user is an Administrator or a Client
+        // Determine if the user to be created is an Administrator
         $isAdministrator = isset($data->job_title) && isset($data->is_super_admin);
-        $isClient = isset($data->street) && isset($data->city) && isset($data->district_id);
 
-        if ($isAdministrator) {
-            $result = Utility::validateAgainstSchema($data, "administrators/create.json");
-        } elseif ($isClient) {
-            $result = Utility::validateAgainstSchema($data, "clients/create.json");
-        } else {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid user type']);
-            return;
-        }
+        $schemaPath = $isAdministrator ? "administrators/create.json" : "clients/create.json";
+        $result = Utility::validateAgainstSchema($data, $schemaPath);
 
         if (!($result->isValid())) {
             $errors = (new ErrorFormatter())->format($result->error());
@@ -121,7 +110,7 @@ class Users
                 $data->job_title,
                 $data->is_super_admin
             );
-        } elseif ($isClient) {
+        } else {
             $address = new Location(
                 $data->street,
                 $data->city,
@@ -157,7 +146,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve the user by ID
-        $user = User::getById($userId);
+        $user = Client::getById($userId) ?? Administrator::getById($userId);
 
         // Check if user exists
         if ($user === null) {
@@ -186,7 +175,7 @@ class Users
         $userId = (int)Utility::splitURL()[3];
 
         // Retrieve the user by ID
-        $user = User::getById($userId);
+        $user = Client::getById($userId) ?? Administrator::getById($userId);
 
         // Check if user exists
         if ($user === null) {
@@ -200,18 +189,9 @@ class Users
         $data = (object)json_decode(file_get_contents("php://input"), true);
 
         // Determine the schema to use for validation
-        $isAdministrator = isset($data->job_title) && isset($data->is_super_admin);
-        $isClient = isset($data->street) && isset($data->city) && isset($data->district_id);
+        $schema = $user instanceof Administrator ? "administrators/update.json" : "clients/update.json";
 
-        if ($isAdministrator) {
-            $result = Utility::validateAgainstSchema($data, "administrators/update.json");
-        } elseif ($isClient) {
-            $result = Utility::validateAgainstSchema($data, "clients/update.json");
-        } else {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid user type']);
-            return;
-        }
+        $result = Utility::validateAgainstSchema($data, $schema);
 
         if (!($result->isValid())) {
             $errors = (new ErrorFormatter())->format($result->error());
@@ -223,33 +203,9 @@ class Users
             return;
         }
 
-        // Update user in the database
-        if ($isAdministrator && $user instanceof Administrator) {
-            $user->setJobTitle($data->job_title);
-            $user->setSuperAdmin($data->is_super_admin);
+        // TODO: use $data to update $user then update
 
-            $success = $user->updateAdministrator();
-        } elseif ($isClient && $user instanceof Client) {
-            $user->setAddress(
-                new Location(
-                    $data->street,
-                    $data->city,
-                    $data->district_id
-                )
-            );
-
-            $success = $user->updateUser();
-        }
-
-        if ($success) {
-            // User updated successfully
-            http_response_code(200); // OK
-            echo json_encode(['message' => 'User updated successfully']);
-        } else {
-            // Failed to update user
-            http_response_code(500); // Internal Server Error
-            echo json_encode(['error' => 'Failed to update user']);
-        }
+        $user->updateUser();
     }
 
     /**
@@ -287,7 +243,7 @@ class Users
     {
         $userId = (int)Utility::splitURL()[3];
 
-        $user = User::getById($userId);
+        $user = Client::getById($userId) ?? Administrator::getById($userId);
 
         // Check if user exists
         if ($user === null) {
