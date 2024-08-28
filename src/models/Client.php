@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Steamy\Model;
 
-use Steamy\Core\Utility;
-
 use Exception;
 
 class Client extends User
@@ -103,20 +101,6 @@ class Client extends User
     }
 
     /**
-     * Deletes user from database
-     *
-     * @return void
-     */
-    public function deleteUser(): void
-    {
-        // delete record from client table
-        $this->delete($this->user_id, 'client', 'user_id');
-
-        // delete record from user table
-        $this->delete($this->user_id, 'user', 'user_id');
-    }
-
-    /**
      * Saves client to database and updates client_id.
      *
      * @return bool Whether client was successfully saved to database
@@ -183,7 +167,7 @@ class Client extends User
         return true;
     }
 
-    public function updateClient(bool $updatePassword = false): bool
+    public function updateUser(bool $updatePassword = false): bool
     {
         $conn = self::connect();
         $conn->beginTransaction();
@@ -302,71 +286,19 @@ class Client extends User
 
         return $base_array;
     }
+
     /**
-     * Get all orders for a specific user.
+     * Get all orders made by client.
      *
-     * @param int $userId The ID of the user.
-     * @return Order|null Array of Order objects if found, otherwise null.
+     * @return Order[] Array of Order objects
      */
-    public static function getAllOrdersForUser(int $userId): ?Order
+    public function getOrders(): array
     {
-        if ($userId < 0) {
-            return null;
-        }
-
-        $query = "SELECT * FROM `order` WHERE `client_id` = :userId";
-        $orderData = self::query($query, ['userId' => $userId]);
-
-        if (empty($orderData)) {
-            return null;
-        }
-
-        $orderData = $orderData[0];
-
-        return new Order(
-            store_id: $orderData->store_id,
-            client_id: $orderData->client_id,
-            order_id: $orderData->order_id,
-            pickup_date: $orderData->pickup_date ? Utility::stringToDate($orderData->pickup_date) : null,
-            status: OrderStatus::from($orderData->status),
-            created_date: Utility::stringToDate($orderData->created_date),
-        );
+        return Order::getOrdersByClientId(client_id: $this->user_id);
     }
 
     /**
-     * Get all reviews for a specific user.
-     *
-     * @param int $userId The ID of the user.
-     * @return Review|null Array of Review objects if found, otherwise null.
-     */
-    public static function getAllReviewsForUser(int $userId): ?Review
-    {
-        if ($userId < 0) {
-            return null;
-        }
-
-        $query = "SELECT * FROM `review` WHERE `client_id` = :userId";
-        $result = Review::query($query, ['userId' => $userId]);
-
-        if (empty($result)) {
-            return null;
-        }
-
-        $result = $result[0];
-
-        return new Review(
-            review_id: $result->review_id,
-            product_id: $result->product_id,
-            client_id: $result->client_id,
-            text: $result->text,
-            rating: $result->rating,
-            created_date: Utility::stringToDate($result->created_date)
-        );
-    }
-
-
-
-    /**
+     * Send email to client to inform him that order is confirmed.
      * @throws Exception
      */
     public function sendOrderConfirmationEmail(Order $order): bool
