@@ -23,6 +23,7 @@
     "@picocss/pico": "^1.5.13",
     "@splidejs/splide": "^4.1.4",
     "aos": "^3.0.0-beta.6",
-    "chart.js": "^4.4.2"
+    "chart.js": "^4.4.2",
+    "jquery": "^3.7.1"
   }
 }

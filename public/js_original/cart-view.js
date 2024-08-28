@@ -1,9 +1,14 @@
 /**
  * This script is executed on /cart page. It allows users to modify their cart in real-time and view the updated totals.
+ * The order of operations is as follows:
+ * 1. Send cart data from local storage to server to request cart page.
+ * 2. Display a loading animation while cart page has not been received.
+ * 3. Receive actual cart page and render it. Event listeners are added as needed.
  */
 
 import Cart from "./models/Cart";
 import CartItem from "./models/CartItem";
+import $ from "jquery";
 
 function updateCart(e) {
   const sectionNode = e.target.parentNode.parentNode;
@@ -90,45 +95,45 @@ function preventKeyboardInput(event) {
 
 /**
  * This function must be called after DOM has loaded.
+ * It initializes event listeners on the true cart page received from server.
  */
 function initCartPage() {
-  const quantityInputs = [
-    ...document.querySelectorAll("section input[type='number']"),
-  ];
-
+  // if checkout button is present on page, add click event. (button is absent when cart is empty)
   const checkoutBtn = document.querySelector("#checkout-btn");
-
-  // if checkout button is present on page (button is absent when cart is empty)
   if (checkoutBtn !== null) {
     checkoutBtn.addEventListener("click", checkout);
   }
 
+  // add change listeners to inputs on page
+  const quantityInputs = [
+    ...document.querySelectorAll("section input[type='number']"),
+  ];
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateCart);
     input.addEventListener("keydown", preventKeyboardInput);
   });
 
-  const itemCount = Cart().getCartSize();
-
   // update cart item count in header
+  const itemCount = Cart().getCartSize();
   document.querySelector("#mini-cart-count").textContent = `(${itemCount})`;
 }
 
-async function uploadCart() {
-  const items = Cart().getItems();
+function uploadCart() {
+  const items = Cart().getItems(); // items from local storage
 
-  const response = await fetch(window.location.href + "/upload", {
+  $.ajax({
+    url: window.location.href + "/upload",
     method: "POST",
-    body: JSON.stringify(items),
+    data: JSON.stringify(items),
+    contentType: "application/json",
+    success: function (response) {
+      // add loading delay of 1s before displaying true cart page
+      setTimeout(function () {
+        $("body").html(response);
+        initCartPage();
+      }, 1000);
+    },
   });
-
-  // add loading delay of 1s
-  await new Promise((r) => setTimeout(r, 1000));
-
-  if (response.ok) {
-    document.body.innerHTML = await response.text();
-    initCartPage();
-  }
 }
 
 window.addEventListener("DOMContentLoaded", uploadCart);
