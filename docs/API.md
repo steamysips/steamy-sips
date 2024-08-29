@@ -20,25 +20,24 @@ tests for API.
 
 There are two types of endpoints:
 
-1. **Public endpoints** : They return a public resource that can be accessed **without a token**.
-2. **Protected endpoints** : They return a protected resource that can only be accessed **with a valid JWT token**.
+1. **Public endpoints** : They return a public resource that can be accessed by anyone.
+2. **Protected endpoints** : They return a protected resource that can only be accessed by administrators.
 
 ### Session
 
-| Endpoint                | Description                                      | Protected |
-|-------------------------|--------------------------------------------------|-----------|
-| `POST /api/v1/sessions` | Authenticates admin and creates a session token. | No        |
+PHP sessions are used for authentication so all session information are stored on server.
 
-Note:
-
-- Only administrators can receive a session token.
-- Only administrators can access protected endpoints.
+| Endpoint                | Description                                                                                              | Protected |
+|-------------------------|----------------------------------------------------------------------------------------------------------|-----------|
+| `POST /api/v1/sessions` | Authenticates admin and creates a session token. The request body should contain `email` and `password`. | No        |
 
 ### User
 
-| Endpoint                          | Description                                         | Protected |
-|-----------------------------------|-----------------------------------------------------|-----------|
-| `GET /api/v1/users`               | Get the list of all users.                          | Yes       |
+A user can be a client or an administrator.
+
+| Endpoint                          | Description                                         | Protected | Query string parameters |
+|-----------------------------------|-----------------------------------------------------|-----------|-------------------------|
+| `GET /api/v1/users`               | Get the list of all users.                          | Yes       | `user-type`             |         
 | `GET /api/v1/users/[id]`          | Get the details of a specific user by their ID.     | Yes       |
 | `POST /api/v1/users`              | Create a new user entry in the database.            | Yes       |
 | `DELETE /api/v1/users/[id]`       | Delete a user with the specified ID.                | Yes       |
@@ -86,9 +85,10 @@ Note:
 
 ## Query string parameters
 
-| Parameter | Possible values | Description                           |
-|-----------|-----------------|---------------------------------------|
-| `sort`    | `asc`, `desc`   | Sort in ascending or descending order |
+| Parameter   | Possible values   | Description                                       |
+|-------------|-------------------|---------------------------------------------------|
+| `sort`      | `asc`, `desc`     | Sort in ascending or descending order             |
+| `user-type` | `client`, `admin` | For user endpoints, return only clients or admins | 
 
 # References
 
