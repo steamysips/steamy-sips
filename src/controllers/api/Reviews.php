@@ -206,7 +206,31 @@ class Reviews
     }
 
     /**
-     * Gets the number of reviews for each month
+     * Gets the number of reviews for each month.
+     *
+     * <pre>
+     *     [
+     *         {
+     *             "date": "2024-04-01",
+     *             "totalReviews": 1,
+     *             "positiveReviews": "0",
+     *             "negativeReviews": "1"
+     *         },
+     *         {
+     *             "date": "2024-05-01",
+     *             "totalReviews": 9,
+     *             "positiveReviews": "4",
+     *             "negativeReviews": "5"
+     *         },
+     *         {
+     *             "date": "2024-06-01",
+     *             "totalReviews": 1,
+     *             "positiveReviews": "1",
+     *             "negativeReviews": "0"
+     *         }
+     *     ]
+     * </pre>
+     *
      * @return void
      */
     public function getCountOverTime(): void
