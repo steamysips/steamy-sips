@@ -47,15 +47,16 @@ A user can be a client or an administrator.
 
 ### Product
 
-| Endpoint                           | Description                                            | Protected | Query string parameters |
-|------------------------------------|--------------------------------------------------------|-----------|-------------------------|
-| `GET /api/v1/products`             | Get the list of all products available in the store.   | No        | `sort`, `group-by`      |
-| `GET /api/v1/products/[id]`        | Get the details of a specific product by its ID.       | No        |
-| `GET /api/v1/products/[id]/stores` | Get the details of stores where a product is sold.     | No        |
-| `GET /api/v1/products/categories`  | Get the list of product categories.                    | No        |
-| `POST /api/v1/products`            | Create a new product entry in the database.            | No        |
-| `DELETE /api/v1/products/[id]`     | Delete a product with the specified ID.                | No        |
-| `PUT /api/v1/products/[id]`        | Update the details of a product with the specified ID. | No        |
+| Endpoint                                        | Description                                            | Protected | Query string parameters |
+|-------------------------------------------------|--------------------------------------------------------|-----------|-------------------------|
+| `GET /api/v1/products`                          | Get the list of all products available in the store.   | No        | `sort`, `group-by`      |
+| `GET /api/v1/products/[id]`                     | Get the details of a specific product by its ID.       | No        |
+| `GET /api/v1/products/[id]/stores`              | Get the details of stores where a product is sold.     | No        |
+| `GET /api/v1/products/categories`               | Get the list of product categories.                    | No        |
+| `POST /api/v1/products`                         | Create a new product entry in the database.            | No        |
+| `DELETE /api/v1/products/[id]`                  | Delete a product with the specified ID.                | No        |
+| `PUT /api/v1/products/[id]`                     | Update the details of a product with the specified ID. | No        |
+| `GET /api/v1/products/sales/sales-per-category` | Get the number of units sold per category.             | No        |                         |
 
 ### Order
 

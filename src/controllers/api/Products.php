@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steamy\Controller\API;
 
 use Opis\JsonSchema\{Errors\ErrorFormatter};
+use PDO;
 use Steamy\Core\Utility;
 use Steamy\Model\Product;
 use Steamy\Core\Model;
@@ -22,6 +23,8 @@ class Products
             '/products/{id}' => 'getProductById',
             '/products/{id}/reviews' => 'getAllReviewsForProduct',
             '/products/{id}/stores' => 'getAllStoresForProduct',
+
+            '/products/stats/sales-per-category' => 'getSalesPerCategory',
         ],
         'POST' => [
             '/products' => 'createProduct',
@@ -255,5 +258,26 @@ class Products
 
         // Return JSON response
         echo json_encode($result);
+    }
+
+    /**
+     * Get units sold per product category
+     * @return void
+     */
+    public function getSalesPerCategory(): void
+    {
+        $query = <<< EOL
+        SELECT category, COUNT(*) as unitsSold
+        FROM product
+        INNER JOIN order_product
+        ON product.product_id = order_product.product_id
+        GROUP BY category
+        EOL;
+
+        $con = self::connect();
+        $stm = $con->prepare($query);
+        $stm->execute();
+
+        echo json_encode($stm->fetchAll(PDO::FETCH_ASSOC));
     }
 }
