@@ -6,11 +6,14 @@ namespace Steamy\Controller\API;
 
 use Opis\JsonSchema\{Errors\ErrorFormatter};
 use Exception;
+use PDO;
+use Steamy\Core\Database;
 use Steamy\Core\Utility;
 use Steamy\Model\Review;
 
 class Reviews
 {
+    use Database;
 
     public static array $routes = [
         'GET' => [
@@ -33,16 +36,31 @@ class Reviews
      */
     public function getAllReviews(): void
     {
-        // Retrieve all reviews from the database
-        $allReviews = Review::getAll();
+        $query = "SELECT * FROM review";
 
-        // Convert reviews to array format
-        $result = [];
-        foreach ($allReviews as $Review) {
-            $result[] = $Review->toArray();
+        if (!empty($_GET['order_by']) && $_GET['order_by'] === 'created_date') {
+            $query .= " ORDER BY created_date DESC ";
         }
 
-        // Return JSON response
+        if (!empty($_GET['limit'])) {
+            $limit = filter_var($_GET['limit'], FILTER_SANITIZE_NUMBER_INT);
+            $query .= " LIMIT " . $limit;
+        }
+
+        $query .= ";";
+
+        $con = self::connect();
+        $stm = $con->prepare($query);
+        $success = $stm->execute();
+
+        if (!$success) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Database bad']);
+            return;
+        }
+
+        $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+
         echo json_encode($result);
     }
 

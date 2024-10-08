@@ -71,7 +71,7 @@ A user can be a client or an administrator.
 
 | Endpoint                            | Description                                           | Protected | Query string parameters |
 |-------------------------------------|-------------------------------------------------------|-----------|-------------------------|
-| `GET /api/v1/reviews`               | Get all reviews for a particular product by its ID.   | No        | `sort`                  |
+| `GET /api/v1/reviews`               | Get all reviews for a particular product by its ID.   | No        | `limit`, `order_by`     |
 | `GET /api/v1/products/[id]/reviews` | Get all reviews for a particular product by its ID.   | No        |
 | `POST /api/v1/reviews`              | Create a new review for a product.                    | Yes       |
 | `PUT /api/v1/reviews/[id]`          | Update the details of a review with the specified ID. | Yes       |
