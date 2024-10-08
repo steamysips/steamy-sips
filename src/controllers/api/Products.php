@@ -21,6 +21,7 @@ class Products
             '/products/categories' => 'getProductCategories',
             '/products/{id}' => 'getProductById',
             '/products/{id}/reviews' => 'getAllReviewsForProduct',
+            '/products/{id}/stores' => 'getAllStoresForProduct',
         ],
         'POST' => [
             '/products' => 'createProduct',
@@ -223,5 +224,36 @@ class Products
 
         // Return JSON response
         echo json_encode($reviews);
+    }
+
+
+    /**
+     * Get all reviews for a particular product by its ID.
+     */
+    public function getAllStoresForProduct(): void
+    {
+        // Get product ID from URL
+        $productId = (int)Utility::splitURL()[3];
+
+        // Check if product exists
+        $product = ProductModel::getById($productId);
+        if ($product === null) {
+            // product not found, return 404
+            http_response_code(404);
+            echo json_encode(['error' => 'Product not found']);
+            return;
+        }
+
+        // Retrieve all stores for the specified product from the database
+        $stores = $product->getStores();
+
+        // convert to primitive format
+        $result = [];
+        foreach ($stores as $store) {
+            $result[] = $store->toArray();
+        }
+
+        // Return JSON response
+        echo json_encode($result);
     }
 }

@@ -85,7 +85,7 @@ class Product
             return [];
         }
 
-        $callback = fn ($obj): string => $obj->category;
+        $callback = fn($obj): string => $obj->category;
 
         return array_map($callback, $result);
     }
@@ -437,5 +437,27 @@ class Product
         unset($newProductData['product_id']);
 
         return $this->update($newProductData, ['product_id' => $this->product_id], $this->table);
+    }
+
+    /**
+     * Get a list of stores where product is sold.
+     * @return Store[]
+     */
+    public function getStores(): array
+    {
+        $query = "SELECT store_id FROM store_product WHERE product_id = :product_id";
+        $records = $this->query($query, ['product_id' => $this->product_id]);
+
+        if (empty($records)) {
+            return [];
+        }
+
+        // Iterate through the retrieved review records and create Review objects
+        $stores = [];
+        foreach ($records as $result) {
+            $stores[] = Store::getByID($result->store_id);
+        }
+
+        return $stores;
     }
 }
