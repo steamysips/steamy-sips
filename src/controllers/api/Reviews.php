@@ -7,18 +7,19 @@ namespace Steamy\Controller\API;
 use Opis\JsonSchema\{Errors\ErrorFormatter};
 use Exception;
 use PDO;
-use Steamy\Core\Database;
+use Steamy\Core\Model;
 use Steamy\Core\Utility;
 use Steamy\Model\Review;
 
 class Reviews
 {
-    use Database;
+    use Model;
 
     public static array $routes = [
         'GET' => [
             '/reviews' => 'getAllReviews',
             '/reviews/{id}' => 'getReviewByID',
+            '/reviews/stats/count-over-time' => 'getCountOverTime',
         ],
         'POST' => [
             '/reviews' => 'createReview',
@@ -202,5 +203,32 @@ class Reviews
             http_response_code(500); // Internal Server Error
             echo json_encode(['error' => 'Failed to delete review']);
         }
+    }
+
+    /**
+     * Gets the number of reviews for each month
+     * @return void
+     */
+    public function getCountOverTime(): void
+    {
+        $query = <<< EOL
+        SELECT
+            DATE_FORMAT(created_date, '%Y-%m-01') AS date,  -- Group by month
+            COUNT(*) AS totalReviews,                       -- Total number of reviews
+            SUM(IF(rating >= 3, 1, 0)) AS positiveReviews,  -- Count of positive reviews (rating 3 and above)
+            SUM(IF(rating < 3, 1, 0)) AS negativeReviews    -- Count of negative reviews (rating below 3)
+        FROM
+            review
+        GROUP BY
+            DATE_FORMAT(created_date, '%Y-%m-01')            -- Group by the first day of each month
+        ORDER BY
+            date;                                            -- Order by date
+        EOL;
+
+        $con = self::connect();
+        $stm = $con->prepare($query);
+        $stm->execute();
+
+        echo json_encode($stm->fetchAll(PDO::FETCH_ASSOC));
     }
 }

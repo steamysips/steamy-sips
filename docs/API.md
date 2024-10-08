@@ -70,13 +70,14 @@ A user can be a client or an administrator.
 
 ### Review
 
-| Endpoint                            | Description                                           | Protected | Query string parameters |
-|-------------------------------------|-------------------------------------------------------|-----------|-------------------------|
-| `GET /api/v1/reviews`               | Get all reviews for a particular product by its ID.   | No        | `limit`, `order_by`     |
-| `GET /api/v1/products/[id]/reviews` | Get all reviews for a particular product by its ID.   | No        |
-| `POST /api/v1/reviews`              | Create a new review for a product.                    | Yes       |
-| `PUT /api/v1/reviews/[id]`          | Update the details of a review with the specified ID. | Yes       |
-| `DELETE /api/v1/reviews/[id]`       | Delete a review with the specified ID.                | Yes       |
+| Endpoint                                    | Description                                           | Protected | Query string parameters |
+|---------------------------------------------|-------------------------------------------------------|-----------|-------------------------|
+| `GET /api/v1/reviews`                       | Get all reviews for a particular product by its ID.   | No        | `limit`, `order_by`     |
+| `GET /api/v1/products/[id]/reviews`         | Get all reviews for a particular product by its ID.   | No        |
+| `POST /api/v1/reviews`                      | Create a new review for a product.                    | Yes       |
+| `PUT /api/v1/reviews/[id]`                  | Update the details of a review with the specified ID. | Yes       |
+| `DELETE /api/v1/reviews/[id]`               | Delete a review with the specified ID.                | Yes       |
+| `GET /api/v1/reviews/stats/count-over-time` | Get the count of reviews for each month.              | No        |                         |
 
 ### District
 
