@@ -6,6 +6,8 @@
 ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?&logo=mysql&logoColor=white)
 ![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)
 
+![Overview of client website](resources/steamy-sips.gif)
+
 A fully-functional coffee shop website, inspired by Starbucks.
 It was built from scratch without any off-the-shelf PHP framework. A high-level summary of the functionalities
 includes:
@@ -21,7 +23,7 @@ includes:
 For more details, see the [software requirements specification](docs/SOFTWARE_SPECS.md).
 
 This repository contains the code for the client website and the API. The code for the admin website is found in a
-separate repository.
+separate [repository](https://github.com/steamysips/steamy-sips-admin).
 
 ## Main features
 
@@ -50,6 +52,11 @@ filesystem, which is
 licensed under the Creative Commons
 Attribution-ShareAlike
 4.0 International License. Please see the [LICENSE](LICENSE) file for details on the original license.
+
+## Disclaimer
+
+This project was developed as part of an educational assignment and is not production-ready. Please note that the
+project is currently incomplete, and no further development is planned.
 
 ## Contributors
 
