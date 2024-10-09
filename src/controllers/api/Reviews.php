@@ -206,47 +206,68 @@ class Reviews
     }
 
     /**
-     * Gets the number of reviews for each month.
-     *
-     * <pre>
-     *     [
-     *         {
-     *             "date": "2024-04-01",
-     *             "totalReviews": 1,
-     *             "positiveReviews": "0",
-     *             "negativeReviews": "1"
-     *         },
-     *         {
-     *             "date": "2024-05-01",
-     *             "totalReviews": 9,
-     *             "positiveReviews": "4",
-     *             "negativeReviews": "5"
-     *         },
-     *         {
-     *             "date": "2024-06-01",
-     *             "totalReviews": 1,
-     *             "positiveReviews": "1",
-     *             "negativeReviews": "0"
-     *         }
-     *     ]
-     * </pre>
+     * Gets the number of reviews for each month with percentage difference from last month.
+     *  Example response:
+     *  <pre>
+     *      [
+     *          {
+     *              "month": "2024-04-01",
+     *              "totalReviews": 1,
+     *              "percentageDifference": null
+     *          },
+     *          {
+     *              "month": "2024-05-01",
+     *              "totalReviews": 9,
+     *              "percentageDifference": "800.00"
+     *          },
+     *          {
+     *              "month": "2024-06-01",
+     *              "totalReviews": 1,
+     *              "percentageDifference": "-88.89"
+     *          },
+     *          {
+     *              "month": "2024-10-01",
+     *              "totalReviews": 1,
+     *              "percentageDifference": "0.00"
+     *          }
+     *      ]
+     *  </pre>
      *
      * @return void
      */
     public function getCountOverTime(): void
     {
         $query = <<< EOL
+        WITH monthly_reviews AS (
+            SELECT
+                DATE_FORMAT(created_date, '%Y-%m-01') AS month,  -- Extract the first day of the month
+                COUNT(review_id) AS totalReviews                -- Total reviews per month
+            FROM
+                review
+            GROUP BY
+                DATE_FORMAT(created_date, '%Y-%m')
+        ),
+        monthly_diff AS (
+            SELECT
+                month,
+                totalReviews,
+                LAG(totalReviews) OVER (ORDER BY month) AS previousMonthReviews  -- Get the previous month's reviews
+            FROM
+                monthly_reviews
+        )
         SELECT
-            DATE_FORMAT(created_date, '%Y-%m-01') AS date,  -- Group by month
-            COUNT(*) AS totalReviews,                       -- Total number of reviews
-            SUM(IF(rating >= 3, 1, 0)) AS positiveReviews,  -- Count of positive reviews (rating 3 and above)
-            SUM(IF(rating < 3, 1, 0)) AS negativeReviews    -- Count of negative reviews (rating below 3)
+            month,
+            totalReviews,
+            CASE
+                WHEN previousMonthReviews IS NOT NULL AND previousMonthReviews != 0 THEN
+                    ROUND(((totalReviews - previousMonthReviews) * 100.0 / previousMonthReviews), 2)
+                ELSE
+                    NULL  -- No previous month data for the first row
+            END AS percentageDifference
         FROM
-            review
-        GROUP BY
-            DATE_FORMAT(created_date, '%Y-%m-01')            -- Group by the first day of each month
+            monthly_diff
         ORDER BY
-            date;                                            -- Order by date
+            month;
         EOL;
 
         $con = self::connect();
