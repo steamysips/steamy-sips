@@ -1,0 +1,2935 @@
+{
+	"info": {
+		"_postman_id": "0479da19-64a3-4a94-b272-59c9d08a7b80",
+		"name": "Steamy Sips API Documentation",
+		"description": "---\n\n## Authentication\n\nNot implemented yet.\n\n### Authentication error response\n\nIf an API key is missing, malformed, or invalid, you will receive an HTTP 401 Unauthorized response code.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32074929"
+	},
+	"item": [
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Get all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
+						},
+						"description": "Get all of products."
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:03:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "4538"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"product_id\": 1,\n        \"name\": \"Espresso\",\n        \"calories\": 5,\n        \"img_url\": \"espresso.webp\",\n        \"img_alt_text\": \"Espresso in a white cup. Source: Dolce Gusto\",\n        \"category\": \"Espresso\",\n        \"price\": 2.99,\n        \"description\": \"A strong and concentrated coffee drink.\",\n        \"created_date\": {\n            \"date\": \"2024-04-28 12:37:10.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 2,\n        \"name\": \"Cappuccino\",\n        \"calories\": 120,\n        \"img_url\": \"cappuccino.webp\",\n        \"img_alt_text\": \"Close-up of a steaming cup of freshly brewed Espresso with frothy milk on top. Source: Discount Coffee\",\n        \"category\": \"Cappuccino\",\n        \"price\": 4.99,\n        \"description\": \"An Italian coffee drink made with espresso, hot milk, and steamed milk foam.\",\n        \"created_date\": {\n            \"date\": \"2024-05-21 12:37:10.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 3,\n        \"name\": \"Caffè Latte\",\n        \"calories\": 190,\n        \"img_url\": \"latte.avif\",\n        \"img_alt_text\": \"A latte with a spoon. Source: Peet's Coffee.\",\n        \"category\": \"Latte\",\n        \"price\": 3.99,\n        \"description\": \"A coffee drink made with espresso and steamed milk.\",\n        \"created_date\": {\n            \"date\": \"2024-04-23 12:37:10.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 4,\n        \"name\": \"Caffè Americano\",\n        \"calories\": 15,\n        \"img_url\": \"americano.webp\",\n        \"img_alt_text\": \"Close-up of a clear glass mug filled with hot, black Americano coffee, topped with a thin layer of creme. Source: Peet's Coffee.\",\n        \"category\": \"Americano\",\n        \"price\": 3.49,\n        \"description\": \"A coffee drink prepared by diluting espresso with hot water.\",\n        \"created_date\": {\n            \"date\": \"2024-01-21 12:37:10.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 5,\n        \"name\": \"Caffè Mocha\",\n        \"calories\": 370,\n        \"img_url\": \"mocha.png\",\n        \"img_alt_text\": \"Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks\",\n        \"category\": \"Mocha\",\n        \"price\": 4.49,\n        \"description\": \"A chocolate-flavored variant of a latte, often with whipped cream on top.\",\n        \"created_date\": {\n            \"date\": \"2024-04-21 12:37:10.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 6,\n        \"name\": \"White Chocolate Mocha\",\n        \"calories\": 390,\n        \"img_url\": \"white-chocolate-mocha.png\",\n        \"img_alt_text\": \"Rich and indulgent mocha served in a ceramic mug, topped with whipped cream and a dusting of cocoa powder. Source: Starbucks\",\n        \"category\": \"Mocha\",\n        \"price\": 5.69,\n        \"description\": \"Our signature mocha meets white chocolate sauce and steamed milk, and then is finished off with sweetened whipped cream to create this supreme white chocolate delight.\",\n        \"created_date\": {\n            \"date\": \"2024-04-25 10:33:02.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 7,\n        \"name\": \"Cinnamon Dolce Latte\\n\",\n        \"calories\": 340,\n        \"img_url\": \"cinnamon-dolce-latte.webp\",\n        \"img_alt_text\": \"Steamed milk and cinnamon dolce-flavored syrup on Latte. Source: Starbucks \",\n        \"category\": \"Latte\",\n        \"price\": 7.88,\n        \"description\": \"We add freshly steamed milk and cinnamon dolce-flavored syrup to our classic espresso, topped with sweetened whipped cream and a cinnamon dolce topping to bring you specialness in a treat.\",\n        \"created_date\": {\n            \"date\": \"2024-04-25 10:37:23.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 8,\n        \"name\": \"Caramel Macchiato\",\n        \"calories\": 250,\n        \"img_url\": \"caramel-macchiato.png\",\n        \"img_alt_text\": \"Freshly steamed milk with vanilla-flavored syrup marked with espresso and topped with a caramel drizzle for an oh-so-sweet finish. Source: Starbucks\",\n        \"category\": \"Macchiato\",\n        \"price\": 3.33,\n        \"description\": \"Freshly steamed milk with vanilla-flavored syrup marked with espresso and topped with a caramel drizzle for an oh-so-sweet finish.\",\n        \"created_date\": {\n            \"date\": \"2024-04-25 10:45:50.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 9,\n        \"name\": \"Espresso Macchiato\",\n        \"calories\": 15,\n        \"img_url\": \"espresso-macchiato.png\",\n        \"img_alt_text\": \"Our rich espresso marked with dollop of steamed milk and foam. A European-style classic. Source: Starbucks\",\n        \"category\": \"Macchiato\",\n        \"price\": 8.85,\n        \"description\": \"Our rich espresso marked with dollop of steamed milk and foam. A European-style classic.\",\n        \"created_date\": {\n            \"date\": \"2024-04-25 10:48:35.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    },\n    {\n        \"product_id\": 10,\n        \"name\": \"Espresso Con Panna\",\n        \"calories\": 35,\n        \"img_url\": \"espresso-con-panna.webp\",\n        \"img_alt_text\": \"Espresso meets a dollop of whipped cream to enhance the rich and caramelly flavors of a straight-up shot. Source: Starbucks\",\n        \"category\": \"Espresso\",\n        \"price\": 4.34,\n        \"description\": \"Espresso meets a dollop of whipped cream to enhance the rich and caramelly flavors of a straight-up shot.\",\n        \"created_date\": {\n            \"date\": \"2024-04-25 10:52:07.000000\",\n            \"timezone_type\": 3,\n            \"timezone\": \"Asia/Dubai\"\n        }\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get a product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products/1",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"1"
+							]
+						},
+						"description": "Get a product by ID"
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 10:45:43 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "322"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"product_id\": 1,\n    \"name\": \"Espresso\",\n    \"calories\": 5,\n    \"img_url\": \"espresso.webp\",\n    \"img_alt_text\": \"Espresso in a white cup. Source: Dolce Gusto\",\n    \"category\": \"Espresso\",\n    \"price\": 2.99,\n    \"description\": \"A strong and concentrated coffee drink.\",\n    \"created_date\": {\n        \"date\": \"2024-04-28 12:37:10.000000\",\n        \"timezone_type\": 3,\n        \"timezone\": \"Asia/Dubai\"\n    }\n}"
+						},
+						{
+							"name": "Product not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/99",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 10:46:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=99"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Product not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get all product categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products/categories",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"categories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/categories",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"categories"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:21:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "65"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    \"Espresso\",\n    \"Cappuccino\",\n    \"Latte\",\n    \"Americano\",\n    \"Mocha\",\n    \"Macchiato\"\n]"
+						}
+					]
+				},
+				{
+					"name": "Create product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"al\",\r\n    \"calories\": 448,\r\n    \"img_url\": \"aliquam asperiores\",\r\n    \"img_alt_text\": \"Et et asperiores illo.\",\r\n    \"category\": \"hcav\",\r\n    \"price\": 6.5,\r\n    \"description\": \"Unde ab ut est cupiditate sit magni rem nam.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"aliquam asperiores\",\r\n    \"calories\": 448,\r\n    \"img_url\": \"aliquam asperiores.png\",\r\n    \"img_alt_text\": \"Et et asperiores illo.\",\r\n    \"category\": \"hcav\",\r\n    \"price\": 6.5,\r\n    \"description\": \"Unde ab ut est cupiditate sit magni rem nam.\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:16:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "58"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Product created successfully\",\n    \"product_id\": 11\n}"
+						},
+						{
+							"name": "Missing required properties",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"aliquam asperiores\",\r\n    \"calories\": 448,\r\n    \"img_url\": \"aliquam asperiores.png\",\r\n    \"img_alt_text\": \"Et et asperiores illo.\",\r\n    \"category\": \"hcav\",\r\n    \"price\": 6.5\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jun 2024 12:39:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "71"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"errors\": {\n        \"/\": [\n            \"The required properties (description) are missing\"\n        ]\n    }\n}"
+						},
+						{
+							"name": "Failed attribute validation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"al\",\r\n    \"calories\": 448,\r\n    \"img_url\": \"aliquam asperiores\",\r\n    \"img_alt_text\": \"Et et asperiores illo.\",\r\n    \"category\": \"hcav\",\r\n    \"price\": 6.5,\r\n    \"description\": \"Unde ab ut est cupiditate sit magni rem nam.\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jun 2024 12:45:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": {\n        \"/name\": [\n            \"Minimum string length is 3, found 2\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete a product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products/1",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"1"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:20:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								}
+							],
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Product not found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/99",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:19:23 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Product not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"calories\": -321\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products/4365",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"4365"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Product not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"name\": \"Add your name in the body\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/99",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 09:48:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Product not found\"\n}"
+						},
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"name\": \"My new product name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/11",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"11"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 16 May 2024 10:35:41 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Product updated successfully\"\n}"
+						},
+						{
+							"name": "Invalid attribute value",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test\",\r\n    \"calories\": -321\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/4365",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"4365"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jun 2024 14:47:31 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": {\n        \"/calories\": [\n            \"Number must be greater than or equal to 0\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/products/0/reviews",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"0",
+								"reviews"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"1",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:29:03 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "326"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"review_id\": 1,\n        \"rating\": 5,\n        \"created_date\": \"2024-05-16 11:11:02\",\n        \"text\": \"i really like this product. I have a verified badge since I have actually bought this product.\",\n        \"client_id\": 1,\n        \"product_id\": 1\n    },\n    {\n        \"review_id\": 5,\n        \"rating\": 1,\n        \"created_date\": \"2024-05-16 11:21:56\",\n        \"text\": \"this is a negative review\",\n        \"client_id\": 2,\n        \"product_id\": 1\n    }\n]"
+						},
+						{
+							"name": "No reviews",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/4/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"4",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:32:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						},
+						{
+							"name": "Product not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/products/0/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"products",
+										"0",
+										"reviews"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:33:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Product not found\"\n}"
+						}
+					]
+				}
+			],
+			"description": "The /products endpoints let you manage your products.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({key: 'X-TEST-ENV', value: 'testing' })\r",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "District",
+			"item": [
+				{
+					"name": "Get all districts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/districts",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"districts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/districts",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"districts"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 19 May 2024 09:27:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "PHPSESSID=hv2buif1vqb1dsm3ligel13her; path=/"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "346"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"district_id\": 4,\n        \"name\": \"Black River\"\n    },\n    {\n        \"district_id\": 3,\n        \"name\": \"Flacq\"\n    },\n    {\n        \"district_id\": 6,\n        \"name\": \"Grand Port\"\n    },\n    {\n        \"district_id\": 1,\n        \"name\": \"Moka\"\n    },\n    {\n        \"district_id\": 8,\n        \"name\": \"Pamplemousses\"\n    },\n    {\n        \"district_id\": 9,\n        \"name\": \"Plaines Wilhems\"\n    },\n    {\n        \"district_id\": 2,\n        \"name\": \"Port Louis\"\n    },\n    {\n        \"district_id\": 7,\n        \"name\": \"Riviere du Rempart\"\n    },\n    {\n        \"district_id\": 5,\n        \"name\": \"Savanne\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get district by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/districts/1",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"districts",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/districts/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"districts",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 19 May 2024 09:28:23 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"district_id\": 1,\n    \"name\": \"Moka\"\n}"
+						},
+						{
+							"name": "District not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/districts/99",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"districts",
+										"99"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 19 May 2024 09:29:04 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Content-Length",
+									"value": "30"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"District not found\"\n}"
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({key: 'X-TEST-ENV', value: 'testing' })"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "Get all reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/reviews",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:36:08 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "962"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"review_id\": 1,\n        \"product_id\": 1,\n        \"client_id\": 1,\n        \"text\": \"i really like this product. I have a verified badge since I have actually bought this product.\",\n        \"rating\": 5,\n        \"created_date\": \"2024-05-16 11:11:02\"\n    },\n    {\n        \"review_id\": 2,\n        \"product_id\": 2,\n        \"client_id\": 1,\n        \"text\": \"the coffee is decent but nothing special\",\n        \"rating\": 3,\n        \"created_date\": \"2024-05-16 11:11:24\"\n    },\n    {\n        \"review_id\": 3,\n        \"product_id\": 3,\n        \"client_id\": 1,\n        \"text\": \"i would love to buy this again but the price is not worth it\",\n        \"rating\": 2,\n        \"created_date\": \"2024-05-16 11:11:53\"\n    },\n    {\n        \"review_id\": 4,\n        \"product_id\": 3,\n        \"client_id\": 1,\n        \"text\": \"Note the calculation for average rating does not consider unverified reviews\",\n        \"rating\": 1,\n        \"created_date\": \"2024-05-16 11:14:04\"\n    },\n    {\n        \"review_id\": 5,\n        \"product_id\": 1,\n        \"client_id\": 2,\n        \"text\": \"this is a negative review\",\n        \"rating\": 1,\n        \"created_date\": \"2024-05-16 11:21:56\"\n    },\n    {\n        \"review_id\": 6,\n        \"product_id\": 3,\n        \"client_id\": 2,\n        \"text\": \"this is a wonderful product that changed my life\",\n        \"rating\": 3,\n        \"created_date\": \"2024-05-16 11:22:44\"\n    }\n]"
+						},
+						{
+							"name": "No reviews",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:37:18 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						}
+					]
+				},
+				{
+					"name": "Create review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/reviews",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Missing data",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:47:10 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Missing fields: product_id, client_id, text, rating\"\n}"
+						},
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "client_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "text",
+											"value": "hello world from postman",
+											"type": "text"
+										},
+										{
+											"key": "rating",
+											"value": "3",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:51:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "55"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Review created successfully\",\n    \"review_id\": 7\n}"
+						},
+						{
+							"name": "Invalid attributes",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "100",
+											"type": "text"
+										},
+										{
+											"key": "client_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "text",
+											"value": "h",
+											"type": "text"
+										},
+										{
+											"key": "rating",
+											"value": "-3",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:55:18 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "106"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": {\n        \"text\": \"Review text must have at least 2 characters\",\n        \"rating\": \"Rating must be between 1 and 5\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update review",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/reviews",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Missing data",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:40:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Invalid JSON data\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/reviews",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Missing review ID",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:40:14 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "73"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "Request has not been defined in $routes for Steamy\\Controller\\API\\Reviews"
+						}
+					]
+				},
+				{
+					"name": "Get a review by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/reviews/1",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:46:04 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "196"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"review_id\": 1,\n    \"product_id\": 1,\n    \"client_id\": 1,\n    \"text\": \"i really like this product. I have a verified badge since I have actually bought this product.\",\n    \"rating\": 5,\n    \"created_date\": \"2024-05-16 11:11:02\"\n}"
+						},
+						{
+							"name": "Not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/reviews/100",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reviews",
+										"100"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 22 May 2024 16:45:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "28"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Review not found\"\n}"
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.add({key: 'X-TEST-ENV', value: 'testing' })"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_id\": 1,\r\n    \"client_id\": 1629,\r\n    \"text\": \"hello world from postman\",\r\n    \"rating\": 3 \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/users/1",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"product_id\": 1,\r\n    \"client_id\": 1629,\r\n    \"text\": \"hello world from postman\",\r\n    \"rating\": 3 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 10:21:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "200"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": 1,\n    \"email\": \"c34560814@gmail.com\",\n    \"first_name\": \"john\",\n    \"phone_no\": \"+230-5-123-4567\",\n    \"last_name\": \"💋💋💋\",\n    \"district_id\": 2,\n    \"street\": \"Royal Road\",\n    \"city\": \"Rochester\"\n}"
+						},
+						{
+							"name": "User not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"product_id\": 1,\r\n    \"client_id\": 1629,\r\n    \"text\": \"hello world from postman\",\r\n    \"rating\": 3 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/143",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"143"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 10:37:47 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"User not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"tester@gmail.com\",\r\n    \"password\":\"hellofdsgd\",\r\n    \"first_name\":\"peter\",\r\n    \"last_name\":\"fdsf\",\r\n    \"phone_no\":\"454345454\",\r\n    \"street\":\"roland road\",\r\n    \"city\": \"James Park\",\r\n    \"district_id\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/users/",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"tester@gmail.com\",\r\n    \"password\":\"hellofdsgd\",\r\n    \"first_name\":\"peter\",\r\n    \"last_name\":\"fdsf\",\r\n    \"phone_no\":\"454345454\",\r\n    \"street\":\"roland road\",\r\n    \"city\": \"James Park\",\r\n    \"district_id\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 10:58:48 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "51"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User created successfully\",\n    \"user_id\": 3\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/users/3",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/3",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"3"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 11:06:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Create session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"c34560814@gmail.com\",\r\n  \"password\": \"User0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://steamy.localhost/api/v1/sessions",
+							"protocol": "http",
+							"host": [
+								"steamy",
+								"localhost"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sessions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"product_id\": 1,\r\n    \"client_id\": 1629,\r\n    \"text\": \"hello world from postman\",\r\n    \"rating\": 3 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/1",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 10:21:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "200"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": 1,\n    \"email\": \"c34560814@gmail.com\",\n    \"first_name\": \"john\",\n    \"phone_no\": \"+230-5-123-4567\",\n    \"last_name\": \"💋💋💋\",\n    \"district_id\": 2,\n    \"street\": \"Royal Road\",\n    \"city\": \"Rochester\"\n}"
+						},
+						{
+							"name": "User not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"product_id\": 1,\r\n    \"client_id\": 1629,\r\n    \"text\": \"hello world from postman\",\r\n    \"rating\": 3 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://steamy.localhost/api/v1/users/143",
+									"protocol": "http",
+									"host": [
+										"steamy",
+										"localhost"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"143"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 28 Aug 2024 10:37:47 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.41 (Ubuntu)"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 19 Nov 1981 08:52:00 GMT"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"User not found\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://farming-simulator.pstmn.io"
+		}
+	]
+}
