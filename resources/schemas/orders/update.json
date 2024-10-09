@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/orders/update.json",
+  "title": "Update Order",
+  "properties": {
+    "status": {
+      "$ref": "https://example.com/common/order.json#/properties/status"
+    },
+    "created_date": {
+      "$ref": "https://example.com/common/order.json#/properties/created_date"
+    },
+    "pickup_date": {
+      "$ref": "https://example.com/common/order.json#/properties/pickup_date"
+    },
+    "client_id": {
+      "$ref": "https://example.com/common/order.json#/properties/client_id"
+    },
+    "store_id": {
+      "$ref": "https://example.com/common/order.json#/properties/store_id"
+    }
+  },
+  "additionalProperties": false
+}

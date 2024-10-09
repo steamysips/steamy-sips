@@ -314,6 +314,38 @@ class Order
     }
 
     /**
+     * @return Order[] An array of Order objects
+     */
+    public static function getAll(): array
+    {
+        $query = "SELECT * FROM `order`";
+        $results = self::query($query);
+
+        if (empty($results)) {
+            return [];
+        }
+
+        // convert results to an array of Order
+        $orders = [];
+        foreach ($results as $result) {
+            $obj = new Order(
+                store_id: $result->store_id,
+                client_id: $result->client_id,
+                status: OrderStatus::from($result->status),
+                pickup_date: $result->pickup_date ? Utility::stringToDate($result->pickup_date) : null,
+                created_date: Utility::stringToDate($result->created_date)
+            );
+            $obj->setOrderID($result->order_id);
+            $orders[] = $obj;
+        }
+        return $orders;
+    }
+    public function setOrderID(int $order_id): void
+    {
+        $this->order_id = $order_id;
+    }
+
+    /**
      * Retrieves a list of orders for a specific client.
      *
      * @param int $client_id The ID of the client whose orders are to be retrieved.
@@ -431,5 +463,10 @@ class Order
         }
 
         return 0.0;
+    }
+
+    public function deleteOrder(): bool
+    {
+        return $this->delete($this->order_id, $this->table, 'order_id');
     }
 }

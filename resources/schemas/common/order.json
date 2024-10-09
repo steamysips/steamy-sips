@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/order.json",
+  "title": "Order",
+  "description": "An order object",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "integer",
+      "description": "Unique identifier for order"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "cancelled", "completed"],
+      "description": "The status of the order"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date and time when the order was created"
+    },
+    "pickup_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date when client picks up the order at the store"
+    },
+    "client_id": {
+      "type": "integer",
+      "description": "ID of the client who placed the order"
+    },
+    "store_id": {
+      "type": "integer",
+      "description": "ID of the store where the order was placed"
+    }
+  },
+  "additionalProperties": false
+}
