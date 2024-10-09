@@ -14,7 +14,7 @@
       "role": "Lead Developer"
     }
   ],
-  "homepage": "https://github.com/creme332/steamy-sips",
+  "homepage": "https://github.com/steamysips/steamy-sips",
   "license": "CC-BY-SA-4.0",
   "require": {
     "ext-pdo": "*",

@@ -1,6 +1,6 @@
 # steamy-sips ☕
 
-[![Run tests](https://github.com/creme332/steamy-sips/actions/workflows/test.yml/badge.svg)](https://github.com/creme332/steamy-sips/actions/workflows/test.yml)
+[![Run tests](https://github.com/steamysips/steamy-sips/actions/workflows/test.yml/badge.svg)](https://github.com/creme332/steamy-sips/actions/workflows/test.yml)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?&logo=linux&logoColor=black)
 ![Apache](https://img.shields.io/badge/apache-%23D42029.svg?&logo=apache&logoColor=white)
 ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?&logo=mysql&logoColor=white)
