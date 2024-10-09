@@ -7,6 +7,7 @@
         - [Product](#product)
         - [Order](#order)
         - [Review](#review)
+        - [Comment](#comment)
         - [District](#district)
     - [Query string parameters](#query-string-parameters)
 - [References](#references)
@@ -79,6 +80,17 @@ A user can be a client or an administrator.
 | `PUT /api/v1/reviews/[id]`                  | Update the details of a review with the specified ID. | Yes       |
 | `DELETE /api/v1/reviews/[id]`               | Delete a review with the specified ID.                | Yes       |
 | `GET /api/v1/reviews/stats/count-over-time` | Get the count of reviews for each month.              | No        |                         |
+
+
+### Comment
+
+| Endpoint                             | Description                                            | Protected |
+|--------------------------------------|--------------------------------------------------------|-----------|
+| `GET /api/v1/comments`               | Get the list of all comments.                          | No        |
+| `GET /api/v1/comments/[id]`          | Get the details of a specific comments by its ID.      | No        |
+| `POST /api/v1/comments`              | Create a new comment  for a product.                   | Yes       |
+| `PUT /api/v1/comments/[id]`          | Update the details of a comment with the specified ID. | Yes       |
+| `DELETE /api/v1/comments/[id]`       | Delete a comment with the specified ID.                | Yes       |
 
 ### District
 

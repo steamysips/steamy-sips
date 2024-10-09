@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/comment.json",
+  "title": "Comment",
+  "description": "A comment object",
+  "type": "object",
+  "properties": {
+    "comment_id": {
+      "type": "integer",
+      "description": "Unique identifier for the comment"
+    },
+    "text": {
+      "type": "string",
+      "description": "The text content of the comment",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date and time when the comment was created"
+    },
+    "parent_comment_id": {
+      "type": ["integer", "null"],
+      "description": "The ID of the parent comment, if any"
+    },
+    "user_id": {
+      "type": "integer",
+      "description": "The ID of the user who made the comment"
+    },
+    "review_id": {
+      "type": "integer",
+      "description": "The ID of the review under which the comment is found"
+    }
+  },
+  "additionalProperties": false
+}
