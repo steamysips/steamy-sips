@@ -1,8 +1,8 @@
--- MySQL dump 10.19  Distrib 10.3.38-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.19  Distrib 10.3.39-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cafe
 -- ------------------------------------------------------
--- Server version	10.3.38-MariaDB-0ubuntu0.20.04.1
+-- Server version	10.3.39-MariaDB-0ubuntu0.20.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -108,7 +108,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `store` WRITE;
 /*!40000 ALTER TABLE `store` DISABLE KEYS */;
-INSERT INTO `store` VALUES (1,'+230 630 1329','Royal Road','\0\0\0\0\0\0\0��&74�J{�/L�L@',1,'Bagatelle'),(2,'+230 630 1234','Angus Road','\0\0\0\0\0\0\0��&74����&�U@',4,'Albion');
+INSERT INTO `store` VALUES (1,'+230 630 1329','Royal Road','\0\0\0\0\0\0\0~8gD94��N@a�L@',1,'Bagatelle'),(2,'+230 630 1234','Angus Road','\0\0\0\0\0\0\0�H��Q44��\nF%u�L@',4,'Albion');
 /*!40000 ALTER TABLE `store` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,4 +140,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-16 11:23:20
+-- Dump completed on 2024-10-09 19:33:28
