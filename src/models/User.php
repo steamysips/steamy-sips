@@ -40,6 +40,14 @@ abstract class User
         $this->phone_no = $phone_no;
     }
 
+    /**
+     * @return User[] A list of all users in database
+     */
+    public static function getUsers(): array
+    {
+        return []; // TODO: Fetch all client and all administrators
+    }
+
     public function toArray(): array
     {
         return
@@ -317,4 +325,31 @@ abstract class User
         return true;
     }
 
+    /**
+     * Get all reviews written by user.
+     *
+     * @return Review[] Array of Review objects
+     */
+    public function getReviews(): array
+    {
+        return []; // TODO: Implement getReviews()
+    }
+
+    /**
+     * Deletes a user record from database.
+     * @return void
+     */
+    public function deleteUser(): void
+    {
+        if ($this instanceof Client) {
+            // delete record from client table
+            $this->delete($this->user_id, 'client', 'user_id');
+        } elseif ($this instanceof Administrator) {
+            // delete record from administrator table
+            $this->delete($this->user_id, 'administrator', 'user_id');
+        }
+
+        // delete record from user table
+        $this->delete($this->user_id, 'user', 'user_id');
+    }
 }

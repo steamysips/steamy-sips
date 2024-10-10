@@ -101,20 +101,6 @@ class Client extends User
     }
 
     /**
-     * Deletes user from database
-     *
-     * @return void
-     */
-    public function deleteUser(): void
-    {
-        // delete record from client table
-        $this->delete($this->user_id, 'client', 'user_id');
-
-        // delete record from user table
-        $this->delete($this->user_id, 'user', 'user_id');
-    }
-
-    /**
      * Saves client to database and updates client_id.
      *
      * @return bool Whether client was successfully saved to database
@@ -256,6 +242,11 @@ class Client extends User
         return $this->address;
     }
 
+    public function setAddress(Location $address): void
+    {
+        $this->address = $address;
+    }
+
     /**
      * Validates attributes of current user and returns an array of errors.
      *
@@ -296,8 +287,18 @@ class Client extends User
         return $base_array;
     }
 
+    /**
+     * Get all orders made by client.
+     *
+     * @return Order[] Array of Order objects
+     */
+    public function getOrders(): array
+    {
+        return Order::getOrdersByClientId(client_id: $this->user_id, limit: -1);
+    }
 
     /**
+     * Send email to client to inform him that order is confirmed.
      * @throws Exception
      */
     public function sendOrderConfirmationEmail(Order $order): bool

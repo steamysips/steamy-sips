@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/common/client.json",
+  "title": "Client",
+  "description": "A client object",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "$ref": "https://example.com/common/user.json#/properties/user_id"
+    },
+    "email": {
+      "$ref": "https://example.com/common/user.json#/properties/email"
+    },
+    "first_name": {
+      "$ref": "https://example.com/common/user.json#/properties/first_name"
+    },
+    "last_name": {
+      "$ref": "https://example.com/common/user.json#/properties/last_name"
+    },
+    "password": {
+      "$ref": "https://example.com/common/user.json#/properties/password"
+    },
+    "phone_no": {
+      "$ref": "https://example.com/common/user.json#/properties/phone_no"
+    },
+    "street": {
+      "type": "string",
+      "description": "Street address of the client",
+      "minLength": 4
+    },
+    "city": {
+      "type": "string",
+      "description": "City of the client",
+      "minLength": 3
+    },
+    "district_id": {
+      "type": "integer",
+      "description": "District ID of the client",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "user_id",
+    "email",
+    "first_name",
+    "last_name",
+    "password",
+    "phone_no",
+    "street",
+    "city",
+    "district_id"
+  ],
+  "additionalProperties": false
+}

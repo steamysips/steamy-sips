@@ -317,24 +317,31 @@ class Order
      * Retrieves a list of orders for a specific client.
      *
      * @param int $client_id The ID of the client whose orders are to be retrieved.
-     * @param int $limit The maximum number of orders to retrieve. Defaults to 5.
+     * @param int $limit The maximum number of orders to retrieve. Defaults to 5. A negative number or zero means no limit.
      * @return Order[] An array of Order objects ordered in descending order of created_date
      * @throws PDOException If there is an error executing the database query.
      */
     public static function getOrdersByClientId(int $client_id, int $limit = 5): array
     {
         $db = self::connect();
-        $stmt = $db->prepare(
-            '
+
+        // create query with limit if any
+        $query = '
         SELECT o.order_id, o.created_date, o.status, o.store_id, o.pickup_date, o.client_id
         FROM `order` o
         WHERE o.client_id = :client_id
         ORDER BY o.created_date DESC
-        LIMIT :limit;
-        '
-        );
+        ';
+        if ($limit > 0) {
+            $query .= 'LIMIT :limit';
+        }
+        $query .= ';';
+
+        $stmt = $db->prepare($query);
         $stmt->bindParam(':client_id', $client_id, PDO::PARAM_INT);
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        if ($limit > 0) {
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        }
         $stmt->execute();
 
         $orderDataArray = $stmt->fetchAll(PDO::FETCH_OBJ);

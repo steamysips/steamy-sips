@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/users/create.json",
+  "title": "Create User",
+  "properties": {
+    "email": {
+      "$ref": "https://example.com/common/user.json#/properties/email"
+    },
+    "first_name": {
+      "$ref": "https://example.com/common/user.json#/properties/first_name"
+    },
+    "password": {
+      "$ref": "https://example.com/common/user.json#/properties/password"
+    },
+    "phone_no": {
+      "$ref": "https://example.com/common/user.json#/properties/phone_no"
+    },
+    "last_name": {
+      "$ref": "https://example.com/common/user.json#/properties/last_name"
+    }
+  },
+  "required": [
+    "email",
+    "first_name",
+    "password",
+    "phone_no",
+    "last_name"
+  ],
+  "additionalProperties": false
+}

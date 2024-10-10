@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/clients/create.json",
+  "title": "Create Client",
+  "properties": {
+    "user_id": {
+      "$ref": "https://example.com/common/client.json#/properties/user_id"
+    },
+    "email": {
+      "$ref": "https://example.com/common/client.json#/properties/email"
+    },
+    "first_name": {
+      "$ref": "https://example.com/common/client.json#/properties/first_name"
+    },
+    "last_name": {
+      "$ref": "https://example.com/common/client.json#/properties/last_name"
+    },
+    "password": {
+      "$ref": "https://example.com/common/client.json#/properties/password"
+    },
+    "phone_no": {
+      "$ref": "https://example.com/common/client.json#/properties/phone_no"
+    },
+    "street": {
+      "$ref": "https://example.com/common/client.json#/properties/street"
+    },
+    "city": {
+      "$ref": "https://example.com/common/client.json#/properties/city"
+    },
+    "district_id": {
+      "$ref": "https://example.com/common/client.json#/properties/district_id"
+    }
+  },
+  "required": [
+    "email",
+    "first_name",
+    "last_name",
+    "password",
+    "phone_no",
+    "street",
+    "city",
+    "district_id"
+  ],
+  "additionalProperties": false
+}
