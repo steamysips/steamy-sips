@@ -23,7 +23,7 @@ cd /var/www/html # your root might be different
 Download the project:
 
 ```bash
-git clone git@github.com:creme332/steamy-sips.git
+git clone git@github.com:steamy-sips/steamy-sips.git
 ```
 
 Move to the root directory of the project:
